@@ -1,0 +1,260 @@
+---
+title: E-Mail-Adresse über das Webmail Outlook Web App (OWA) verwenden
+description: Erfahren Sie, wie Sie Ihre E-Mail-Adresse über das Webmail OWA verwenden
+lastUpdated: 2026-05-04
+---
+
+## Ziel
+
+Mit den E-Mail-Lösungen von OVHcloud können Sie Ihre E-Mails über ein Gerät und einen Client Ihrer Wahl senden und empfangen. OVHcloud stellt Ihnen einen Online-E-Mail-Dienst namens Outlook Web App (OWA) zur Verfügung, mit dem Sie von überall über einen Webbrowser auf einen Account zugreifen können. Alle aktiven E-Mail-Accounts auf MX Plan, Email Pro und Hosted Exchange teilen sich einen einzigen Zugangspunkt zu ihrer jeweiligen OWA-Oberfläche: unsere [Webmail-Anmeldeseite](https://www.ovhcloud.com/de/mail/).
+
+**Erfahren Sie, wie Sie über die OWA-Oberfläche die gängigen Aktionen mit Ihrer E-Mail-Adresse durchführen.**
+
+## Voraussetzungen
+
+- Sie verfügen über eine bereits eingerichtete OVHcloud E-Mail-Lösung aus den folgenden Angeboten:
+    - [**MX Plan**](https://www.ovhcloud.com/de/web-hosting/), verfügbar mit unseren Webhosting-Angeboten, im [100M Free Hosting](https://www.ovhcloud.com/de/domains/free-web-hosting/) enthalten oder als eigenständige Lösung bestellt;
+    - [**Hosted Exchange**](https://www.ovhcloud.com/de/emails/hosted-exchange/);
+    - [**Email Pro**](https://www.ovhcloud.com/de/emails/email-pro/).
+- Sie verfügen über die Anmeldedaten für die E-Mail-Adresse, die Sie verwenden möchten.
+
+## In der praktischen Anwendung
+
+Diese Anleitung hilft Ihnen, die üblichen Aufgaben besser zu verstehen, die in einem E-Mail-Account über OWA verfügbar sind. Da diese Oberfläche jedoch nicht ursprünglich von OVHcloud erstellt wurde, können wir keine spezifischen Anweisungen zu Einstellungen geben, die in dieser Anleitung nicht behandelt werden.
+
+Für Exchange-spezifische Funktionen finden Sie weitere Anleitungen im Abschnitt [Weiterführende Informationen](#weiterfuhrende-informationen) am Ende dieser Anleitung.
+
+:::info
+Nachdem Sie sich angemeldet und mit der Oberfläche vertraut gemacht haben, müssen Sie die Anweisungen nicht in der angegebenen Reihenfolge befolgen.
+:::
+
+
+### Anmeldung bei OWA
+
+Um sich mit Ihrer E-Mail-Adresse bei OWA anzumelden, öffnen Sie die [Webmail-Anmeldeseite](https://www.ovhcloud.com/de/mail/). Geben Sie Ihre vollständige E-Mail-Adresse und Ihr Passwort ein. Klicken Sie anschließend auf <code className="action">Anmelden</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step1.png" loading="lazy" />
+
+:::warning
+Wenn Sie auf eine **Roundcube**-Oberfläche weitergeleitet werden, bedeutet dies, dass Sie die Legacy-Version des MX Plan Angebots nutzen. Weitere Informationen zu Ihrem MX Plan Angebot finden Sie auf unserer Seite [Erste Schritte mit dem MX Plan Angebot](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities).
+
+Um sich mit der **Roundcube**-Oberfläche vertraut zu machen, lesen Sie unsere Anleitung [E-Mail-Adresse über das Webmail Roundcube verwenden](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-roundcube).
+:::
+
+
+Wenn Sie sich zum ersten Mal mit dieser E-Mail-Adresse bei OWA anmelden, werden Sie aufgefordert, die Sprache der Oberfläche und die Zeitzone festzulegen. Klicken Sie anschließend auf <code className="action">Speichern</code>, um fortzufahren.
+
+:::info
+Die Zeitzonen sind nach [dem Standard UTC (Coordinated Universal Time)](https://de.wikipedia.org/wiki/Koordinierte_Weltzeit) aufgeführt, nicht in alphabetischer Reihenfolge der Städte.
+
+**Beispiel**: Für Westeuropa ist dies UTC +1 (Brüssel, Kopenhagen, Madrid, Paris).
+:::
+
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step2.png" loading="lazy" />
+
+Ab jetzt wird Ihr Posteingang standardmäßig angezeigt, sobald Sie sich anmelden.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step3.png" loading="lazy" />
+
+### Die OWA-Anzeige verstehen
+
+Die OWA-Oberfläche enthält mehrere Bereiche. Anhand der Tabelle und der nachstehenden Abbildung können Sie sich mit ihr vertraut machen.
+
+|Bereiche|Beschreibung|  
+|---|---|  
+|Oberer Bereich (1)|Enthält zwei Registerkartenleisten: Die erste ermöglicht den Zugriff auf allgemeine Einstellungen (etwa den [Bereich Optionen](#zugriff-auf-den-bereich-optionen)). Die zweite Leiste kann für spezifische Aktionen mit Ihrer Adresse genutzt werden (etwa zum Senden oder Beantworten von E-Mails).|  
+|Linke Seite (2)|Zeigt die Liste der Ordner für Ihre E-Mail-Adresse an. Diese Ordner werden als Baumstruktur dargestellt, die Sie ein- oder ausklappen können.|
+|Mittleres Segment (3)|Zeigt die Liste der Nachrichten (gelesen und ungelesen) aus dem im linken Menü ausgewählten Ordner an. In diesem Bereich können auch Suchergebnisse angezeigt werden.|
+|Rechte Seite (4)|Zeigt den Lesebereich an, wenn eine E-Mail ausgewählt wurde.|
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step4.png" loading="lazy" />
+
+Beachten Sie, dass Sie die Größe der vertikalen Bereiche durch Klicken und Ziehen ihrer Trennlinien ändern können.
+
+### E-Mails anzeigen
+
+Um Ihre E-Mails anzuzeigen, wählen Sie einen Ordner auf der linken Seite aus. Eingehende E-Mails, die nicht von Posteingangsregeln bearbeitet werden, erscheinen im Ordner "Posteingang". Um zu prüfen, ob Sie neue E-Mails erhalten haben, sehen Sie nach, ob neben dem entsprechenden Ordner eine Zahl angezeigt wird.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step5.png" loading="lazy" />
+
+Um eine E-Mail zu lesen, wählen Sie gegebenenfalls ihren Ordner aus. Klicken Sie dann auf die E-Mail, um deren Inhalt im Lesebereich anzuzeigen. Ungelesene Nachrichten werden in Fettdruck dargestellt, um sie von gelesenen Nachrichten zu unterscheiden.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step6.png" loading="lazy" />
+
+### E-Mails sortieren und filtern
+
+Oben rechts in der Nachrichtenliste öffnet die Schaltfläche <code className="action">Filter</code> ein Menü, das alle Anzeigeoptionen für den ausgewählten Ordner zusammenfasst.
+
+- **Nach Kategorie filtern**: Wählen Sie einen Eintrag, um nur eine Auswahl von E-Mails anzuzeigen, unter <code className="action">Alle</code>, <code className="action">Ungelesen</code>, <code className="action">An mich</code> (E-Mails, die direkt an Ihre Adresse gerichtet sind), <code className="action">Gekennzeichnet</code> (zur Nachverfolgung markierte E-Mails) oder <code className="action">Erwähnungen</code> (E-Mails, in denen Ihre Adresse erwähnt wird).
+
+- **Sortieren nach**: Bewegen Sie den Mauszeiger über den Eintrag <code className="action">Sortieren nach</code>, um das Sortierkriterium für E-Mails auszuwählen: **Datum**, **Von**, **An**, **Betreff**, **Anlagen**, **Wichtigkeit** oder **Größe**. Der Pfeil links neben dem Kriterium zeigt die aktuelle Reihenfolge an; klicken Sie erneut auf dasselbe Kriterium, um sie umzukehren.
+
+- **Anzeigen als**: Bewegen Sie den Mauszeiger über den Eintrag <code className="action">Anzeigen als</code>, um zwischen der Ansicht **Nachrichten** (eine E-Mail pro Zeile) und der Ansicht **Unterhaltungen** (E-Mails nach Diskussionsverlauf gruppiert) zu wechseln.
+
+### Senden und Antworten
+
+Um **eine neue Nachricht zu senden**, klicken Sie auf das Symbol <code className="action">Neu</code> oben in der OWA-Oberfläche. Der Bearbeitungsbereich wird auf der rechten Seite angezeigt. Füllen Sie die Felder Ihrer E-Mail aus (Empfänger, Betreff, Nachrichtentext, Anlagen). Klicken Sie auf <code className="action">Senden</code>, sobald Ihre E-Mail bereit ist.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step7.png" loading="lazy" />
+
+Um **auf eine Nachricht zu antworten**, klicken Sie zunächst darauf, um sie anzuzeigen. Klicken Sie anschließend auf <code className="action">Allen antworten</code>, um allen Empfängern zu antworten. Verwenden Sie die Pfeil-nach-unten-Schaltfläche, wenn Sie nur dem Absender der E-Mail antworten möchten (ohne die Empfänger in Kopie), und klicken Sie dann auf <code className="action">Antworten</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step8.png" loading="lazy" />
+
+Wenn Sie sich zum Antworten entscheiden, wird der Schnellantwort-Editor über der E-Mail angezeigt. Verfassen Sie hier Ihre Antwort, und sobald Sie Ihre Nachricht senden möchten, klicken Sie auf <code className="action">Senden</code>. Beachten Sie, dass Sie für jede Antwortoption (etwa das Hinzufügen einer Signatur) zunächst die Ansicht durch Klicken auf das Doppelpfeilsymbol auf den vollständigen Bearbeitungsbereich erweitern müssen.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step9.png" loading="lazy" />
+
+### Ihren Posteingang organisieren
+
+OWA bietet verschiedene Möglichkeiten, Ihren Posteingang zu organisieren. Sie können:
+
+- [Ordner und Unterordner erstellen](#einen-ordner-erstellen),
+- [E-Mails verschieben](#e-mails-verschieben),
+- [Regeln festlegen](#posteingangsregeln-erstellen), um automatisch Aktionen auszuführen, sobald eine neue E-Mail eingeht,
+- [einen Absender blockieren](#einen-absender-blockieren), um keine Nachrichten mehr von ihm zu erhalten.
+
+#### Einen Ordner erstellen
+
+Um einen neuen Ordner zu erstellen, klicken Sie mit der rechten Maustaste auf den Namen Ihrer E-Mail-Adresse in der Ordnerstruktur und wählen Sie dann <code className="action">Neuen Ordner erstellen</code>. Auf dieselbe Weise können Sie in bestehenden Ordnern einen Unterordner erstellen, indem Sie auf <code className="action">Neuen Unterordner erstellen</code> klicken.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step10.png" loading="lazy" />
+
+#### E-Mails verschieben
+
+Um **eine E-Mail zu verschieben**, können Sie sie einfach per Drag-and-Drop in den Zielordner ziehen oder mit der rechten Maustaste darauf klicken und <code className="action">Verschieben</code> auswählen.
+Um **mehrere E-Mails gleichzeitig zu verschieben**, wählen Sie alle über ihre Kontrollkästchen aus. Klicken Sie dann auf <code className="action">Verschieben</code> (auf der rechten Seite) oder auf <code className="action">Verschieben nach</code> (im oberen Bereich). Wählen Sie anschließend den Zielordner aus.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step11.png" loading="lazy" />
+
+#### Posteingangsregeln erstellen
+
+<iframe class="video" width="560" height="315" src="https://www.youtube-nocookie.com/embed/z1D2wc7XWX4?start=48" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Um Regeln zu erstellen und zu verwalten, klicken Sie zunächst oben auf das Zahnradsymbol und dann auf <code className="action">Optionen</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step12.png" loading="lazy" />
+
+Auf der neuen Seite, die sich öffnet, klicken Sie im linken Menü auf <code className="action">Posteingangs- und Aufräumregeln</code>. In der Baumstruktur "Optionen" finden Sie diese Funktion unter "E-Mail" im Bereich "Automatische Verarbeitung". Hier können Sie Regeln in der Liste erstellen, bearbeiten und verschieben.
+
+Um eine neue Regel hinzuzufügen, klicken Sie auf die Schaltfläche <code className="action">+</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step13.png" loading="lazy" />
+
+Geben Sie die erforderlichen Informationen entsprechend der Aufgabe ein, die diese Regel ausführen soll. Klicken Sie anschließend auf <code className="action">OK</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step14.png" loading="lazy" />
+
+Detailliertere Anweisungen zum Erstellen von Posteingangsregeln finden Sie in unserer Anleitung: [Posteingangsregeln in OWA erstellen](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/creating-inbox-rules-in-owa-mx-plan).
+
+#### Einen Absender blockieren
+
+<iframe class="video" width="560" height="315" src="https://www.youtube-nocookie.com/embed/Ivad4FgJ2No" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Klicken Sie oben rechts auf das Zahnradsymbol und dann auf <code className="action">Optionen</code>. Folgen Sie weiterhin in der linken Spalte der Baumstruktur "E-Mail" unter "Konten" und dann "Blockieren oder zulassen".
+
+Geben Sie im Bereich "**Gesperrte Absender**" eine zu blockierende E-Mail-Adresse oder einen Domainnamen ein und klicken Sie dann auf die Schaltfläche <code className="action">+</code>, um diese in die Liste aufzunehmen.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/owa_exchange_block.png" loading="lazy" />
+
+### Ihre Kontakte verwalten
+
+Um Ihre Kontakte zu verwalten, klicken Sie zunächst oben links auf der Seite auf die blaue App-Launcher-Schaltfläche (die auch Zugriff auf Kalender, Aufgaben und andere Module bietet) und dann auf <code className="action">Personen</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step15.png" loading="lazy" />
+
+Auf der neuen Seite können Sie einen neuen Kontakt hinzufügen, eine Kontaktliste erstellen und vorhandene Kontakte entfernen.
+
+#### Einen Kontakt hinzufügen
+
+Klicken Sie auf <code className="action">Neu</code> und geben Sie dann die Daten des Kontakts ein, den Sie hinzufügen möchten. Klicken Sie anschließend auf <code className="action">Speichern</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step16.png" loading="lazy" />
+
+#### Eine Kontaktliste erstellen
+
+Klicken Sie auf den Pfeil nach unten neben <code className="action">Neu</code> und dann auf <code className="action">Kontaktliste</code>. Geben Sie ihr einen Namen, fügen Sie Kontakte hinzu und klicken Sie anschließend auf <code className="action">Speichern</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step17.png" loading="lazy" />
+
+### Ihr Passwort ändern
+
+<iframe class="video" width="560" height="315" src="https://www.youtube-nocookie.com/embed/z1D2wc7XWX4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Sie können das Passwort Ihres Accounts ändern, während Sie bei OWA angemeldet sind. Klicken Sie hierzu oben auf das Zahnradsymbol und dann auf <code className="action">Optionen</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step12.png" loading="lazy" />
+
+Erweitern Sie auf der neuen Seite den Tab "Allgemein" in der Baumstruktur auf der linken Seite und klicken Sie dann auf <code className="action">Mein Konto</code>. Klicken Sie abschließend auf <code className="action">Kennwort ändern</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step18.png" loading="lazy" />
+
+Geben Sie im neuen Fenster, das sich öffnet, Ihr aktuelles Passwort ein. Geben Sie anschließend ein neues Passwort ein und bestätigen Sie es durch erneute Eingabe. Klicken Sie auf <code className="action">Speichern</code>, um das neue Passwort zu speichern.
+
+:::info
+Denken Sie daran, Ihr neues Passwort auf allen Geräten einzugeben, die für den Zugriff auf diesen Account verwendet werden (zum Beispiel in Ihrer E-Mail-Client-Software). Sollten Sie Schwierigkeiten mit Ihrem Passwort haben, wenden Sie sich an Ihren Dienstadministrator.
+:::
+
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step19.png" loading="lazy" />
+
+### Eine automatische Antwort hinzufügen
+
+In OWA können Sie eine automatische Antwort für Ihren Posteingang erstellen, damit E-Mails während Ihrer Abwesenheit nicht unbeantwortet bleiben. Klicken Sie hierzu oben auf das Zahnradsymbol und dann auf <code className="action">Automatische Antworten</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step20.png" loading="lazy" />
+
+Wählen Sie im sich öffnenden Fenster die Option "Automatische Antworten senden". Sie können den Auto-Responder dann so einstellen, dass er verschiedene Kriterien erfüllt:
+
+- E-Mails mit automatischer Antwort für ein festes Zeitintervall oder dauerhaft senden, bis sie manuell deaktiviert werden,
+- definieren, welche Absender automatische Antworten erhalten (nur interne Absender oder auch externe Absender einschließen).
+
+Geben Sie die erforderlichen Informationen entsprechend der Aufgabe ein, die Sie mit dieser Regel ausführen möchten. Klicken Sie anschließend auf <code className="action">OK</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step21.png" loading="lazy" />
+
+Detailliertere Anweisungen zum Erstellen automatischer Antworten finden Sie in unserer Anleitung: [Automatische Antwort in OWA erstellen](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/owa-automatic-replies).
+
+### Eine Signatur hinzufügen
+
+Um eine E-Mail-Signatur hinzuzufügen, klicken Sie oben auf das Zahnradsymbol und dann auf <code className="action">Optionen</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step12.png" loading="lazy" />
+
+Klicken Sie auf der linken Seite der neuen Seite auf <code className="action">E-Mail-Signatur</code>. In der Baumstruktur der Optionen befindet sich dieser Eintrag unter "E-Mail" und "Layout". Von hier aus können Sie die Signatur aktivieren, deaktivieren und bearbeiten.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step22.png" loading="lazy" />
+
+Verfassen Sie Ihre E-Mail-Signatur im Editor-Feld. Sie können angeben, ob Sie die Standardsignatur nur in neuen E-Mails oder auch in Antworten und weitergeleiteten E-Mails einfügen möchten. Sobald Sie fertig sind, klicken Sie zum Bestätigen auf <code className="action">Speichern</code>.
+
+Anweisungen zum Erstellen automatischer Signaturen mithilfe domainübergreifender Vorlagen finden Sie in unserer Anleitung: [Automatische Signaturen erstellen](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/feature-footers).
+
+### Zugriff auf den Bereich Optionen
+
+Um auf alle Ihre Einstellungen zuzugreifen, klicken Sie oben auf das Zahnradsymbol und dann auf <code className="action">Optionen</code>.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step12.png" loading="lazy" />
+
+Sie können dann die Baumstruktur "Optionen" auf der linken Seite der Seite durchsuchen. Auf dieser Seite können Sie weitere Anpassungen am Layout und Verhalten Ihres E-Mail-Accounts vornehmen. Beachten Sie, dass aus Sicherheitsgründen einige Account-Optionen von OVHcloud deaktiviert sein können.
+
+<img className="thumbnail" alt="useowa" src="/images/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa/use-owa-step23.png" loading="lazy" />
+
+### Cookie-Verwaltung
+
+Das für unsere E-Mail-Angebote verwendete Webmail basiert auf der Software Microsoft Outlook Web App. Es kann daher Metadaten in Form von Cookies namens `appsforoffice.microsoft.com` mit Microsoft-Servern austauschen.
+
+Wenn Sie diese Datenübertragungen deaktivieren möchten, können Sie eine Erweiterung zur Inhaltsblockierung in Ihrem Browser verwenden (zum Beispiel uBlock Origin oder Ghostery).
+Das Deaktivieren dieser Cookies kann jedoch die Stabilität Ihres Webmails beeinträchtigen.
+
+## Weiterführende Informationen
+
+[Automatische Antworten in OWA erstellen](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/owa-automatic-replies)
+
+[Einen Ordner über die OWA-Oberfläche freigeben](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/owa-directory-sharing)
+
+[Kalender über die OWA-Oberfläche freigeben](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/owa-calendar-sharing)
+
+[Kontaktgruppe erstellen](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/feature-groups)
+
+Treten Sie unserer [User Community](https://community.ovhcloud.com/community/en) bei.

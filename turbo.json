@@ -1,0 +1,160 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NODE_OPTIONS", "NODE_ENV", "SENTRY_DSN", "SENTRY_ENVIRONMENT"],
+  "tasks": {
+    "build:fr": {
+      "env": ["LOCALE"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!docs/en/**",
+        "!docs/de/**",
+        "!docs/es/**",
+        "!docs/it/**",
+        "!docs/pl/**",
+        "!docs/pt/**",
+        "!.cds/**",
+        "!scripts/**",
+        "!.github/**",
+        "!.husky/**",
+        "!biome.json",
+        "!CLAUDE.md",
+        "!README.md",
+        "!CHANGELOG.md"
+      ],
+      "outputs": ["dist/fr/**"]
+    },
+    "build:en": {
+      "env": ["LOCALE"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!docs/fr/**",
+        "!docs/de/**",
+        "!docs/es/**",
+        "!docs/it/**",
+        "!docs/pl/**",
+        "!docs/pt/**",
+        "!.cds/**",
+        "!scripts/**",
+        "!.github/**",
+        "!.husky/**",
+        "!biome.json",
+        "!CLAUDE.md",
+        "!README.md",
+        "!CHANGELOG.md"
+      ],
+      "outputs": ["dist/en/**"]
+    },
+    "build:de": {
+      "env": ["LOCALE"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!docs/fr/**",
+        "!docs/en/**",
+        "!docs/es/**",
+        "!docs/it/**",
+        "!docs/pl/**",
+        "!docs/pt/**",
+        "!.cds/**",
+        "!scripts/**",
+        "!.github/**",
+        "!.husky/**",
+        "!biome.json",
+        "!CLAUDE.md",
+        "!README.md",
+        "!CHANGELOG.md"
+      ],
+      "outputs": ["dist/de/**"]
+    },
+    "build:es": {
+      "env": ["LOCALE"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!docs/fr/**",
+        "!docs/en/**",
+        "!docs/de/**",
+        "!docs/it/**",
+        "!docs/pl/**",
+        "!docs/pt/**",
+        "!.cds/**",
+        "!scripts/**",
+        "!.github/**",
+        "!.husky/**",
+        "!biome.json",
+        "!CLAUDE.md",
+        "!README.md",
+        "!CHANGELOG.md"
+      ],
+      "outputs": ["dist/es/**"]
+    },
+    "build:it": {
+      "env": ["LOCALE"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!docs/fr/**",
+        "!docs/en/**",
+        "!docs/de/**",
+        "!docs/es/**",
+        "!docs/pl/**",
+        "!docs/pt/**",
+        "!.cds/**",
+        "!scripts/**",
+        "!.github/**",
+        "!.husky/**",
+        "!biome.json",
+        "!CLAUDE.md",
+        "!README.md",
+        "!CHANGELOG.md"
+      ],
+      "outputs": ["dist/it/**"]
+    },
+    "build:pl": {
+      "env": ["LOCALE"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!docs/fr/**",
+        "!docs/en/**",
+        "!docs/de/**",
+        "!docs/es/**",
+        "!docs/it/**",
+        "!docs/pt/**",
+        "!.cds/**",
+        "!scripts/**",
+        "!.github/**",
+        "!.husky/**",
+        "!biome.json",
+        "!CLAUDE.md",
+        "!README.md",
+        "!CHANGELOG.md"
+      ],
+      "outputs": ["dist/pl/**"]
+    },
+    "build:pt": {
+      "env": ["LOCALE"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!docs/fr/**",
+        "!docs/en/**",
+        "!docs/de/**",
+        "!docs/es/**",
+        "!docs/it/**",
+        "!docs/pl/**",
+        "!.cds/**",
+        "!scripts/**",
+        "!.github/**",
+        "!.husky/**",
+        "!biome.json",
+        "!CLAUDE.md",
+        "!README.md",
+        "!CHANGELOG.md"
+      ],
+      "outputs": ["dist/pt/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
+    }
+  }
+}

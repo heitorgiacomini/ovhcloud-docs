@@ -1,0 +1,127 @@
+import { RegionProvider } from '@components/Api/RegionContext';
+import { useDark, useFrontmatter } from '@rspress/core/runtime';
+import {
+  Layout as BasicLayout,
+  DocLayout as OriginalDocLayout,
+} from '@rspress/core/theme-original';
+import type React from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { AnalyticsBootstrap } from '@components/Analytics';
+import { AIChatbotDrawerProvider } from 'theme/components/AIChatbotDrawer/context';
+import Breadcrumbs from 'theme/components/Breadcrumbs/Breadcrumbs.tsx';
+import { EditLink } from 'theme/components/EditLink';
+import { LlmsViewOptions } from 'theme/components/LlmsViewOptions';
+import { Nav } from 'theme/components/Nav';
+import { PageFeedback } from 'theme/components/PageFeedback';
+import { SEOHead } from 'theme/components/SEOHead';
+import { Sidebar } from 'theme/components/Sidebar';
+import { initSentry } from 'theme/sentry';
+
+// Lazy-loaded non-critical components (separate chunks, loaded after hydration)
+const LazyAIChatbotDrawer = lazy(() =>
+  import('theme/components/AIChatbotDrawer/AIChatbotDrawer').then((m) => ({
+    default: m.AIChatbotDrawer,
+  })),
+);
+const LazySurveyWidget = lazy(() =>
+  import('theme/components/SurveyWidget').then((m) => ({
+    default: m.SurveyWidget,
+  })),
+);
+import { ELearningLayout } from 'theme/layouts/ELearningLayout';
+import { HomeLayout } from 'theme/layouts/HomeLayout/HomeLayout';
+import { MigrationLayout } from 'theme/layouts/MigrationLayout';
+import { OverviewLayout } from 'theme/layouts/OverviewLayout';
+
+// Custom DocLayout that handles overview pages and respects frontmatter
+const DocLayout = (props: React.ComponentProps<typeof OriginalDocLayout>) => {
+  const { frontmatter } = useFrontmatter();
+  const fm = frontmatter as Record<string, unknown>;
+  const pageType = fm?.pageType;
+  const showOutline = fm?.outline !== false;
+  const showSidebar = fm?.sidebar !== false;
+
+  // If pageType is 'overview', use our custom OverviewLayout
+  if (pageType === 'overview') {
+    return <OverviewLayout {...props} />;
+  }
+
+  // If pageType is 'elearning', use our custom ELearningLayout
+  if (pageType === 'elearning') {
+    return <ELearningLayout {...props} />;
+  }
+
+  // If pageType is 'migration', use our custom MigrationLayout
+  if (pageType === 'migration') {
+    return <MigrationLayout {...props} />;
+  }
+
+  // Apply CSS classes based on frontmatter to hide outline/sidebar
+  return (
+    <div
+      className={`custom-doc-layout ${!showOutline ? 'hide-outline' : ''} ${!showSidebar ? 'hide-sidebar' : ''}`}
+    >
+      <OriginalDocLayout {...props} />
+    </div>
+  );
+};
+
+const Layout = (props: React.ComponentProps<typeof BasicLayout>) => {
+  const isDark = useDark();
+
+  useEffect(() => {
+    initSentry();
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!root) {
+      return;
+    }
+    if (isDark) {
+      root.classList.add('tw-dark');
+    } else {
+      root.classList.remove('tw-dark');
+    }
+  }, [isDark]);
+
+  // Pass DocLayout explicitly to BasicLayout so it uses our custom one
+  return (
+    <RegionProvider>
+      <AIChatbotDrawerProvider>
+        <AnalyticsBootstrap />
+        <SEOHead />
+        <BasicLayout
+          {...props}
+          beforeDocContent={<Breadcrumbs />}
+          beforeDocFooter={<PageFeedback />}
+        />
+        <Suspense fallback={null}>
+          <LazyAIChatbotDrawer />
+        </Suspense>
+        <Suspense fallback={null}>
+          <LazySurveyWidget />
+        </Suspense>
+      </AIChatbotDrawerProvider>
+    </RegionProvider>
+  );
+};
+
+// Re-export everything from original theme first
+export * from '@rspress/core/theme-original';
+
+// Then override with custom components (must come AFTER wildcard export)
+export { LastUpdated } from 'theme/components/LastUpdated';
+export { NavHamburger } from 'theme/components/NavHamburger';
+export {
+  DocLayout,
+  EditLink,
+  ELearningLayout,
+  HomeLayout,
+  Layout,
+  LlmsViewOptions,
+  MigrationLayout,
+  Nav,
+  OverviewLayout,
+  Sidebar,
+};

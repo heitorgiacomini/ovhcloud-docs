@@ -1,0 +1,198 @@
+import { useI18n } from '@rspress/core/runtime';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRegion } from './RegionContext';
+import './index.css';
+
+const REGIONS = {
+  eu: { flag: '🇪🇺', label: 'EU', base: 'https://eu.api.ovh.com/console/' },
+  ca: { flag: '🇨🇦', label: 'CA', base: 'https://ca.api.ovh.com/console/' },
+} as const;
+
+type Region = keyof typeof REGIONS;
+
+interface ApiProps {
+  version: string;
+  section: string;
+  route: string;
+  method?: string;
+  regions?: Region[];
+}
+
+export default function Api({
+  version,
+  section,
+  route,
+  method = 'GET',
+  regions = ['eu', 'ca'],
+}: ApiProps) {
+  const { region: globalRegion, setRegion } = useRegion();
+  const region = regions.includes(globalRegion) ? globalRegion : regions[0];
+  const apiAnchor = `${method.toLocaleLowerCase()}-${route.replace(/\\?\{([^\\}]+)\\?\}/g, '-$1-')}`;
+  const href = `${REGIONS[region].base}?section=${section}&branch=${version}#${apiAnchor}`;
+  const t = useI18n();
+
+  const [open, setOpen] = useState(false);
+  const [focusIndex, setFocusIndex] = useState(-1);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!open) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          setOpen(true);
+          setFocusIndex(regions.indexOf(region));
+        }
+        return;
+      }
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          setFocusIndex((prev) => Math.min(prev + 1, regions.length - 1));
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setFocusIndex((prev) => Math.max(prev - 1, 0));
+          break;
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          if (focusIndex >= 0) {
+            setRegion(regions[focusIndex]);
+            setOpen(false);
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          setOpen(false);
+          break;
+        case 'Tab':
+          setOpen(false);
+          break;
+      }
+    },
+    [open, focusIndex, regions, region, setRegion],
+  );
+
+  // Focus the active option when focus index changes
+  useEffect(() => {
+    if (open && focusIndex >= 0) {
+      optionRefs.current[focusIndex]?.focus();
+    }
+  }, [open, focusIndex]);
+
+  const selectRegion = (r: Region) => {
+    setRegion(r);
+    setOpen(false);
+  };
+
+  return (
+    <div className="ovh-api-main">
+      {regions.length > 1 && (
+        <div className="ovh-api-dropdown" ref={wrapperRef}>
+          <button
+            type="button"
+            className="ovh-api-dropdown__trigger"
+            onClick={() => setOpen(!open)}
+            onKeyDown={handleKeyDown}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            aria-label={t('api.regionTooltipTitle')}
+          >
+            <span className="ovh-api-dropdown__flag">
+              {REGIONS[region].flag}
+            </span>
+            <span className="ovh-api-dropdown__label">
+              {REGIONS[region].label}
+            </span>
+            <span
+              className={`ovh-api-dropdown__chevron${open ? ' ovh-api-dropdown__chevron--open' : ''}`}
+              aria-hidden="true"
+            >
+              ▾
+            </span>
+          </button>
+
+          {open && (
+            <div
+              className="ovh-api-dropdown__menu"
+              role="listbox"
+              aria-label={t('api.regionTooltipTitle')}
+            >
+              <p className="ovh-api-dropdown__title">
+                {t('api.regionTooltipTitle')}
+              </p>
+              {regions.map((r, i) => {
+                const isSelected = r === region;
+                const descKey = `api.regionTooltip${r.toUpperCase()}` as const;
+                const desc = t(descKey);
+
+                return (
+                  <button
+                    key={r}
+                    ref={(el) => {
+                      optionRefs.current[i] = el;
+                    }}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    className={`ovh-api-dropdown__option${isSelected ? ' ovh-api-dropdown__option--selected' : ''}`}
+                    onClick={() => selectRegion(r)}
+                    onKeyDown={handleKeyDown}
+                    tabIndex={-1}
+                  >
+                    <span className="ovh-api-dropdown__option-header">
+                      <span className="ovh-api-dropdown__option-flag">
+                        {REGIONS[r].flag}
+                      </span>
+                      <span className="ovh-api-dropdown__option-label">
+                        {REGIONS[r].label}
+                      </span>
+                      {isSelected && (
+                        <span
+                          className="ovh-api-dropdown__check"
+                          aria-hidden="true"
+                        >
+                          ✓
+                        </span>
+                      )}
+                    </span>
+                    {desc && desc !== descKey && (
+                      <span className="ovh-api-dropdown__option-desc">
+                        {desc}
+                      </span>
+                    )}
+                    <span className="ovh-api-dropdown__option-url">
+                      {REGIONS[r].base
+                        .replace('https://', '')
+                        .replace('/console/', '')}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+      <a target="_blank" href={href} rel="noopener noreferrer">
+        {regions.length === 1 && (
+          <span className="ovh-api-flag">{REGIONS[region].flag}</span>
+        )}
+        <span className={`ovh-api-verb ovh-api-verb-${method}`}>{method}</span>
+        <span className="ovh-api-endpoint">{route.replace(/\\/g, '')}</span>
+      </a>
+    </div>
+  );
+}

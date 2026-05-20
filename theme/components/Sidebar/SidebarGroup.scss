@@ -1,0 +1,22 @@
+.rp-sidebar-group {
+  color: var(--rp-c-text-1);
+}
+
+// Children container of each group: draws one continuous vertical guide line
+// at the right horizontal position based on the children's depth.
+//
+// Position formula: x = 12px * children-depth (where children-depth is the
+// depth of the items inside this container, set as a CSS variable).
+.rp-sidebar-group__children {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(12px * var(--children-depth));
+    width: 1px;
+    background-color: var(--rp-c-divider-light);
+  }
+}

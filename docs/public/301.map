@@ -1,0 +1,17 @@
+# Redirect rules (301 Permanent)
+# Format: source destination
+
+/ /fr/;
+
+# Deleted guides → home page
+/en/guides/account-and-service-management/account-information/ssh-key-creation/ /en/;
+/fr/guides/account-and-service-management/account-information/ssh-key-creation/ /fr/;
+/de/guides/account-and-service-management/account-information/ssh-key-creation/ /de/;
+/es/guides/account-and-service-management/account-information/ssh-key-creation/ /es/;
+/it/guides/account-and-service-management/account-information/ssh-key-creation/ /it/;
+/pl/guides/account-and-service-management/account-information/ssh-key-creation/ /pl/;
+/pt/guides/account-and-service-management/account-information/ssh-key-creation/ /pt/;
+
+
+
+

@@ -1,0 +1,170 @@
+---
+title: Zimbra - Configurar la cuenta de correo electrónico en un cliente de correo
+description: Elija el método de configuración adaptado a su plan Zimbra Starter o Pro y a su cliente de correo
+lastUpdated: 2026-05-04
+---
+
+import { Tab, Tabs } from '@rspress/core/theme';
+
+
+## Objetivo
+
+Con su plan Zimbra, OVHcloud le ofrece una plataforma de mensajería colaborativa open source con todas las funcionalidades necesarias para un uso profesional. Esta guía le ayuda a elegir el método de configuración adaptado a su plan Zimbra y a su cliente de correo.
+
+**Descubra qué método elegir para configurar su cuenta de correo electrónico Zimbra en el cliente de correo de su elección.**
+
+## Requisitos
+
+- Haber contratado una cuenta de correo electrónico en una de nuestras [soluciones Zimbra](https://www.ovhcloud.com/es-es/emails/zimbra-emails/) (**Zimbra Starter** o **Zimbra Pro**).
+- Haber instalado un cliente de correo en el dispositivo de su elección.
+- Disponer de las credenciales de la dirección de correo electrónico que desea configurar.
+
+{/* CP-NAV-START:web-zimbra */}
+---
+
+### Acceso al área de cliente de OVHcloud
+
+- **Enlace directo:** <ManagerLink to="/#/zimbra/">Zimbra</ManagerLink>
+- **Para acceder a sus servicios:** <code className="action">Web Cloud</code> > <code className="action">Zimbra Mail</code>
+
+---
+{/* CP-NAV-END:web-zimbra */}
+
+## Procedimiento
+
+### Identificar su plan Zimbra <a name="identifier-offre"></a>
+
+El método de configuración que debe utilizar depende de su plan Zimbra. Los dos planes no admiten los mismos protocolos.
+
+| Plan | Protocolos admitidos | Funcionalidades sincronizadas |
+|---|---|---|
+| **Zimbra Starter** | IMAP, POP, SMTP | Solo correos electrónicos |
+| **Zimbra Pro** | IMAP, POP, SMTP, **ActiveSync**, **EWS** | Correos electrónicos, calendario, contactos, tareas |
+
+:::info
+Para identificar su plan, conéctese a su <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink> y acceda a <code className="action">Web Cloud</code> y, a continuación, a <code className="action">Zimbra Mail</code>. En la pestaña <code className="action">Cuentas de correo</code>, el plan se indica en la columna **Plan** de cada cuenta.
+:::
+
+
+### Configurar una cuenta Zimbra Pro <a name="config-zimbra-pro"></a>
+
+:::tip[Success]
+Para aprovechar al máximo las funcionalidades colaborativas de Zimbra Pro (sincronización del calendario, los contactos y las tareas), utilice los protocolos **ActiveSync** o **EWS** mediante las guías dedicadas que aparecen a continuación. La configuración IMAP/POP sigue siendo posible, pero solo sincroniza los correos electrónicos.
+:::
+
+
+Haga clic en la pestaña correspondiente al tipo de dispositivo que utiliza:
+
+<Tabs>
+  <Tab label="Ordenador Windows">
+    - [Outlook clásico mediante ActiveSync](/guides/web-cloud/email-and-collaborative-solutions/zimbra/zimbra-outlook-windows)
+  </Tab>
+  <Tab label="Ordenador Apple Mac">
+    - [Mail mediante EWS](/guides/web-cloud/email-and-collaborative-solutions/zimbra/zimbra-mail-macos)
+    - [Outlook mediante EWS](/guides/web-cloud/email-and-collaborative-solutions/zimbra/zimbra-outlook-macos)
+  </Tab>
+  <Tab label="iPhone o iPad">
+    - [Mail mediante ActiveSync](/guides/web-cloud/email-and-collaborative-solutions/zimbra/zimbra-mail-app-ios)
+    - [Outlook mediante ActiveSync](/guides/web-cloud/email-and-collaborative-solutions/zimbra/zimbra-outlook-app-ios)
+  </Tab>
+  <Tab label="Smartphone o tableta Android">
+    - [Gmail mediante ActiveSync](/guides/web-cloud/email-and-collaborative-solutions/zimbra/zimbra-gmail-app-android)
+    - [Outlook mediante ActiveSync](/guides/web-cloud/email-and-collaborative-solutions/zimbra/zimbra-outlook-app-android)
+  </Tab>
+</Tabs>
+
+
+### Configurar una cuenta Zimbra Starter (o una cuenta Zimbra Pro en IMAP/POP) <a name="mail-config"></a>
+
+Para el plan **Zimbra Starter**, o si prefiere una configuración IMAP/POP para su cuenta **Zimbra Pro**, utilice las guías que aparecen a continuación.
+
+:::info
+Las guías que aparecen a continuación se comparten con el plan MX Plan, ya que los parámetros IMAP/POP/SMTP son estrictamente idénticos para ambos planes. Por ese motivo, los enlaces tienen la mención "MX Plan" en su título.
+:::
+
+
+Haga clic en la pestaña correspondiente al tipo de dispositivo que utiliza:
+
+<Tabs>
+  <Tab label="Ordenador Windows">
+    - [Outlook para Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-outlook-2016)
+    - [Thunderbird para Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-thunderbird-windows)
+    - [Correo para Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-windows-10)
+  </Tab>
+  <Tab label="Ordenador Apple Mac">
+    - [Outlook para macOS](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-outlook-2016-mac)
+    - [Mail para macOS](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-mail-macos)
+    - [Thunderbird para macOS](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-thunderbird-mac)
+  </Tab>
+  <Tab label="iPhone o iPad">
+    - [Mail para iPhone e iPad](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-ios)
+  </Tab>
+  <Tab label="Smartphone o tableta Android">
+    - [Gmail para Android](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-android)
+  </Tab>
+  <Tab label="Interfaz web">
+    - [Interfaz online de Gmail](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-gmail)
+  </Tab>
+</Tabs>
+
+
+### Utilizar la aplicación móvil Zimbra <a name="config-zimbra-app"></a>
+
+Compatible con los planes **Zimbra Starter** y **Zimbra Pro**, la aplicación móvil Zimbra (Android e iOS) permite acceder a su cuenta mediante el protocolo nativo de Zimbra.
+
+- [Configurar la aplicación móvil Zimbra](/guides/web-cloud/email-and-collaborative-solutions/zimbra/mail-app-zimbra-for-android-ios)
+
+### Parámetros IMAP, POP y SMTP de referencia <a name="popimap-settings"></a>
+
+Si su cliente de correo requiere una configuración manual, utilice los siguientes parámetros.
+
+#### Servidores de recepción
+
+Para la recepción de los correos electrónicos, recomendamos el protocolo **IMAP**. El protocolo **POP** sigue estando disponible. Haga clic en la pestaña correspondiente al protocolo de su elección:
+
+<Tabs>
+  <Tab label="IMAP (recomendado)">
+    - **Nombre de usuario**: dirección de correo electrónico **completa**
+    - **Contraseña**: contraseña de la dirección de correo electrónico
+    - **Servidor EUROPA (entrante)**: `imap.mail.ovh.net` **o** `ssl0.ovh.net`
+    - **Servidor AMÉRICA/ASIA-PACÍFICO (entrante)**: `imap.mail.ovh.ca`
+    - **Puerto**: 993
+    - **Tipo de seguridad**: SSL/TLS
+  </Tab>
+  <Tab label="POP">
+    - **Nombre de usuario**: dirección de correo electrónico **completa**
+    - **Contraseña**: contraseña de la dirección de correo electrónico
+    - **Servidor EUROPA (entrante)**: `pop.mail.ovh.net` **o** `ssl0.ovh.net`
+    - **Servidor AMÉRICA/ASIA-PACÍFICO (entrante)**: `pop.mail.ovh.ca`
+    - **Puerto**: 995
+    - **Tipo de seguridad**: SSL/TLS
+  </Tab>
+</Tabs>
+
+
+#### Servidor de envío
+
+Para el envío de los correos electrónicos, utilice los siguientes parámetros **SMTP**:
+
+- **Nombre de usuario**: dirección de correo electrónico **completa**
+- **Contraseña**: contraseña de la dirección de correo electrónico
+- **Servidor EUROPA (saliente)**: `smtp.mail.ovh.net` **o** `ssl0.ovh.net`
+- **Servidor AMÉRICA/ASIA-PACÍFICO (saliente)**: `smtp.mail.ovh.ca`
+- **Puerto**: 465
+- **Tipo de seguridad**: SSL/TLS
+
+## Más información <a name="go-further"></a>
+
+[Primeros pasos con el plan Zimbra](/guides/web-cloud/email-and-collaborative-solutions/zimbra/getting-started-zimbra)
+
+[Configurar la aplicación móvil Zimbra](/guides/web-cloud/email-and-collaborative-solutions/zimbra/mail-app-zimbra-for-android-ios)
+
+[Utilizar el webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra)
+
+[FAQ sobre la solución Zimbra OVHcloud](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/faq-zimbra)
+
+Para servicios especializados (posicionamiento web, desarrollo, etc.), póngase en contacto con los [partners de OVHcloud](https://partner.ovhcloud.com/es-es/directory/).
+
+Si necesita ayuda para el uso y la configuración de sus soluciones de OVHcloud, puede consultar nuestras [ofertas de soporte](https://www.ovhcloud.com/es-es/support-levels/).
+
+Interactúe con nuestra [comunidad de usuarios](https://community.ovhcloud.com/community/en).

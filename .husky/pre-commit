@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -e
+
+staged=$(mktemp)
+trap 'rm -f "$staged"' EXIT
+
+git diff --cached --name-only -z --diff-filter=ACM -- \
+  '*.png' '*.jpg' '*.jpeg' '*.PNG' '*.JPG' '*.JPEG' > "$staged"
+
+[ -s "$staged" ] || exit 0
+
+xargs -0 pnpm images:compress < "$staged"
+xargs -0 git add -- < "$staged"

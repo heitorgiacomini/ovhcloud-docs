@@ -1,0 +1,107 @@
+.rp-sidebar-item {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  margin-top: 2px;
+  position: relative;
+  border-radius: 8px;
+  line-height: 24px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--rp-c-text-2);
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:hover,
+  &--pending {
+    color: var(--rp-c-text-1);
+    background-color: var(--rp-c-bg-mute);
+  }
+
+  &--pending {
+    opacity: 0.8;
+  }
+
+  // external link
+  &.rp-link[target='_blank'] {
+    &::after {
+      content: '↗';
+      font-weight: 400;
+      display: inline-block;
+      font-size: 1em;
+      transform: translate(0, -0.2em);
+      transition: transform 0.2s ease;
+      margin-left: 0.2em;
+      margin-right: 0.1em;
+    }
+  }
+
+  &--active {
+    color: var(--rp-c-link);
+    background-color: var(--rp-c-brand-tint);
+    font-weight: 600;
+    &:hover {
+      color: var(--rp-c-link);
+      background-color: var(--rp-c-brand-tint);
+    }
+  }
+
+  // Active item indicator: thicker brand bar at the deepest guide column
+  // (aligned with the parent container's guide line — see SidebarGroup.scss).
+  &--group-item.rp-sidebar-item--active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(12px * var(--depth, 1));
+    width: 2px;
+    background-color: var(--rp-c-brand);
+    border-radius: 1px;
+  }
+
+  // Neutralize Rspress core's leftmost active indicator (drawn at left:12px
+  // on .rp-sidebar-item__left::before) — we use our own indicator above.
+  &--group-item.rp-sidebar-item--active .rp-sidebar-item__left::before {
+    display: none;
+  }
+
+  // Neutralize Rspress core's per-item guide line (grey ::before at left:12px
+  // on every group-item). Guide lines are now drawn once per group container
+  // (see SidebarGroup.scss), avoiding overlap and color mismatch. Excludes
+  // active items so our own active indicator (above) keeps rendering.
+  &--group-item:not(.rp-sidebar-item--active)::before {
+    display: none;
+  }
+
+  // Font hierarchy: universe labels (depth 0) — only groups, not header links
+  &.rp-sidebar-group[data-depth='0'] {
+    font-weight: 550;
+  }
+
+  // Font hierarchy: product labels (depth 1) medium weight
+  &[data-depth='1'] {
+    font-weight: 500;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+  }
+
+  &__link {
+    opacity: 1;
+  }
+}

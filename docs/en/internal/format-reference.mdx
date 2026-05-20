@@ -1,0 +1,533 @@
+---
+title: "Format Reference"
+description: "Internal authoring aid. A single page compiling every supported markdown and MDX format so a single visual pass confirms nothing broke after a theme or build change. Not user-facing."
+lastUpdated: 2026-04-28
+sidebar: false
+outline: false
+head:
+  - - meta
+    - name: robots
+      content: noindex, nofollow, noarchive, nosnippet
+---
+
+import { Tab, Tabs } from '@rspress/core/theme';
+import Api from '@components/Api';
+import Tooltip from '@components/Tooltip';
+import { withBase } from '@rspress/core/runtime';
+import { GuidedTour } from '@components/GuidedTour';
+
+:::warning
+This page is an **internal format reference** for contributors. It compiles every supported markdown and MDX format on a single page so reviewers can spot rendering regressions in one pass. It is hidden from the sidebar, excluded from the sitemap and `llms.txt`, and tagged `noindex,nofollow`. Do not link to it from user-facing guides.
+:::
+
+## Objective
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vehicula augue sit amet libero fringilla, nec auctor magna pretium. This guide compiles **every supported format** so that a single visual pass can confirm nothing is broken after a theme or build change.
+
+## Requirements
+
+- An <ManagerLink to="/">OVHcloud account</ManagerLink> with access to the Control Panel
+- Basic familiarity with [Markdown](https://www.markdownguide.org/) and MDX
+- A browser to verify that all formats render correctly
+
+---
+
+## Instructions
+
+### 1 — Plain text and inline formatting
+
+Lorem ipsum dolor sit amet, **consectetur adipiscing** elit. *Pellentesque* habitant morbi tristique senectus. Use `inline code` to reference technical terms, file paths like `/etc/hosts`, or commands like `sudo systemctl restart nginx`.
+
+You can also combine them: **`bold code`** or *`italic code`*.
+
+Superscript for footnotes<sup>1</sup> and line breaks<br />between phrases are also supported.
+
+<sup>1</sup> *This is a simulated footnote rendered with superscript HTML.*
+
+Tooltip example: hover over <Tooltip content="This is a **tooltip** with `inline code` and a [link](https://ovhcloud.com).">this word</Tooltip> to see the overlay.
+
+---
+
+### 2 — Headings
+
+#### H4 — Fourth-level heading
+
+##### H5 — Fifth-level heading (use sparingly)
+
+---
+
+### 3 — Images
+
+**Image from the shared public folder** (referenced by absolute path, shared across all locales):
+
+![OVHcloud account login screen](/images/guides/account-and-service-management/account-information/all-about-username/log-in.png)
+
+**Second image from a different guide folder** (still a shared public asset):
+
+![API console actions screenshot](/images/guides/account-and-service-management/account-information/authenticate-api-with-service-account/actions-in-console.png)
+
+---
+
+### 4 — Code blocks
+
+**Bash:**
+
+```bash
+#!/bin/bash
+# Create and mount a logical volume for SAP HANA data
+pvcreate /dev/sdb
+vgcreate vg_hana /dev/sdb
+lvcreate -L 500G -n lv_hanadata vg_hana
+mkfs.xfs /dev/vg_hana/lv_hanadata
+mount /dev/vg_hana/lv_hanadata /hana/data
+echo "Mount successful"
+```
+
+**Console (interactive shell output):**
+
+```console
+$ lsblk
+NAME          MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda             8:0    0 447.1G  0 disk
+├─sda1          8:1    0   512M  0 part  /boot/efi
+├─sda2          8:2    0     1G  0 part  /boot
+└─sda3          8:3    0 445.6G  0 part
+  └─md0         9:0    0 445.6G  0 raid1 /
+sdb             8:16   0  10.5T  0 disk
+
+$ df -h /hana/data
+Filesystem                       Size  Used Avail Use% Mounted on
+/dev/mapper/vg_hana-lv_hanadata  500G  1.2G  499G   1% /hana/data
+```
+
+**JSON:**
+
+```json
+{
+  "serviceName": "pcc-1-2-3-4",
+  "ram": 512,
+  "storage": {
+    "type": "NVMe",
+    "sizeGb": 10240
+  },
+  "tags": ["production", "sap-hana"]
+}
+```
+
+**YAML:**
+
+```yaml
+version: "3.8"
+services:
+  app:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+```
+
+---
+
+### 5 — Callouts
+
+> [!INFO]
+> **Info callout** — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Use this for neutral supplementary information that helps the reader but is not critical.
+
+> [!TIP]
+> **Tip callout** — Pellentesque habitant morbi tristique senectus et netus. Use tips to share best practices or shortcuts.
+
+:::warning
+**Warning callout** — Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Use warnings when the user must pay attention to avoid data loss or service disruption.
+
+- This warning has a list item
+- And another one
+:::
+
+:::danger
+**Danger callout** — Ut enim ad minim veniam, quis nostrud exercitation. Use danger for irreversible or destructive actions.
+:::
+
+**Empty blockquote** (plain `>` syntax, no type annotation):
+
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is an unstyled blockquote, also known as an "empty" callout.
+
+---
+
+### 6 — Details (collapsible sections)
+
+:::details Click to expand — Basic collapsible
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+
+:::
+
+<details>
+<summary>Click to expand — Collapsible with rich content</summary>
+
+This collapsible contains multiple content types:
+
+**A code block:**
+
+```bash
+echo "Hello from inside a collapsible"
+```
+
+**A table:**
+
+| Parameter | Type   | Description                |
+|-----------|--------|----------------------------|
+| `host`    | string | The target hostname or IP  |
+| `port`    | number | The port to connect to     |
+| `timeout` | number | Connection timeout in ms   |
+
+**An info callout:**
+
+> [!INFO]
+> You can nest callouts inside collapsibles.
+
+</details>
+
+---
+
+### 7 — Tables
+
+Simple table:
+
+| Logical volume | Recommended size              |
+|----------------|-------------------------------|
+| `/usr/sap`     | MIN(32 GB)                    |
+| `/hana/data`   | 1 × RAM                       |
+| `/hana/log`    | ½ × RAM (max 512 GB)          |
+| `/hana/shared` | MIN(1 × RAM, 1 TB)            |
+| `/hana/backup` | `/hana/data` + `/hana/log`    |
+
+Table with HTML line breaks in cells:
+
+| Condition | Formula |
+|-----------|---------|
+| RAM ≤ 512 GB | `/hana/log` = ½ × RAM<br />Example: 256 GB RAM → 128 GB log |
+| RAM > 512 GB | `/hana/log` = 512 GB (fixed cap)<br />Example: 1 TB RAM → 512 GB log |
+
+---
+
+### 8 — Lists
+
+**Unordered list:**
+
+- Lorem ipsum dolor sit amet
+- Consectetur adipiscing elit
+- Sed do eiusmod tempor incididunt
+
+**Nested unordered list:**
+
+- Universe level
+  - Product level
+    - Section level
+      - Guide level (deepest nesting)
+  - Another product
+    - Its section
+
+**Numbered list:**
+
+1. Connect to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Navigate to **Bare Metal Cloud** > **Dedicated Servers**.
+3. Select your server from the list.
+4. Click the `Install` button to launch the reinstallation wizard.
+5. Confirm your choice in the modal dialog.
+
+**Numbered list with a custom start value:**
+
+<ol start="6">
+  <li>Review the partition layout proposed by the wizard.</li>
+  <li>Click <code>Confirm</code> to finalize the installation.</li>
+</ol>
+
+---
+
+### 9 — Links
+
+**Internal link (guide path):**
+[All about your OVHcloud username](/guides/account-and-service-management/account-information/all-about-username)
+
+**Internal link (shortcut alias):**
+<ManagerLink to="/">OVHcloud Control Panel</ManagerLink>
+
+**External link:**
+[OVHcloud community forum](https://community.ovh.com/)
+
+**Link inside a sentence:**
+To manage your SSH keys, log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and navigate to **My account** > **SSH keys**.
+
+**Inline code outside a link:**
+Use the `--force` flag only when you are certain the operation is safe.
+
+**Inline code inside a link:**
+See the [`/me/api/credential`](/guides/manage-and-operate/api/console-preview) endpoint reference for authentication details.
+
+Sentence mixing both: the [`GET /me`](/guides/manage-and-operate/api/console-preview) call returns your account details, whereas plain text links like <ManagerLink to="/">the Control Panel</ManagerLink> do not use code formatting.
+
+---
+
+### 10 — API calls
+
+Single GET call:
+
+<Api version="v1" section="/me" method="GET" route="/me" />
+
+POST call with a path parameter:
+
+<Api version="v1" section="/dedicatedCloud" method="POST" route={"/dedicatedCloud/{serviceName}/sap"} />
+
+PUT call limited to EU and CA regions:
+
+<Api version="v1" section="/nutanix" method="PUT" route={"/nutanix/{serviceName}"} regions={['eu', 'ca']} />
+
+DELETE call:
+
+<Api version="v1" section="/domain" method="DELETE" route={"/domain/{serviceName}/zone/{name}/record/{id}"} />
+
+---
+
+### 11 — Tabs
+
+**Basic tabs:**
+
+<Tabs>
+<Tab label="Linux / macOS">
+
+```bash
+ssh ubuntu@192.0.2.1 -i ~/.ssh/my_key
+```
+
+</Tab>
+<Tab label="Windows (PowerShell)">
+
+```bash
+ssh ubuntu@192.0.2.1 -i C:\Users\user\.ssh\my_key
+```
+
+</Tab>
+<Tab label="Windows (PuTTY)">
+
+Open PuTTY and enter `192.0.2.1` in the **Host Name** field. Under **Connection > SSH > Auth**, browse to your private key file (`.ppk` format).
+
+</Tab>
+</Tabs>
+
+---
+
+### 12 — Embedded video
+
+<iframe class="video" width="560" height="315" src="https://www.youtube-nocookie.com/embed/dfpPCa0mUyo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+---
+
+### 12b — Guided-tour iframe
+
+<GuidedTour
+  src="/slideshows/pages/account_and_service_management/account_information/address_change/en-gb/index.html"
+  title="Interactive guided tour — Edit your postal address"
+/>
+
+---
+
+### 13 — Russian-doll (nested formats)
+
+The following tabs each contain multiple nested format types.
+
+<Tabs>
+<Tab label="API + Callout">
+
+Use the following API call to retrieve your service information:
+
+<Api version="v1" section="/me" method="GET" route="/me/api/logs/self" />
+
+> [!INFO]
+> This endpoint returns a paginated list. Use the `offset` and `limit` query parameters to navigate through results. The maximum page size is 100.
+
+:::warning
+Logs are retained for **90 days** only. Archive them regularly if you need a longer audit trail.
+:::
+
+</Tab>
+<Tab label="Image + Callout">
+
+The Control Panel dashboard displays your active services:
+
+![OVHcloud account overview](/images/guides/account-and-service-management/account-information/all-about-username/newhub1.png)
+
+> [!TIP]
+> Click the **shortcut** icons at the top of the dashboard to jump directly to the most-used sections of your account.
+
+</Tab>
+<Tab label="Collapsible + Code + Table">
+
+:::details Expand to see the full configuration file
+
+```yaml
+# /etc/hana/global.ini
+[persistence]
+basepath_datavolumes = /hana/data/SID
+basepath_logvolumes  = /hana/log/SID
+
+[communication]
+listeninterface = .global
+```
+
+Recommended disk layout for this configuration:
+
+| Mount point    | File system | Mount options                              |
+|----------------|-------------|--------------------------------------------|
+| `/hana/data`   | XFS         | `noatime,nodiratime,logbsize=256k`         |
+| `/hana/log`    | XFS         | `noatime,nodiratime,logbsize=256k`         |
+| `/hana/shared` | NFS or XFS  | `rw,bg,hard,timeo=600,rsize=1048576`       |
+
+:::
+
+<details>
+<summary>Troubleshooting — mount errors at boot</summary>
+
+If `/hana/data` fails to mount on boot, check that the UUID in `/etc/fstab` matches the actual device:
+
+```console
+$ blkid /dev/vg_hana/lv_hanadata
+/dev/vg_hana/lv_hanadata: UUID="a1b2c3d4-e5f6-7890-abcd-ef1234567890" TYPE="xfs"
+
+$ grep hana /etc/fstab
+UUID=a1b2c3d4-e5f6-7890-abcd-ef1234567890  /hana/data  xfs  noatime,nodiratime,logbsize=256k  0 0
+```
+
+:::danger
+Do **not** use `/dev/sdX` paths in `/etc/fstab`. Device names are not stable across reboots. Always use UUIDs or LVM paths.
+:::
+
+</details>
+
+</Tab>
+<Tab label="List + API + Image">
+
+**Steps to authorize an API token:**
+
+1. Retrieve your current NIC handle:
+
+<Api version="v1" section="/me" method="GET" route="/me" />
+
+2. Grant the token the required scope via the Control Panel:
+
+![IAM policy creation screen](/images/guides/account-and-service-management/account-information/iam-policy-ui/create_a_policy_01.png)
+
+3. Verify the token is active:
+
+- Go to **Account** > **API** > **Active tokens**
+- Check the expiry date column
+- Revoke any tokens that are no longer needed:
+  - Click the `...` menu
+  - Select `Revoke`
+  - Confirm the action
+
+:::warning
+Tokens with the `full-access` scope should be rotated every 90 days as a security best practice.
+:::
+
+</Tab>
+</Tabs>
+
+---
+
+### 14 — Russian-doll: formats inside a Details
+
+<details>
+<summary>Expand — API call, image, callout, code block, table and nested list inside a collapsible</summary>
+
+Use this API call to list your active credentials:
+
+<Api version="v1" section="/me" method="GET" route="/me/api/credential" />
+
+The Control Panel shows the same data under **Account** > **API** > **My credentials**:
+
+![OVHcloud IAM policies screen](/images/guides/account-and-service-management/account-information/iam-policy-ui/iam_policies.png)
+
+:::info
+Credentials created via the API and credentials created via the Control Panel are interchangeable — they share the same underlying token store.
+:::
+
+:::warning
+If you rotate a credential that is embedded in an automation script, update the script **before** revoking the old credential, or your automation will fail.
+:::
+
+Revoke a credential by its ID with:
+
+```bash
+# Replace <credentialId> with the numeric ID returned by the GET call above
+curl -X DELETE "https://eu.api.ovh.com/v1/me/api/credential/<credentialId>" \
+  -H "X-Ovh-Application: <appKey>" \
+  -H "X-Ovh-Consumer: <consumerKey>" \
+  -H "X-Ovh-Timestamp: $(date +%s)" \
+  -H "X-Ovh-Signature: <signature>"
+```
+
+Recommended rotation schedule by credential scope:
+
+| Scope          | Rotation interval | Automation-safe? |
+|----------------|-------------------|-----------------|
+| `full-access`  | 30 days           | No — manual only |
+| `read-only`    | 90 days           | Yes              |
+| `scoped`       | 60 days           | Yes              |
+
+Steps to rotate safely:
+
+1. Create the new credential via the API or Control Panel.
+2. Update all scripts and CI/CD pipelines that use the old credential:
+   - Check your `.env` files and secret stores
+   - Check scheduled jobs and cron tasks
+     - Look for hardcoded tokens in shell scripts
+     - Look for tokens injected as environment variables
+3. Validate that the new credential works end-to-end.
+4. Revoke the old credential.
+
+</details>
+
+---
+
+### 15 — Nested Details (russian-doll collapsibles)
+
+Two depth levels of collapsibles using raw HTML `<details>`. The Rspress container syntax (`:::details`) does **not** support nesting — use HTML for any nested case.
+
+<details>
+<summary>Outer collapsible — click to expand</summary>
+
+The outer block can contain any MDX content.
+
+<details>
+<summary>Inner collapsible — click to expand</summary>
+
+The inner block is fully nested.
+
+- A list item
+- Another list item
+
+```bash
+echo "Inner code block"
+```
+
+> [!INFO]
+> Callouts also render inside nested collapsibles.
+
+</details>
+
+Back at the outer level after the inner closes.
+
+</details>
+
+---
+
+## Go further
+
+- [OVHcloud API documentation](/guides/manage-and-operate/api/console-preview)
+- [Managing contacts for your services](/guides/account-and-service-management/account-information/managing-contacts)
+- [OVHcloud community forum](https://community.ovh.com/)
+
+Join our [community of users](/links/community).

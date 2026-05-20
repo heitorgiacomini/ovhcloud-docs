@@ -1,0 +1,84 @@
+---
+title: Configurer le NTP sur la Private Gateway
+description: Découvrez comment utiliser le NTP de la Private Gateway sur une infrastructure Hosted Private Cloud
+lastUpdated: 2026-04-23
+---
+
+import Api from '@components/Api';
+
+
+## Objectif
+
+La private gateway vous permet d'utiliser un serveur NTP.
+
+**Ce guide vous explique comment configurer le service NTP sur la private gateway de votre infrastructure Hosted Private Cloud.**
+
+## Prérequis
+
+- Posséder une offre [Hosted Private Cloud](https://www.ovhcloud.com/fr/hosted-private-cloud/vmware/).
+- Avoir accès à l'interface de gestion vSphere.
+- Avoir activé la private gateway.
+- Avoir [créé ses identifiants pour l'API OVHcloud](/guides/manage-and-operate/api/first-steps) et être connecté aux [API OVHcloud](https://eu.api.ovh.com/).
+
+## En pratique
+
+### Architecture
+
+La private gateway n'est pas routée par défaut. Seules les machines du même sous-réseau peuvent accéder directement au serveur NTP. Pour un accès depuis un autre réseau, il est nécessaire de mettre en place un source NAT.
+
+<img className="thumbnail" alt="NTP private gateway - Architecture" src="/images/hosted-private-cloud/powered-by-vmware/private-gateway-ntp/architecture.png" loading="lazy" />
+
+### Configurer le NTP sur la private gateway
+
+#### Récupérer l'IP de la private gateway
+
+Effectuez l'appel API suivant pour obtenir les informations de la private gateway et récupérer la valeur de `customerIp` :
+
+<Api version="v1" section="/dedicatedCloud" method="GET" route={"/dedicatedCloud/\{serviceName\}/datacenter/\{datacenterId\}/privateGateway"} />
+
+
+<img className="thumbnail" alt="NTP private gateway - Appel API" src="/images/hosted-private-cloud/powered-by-vmware/private-gateway-ntp/apiGet.png" loading="lazy" />
+
+#### Installer chrony
+
+Sur la VM concernée, lancez la commande suivante :
+
+```shell
+apt-get install chrony
+```
+
+#### Configurer chrony
+
+Éditez le fichier `/etc/chrony.conf` en ajoutant l'IP du serveur de la private gateway et en enlevant la configuration par défaut.
+
+<img className="thumbnail" alt="NTP private gateway - Configuration" src="/images/hosted-private-cloud/powered-by-vmware/private-gateway-ntp/configFile.png" loading="lazy" />
+
+#### Redémarrer chrony
+
+Redémarrez le service chrony :
+
+```shell
+systemctl restart chrony
+```
+
+#### Vérifier le client
+
+Vérifiez que la VM se connecte bien au serveur :
+
+```shell
+chronyc sources
+```
+
+<img className="thumbnail" alt="NTP private gateway - Vérification serveur" src="/images/hosted-private-cloud/powered-by-vmware/private-gateway-ntp/ntpServer.png" loading="lazy" />
+
+Vérifiez que la synchronisation fonctionne :
+
+```shell
+chronyc tracking
+```
+
+<img className="thumbnail" alt="NTP private gateway - Vérification synchronisation" src="/images/hosted-private-cloud/powered-by-vmware/private-gateway-ntp/ntpSynchro.png" loading="lazy" />
+
+## Aller plus loin
+
+Échangez avec notre [communauté d'utilisateurs](https://community.ovhcloud.com/community/fr).

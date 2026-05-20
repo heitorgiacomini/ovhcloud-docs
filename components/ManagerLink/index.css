@@ -1,0 +1,46 @@
+@reference "tailwindcss";
+
+/* ── Trigger (looks like a regular doc link) ──────────── */
+
+.ovh-manager-link__trigger {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--rp-c-link, var(--rp-c-brand-lighter));
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.ovh-manager-link__trigger:hover {
+  text-decoration: underline;
+}
+
+.ovh-manager-link__trigger::after {
+  content: '↗';
+  font-weight: 400;
+  display: inline-block;
+  font-size: 0.7em;
+  transform: translate(0, -0.2em);
+  transition: transform 0.2s ease;
+  margin-left: 0.2em;
+  margin-right: 0.1em;
+}
+
+.ovh-manager-link__trigger:focus-visible {
+  outline: 2px solid var(--rp-c-brand-lighter);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Menu (portaled to <body>, positioned via inline style) ─ */
+
+.ovh-manager-link__menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}

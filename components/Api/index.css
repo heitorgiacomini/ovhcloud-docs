@@ -1,0 +1,226 @@
+@reference "tailwindcss";
+
+.ovh-api-main {
+  border-radius: 5px;
+  margin: 10px 0;
+  @apply py-1;
+  @apply font-mono;
+  @apply text-gray-600;
+  @apply font-bold;
+  @apply w-full;
+  @apply flex;
+  @apply items-center;
+}
+
+.ovh-api-main:hover {
+  @apply bg-gray-100;
+}
+
+/* ── Dropdown ─────────────────────────────────────────── */
+
+.ovh-api-dropdown {
+  position: relative;
+  margin-right: 0.5rem;
+  font-family: "Source Sans Pro", sans-serif;
+}
+
+.ovh-api-dropdown__trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 6px;
+  background: var(--rp-c-bg);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--rp-c-text-1);
+  transition: border-color 0.15s;
+}
+
+.ovh-api-dropdown__trigger:hover,
+.ovh-api-dropdown__trigger:focus-visible {
+  border-color: var(--rp-c-brand);
+}
+
+.ovh-api-dropdown__trigger:focus-visible {
+  outline: 2px solid var(--rp-c-brand-lighter);
+  outline-offset: 2px;
+}
+
+.ovh-api-dropdown__flag {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.ovh-api-dropdown__chevron {
+  font-size: 10px;
+  color: var(--rp-c-text-3);
+  transition: transform 0.2s;
+}
+
+.ovh-api-dropdown__chevron--open {
+  transform: rotate(180deg);
+}
+
+/* ── Menu ─────────────────────────────────────────────── */
+
+.ovh-api-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 200;
+  min-width: 320px;
+  max-width: 420px;
+  padding: 8px;
+  background: var(--rp-c-bg);
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 10px;
+  box-shadow: var(--rp-shadow-4);
+}
+
+.ovh-api-dropdown__title {
+  margin: 0 0 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--rp-c-text-2);
+  letter-spacing: 0.03em;
+}
+
+/* ── Option ───────────────────────────────────────────── */
+
+.ovh-api-dropdown__option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  border: 1.5px solid var(--rp-c-divider-light);
+  border-radius: 8px;
+  background: var(--rp-c-bg);
+  cursor: pointer;
+  text-align: left;
+  font-family: "Source Sans Pro", sans-serif;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.ovh-api-dropdown__option:last-child {
+  margin-bottom: 0;
+}
+
+.ovh-api-dropdown__option:hover {
+  border-color: var(--rp-c-brand-lighter);
+  background: var(--rp-c-bg-soft);
+}
+
+.ovh-api-dropdown__option:focus-visible {
+  outline: 2px solid var(--rp-c-brand-lighter);
+  outline-offset: -2px;
+  border-color: var(--rp-c-brand-lighter);
+}
+
+.ovh-api-dropdown__option--selected {
+  border-color: var(--rp-c-brand);
+  background: var(--rp-c-bg-soft);
+}
+
+.ovh-api-dropdown__option-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ovh-api-dropdown__option-flag {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.ovh-api-dropdown__option-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--rp-c-text-1);
+  flex: 1;
+}
+
+.ovh-api-dropdown__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--rp-c-brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ovh-api-dropdown__option-desc {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--rp-c-text-2);
+  line-height: 1.4;
+  padding-left: 22px;
+}
+
+.ovh-api-dropdown__option-url {
+  font-size: 10px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--rp-c-text-3);
+  padding-left: 22px;
+}
+
+/* ── Legacy ───────────────────────────────────────────── */
+
+.ovh-api-flag {
+  @apply mr-2;
+}
+
+.ovh-api-verb {
+  @apply rounded-2xl;
+  @apply px-2;
+  @apply py-1;
+  @apply mr-2;
+  @apply font-bold;
+}
+
+.ovh-api-verb.ovh-api-verb-GET {
+  background-color: rgb(190, 241, 255);
+  color: rgb(77, 85, 146);
+}
+
+.ovh-api-verb.ovh-api-verb-POST {
+  background-color: rgb(219, 242, 187);
+  color: rgb(38, 132, 3);
+}
+
+.ovh-api-verb.ovh-api-verb-PUT {
+  background-color: rgb(254, 234, 134);
+  color: rgb(139, 97, 17);
+}
+
+.ovh-api-verb.ovh-api-verb-DELETE {
+  background-color: rgb(255, 210, 221);
+  color: rgb(193, 27, 27);
+}
+
+/* ── Dark mode ────────────────────────────────────────── */
+
+html.rp-dark .ovh-api-main:hover {
+  background-color: var(--rp-c-bg-soft);
+}
+
+html.rp-dark .ovh-api-dropdown__check {
+  background: var(--rp-c-brand-lighter);
+}
+
+html.rp-dark .ovh-api-dropdown__option--selected {
+  border-color: var(--rp-c-brand-lighter);
+}
