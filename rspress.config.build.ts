@@ -39,9 +39,6 @@ export default defineConfig({
     logLevel: 'error',
     plugins: [pluginSass()],
     html: {
-      meta: {
-        robots: 'noindex, nofollow',
-      },
       // jQuery loaded statically so window.jQuery is available globally
       // before ovh_delta.js runs. ovh_delta.js itself is loaded dynamically
       // from a useEffect inside AnalyticsBootstrap (see components/Analytics)
