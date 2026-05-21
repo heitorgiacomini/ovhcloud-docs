@@ -4,6 +4,15 @@
 *.log*
 base
 
+# Never ignore image assets, even if their filename contains substrings
+# that match patterns above (e.g. "Activity.Logs.png" vs *.log*).
+!**/*.png
+!**/*.jpg
+!**/*.jpeg
+!**/*.gif
+!**/*.svg
+!**/*.webp
+
 # Dist
 node_modules
 dist/
