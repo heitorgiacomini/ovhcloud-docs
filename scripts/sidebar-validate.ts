@@ -73,7 +73,7 @@ async function validate(): Promise<{ deadLinks: string[]; valid: boolean }> {
   // docs/fr/guides/e-learning/index.mdx -> /guides/e-learning/ (with trailing slash)
   const existingPaths = new Set<string>();
   for (const f of mdxFiles) {
-    const relativePath = path.relative(docsDir, f);
+    const relativePath = path.relative(docsDir, f).replace(/\\/g, '/');
     const routePath = `/${relativePath.replace(/\.(mdx|md)$/, '')}`;
     existingPaths.add(routePath);
     // Also add trailing slash variant for index files
