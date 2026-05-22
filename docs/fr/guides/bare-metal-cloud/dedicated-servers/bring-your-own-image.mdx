@@ -1,7 +1,7 @@
 ---
 title: Bring Your Own Image (BYOI)
 description: Découvrez comment déployer facilement vos propres images sur des serveurs dédiés
-lastUpdated: 2026-02-10
+lastUpdated: 2026-05-22
 ---
 
 import Api from '@components/Api';
@@ -55,6 +55,8 @@ Certaines limites techniques sont liées à l’utilisation de produits physique
 **À propos du RAID :**
 
 - Bring Your Own Image (BYOI) ne prend pas en charge la configuration RAID logicielle au moment de l'installation, mais vous pouvez utiliser le service [Bring Your Own Linux (BYOLinux)](/guides/bare-metal-cloud/dedicated-servers/bring-your-own-linux) pour le faire. Choisissez le type d'installation personnalisée le plus adapté : [Comparaison entre Bring Your Own Image (BYOI) et Bring Your Own Linux (BYOLinux)](/guides/bare-metal-cloud/dedicated-servers/bring-your-own-image-versus-bring-your-own-linux).
+
+- BYOI déploie l'image sur un seul disque : le premier disque du groupe de disques cible.
 
 - Le RAID matériel est pris en charge, si votre serveur le supporte, car il est configuré avant le déploiement de l'image sur le disque.
 
