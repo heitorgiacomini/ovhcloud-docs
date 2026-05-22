@@ -77,7 +77,7 @@ async function findOrphans() {
   // docs/fr/guides/public-cloud/compute/overview.mdx -> /guides/public-cloud/compute/overview
   const orphans = mdxFiles
     .map((f) => {
-      const relativePath = path.relative(docsDir, f);
+      const relativePath = path.relative(docsDir, f).replace(/\\/g, '/');
       return `/${relativePath.replace(/\.(mdx|md)$/, '')}`;
     })
     .filter((routePath) => !sidebarLinks.has(routePath));
