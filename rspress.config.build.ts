@@ -15,6 +15,7 @@ import { nav } from './config/nav';
 import type { Locale } from './config/shared';
 import { locales } from './config/shared';
 import { sidebar } from './config/sidebar';
+import { pluginFillMissingLocalePages } from './plugins/fillMissingLocalePages';
 import { pluginLastUpdatedFromCache } from './plugins/lastUpdatedFromCache';
 import { rehypeLazyImages } from './plugins/rehypeLazyImages';
 import { remarkNoManagerHardcoded } from './plugins/remarkNoManagerHardcoded';
@@ -33,7 +34,18 @@ export default defineConfig({
   lang: locale,
 
   // Use cached lastUpdated plugin instead of built-in (avoids 80k+ git calls)
-  plugins: [pluginLastUpdatedFromCache()],
+  plugins: [
+    pluginLastUpdatedFromCache(),
+    pluginFillMissingLocalePages({
+      docsRoot: path.join(BASE_DIR, 'docs'),
+      sidebarIndex: path.join(BASE_DIR, 'config/sidebar/index.md'),
+      // Per-locale build: only the current locale is processed. EN is the
+      // fallback source and skipped internally by the plugin.
+      locales: [locale as 'fr' | 'de' | 'es' | 'it' | 'pl' | 'pt'],
+      // Prod: base=/{locale}/ already prefixes, so routePath stays bare.
+      routePrefixFor: () => '',
+    }),
+  ],
 
   builderConfig: {
     logLevel: 'error',

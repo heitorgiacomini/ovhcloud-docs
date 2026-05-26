@@ -15,6 +15,7 @@ import { generateLinkRules } from './config/link-rules';
 import { nav } from './config/nav';
 import type { Locale } from './config/shared';
 import { sidebar } from './config/sidebar';
+import { pluginFillMissingLocalePages } from './plugins/fillMissingLocalePages';
 import { pluginLastUpdatedFromCache } from './plugins/lastUpdatedFromCache';
 import { rehypeLazyImages } from './plugins/rehypeLazyImages';
 import { remarkNoManagerHardcoded } from './plugins/remarkNoManagerHardcoded';
@@ -73,7 +74,21 @@ const excludedLocales = allLocales
 
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
-  plugins: [pluginLastUpdatedFromCache()],
+  plugins: [
+    pluginLastUpdatedFromCache(),
+    pluginFillMissingLocalePages({
+      docsRoot: path.join(__dirname, 'docs'),
+      sidebarIndex: path.join(__dirname, 'config/sidebar/index.md'),
+      locales: activeLocales
+        .map((l) => l.lang)
+        .filter(
+          (l): l is 'fr' | 'de' | 'es' | 'it' | 'pl' | 'pt' => l !== 'en',
+        ),
+      // Dev routing: default locale serves at /, others at /{lang}/
+      routePrefixFor: (locale) =>
+        locale === (activeLocales[0]?.lang || 'fr') ? '' : `/${locale}`,
+    }),
+  ],
   builderConfig: {
     plugins: [pluginSass()],
     html: {
