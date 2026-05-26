@@ -484,10 +484,11 @@ OVHcloud Object Storage empêchera toute transition vers un autre niveau de stoc
 
 ### Délai de transition minimal
 
-La durée minimale des règles de transition est de **30 jours**, ce qui signifie que votre configuration de lifecycle ne sera pas valide et que vous obtiendrez une erreur si le nombre de jours pour votre règle de transition est inférieur à 30 jours. En pratique, cela signifie que la fonction de lifecycle ne prendra en compte que les objets datant de plus de **30 jours**.
-Par exemple, supposons que vous téléversez un objet dans le niveau de stockage High Performance et que vous souhaitez le faire passer au niveau de stockage Standard après un certain temps, puis de Standard à Standard Infrequent Access après un autre laps de temps. Cela signifierait que:
-- votre objet ne pourra passer de High Performance à Standard qu'après 30 jours
-- votre objet ne pourra passer de Standard à Standard Infrequent Access qu'après 60 jours (30 jours après la précédente transition)
+La durée minimale des règles de transition entre 2 storage classes est de **1 jour**, ce qui signifie que votre configuration de lifecycle ne sera pas valide et que vous obtiendrez une erreur si le nombre de jours pour votre règle de transition est inférieur à 1 jour. En pratique, si vous avez plus d'une transition, la durée pour la nième transition doit être supérieure ou égale à n.
+
+Exemples:
+- vous avez une transition de High Performance à Standard, la durée minimale est de 1 jour
+- vous avez 3 transitions: la 1ere de High Performance à Standard, la 2e Standard à Infrequent Access et la 3e de Infrequent Access à Active Archive. La durée minimale pour la 1ere transition est de 1 jour, 2 jours pour la 2e et 3 jours pour la 3e.
 
 ### Expiration vs transitions
 
