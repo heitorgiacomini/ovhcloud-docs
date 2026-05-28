@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.05.28.1
+
+### Fixes
+- **byo:** address PR #67 review feedback (NBSP + FR table articles)
+
+### Maintenance
+- **nsd:** bump lastUpdated to 2026-05-28
+
+### Documentation
+- 30 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.05.28
 
 ### Features
