@@ -122,13 +122,13 @@ Dans la section `customizations`, seuls les champs `imageURL`, `imageType` et `e
 }
 ```
 
-Même si `configDriveUserData` peut être envoyé à l'API directement en clair en échappant les bons caractères, il est recommandé d'envoyer à l'API le script encodé en base64 en utilisant par exemple la commande UNIX/Linux suivante :
+Même si `configDriveUserData` peut être envoyé à l'API directement en clair en échappant les bons caractères, il est recommandé d'envoyer à l'API le script encodé en base64 en utilisant par exemple la commande UNIX/Linux suivante :
 
 ```bash
 cat my-data.yaml | base64 -w0
 ```
 
-Voici la version en clair de `configDriveUserData` de l'exemple ci-dessus :
+Voici la version en clair de `configDriveUserData` de l'exemple ci-dessus :
 
 ```yaml
 #cloud-config
@@ -156,17 +156,17 @@ Une fois les champs complétés, démarrez le déploiement en cliquant sur <code
 
 | Champ | Description | Obligatoire |
 |-|-|-|
-| customizations/hostname | Le hostname | ❌ |
-| customizations/sshKey | La clé publique SSH | ❌ |
-| customizations/imageURL | L'URL de l'image | ✅ |
-| customizations/imageType | Le type/format de l'image (qcow2, raw) | ✅ |
+| customizations/hostname | Hostname | ❌ |
+| customizations/sshKey | Clé publique SSH | ❌ |
+| customizations/imageURL | URL de l'image | ✅ |
+| customizations/imageType | Type/format de l'image (qcow2, raw) | ✅ |
 | customizations/imageCheckSum | Checksum de l'image | ❌ |
 | customizations/imageCheckSumType | Type de checksum de l'image (md5, sha1, sha256, sha512) | ❌ (sauf si checksum fourni) |
 | customizations/configDriveUserData | Données utilisateur (user-data) cloud-init¹ | ❌ |
 | customizations/configDriveMetadata | Métadonnées cloud-init personnalisées, exposées sous la clé `meta` de `meta_data.json`⁴ | ❌ |
 | customizations/httpHeaders?Key | Clé des en-têtes HTTP | ❌² |
 | customizations/httpHeaders?Value | Valeur des en-têtes HTTP | ❌² |
-| userMetadata/efiBootloaderPath | Le chemin du bootloader EFI | ✅³ |
+| userMetadata/efiBootloaderPath | Chemin du bootloader EFI | ✅³ |
 
 ¹ [Données utilisateur](https://cloudinit.readthedocs.io/en/latest/explanation/format.html) cloud-init standard — généralement un document `#cloud-config` ou un script (voir les [exemples officiels de cloud-init](https://docs.cloud-init.io/en/latest/reference/examples.html)). Équivalent à `server create --user-data <fichier>` chez OpenStack. Sa représentation JSON doit être sur une seule ligne avec `\n` pour les retours à la ligne, car les chaînes JSON ne peuvent pas contenir de retours à la ligne littéraux.<br />
 ² À utiliser uniquement si vous avez besoin d'en-têtes HTTP, tels que `Basic Auth`<br />
@@ -188,10 +188,10 @@ Les chemins ci-dessous utilisent l'échappement JSON : `\\` représente un seul 
 | Arch Linux | `\\efi\\arch\\grubx64.efi` |
 | Gentoo | `\\efi\\boot\\bootx64.efi` |
 
-⁴ Objet JSON de couples clé/valeur arbitraires, équivalent à `server create --property clé=valeur` chez OpenStack. Les couples sont écrits dans le `meta_data.json` du config drive sous la clé `meta`, où cloud-init peut les lire. Exemple : `"configDriveMetadata": {"role": "webserver", "env": "prod"}` devient `"meta": {"role": "webserver", "env": "prod"}` dans `meta_data.json`. Voir la [documentation du service de métadonnées OpenStack](https://docs.openstack.org/nova/latest/user/metadata.html#openstack-format-metadata) pour le schéma complet.
+⁴ Objet JSON de couples clé/valeur arbitraires, équivalent à `server create --property clé=valeur` chez OpenStack. Les couples sont écrits dans le `meta_data.json` du config drive sous la clé `meta`, où cloud-init peut les lire. Exemple : `"configDriveMetadata": {"role": "webserver", "env": "prod"}` devient `"meta": {"role": "webserver", "env": "prod"}` dans `meta_data.json`. Voir la [documentation du service de métadonnées OpenStack](https://docs.openstack.org/nova/latest/user/metadata.html#openstack-format-metadata) pour le schéma complet.
 
 :::info
-Lorsque vous renseignez l'une des personnalisations de cette page, OVHcloud ajoute une petite partition de [config drive](https://docs.cloud-init.io/en/latest/reference/datasources/configdrive.html) lors de l'installation ; sinon, aucun config drive n'est créé. Cloud-init la lit au premier démarrage. Renseignez `configDriveUserData` pour ajouter vos propres données utilisateur (user-data) cloud-init.
+Lorsque vous renseignez l'une des personnalisations de cette page, OVHcloud ajoute une petite partition de [config drive](https://docs.cloud-init.io/en/latest/reference/datasources/configdrive.html) lors de l'installation ; sinon, aucun config drive n'est créé. Cloud-init la lit au premier démarrage. Renseignez `configDriveUserData` pour ajouter vos propres données utilisateur (user-data) cloud-init.
 
 :::
 
