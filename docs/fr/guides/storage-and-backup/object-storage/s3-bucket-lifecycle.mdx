@@ -1,7 +1,7 @@
 ---
 title: Object Storage - Gestion intelligente du stockage avec des règles lifecycle
 description: "Découvrez comment optimiser vos coûts de stockage avec les règles lifecycle d'OVHcloud"
-lastUpdated: 2026-05-27
+lastUpdated: 2026-05-28
 ---
 
 
@@ -484,10 +484,12 @@ OVHcloud Object Storage empêchera toute transition vers un autre niveau de stoc
 
 ### Délai de transition minimal
 
-La durée minimale des règles de transition est de **30 jours**, ce qui signifie que votre configuration de lifecycle ne sera pas valide et que vous obtiendrez une erreur si le nombre de jours pour votre règle de transition est inférieur à 30 jours. En pratique, cela signifie que la fonction de lifecycle ne prendra en compte que les objets datant de plus de **30 jours**.
-Par exemple, supposons que vous téléversez un objet dans le niveau de stockage High Performance et que vous souhaitez le faire passer au niveau de stockage Standard après un certain temps, puis de Standard à Standard Infrequent Access après un autre laps de temps. Cela signifierait que:
-- votre objet ne pourra passer de High Performance à Standard qu'après 30 jours
-- votre objet ne pourra passer de Standard à Standard Infrequent Access qu'après 60 jours (30 jours après la précédente transition)
+La durée minimale des règles de transition entre 2 storage classes est de **1 jour**, ce qui signifie que votre configuration de lifecycle ne sera pas valide et que vous obtiendrez une erreur si le nombre de jours pour votre règle de transition est inférieur à 1 jour. En pratique, avec plusieurs transitions, la durée minimale de la nième transition doit être supérieure ou égale à n.
+
+Exemples :
+
+- vous avez une transition de High Performance à Standard, la durée minimale est de 1 jour.
+- vous avez 3 transitions : la 1ère de High Performance à Standard, la 2e de Standard à Infrequent Access et la 3e de Infrequent Access à Active Archive. Les durées minimales sont 1 jour (1ère), 2 jours (2e) et 3 jours (3e).
 
 ### Expiration vs transitions
 
@@ -530,7 +532,7 @@ Voici la structure de base d'une configuration d'un lifecycle JSON contenant des
 | ---------------------------------------------------- | -------- | ------------
 | Transitions                                          | oui*     | Un tableau d'opérations lifecycle qui copient automatiquement tous les objets sélectionnés (seulement les versions courantes si le bucket est versionné) de leur niveau de stockage actuel vers le niveau de stockage le plus efficace. |
 | Transitions.Date                                     | non*     | Indique la date à laquelle les objets doivent être transférés. La valeur de la date doit être au format ISO 8601 et l'heure doit toujours être fixée à minuit UTC. <br/><br/> ⚠️ Cet attribut n'est pas obligatoire si Days est présent. <br/> ⚠️ cet attribut s'exclut mutuellement avec Days, c'est-à-dire que vous avez soit Date, soit Days, mais vous ne pouvez pas spécifier les deux. |
-| Transitions.Days                                     | oui*     | Indique la durée en jours après laquelle les objets doivent être transférés. La valeur doit être un nombre entier égal ou supérieur à 30. <br/><br/> ⚠️ Cet attribut est obligatoire si Date n'est pas présent. <br/> ⚠️ cet attribut s'exclut mutuellement avec Date, c'est-à-dire que vous avez soit Date, soit Days, mais vous ne pouvez pas spécifier les deux. |
+| Transitions.Days                                     | oui*     | Indique la durée en jours après laquelle les objets doivent être transférés. La valeur doit être un nombre entier égal ou supérieur à 1. <br/><br/> ⚠️ Cet attribut est obligatoire si Date n'est pas présent. <br/> ⚠️ cet attribut s'exclut mutuellement avec Date, c'est-à-dire que vous avez soit Date, soit Days, mais vous ne pouvez pas spécifier les deux. |
 | Transitions.StorageClass                             | oui      | Indique la classe de stockage cible. Actuellement, seul « STANDARD » est disponible. |
 | NoncurrentVersionTransitions                         | non      | Un tableau d'actions de lifecycle qui indique quand les versions d'objets non courantes doivent être transférées. Ces actions n'affectent pas les versions courantes. Elles n'assurent la transition que pour les versions qui ne sont pas courantes. |
 | NoncurrentVersionTransitions.NoncurrentDays          | non      | Indique le nombre de jours avant qu'une version non courante soit éligible à la transition après être devenue non courante, c'est-à-dire l'âge minimum d'une version non courante. |
