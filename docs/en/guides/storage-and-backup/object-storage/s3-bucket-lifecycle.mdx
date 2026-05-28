@@ -1,7 +1,7 @@
 ---
 title: Object Storage - Smart Storage Management with Lifecycle Rules
 description: Learn how to optimise your OVHcloud Object Storage costs by configuring lifecycle rules for automatic expiration, transition, and cleanup of objects
-lastUpdated: 2026-04-08
+lastUpdated: 2026-05-28
 ---
 
 
@@ -484,11 +484,12 @@ OVHcloud Object Storage will prevent any transition to any storage tier for obje
 
 ### Minimum transition delay
 
-The minimum duration for transition rules between storage classes is **1 day** i.e your lifecycle configuration will not be valid and you will get an error if the number of days for your transition rule is less than 1 day. In pratice, if you have more than one transition, the minimum duration for the nth transtiion must equal or greater than n.
+The minimum duration for transition rules between storage classes is **1 day** i.e your lifecycle configuration will not be valid and you will get an error if the number of days for your transition rule is less than 1 day. In practice, with multiple transitions, the minimum duration for the nth transition must be at least n days.
 
 Examples:
-- you have one transition from High Performance to Standard, the minimum duration is 1 day
-- you have 3 transitions: 1st from High Performance to Standand, 2nd from Standard to Infrequent Access and 3rd from Infrequent Access to Active Archive. The minimum duration for the 1st transition is 1 day, 2 days for the 2nd one and 3 days for the 3rd one.
+
+- with a single transition from High Performance to Standard, the minimum duration is 1 day.
+- you have 3 transitions: 1st from High Performance to Standard, 2nd from Standard to Infrequent Access, and 3rd from Infrequent Access to Active Archive. The minimum durations are 1 day (1st), 2 days (2nd), and 3 days (3rd).
 
 ### Expiration vs transitions
 

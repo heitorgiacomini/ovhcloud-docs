@@ -1,7 +1,7 @@
 ---
 title: Object Storage - Smart Storage Management with Lifecycle Rules
 description: Learn how to optimise your OVHcloud Object Storage costs by configuring lifecycle rules for automatic expiration, transition, and cleanup of objects
-lastUpdated: 2026-04-08
+lastUpdated: 2026-05-28
 ---
 
 
@@ -484,10 +484,12 @@ OVHcloud Object Storage will prevent any transition to any storage tier for obje
 
 ### Minimum transition delay
 
-The minimum duration for transition rules is **30 days** i.e your lifecycle configuration will not be valid and you will get an error if the number of days for your transition rule is less than 30 days. In practice, it means that the lifecycle feature will only consider objects older than **30 days**.
-For example, let's say you upload an object in the High Performance storage tier and you want to transition said object to Standard storage tier after a certain amount of time and then from Standard to Standard Infrequent Access storage tier after another amount of time. That means:
-- your object can only be transitioned from High Performance to Standard after 30 days
-- your object can only be transitioned from Standard to Standard Infrequent Access after 60 days (30 days after the previous transition)
+The minimum duration for transition rules between storage classes is **1 day** i.e your lifecycle configuration will not be valid and you will get an error if the number of days for your transition rule is less than 1 day. In practice, with multiple transitions, the minimum duration for the nth transition must be at least n days.
+
+Examples:
+
+- with a single transition from High Performance to Standard, the minimum duration is 1 day.
+- you have 3 transitions: 1st from High Performance to Standard, 2nd from Standard to Infrequent Access, and 3rd from Infrequent Access to Active Archive. The minimum durations are 1 day (1st), 2 days (2nd), and 3 days (3rd).
 
 ### Expiration vs transitions
 
@@ -530,7 +532,7 @@ The following is the basic structure of a lifecycle configuration JSON containin
 | ---------------------------------------------------- | -------- | ------------
 | Transitions                                          | yes*     | An array of lifecycle operations that automatically copy all selected objects (current versions only, if versioning is enabled) from their current storage tier to the most effective storage tier. |
 | Transitions.Date                                     | no*      | Indicates the date when the objects are to be transitioned. The date value must be in the ISO 8601 date format and the time must always be set to midnight UTC. <br/><br/> ⚠️ This attribute is not mandatory if Days is present. <br/> ⚠️ this attribute is mutually exclusive with Days i.e you either have Date or Days but you cannot specify both. |
-| Transitions.Days                                     | yes*     | Indicates the duration in days after which the objects are to be transitioned. The value must be an integer equal to or greater than 30. <br/><br/> ⚠️ This attribute is mandatory if Date is not present. <br/> ⚠️ this attribute is mutually exclusive with Date i.e you either have Date or Days but you cannot specify both. |
+| Transitions.Days                                     | yes*     | Indicates the duration in days after which the objects are to be transitioned. The value must be an integer equal to or greater than 1. <br/><br/> ⚠️ This attribute is mandatory if Date is not present. <br/> ⚠️ this attribute is mutually exclusive with Date i.e you either have Date or Days but you cannot specify both. |
 | Transitions.StorageClass                             | yes      | Indicates the target Storage class. Currently, only "STANDARD" is available. |
 | NoncurrentVersionTransitions                         | no       | An array of lifecycle actions that indicate when noncurrent object versions should be transitioned. These actions do not affect the current versions. They only transition the versions that are not current. |
 | NoncurrentVersionTransitions.NoncurrentDays          | no       | Indicates the number of days before a noncurrent version is eligible to transition after they became noncurrent i.e the minimum age of a noncurrent version. |
