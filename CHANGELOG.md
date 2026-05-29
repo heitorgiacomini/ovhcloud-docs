@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026.05.29
+
+### Features
+- **compute:** update iimage lifecycle guide (#37)
+
+### Fixes
+- **pt:** strip leftover <style> block in ola-enable-debian9
+
+### Maintenance
+- **pcdb:** last updated
+
+### Documentation
+- 189 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.05.28.1
 
 ### Fixes
