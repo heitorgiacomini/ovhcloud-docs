@@ -257,3 +257,15 @@ pnpm page:delete        # Delete a page across all locales
 - **SCSS** with Tailwind CSS v4 directives (`tw-dark` class for dark mode)
 - **TypeScript** with strict mode
 - Path alias: `@components` → `components/`
+
+## CDS (Continuous Deployment System)
+
+The CDS is used to deploy the documentation site to the OVHcloud infrastructure.
+
+### CDS Workflow
+
+The CDS workflow is defined in the `ovhcloud-docs-ci` repository.
+
+### CDS Workflow Configuration
+
+The CDS workflow configuration is defined in the `ovhcloud-docs-ci` repository.
