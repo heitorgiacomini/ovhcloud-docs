@@ -252,7 +252,7 @@ logstash-input-snmptrap
 We patched the gelf input to support TCP+TLS. Example of Input section:
 
 ```ruby
- tcp &#123;
+ tcp {
      port => 12202
      type => gelf
      ssl_enabled => true
@@ -260,8 +260,8 @@ We patched the gelf input to support TCP+TLS. Example of Input section:
      ssl_certificate => "/etc/ssl/private/server.crt"
      ssl_key => "/etc/ssl/private/server.key"
      ssl_extra_chain_certs => ["/etc/ssl/private/ca.crt"]
-     codec => gelf &#123; delimiter => "\x00" &#125;
- &#125;
+     codec => gelf { delimiter => "\x00" }
+ }
 ```
 
 #### filter plugins

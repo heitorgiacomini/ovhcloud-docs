@@ -277,7 +277,7 @@ When upgrading Kubernetes versions, MKS offers two strategies for updating worke
 |  +-------+                                                     | v1.34 |    |
 |  |Node 1 |  Pods moved to                                      +---+---+    |
 |  |UPGRADE|  other nodes                     2. Cordon & Drain      |        |
-|  +---+---+                                     old node       &lt;----+        |
+|  +---+---+                                     old node       <----+        |
 |      |                                                                      |
 |      | 2. Upgrade                             +-------+                     |
 |      v    components                          |Node 3 |  3. Migrate pods    |
@@ -546,7 +546,7 @@ kind: Service
 metadata:
   name: my-service
   annotations:
-    # Required for Kubernetes &lt; 1.31
+    # Required for Kubernetes < 1.31
     loadbalancer.ovhcloud.com/class: octavia
     # Optional: choose LB size (small, medium, large, xl)
     loadbalancer.ovhcloud.com/flavor: small
@@ -643,7 +643,7 @@ MKS uses the OpenStack Cinder CSI driver for persistent storage:
 |           |                 |                                    |
 |           v                 v                                    |
 |  +------------------+     +------------------+                   |
-|  |       PVC        |&lt;--->|       PV         |                   |
+|  |       PVC        |<--->|       PV         |                   |
 |  | (Request)        |     | (Provisioned)    |                   |
 |  +------------------+     +--------+---------+                   |
 |                                    |                             |

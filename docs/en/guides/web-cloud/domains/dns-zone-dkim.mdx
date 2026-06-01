@@ -372,23 +372,23 @@ Follow the **5 steps** by clicking on each of the 5 tabs below:
     *Example result:*
     
     ```console
-    &#123;
+    {
      "activeSelector": null,
      "autoconfig": true,
      "selectors": [
-       &#123;
+       {
          "selectorName": "ovhmo3456789-selector2",
          "status": "set",
          "cname": "ovhmo3456789-selector2._domainkey.mydomain.ovh CNAME ovhmo3456789-selector2._domainkey.123402.aj.dkim.mail.ovh.net."
-       &#125;,
-       &#123;
+       },
+       {
          "selectorName": "ovhmo3456789-selector1",
          "cname": "ovhmo3456789-selector1._domainkey.mydomain.ovh CNAME ovhmo3456789-selector1._domainkey.123403.aj.dkim.mail.ovh.net.",
          "status": "set"
-       &#125;
+       }
      ],
      "status": "modifying"
-    &#125;
+    }
     ```
     <br/>
     In the example above, the last status line `"status": "modifying"` means that the configuration is in progress. Wait approximately **10 minutes** and restart the API call.
@@ -702,11 +702,11 @@ Follow the **5 steps** below by clicking on each tab.
     *Example of entry:*
     
     ```console
-    &#123;
+    {
        "autoEnableDKIM": false,
        "configureDkim": false,
        "selectorName": "ovhemp123456-selector1"
-    &#125;
+    }
     ```
     
     :::info
@@ -918,12 +918,12 @@ Select the email solution concerned in the following tabs:
     *Example result:*
     
     ```console
-    &#123;
+    {
      "function": "domain/enableDKIM",
      "id": 123456789,
      "domain": "guidesteam.ovh",
      "status": "todo"
-    &#125;
+    }
     ```
   </Tab>
   <Tab label="Exchange">

@@ -156,13 +156,13 @@ swift post -H "X-Remove-Object-My-Custom-Key:" `<container>` <object>
 ### Set Read ACL on a container
 
 ```bash
-swift post `<container>` -r "$&#123;OS_TENANT_ID&#125;:*"
+swift post `<container>` -r "${OS_TENANT_ID}:*"
 ```
 
 ### Set write ACL on a container
 
 ```bash
-swift post `<container>` -w "$&#123;OS_TENANT_ID&#125;:*"
+swift post `<container>` -w "${OS_TENANT_ID}:*"
 ```
 
 ### Delete the read ACL on a container
