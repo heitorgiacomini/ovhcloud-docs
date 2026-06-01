@@ -123,7 +123,7 @@ La seconde étape consiste à récupérer les offres accessibles pour un nom de 
   <Tab label="Réponse">
     ```javascript
     [
-      &#123;
+      {
         "action": "create", // 1
         "configurations": [],
         "deliveryTime": "",
@@ -144,51 +144,51 @@ La seconde étape consiste à récupérer les offres accessibles pour un nom de 
         "orderable": true,
         "phase": "ga",
         "prices": [
-          &#123;
+          {
             "label": "PRICE",
-            "price": &#123;
+            "price": {
               "currencyCode": "EUR",
               "text": "6.99 €",
               "value": 6.99
-            &#125;
-          &#125;,
-          &#123;
+            }
+          },
+          {
             "label": "RENEW",
-            "price": &#123;
+            "price": {
               "currencyCode": "EUR",
               "text": "6.99 €",
               "value": 6.99
-            &#125;
-          &#125;,
-          &#123;
+            }
+          },
+          {
             "label": "DISCOUNT",
-            "price": &#123;
+            "price": {
               "currencyCode": "EUR",
               "text": "2.00 €",
               "value": 2
-            &#125;
-          &#125;,
-          &#123;
+            }
+          },
+          {
             "label": "FEE",
-            "price": &#123;
+            "price": {
               "currencyCode": "EUR",
               "text": "0.00 €",
               "value": 0
-            &#125;
-          &#125;,
-          &#123;
+            }
+          },
+          {
             "label": "TOTAL",
-            "price": &#123;
+            "price": {
               "currencyCode": "EUR",
               "text": "4.99 €",
               "value": 4.99
-            &#125;
-          &#125;
+            }
+          }
         ],
         "pricingMode": "default", // 4
         "productId": "domain",
         "quantityMax": 1
-      &#125;
+      }
     ]
     ```
   </Tab>
@@ -308,180 +308,180 @@ Cette étape est optionnelle. Elle donne un aperçu du contenu du panier, mais e
 <Tabs>
   <Tab label="Réponse">
     ```json
-    &#123;
+    {
       "contracts": [],
       "details": [
-        &#123;
+        {
           "cartItemID": null,
           "description": "testdomainorder.com - Zone DNS",
           "detailType": "DURATION",
           "domain": "*001.001",
-          "originalTotalPrice": &#123;
+          "originalTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "quantity": 1,
-          "reductionTotalPrice": &#123;
+          "reductionTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "reductions": [],
-          "totalPrice": &#123;
+          "totalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
-          "unitPrice": &#123;
+          },
+          "unitPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;
-        &#125;,
-        &#123;
+          }
+        },
+        {
           "cartItemID": null,
           "description": "DNS zone",
           "detailType": "INSTALLATION",
           "domain": "*001.001",
-          "originalTotalPrice": &#123;
+          "originalTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "quantity": 1,
-          "reductionTotalPrice": &#123;
+          "reductionTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "reductions": [],
-          "totalPrice": &#123;
+          "totalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
-          "unitPrice": &#123;
+          },
+          "unitPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;
-        &#125;,
-        &#123;
+          }
+        },
+        {
           "cartItemID": null,
           "description": "testdomainorder.com - .com demande d'enregistrement - 12 mois",
           "detailType": "DURATION",
           "domain": "*001",
-          "originalTotalPrice": &#123;
+          "originalTotalPrice": {
             "currencyCode": "EUR",
             "text": "9.99 €",
             "value": 9.99
-          &#125;,
+          },
           "quantity": 1,
-          "reductionTotalPrice": &#123;
+          "reductionTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "reductions": [],
-          "totalPrice": &#123;
+          "totalPrice": {
             "currencyCode": "EUR",
             "text": "9.99 €",
             "value": 9.99
-          &#125;,
-          "unitPrice": &#123;
+          },
+          "unitPrice": {
             "currencyCode": "EUR",
             "text": "9.99 €",
             "value": 9.99
-          &#125;
-        &#125;,
-        &#123;
+          }
+        },
+        {
           "cartItemID": null,
           "description": "Domain .com",
           "detailType": "INSTALLATION",
           "domain": "*001",
-          "originalTotalPrice": &#123;
+          "originalTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "quantity": 1,
-          "reductionTotalPrice": &#123;
+          "reductionTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "reductions": [],
-          "totalPrice": &#123;
+          "totalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
-          "unitPrice": &#123;
+          },
+          "unitPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;
-        &#125;,
-        &#123;
+          }
+        },
+        {
           "cartItemID": null,
           "description": ".COM Create Prix barre",
           "detailType": "GIFT",
           "domain": "*001",
-          "originalTotalPrice": &#123;
+          "originalTotalPrice": {
             "currencyCode": "EUR",
             "text": "-2.50 €",
             "value": -2.5
-          &#125;,
+          },
           "quantity": 1,
-          "reductionTotalPrice": &#123;
+          "reductionTotalPrice": {
             "currencyCode": "EUR",
             "text": "0.00 €",
             "value": 0
-          &#125;,
+          },
           "reductions": [],
-          "totalPrice": &#123;
+          "totalPrice": {
             "currencyCode": "EUR",
             "text": "-2.50 €",
             "value": -2.5
-          &#125;,
-          "unitPrice": &#123;
+          },
+          "unitPrice": {
             "currencyCode": "EUR",
             "text": "-2.50 €",
             "value": -2.5
-          &#125;
-        &#125;
+          }
+        }
       ],
       "orderId": null,
-      "prices": &#123;
-        "originalWithoutTax": &#123;
+      "prices": {
+        "originalWithoutTax": {
           "currencyCode": "EUR",
           "text": "7.49 €",
           "value": 7.49
-        &#125;,
-        "reduction": &#123;
+        },
+        "reduction": {
           "currencyCode": "EUR",
           "text": "0.00 €",
           "value": 0
-        &#125;,
-        "tax": &#123;
+        },
+        "tax": {
           "currencyCode": "EUR",
           "text": "1.50 €",
           "value": 1.5
-        &#125;,
-        "withTax": &#123;
+        },
+        "withTax": {
           "currencyCode": "EUR",
           "text": "8.99 €",
           "value": 8.99
-        &#125;,
-        "withoutTax": &#123;
+        },
+        "withoutTax": {
           "currencyCode": "EUR",
           "text": "7.49 €",
           "value": 7.49
-        &#125;
-      &#125;,
+        }
+      },
       "url": null
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -619,11 +619,11 @@ Maintenant que nous avons récupéré la liste des configurations requises, il s
 <Tabs>
   <Tab label="Réponse">
     ```json
-    &#123;
+    {
       "id": 69663774,
       "label": "OWNER_CONTACT",
       "value": "/me/contact/13189481"
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>

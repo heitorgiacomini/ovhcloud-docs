@@ -490,20 +490,20 @@ Partons d'un exemple n'imposant qu'une seule règle pour la commande d'un nom de
 <Tabs>
   <Tab label="Règle d'acceptation des conditions particulières">
     ```json
-    &#123;
+    {
       "label": "ACCEPT_CONDITIONS",
       "type": "bool",
       "description": "Le registre a des conditions spéciales qui doivent être acceptées.",
       "placeholder": "true",
       "constraints": [
-        &#123;
+        {
           "operator": "required"
-        &#125;,
-        &#123;
+        },
+        {
           "operator": "shouldbetrue"
-        &#125;
+        }
       ]
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -565,35 +565,35 @@ Ces deux règles peuvent êtres combinées à l'aide de l'opérateur `and` de l'
 <Tabs>
   <Tab label="Règles fusionnées en une seule par un `and`">
     ```json
-    &#123;
+    {
       "and": [
-        &#123;
+        {
           "label": "ACCEPT_CONDITIONS",
           "type": "bool",
           "description": "Le registre a des conditions spéciales qui doivent être acceptées.",
           "placeholder": "true",
           "constraints": [
-            &#123;
+            {
               "operator": "required"
-            &#125;,
-            &#123;
+            },
+            {
               "operator": "shouldbetrue"
-            &#125;
+            }
           ]
-        &#125;,
-        &#123;
+        },
+        {
           "label": "REASON",
           "type": "text",
           "description": "L'achat de ce nom de domaine doit être justifié",
           "placeholder": "Je suis le maire de la ville OVHcity et je veux un nom de domaine pour ma ville",
           "constraints": [
-            &#123;
+            {
               "operator": "required"
-            &#125;
+            }
           ]
-        &#125;
+        }
       ]
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -771,27 +771,27 @@ Voici un exemple simple purement fictif : un registre veut que les conditions sp
 <Tabs>
   <Tab label="Exemple de règle avec une condition">
     ```json
-    &#123;
+    {
       "label": "ACCEPT_CONDITIONS",
       "type": "bool",
       "description": "Le registre a des conditions spéciales qui doivent être acceptées",
       "constraints": [
-        &#123;
+        {
           "operator": "required",
-          "conditions": &#123;
+          "conditions": {
             "label": "REASON",
             "type": "text",
             "description": "Justifier l'achat de ce nom de domaine",
             "placeholder": "Je suis le maire de la ville OVHcity et je veux un nom de domaine pour ma ville",
             "constraints": [
-              &#123;
+              {
                 "operator": "empty"
-              &#125;
+              }
             ]
-          &#125;
-        &#125;
+          }
+        }
       ]
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -2487,259 +2487,259 @@ Cela se traduit de cette manière. Pour une raison de clarté, les règles sur l
   </Tab>
   <Tab label="Afficher : Règle d'éligibilité du `.berlin`">
     ```json
-    &#123;
+    {
       "and": [
-        &#123;
+        {
           "label": "ADMIN_ACCOUNT",
           "type": "contact",
-          "fields": &#123;
+          "fields": {
             "and": [
-              &#123;
+              {
                 "label": "address.country",
                 "type": "string",
                 "description": "Represents the country of the admin contact.",
                 "placeholder": "DE",
                 "constraints": [
-                  &#123;
+                  {
                     "operator": "eq",
                     "value": "DE",
-                    "conditions": &#123;
+                    "conditions": {
                       "label": "OWNER_CONTACT",
                       "type": "contact",
-                      "fields": &#123;
+                      "fields": {
                         "or": [
-                          &#123;
+                          {
                             "label": "address.country",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "DE"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;,
-                          &#123;
+                          },
+                          {
                             "label": "address.city",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "Berlin"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;
+                          }
                         ],
                         "constraints": []
-                      &#125;,
+                      },
                       "constraints": [
-                        &#123;
+                        {
                           "operator": "required"
-                        &#125;
+                        }
                       ]
-                    &#125;
-                  &#125;,
-                  &#123;
+                    }
+                  },
+                  {
                     "operator": "required"
-                  &#125;,
-                  &#123;
+                  },
+                  {
                     "operator": "maxlength",
                     "value": "255"
-                  &#125;
+                  }
                 ]
-              &#125;,
-              &#123;
+              },
+              {
                 "label": "address.city",
                 "type": "string",
                 "description": "Represents the city of the admin contact.",
                 "placeholder": "Berlin",
                 "constraints": [
-                  &#123;
+                  {
                     "operator": "eq",
                     "value": "Berlin",
-                    "conditions": &#123;
+                    "conditions": {
                       "label": "OWNER_CONTACT",
                       "type": "contact",
-                      "fields": &#123;
+                      "fields": {
                         "or": [
-                          &#123;
+                          {
                             "label": "address.country",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "DE"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;,
-                          &#123;
+                          },
+                          {
                             "label": "address.city",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "Berlin"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;
+                          }
                         ],
                         "constraints": []
-                      &#125;,
+                      },
                       "constraints": [
-                        &#123;
+                        {
                           "operator": "required"
-                        &#125;
+                        }
                       ]
-                    &#125;
-                  &#125;,
-                  &#123;
+                    }
+                  },
+                  {
                     "operator": "required"
-                  &#125;,
-                  &#123;
+                  },
+                  {
                     "operator": "maxlength",
                     "value": "255"
-                  &#125;
+                  }
                 ]
-              &#125;
+              }
             ],
             "constraints": []
-          &#125;,
+          },
           "description": "rule related to the admin domain",
           "constraints": [
-            &#123;
+            {
               "operator": "required"
-            &#125;
+            }
           ]
-        &#125;,
-        &#123;
+        },
+        {
           "label": "OWNER_CONTACT",
           "type": "contact",
-          "fields": &#123;
+          "fields": {
             "and": [
-              &#123;
+              {
                 "label": "address.city",
                 "type": "string",
                 "description": "Represents the city of the owner contact.",
                 "placeholder": "Berlin",
                 "constraints": [
-                  &#123;
+                  {
                     "operator": "eq",
                     "value": "Berlin",
-                    "conditions": &#123;
+                    "conditions": {
                       "label": "ADMIN_ACCOUNT",
                       "type": "contact",
-                      "fields": &#123;
+                      "fields": {
                         "or": [
-                          &#123;
+                          {
                             "label": "address.country",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "DE"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;,
-                          &#123;
+                          },
+                          {
                             "label": "address.city",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "Berlin"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;
+                          }
                         ],
                         "constraints": []
-                      &#125;,
+                      },
                       "constraints": [
-                        &#123;
+                        {
                           "operator": "required"
-                        &#125;
+                        }
                       ]
-                    &#125;
-                  &#125;,
-                  &#123;
+                    }
+                  },
+                  {
                     "operator": "required"
-                  &#125;,
-                  &#123;
+                  },
+                  {
                     "operator": "maxlength",
                     "value": "255"
-                  &#125;
+                  }
                 ]
-              &#125;,
-              &#123;
+              },
+              {
                 "label": "address.country",
                 "type": "string",
                 "description": "Represents the country of the owner contact.",
                 "placeholder": "FR",
                 "constraints": [
-                  &#123;
+                  {
                     "operator": "eq",
                     "value": "DE",
-                    "conditions": &#123;
+                    "conditions": {
                       "label": "ADMIN_ACCOUNT",
                       "type": "contact",
-                      "fields": &#123;
+                      "fields": {
                         "or": [
-                          &#123;
+                          {
                             "label": "address.country",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "DE"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;,
-                          &#123;
+                          },
+                          {
                             "label": "address.city",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "ne",
                                 "value": "Berlin"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;
+                          }
                         ],
                         "constraints": []
-                      &#125;,
+                      },
                       "constraints": [
-                        &#123;
+                        {
                           "operator": "required"
-                        &#125;
+                        }
                       ]
-                    &#125;
-                  &#125;,
-                  &#123;
+                    }
+                  },
+                  {
                     "operator": "required"
-                  &#125;,
-                  &#123;
+                  },
+                  {
                     "operator": "contains",
                     "values": [
                       "AC",
@@ -2757,65 +2757,65 @@ Cela se traduit de cette manière. Pour une raison de clarté, les règles sur l
                       "ZM",
                       "ZW"
                     ],
-                    "conditions": &#123;
+                    "conditions": {
                       "label": "ADMIN_ACCOUNT",
                       "type": "contact",
-                      "fields": &#123;
+                      "fields": {
                         "or": [
-                          &#123;
+                          {
                             "label": "address.country",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "eq",
                                 "value": "DE"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;,
-                          &#123;
+                          },
+                          {
                             "label": "address.city",
                             "type": "string",
                             "constraints": [
-                              &#123;
+                              {
                                 "operator": "eq",
                                 "value": "Berlin"
-                              &#125;,
-                              &#123;
+                              },
+                              {
                                 "operator": "required"
-                              &#125;
+                              }
                             ]
-                          &#125;
+                          }
                         ],
                         "constraints": []
-                      &#125;,
+                      },
                       "constraints": [
-                        &#123;
+                        {
                           "operator": "required"
-                        &#125;
+                        }
                       ]
-                    &#125;
-                  &#125;,
-                  &#123;
+                    }
+                  },
+                  {
                     "operator": "maxlength",
                     "value": "255"
-                  &#125;
+                  }
                 ]
-              &#125;
+              }
             ]
-          &#125;,
+          },
           "description": "rule related to the domain owner",
           "constraints": [
-            &#123;
+            {
               "operator": "required"
-            &#125;
+            }
           ]
-        &#125;
+        }
       ],
       "constraints": []
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>

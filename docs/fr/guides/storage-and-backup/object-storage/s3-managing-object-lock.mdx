@@ -214,7 +214,7 @@ Pour appliquer une configuration de rétention sur un objet :
 aws s3api put-object-retention \
   --bucket `<bucket_name>` \
   --key `<object_key>` \
-  --retention '&#123;"Mode":"COMPLIANCE","RetainUntilDate":"2023-01-01T12:00:00.00Z"&#125;'
+  --retention '{"Mode":"COMPLIANCE","RetainUntilDate":"2023-01-01T12:00:00.00Z"}'
 ```
 
 :::info

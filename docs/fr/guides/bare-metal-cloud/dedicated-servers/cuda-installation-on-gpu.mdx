@@ -122,7 +122,7 @@ nano /etc/environment
 source /etc/environment
 ```
 ```sh
-export PATH=/usr/local/cuda-9.0/bin$&#123;PATH:+:$&#123;PATH&#125;&#125;
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
 ```
 ```sh
 nvcc --version
