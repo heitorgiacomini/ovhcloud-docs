@@ -38,7 +38,7 @@ Affinché un provider di servizi (cioè il tuo account OVHcloud) possa stabilire
 
 Il tuo Google Workspace agisce come provider di identità. Le richieste di autenticazione al tuo account OVHcloud saranno accettate solo se l'hai precedentemente dichiarato come organismo terzo di fiducia.
 
-Significa che deve essere aggiunto come `Web and mobile aps`.
+Significa che deve essere aggiunto come `Web and mobile apps`.
 
 Accedi all'interfaccia di gestione di [Google Workspace](https://admin.google.com) con il tuo account amministratore.
 
@@ -109,7 +109,7 @@ Per maggiori informazioni, clicca sul link situato sotto "URL del servizio SSO".
 
 <img className="thumbnail" alt="OVHcloud di connessione SSO Step 4" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_user_management_connect_sso_4.png" loading="lazy" />
 
-Il pulsante <code className="action">...</code> permette di aggiornare o eliminare l'SO e di consultarne i dettagli.
+Il pulsante <code className="action">...</code> permette di aggiornare o eliminare l'SSO e di consultarne i dettagli.
 
 <img className="thumbnail" alt="OVHcloud di connessione SSO step 5" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_user_management_connect_sso_5.png" loading="lazy" />
 
@@ -160,11 +160,14 @@ Verifica che il gruppo sia aggiunto al tuo account OVHcloud nella sezione "Grupp
 
 Quando ti connetti con un utente del gruppo **Intern**, il tuo account OVHcloud riconoscerà che l'utente ha il ruolo "UNPRIVILEGED" specificato dal suo gruppo.
 
-Attenzione: se concedi il privilegio `Nessuno`, sarà necessario assegnare i diritti a questo gruppo tramite le [politiche IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Se concedi il privilegio `Nessuno`, sarà necessario assegnare i diritti a questo gruppo tramite le [politiche IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 In seguito, potrai disconnetterti dal tuo account e collegarti al tuo Google Workspace come provider di identità.
 
-### Connexion via SSO
+### Connessione tramite SSO
 
 Nella <ManagerLink to="/">pagina di identificazione OVHcloud</ManagerLink>, inserisci il tuo [identificativo cliente](/guides/account-and-service-management/account-information/ovhcloud-account-creation#qual-e-il-mio-identificativo-cliente) seguito da **/idp** senza password e clicca sul pulsante <code className="action">Login</code>.
 
@@ -188,6 +191,6 @@ Adesso sei connesso con lo stesso identificativo cliente, ma tramite l'utente Go
 
 [Rendere sicuro il tuo account OVHcloud con la doppia autenticazione](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[Come utilizzare le politiche IAM dallo Spazio Cliente](/guides/account-and-service-management/account-information/iam-policy-ui).
+[Come utilizzare le politiche IAM dallo Spazio Cliente](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Contatta la nostra [Community di utenti](https://community.ovhcloud.com/community/en).

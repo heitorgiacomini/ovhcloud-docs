@@ -40,7 +40,7 @@ Votre Google Workspace agit en tant que fournisseur d'identité. Les demandes d'
 
 Cela signifie qu'il doit être ajouté en tant que `Web and mobile apps`.
 
-Connectez vous sur l'interface d'administration de [Google Workspace](https://admin.google.com) avec votre compte administrateur.
+Connectez-vous sur l'interface d'administration de [Google Workspace](https://admin.google.com) avec votre compte administrateur.
 
 Rendez vous dans <code className="action">Apps</code> puis <code className="action">Web and mobile apps</code>.
 
@@ -158,19 +158,22 @@ Vous pourrez ensuite vérifier que le groupe est ajouté à votre compte OVHclou
 
 <img className="thumbnail" alt="Groupes de gestion des utilisateurs Google Workspace" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_user_management_groups_3.png" loading="lazy" />
 
-Lorsque vous vous connecterez par la suite avec un utilisateur du group **Intern**, votre compte OVHcloud reconnaîtra que l'utilisateur a le rôle « UNPRIVILEGED » spécifié par son groupe.
+Lorsque vous vous connecterez par la suite avec un utilisateur du groupe **Intern**, votre compte OVHcloud reconnaîtra que l'utilisateur a le rôle « UNPRIVILEGED » spécifié par son groupe.
 
-Attention, si vous donnez le privilège `Aucun`, il sera nécessaire d'attribuer des droits à ce groupe via les [politiques IAM](/guides/account-and-service-management/account-information/iam-policy-ui)
+:::warning
+Si vous donnez le privilège `Aucun`, il sera nécessaire d'attribuer des droits à ce groupe via les [politiques IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 Vous pourrez ensuite vous déconnecter de votre compte et vous reconnecter avec votre Google Workspace en tant que fournisseur d'identité.
 
 ### Connexion via SSO
 
-Sur <ManagerLink to="/">la page d'identification OVHcloud</ManagerLink>, renseignez votre [identifiant](/guides/account-and-service-management/account-information/ovhcloud-account-creation#quel-est-mon-identifiant-client) suivi de **/idp** sans mot de passe et cliquez sur le bouton <code className="action">Login</code> .
+Sur <ManagerLink to="/">la page d'identification OVHcloud</ManagerLink>, renseignez votre [identifiant](/guides/account-and-service-management/account-information/ovhcloud-account-creation#quel-est-mon-identifiant-client) suivi de **/idp** sans mot de passe et cliquez sur le bouton <code className="action">Login</code>.
 
 <img className="thumbnail" alt="Connexion à la fédération OVHcloud" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_federation_login_1.png" loading="lazy" />
 
-Vous êtes ensuite redirigé vers votre page de connexion Google Workspace. Entrez un login/password d'un utilisateur de votre Google Workspace, puis cliquez sur le bouton <code className="action">Sign in</code> .
+Vous êtes ensuite redirigé vers votre page de connexion Google Workspace. Entrez un identifiant/mot de passe d'un utilisateur de votre Google Workspace, puis cliquez sur le bouton <code className="action">Sign in</code>.
 
 <img className="thumbnail" alt="OVHcloud Federation login Redirection Google Workspace" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_federation_login_2.png" loading="lazy" />
 

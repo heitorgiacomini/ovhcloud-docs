@@ -183,7 +183,7 @@ No campo <code className="action">Source attribute</code>, introduza <code class
 
 A sua interface deverá ser bastante semelhante à seguinte captura de ecrã:
 
-<img className="thumbnail" alt="Entra ID SSO entrado UPN" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_sso_9bis.png" loading="lazy" />
+<img className="thumbnail" alt="Entra ID SSO entrada UPN" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_sso_9bis.png" loading="lazy" />
 
 Clique em <code className="action">Save</code>
 
@@ -253,11 +253,14 @@ O grupo criado deve constar da lista.
 
 <img className="thumbnail" alt="Grupos de gestão de utilizadores Ovhcloud etapa 3" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_menu_3.png" loading="lazy" />
 
-Atenção: se conceder o privilégio `Nenhum`, será necessário atribuir permissões a este grupo através das [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Se conceder o privilégio `Nenhum`, será necessário atribuir permissões a este grupo através das [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 ### Ligação via SSO
 
-Na <ManagerLink to="/">página de identificação da OVHcloud</ManagerLink>, introduza o seu [identificador de cliente](/guides/account-and-service-management/account-information/ovhcloud-account-creation#qual-e-o-meu-identificador-de-cliente) seguido de **/idp** sem password e clique no botão <code className="action">Login</code>.
+Na <ManagerLink to="/">página de identificação da OVHcloud</ManagerLink>, introduza o seu [identificador de cliente](/guides/account-and-service-management/account-information/ovhcloud-account-creation#qual-e-o-meu-identificador-de-cliente) seguido de **/idp** sem palavra-passe e clique no botão <code className="action">Login</code>.
 
 <img className="thumbnail" alt="Ovhcloud SSO Login step 1" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_login_1.png" loading="lazy" />
 
@@ -273,7 +276,7 @@ Introduza a palavra-passe do utilizador da aplicação Entra ID e clique no bot�
 
 <img className="thumbnail" alt="Entra ID Login etapa 3" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_login_3.png" loading="lazy" />
 
-Já está ligado com o mesmo nichandle, mas através do utilizador Ative Diretory e utilizando o seu SSO de aplicação Entra ID.
+Já está ligado com o mesmo nichandle, mas através do utilizador Active Directory e utilizando o seu SSO de aplicação Entra ID.
 
 <img className="thumbnail" alt="Ovhcloud SSO Login step 2" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_login_2.png" loading="lazy" />
 
@@ -291,4 +294,4 @@ Se o seu e-mail não aparecer abaixo de `Connected via SSO`, isto significa que 
 
 [Como utilizar as políticas IAM a partir do seu Espaço Cliente](/guides/account-and-service-management/account-information/iam-policy-ui)
 
-Fale com nossa [comunidade de utilizadores](https://community.ovhcloud.com/community/en).
+Fale com a nossa [comunidade de utilizadores](https://community.ovhcloud.com/community/en).

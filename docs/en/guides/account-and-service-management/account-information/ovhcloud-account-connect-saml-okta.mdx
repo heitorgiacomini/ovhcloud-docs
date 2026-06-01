@@ -81,7 +81,7 @@ Then open the application and go to the "Assignments" tab and assign users or gr
 
 <img className="thumbnail" alt="Assign users" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-okta/OKTA_add_user.png" loading="lazy" />
 
-Before going to the next section, go to the "Sign On" tab, and access to the **Metadata URL** and save the provided XML file.
+Before going to the next section, go to the "Sign On" tab, and access the **Metadata URL** and save the provided XML file.
 
 <img className="thumbnail" alt="Retrieve metadata" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-okta/OKTA_retrieve_metadata.png" loading="lazy" />
 
@@ -138,7 +138,10 @@ You can then verify that the group is added to your OVHcloud account in the "Gro
 
 When you later log in with a user from the **Intern** group, your OVHcloud account will recognise that the user has the role "UNPRIVILEGED" specified by his group.
 
-Warning: if you give the `NONE` role, you will need to assign permissions to this group via the [IAM policies](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+If you give the `NONE` role, you will need to assign permissions to this group via the [IAM policies](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 You will then be able to log out of your account and log back in with your Okta as an identity provider.
 
@@ -162,10 +165,10 @@ You are now logged in with the same customer ID, but through your Okta user.
 
 [Securing my OVHcloud account and managing my personal information](/guides/account-and-service-management/account-information/all-about-username)
 
-[Setting and managing your account password](/guides/account-and-service-management/account-information/manage-ovh-password)
+[Setting and managing an account password](/guides/account-and-service-management/account-information/manage-ovh-password)
 
 [Securing your OVHcloud account with two-factor authentication](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[How to use IAM policies using the OVHcloud Control Panel](/guides/account-and-service-management/account-information/iam-policy-ui).
+[How to use IAM policies using the OVHcloud Control Panel](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Join our [community of users](https://community.ovhcloud.com/community/en).

@@ -153,7 +153,7 @@ Para mais informações, clique no link situado abaixo do `URL do serviço SSO`.
 
 <img className="thumbnail" alt="Ligação SSO OVHcloud etapa 5" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/ovhcloud_user_management_connect_sso_5.png" loading="lazy" />
 
-O botão <code className="action">...</code> permite atualizar ou eliminar o SO, e consultar os respetivos detalhes.
+O botão <code className="action">...</code> permite atualizar ou eliminar o SSO, e consultar os respetivos detalhes.
 
 <img className="thumbnail" alt="Ligação SSO OVHcloud etapa 6" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/ovhcloud_user_management_connect_sso_6.png" loading="lazy" />
 
@@ -204,17 +204,20 @@ De seguida, poderá verificar que o grupo é adicionado à sua conta OVHcloud na
 
 Quando se ligar ao utilizador Active Directory "John Doe", a sua conta OVHcloud reconhecerá que o utilizador tem o papel "REGULAR", especificado pelo seu grupo.
 
-Atenção: se conceder o privilégio `Nenhum`, será necessário atribuir permissões a este grupo através das [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Se conceder o privilégio `Nenhum`, será necessário atribuir permissões a este grupo através das [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 De seguida, poderá desligar a sua conta e voltar a ligar-se ao seu AD FS enquanto fornecedor de identidade.
 
 ### Ligação via SSO
 
-Na <ManagerLink to="/">página de identificação da OVHcloud</ManagerLink>, introduza o seu [identificador de cliente](/guides/account-and-service-management/account-information/ovhcloud-account-creation#qual-e-o-meu-identificador-de-cliente) seguido de **/idp** sem password e clique no botão <code className="action">Login</code>.
+Na <ManagerLink to="/">página de identificação da OVHcloud</ManagerLink>, introduza o seu [identificador de cliente](/guides/account-and-service-management/account-information/ovhcloud-account-creation#qual-e-o-meu-identificador-de-cliente) seguido de **/idp** sem palavra-passe e clique no botão <code className="action">Login</code>.
 
 <img className="thumbnail" alt="Ligação à Federação OVHcloud" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/ovhcloud_federation_login_1.png" loading="lazy" />
 
-De seguida, será redirecionado para a página de ligação AD FS. Introduza um login/password de um utilizador do seu Active Directory LDAP e clique no botão <code className="action">Sign in</code>.
+De seguida, será redirecionado para a página de ligação AD FS. Introduza um login/palavra-passe de um utilizador do seu Active Directory LDAP e clique no botão <code className="action">Sign in</code>.
 
 <img className="thumbnail" alt="OVHcloud Federation login Reencaminhamento AD FS" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/ovhcloud_federation_login_2.png" loading="lazy" />
 

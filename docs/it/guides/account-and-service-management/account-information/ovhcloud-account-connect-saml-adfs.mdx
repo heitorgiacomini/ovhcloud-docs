@@ -153,7 +153,7 @@ Per maggiori informazioni, clicca sul link sotto l'`URL del servizio SSO`.
 
 <img className="thumbnail" alt="OVHcloud di connessione SSO step 5" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/ovhcloud_user_management_connect_sso_5.png" loading="lazy" />
 
-Il pulsante <code className="action">...</code> permette di aggiornare o eliminare l'SO e di consultarne i dettagli.
+Il pulsante <code className="action">...</code> permette di aggiornare o eliminare l'SSO e di consultarne i dettagli.
 
 <img className="thumbnail" alt="OVHcloud di connessione SSO Step 6" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/ovhcloud_user_management_connect_sso_6.png" loading="lazy" />
 
@@ -204,7 +204,10 @@ Verifica che il gruppo sia aggiunto al tuo account OVHcloud nella sezione `Grupp
 
 Quando ti connetti con l'utente Active Directory "John Doe", il tuo account OVHcloud riconoscerà che l'utente ha il ruolo "REGULAR", specificato dal suo gruppo.
 
-Attenzione: se concedi il ruolo `Nessuno`, sarà necessario assegnare i diritti a questo gruppo tramite le [politiche IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Se concedi il ruolo `Nessuno`, sarà necessario assegnare i diritti a questo gruppo tramite le [politiche IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 In seguito, potrai disconnetterti dal tuo account e collegarti con il tuo AD FS come provider di identità.
 
@@ -232,6 +235,6 @@ Adesso sei connesso con lo stesso identificativo cliente, ma tramite l'utente Ac
 
 [Rendere sicuro il tuo account OVHcloud con la doppia autenticazione](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[Come utilizzare le politiche IAM dallo Spazio Cliente](/guides/account-and-service-management/account-information/iam-policy-ui).
+[Come utilizzare le politiche IAM dallo Spazio Cliente](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Contatta la nostra [Community di utenti](https://community.ovhcloud.com/community/en).

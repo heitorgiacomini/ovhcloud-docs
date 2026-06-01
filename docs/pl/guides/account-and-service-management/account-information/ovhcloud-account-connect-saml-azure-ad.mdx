@@ -13,7 +13,7 @@ Możesz użyć uwierzytelnienia **SSO** (*Single Sign-On*), aby zalogować się 
 ## Wymagania początkowe
 
 - Dostęp do ról **Administrator aplikacji** i **administrator użytkowników** usługi Entra ID
-- Posiadanie [konta OVHcloud](/guides/account-and-service-management/account-information/ovhcloud-account-creation)wferee
+- Posiadanie [konta OVHcloud](/guides/account-and-service-management/account-information/ovhcloud-account-creation)
 
 {/* CP-NAV-START:iam-saml-sso */}
 ---
@@ -80,11 +80,11 @@ W tym przykładzie, skupmy użytkownika **John Smith** na grupie **manager@ovhcl
 
 W interfejsie wybranej grupy kliknij <code className="action">Members</code> w menu po lewej stronie, a następnie kliknij <code className="action">Add members</code> w menu na górze.
 
-<img className="thumbnail" alt="Entra ID Group User Asignment Etap 1" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_group_user_assignment_1.png" loading="lazy" />
+<img className="thumbnail" alt="Entra ID Group User Assignment Etap 1" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_group_user_assignment_1.png" loading="lazy" />
 
 Wybierz użytkownika, który chcesz dodać do tej grupy, następnie kliknij przycisk <code className="action">Select</code>.
 
-<img className="thumbnail" alt="Entra ID Group User Asignment Etap 2" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_group_user_assignment_2.png" loading="lazy" />
+<img className="thumbnail" alt="Entra ID Group User Assignment Etap 2" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_group_user_assignment_2.png" loading="lazy" />
 
 Teraz użytkownik jest przypisany do grupy.
 
@@ -225,7 +225,7 @@ Kliknij przycisk <code className="action">Zatwierdź</code>.
 
 <img className="thumbnail" alt="Ovhcloud SSO step 1" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_1.png" loading="lazy" />
 
-Dodawanie aplikacji Entra ID do Twojego konta e-mail zostało ustanowione, ale należy dodać grupy do Twojego konta OVHcloud.
+Dodawanie aplikacji Entra ID do Twojego konta OVHcloud zostało ustanowione, ale należy dodać grupy do Twojego konta OVHcloud.
 
 :::warning
 Jeśli spróbujesz zalogować się przez SSO, prawdopodobnie wyświetli się komunikat błędu "`Not in valid groups`".
@@ -237,7 +237,7 @@ Twoje konto OVHcloud sprawdza, czy uwierzytelniony użytkownik należy do grupy 
 
 Aby rozwiązać tę sytuację, sprawdź atrybut "Group" zwrócony przez aplikację Entra ID: Pole **Object Id**.
 
-#### Sprawozdawczość grup OVHcloud
+#### Deklarowanie grup OVHcloud
 
 <img className="thumbnail" alt="Etap 2 Entra ID Group" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_group_2.png" loading="lazy" />
 
@@ -253,7 +253,10 @@ Utworzona grupa musi pojawić się na liście.
 
 <img className="thumbnail" alt="Grupy zarządzania użytkownikami Ovhcloud etap 3" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_menu_3.png" loading="lazy" />
 
-Uwaga: jeśli nadasz tej grupie uprawnienia `Brak`, konieczne będzie przypisanie uprawnień za pośrednictwem [zasad IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Jeśli nadasz tej grupie uprawnienia `Brak`, konieczne będzie przypisanie uprawnień za pośrednictwem [zasad IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 ### Logowanie przez SSO
 
@@ -289,6 +292,6 @@ Jeśli Twój e-mail nie wyświetla się poniżej `Connected via SSO`, oznacza to
 
 [Zabezpieczenie konta OVHcloud za pomocą weryfikacji dwuetapowej](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[Jak korzystać z polityki IAM w Panelu klienta](/guides/account-and-service-management/account-information/iam-policy-ui).
+[Jak korzystać z polityki IAM w Panelu klienta](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Dołącz do [grona naszych użytkowników](https://community.ovhcloud.com/community/en).

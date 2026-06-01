@@ -75,7 +75,7 @@ Haga clic en <code className="action">Finish</code>.
 
 <img className="thumbnail" alt="Añadir una aplicación SAML, etapa 4" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/google_workspace_web_mobile_add_saml_app_step4.png" loading="lazy" />
 
-Active el acceso a esta aplicación haciendo clic en <code className="action">OFF for everyone</code> en la sección "User Access". Haga clic en <code className="action">ON for everyone</code> y, seguidamente, en el botón <code className="action">SAVE.</code>
+Active el acceso a esta aplicación haciendo clic en <code className="action">OFF for everyone</code> en la sección "User Access". Haga clic en <code className="action">ON for everyone</code> y, seguidamente, en el botón <code className="action">SAVE</code>
 
 <img className="thumbnail" alt="Activar la aplicación para todos los usuarios" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/google_workspace_web_mobile_enable_app1.png" loading="lazy" />
 
@@ -118,7 +118,7 @@ Su Google Workspace se considera ahora proveedor de identidad de confianza. No o
 :::warning
 Si intenta conectarse por SSO, es probable que aparezca un mensaje de error `Not in valid groups`.
 
-Su cuenta de OVHcloud verifica si el usuario se autentifica pertenece a un grupo existente en la cuenta.
+Su cuenta de OVHcloud verifica si el usuario que se autentica pertenece a un grupo existente en la cuenta.
 
 :::
 
@@ -160,7 +160,10 @@ A continuación, compruebe que el grupo se añade a su cuenta de OVHcloud en la 
 
 Una vez que se conecte posteriormente con un usuario del grupo **interno**, su cuenta de OVHcloud reconocerá que el usuario tiene el rol "UNPRIVILEGED" especificado por su grupo.
 
-Atención: Si otorga el privilegio `Ninguno`, será necesario asignar permisos a este grupo a través de las [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Si otorga el privilegio `Ninguno`, será necesario asignar permisos a este grupo a través de las [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 A continuación, podrá desconectarse de su cuenta y reconectarse con su Google Workspace como proveedor de identidad.
 
@@ -188,6 +191,6 @@ Ahora está conectado con el mismo ID de cliente, pero a través de su usuario d
 
 [Proteger su cuenta de OVHcloud con la doble autenticación](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[Cómo utilizar las políticas IAM desde el área de cliente](/guides/account-and-service-management/account-information/iam-policy-ui).
+[Cómo utilizar las políticas IAM desde el área de cliente](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Interactúe con nuestra [comunidad de usuarios](https://community.ovhcloud.com/community/en).

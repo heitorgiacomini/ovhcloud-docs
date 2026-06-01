@@ -6,7 +6,7 @@ lastUpdated: 2024-10-02
 
 ## Objective
 
-This guide explains how to provide a user with the minimum rights to allow them to log in to the OVHcloud Control Panel.
+**This guide explains how to provide a user with the minimum rights to allow them to log in to the OVHcloud Control Panel.**
 
 ## Requirements
 
@@ -17,10 +17,10 @@ This guide explains how to provide a user with the minimum rights to allow them 
 {/* CP-NAV-START:iam-policies */}
 ---
 
-### Acesso à Área de Cliente OVHcloud
+### OVHcloud Control Panel Access
 
-- **Ligação direta:** <ManagerLink to="/#/iam/policies/myPolicies">IAM Policies</ManagerLink>
-- **Caminho de navegação:** <code className="action">Identidade, Segurança e Operações</code> > <code className="action">Políticas</code>
+- **Direct link:** <ManagerLink to="/#/iam/policies/myPolicies">IAM Policies</ManagerLink>
+- **Navigation path:** <code className="action">Identity, Security & Operations</code> > <code className="action">Policies</code>
 
 ---
 {/* CP-NAV-END:iam-policies */}
@@ -40,19 +40,19 @@ With these rights, a user will be able to log in to the OVHcloud Control Panel. 
 
 Using the UI, you can set up a policy with the following configuration:
 
-Add the identites you want to give access to.
+Add the identities you want to give access to.
 
 <img className="thumbnail" alt="Add identities" src="/images/account-and-service-management/account-information/iam-control-panel-access/add_identities.png" loading="lazy" />
 
 Add a `resourceType` "OVHcloud customer account" and add your account as a resource.
 
-<img className="thumbnail" alt="Account ressourceType" src="/images/account-and-service-management/account-information/iam-control-panel-access/account_ressourceType.png" loading="lazy" />
+<img className="thumbnail" alt="Account resourceType" src="/images/account-and-service-management/account-information/iam-control-panel-access/account_ressourceType.png" loading="lazy" />
 
 Then you can either use the managed permissions group `controlPanelAccess`
 
 <img className="thumbnail" alt="Control Panel Access" src="/images/account-and-service-management/account-information/iam-control-panel-access/controlPanelAccess.png" loading="lazy" />
 
-Or add the 4 rights listed above as an action.
+Or add the 4 rights listed above as actions.
 
 <img className="thumbnail" alt="Add actions" src="/images/account-and-service-management/account-information/iam-control-panel-access/add_actions.png" loading="lazy" />
 

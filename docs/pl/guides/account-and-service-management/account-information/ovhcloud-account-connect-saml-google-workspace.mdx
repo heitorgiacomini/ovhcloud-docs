@@ -65,7 +65,7 @@ Kliknij <code className="action">Continue</code>.
 
 <img className="thumbnail" alt="Dodaj aplikację SAML, etap 3" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/google_workspace_web_mobile_add_saml_app_step3.png" loading="lazy" />
 
-W etapie "Atrybut mapping" dodaj następującą mapping:
+W etapie "Attribute mapping" dodaj następującą mapping:
 
 - **First Name**: Imię
 - **Last Name**: Nazwisko
@@ -109,7 +109,7 @@ Aby uzyskać więcej informacji, kliknij link pod "URL usługi SSO".
 
 <img className="thumbnail" alt="Etap 4 OVHcloud logowania SSO" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_user_management_connect_sso_4.png" loading="lazy" />
 
-Przycisk <code className="action">...</code> pozwala na aktualizację lub usunięcie certyfikatu SSO i na zapoznanie się z jego szczegółami.
+Przycisk <code className="action">...</code> pozwala na aktualizację lub usunięcie połączenia SSO i na zapoznanie się z jego szczegółami.
 
 <img className="thumbnail" alt="Etap 5 OVHcloud logowania SSO" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_user_management_connect_sso_5.png" loading="lazy" />
 
@@ -160,7 +160,10 @@ Następnie możesz sprawdzić, czy grupa została dodana do Twojego konta OVHclo
 
 Po zalogowaniu się z użytkownikiem grupy **wewnętrznej** konto OVHcloud zostanie uznane za użytkownika spełniającego rolę "UNPRIVILEGED" określoną przez jego grupę.
 
-Uwaga: jeśli nadasz tej grupie uprawnienia `Brak`, konieczne będzie przypisanie uprawnień za pośrednictwem [zasad IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Jeśli nadasz tej grupie uprawnienia `Brak`, konieczne będzie przypisanie uprawnień za pośrednictwem [zasad IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 Następnie będziesz mógł wylogować się z konta i ponownie zalogować się do Google Workspace jako dostawca danych.
 
@@ -170,7 +173,7 @@ Na <ManagerLink to="/">stronie logowania OVHcloud</ManagerLink> wpisz [identyfik
 
 <img className="thumbnail" alt="Połączenie z federacją OVHcloud" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_federation_login_1.png" loading="lazy" />
 
-Zostaniesz przekierowany na stronę logowania Google Workspace. Wprowadź login/hasło użytkownika Twojego Google Workspace, następnie kliknij przycisk <code className="action">Sign in</code> .
+Zostaniesz przekierowany na stronę logowania Google Workspace. Wprowadź login/hasło użytkownika Twojego Google Workspace, następnie kliknij przycisk <code className="action">Sign in</code>.
 
 <img className="thumbnail" alt="OVHcloud Federacja Login Przekierowanie Google Workspace" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-google-workspace/ovhcloud_federation_login_2.png" loading="lazy" />
 
@@ -188,6 +191,6 @@ Teraz jesteś zalogowany tym samym identyfikatorem klienta, ale za pomocą użyt
 
 [Zabezpieczenie konta OVHcloud za pomocą weryfikacji dwuetapowej](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[Jak korzystać z polityki IAM w Panelu klienta](/guides/account-and-service-management/account-information/iam-policy-ui).
+[Jak korzystać z polityki IAM w Panelu klienta](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Dołącz do [grona naszych użytkowników](https://community.ovhcloud.com/community/en).

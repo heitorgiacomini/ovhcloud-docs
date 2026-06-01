@@ -6,7 +6,7 @@ lastUpdated: 2025-05-15
 
 ## Ziel
 
-Sie können die Authentifizierungsmethode **Single Sign-On** (SSO) verwenden, um sich in Ihren OVHcloud Kunden-Account einzuloggen. Um diese Verbindungen zu aktivieren, müssen Ihr Account und Ihr Entra ID (vormals Azure Active Directory) mithilfe von SAML-Authentifizierungen (*Security Serving Markup Language*) konfiguriert werden.
+Sie können die Authentifizierungsmethode **Single Sign-On** (SSO) verwenden, um sich in Ihren OVHcloud Kunden-Account einzuloggen. Um diese Verbindungen zu aktivieren, müssen Ihr Account und Ihr Entra ID (vormals Azure Active Directory) mithilfe von SAML-Authentifizierungen (*Security Assertion Markup Language*) konfiguriert werden.
 
 **Diese Anleitung erklärt, wie Sie Ihren OVHcloud Kunden-Account mit einem externen Entra ID verbinden.**
 
@@ -253,11 +253,14 @@ Die erstellte Gruppe sollte in der Liste erscheinen.
 
 <img className="thumbnail" alt="OVHcloud User Management Gruppen Schritt 3" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_menu_3.png" loading="lazy" />
 
-Achtung, wenn Sie die Berechtigung `Keine` erteilen, müssen Sie dieser Gruppe Rechte über die [IAM-Richtlinien](/guides/account-and-service-management/account-information/iam-policy-ui) zuweisen.
+:::warning
+Wenn Sie die Berechtigung `Keine` erteilen, müssen Sie dieser Gruppe Rechte über die [IAM-Richtlinien](/guides/account-and-service-management/account-information/iam-policy-ui) zuweisen.
+
+:::
 
 ### Verbindung via SSO
 
-Geben Sie auf der <ManagerLink to="/">OVHcloud Login-Seite</ManagerLink> Ihre [Kundenkennung](/guides/account-and-service-management/account-information/ovhcloud-account-creation#was-ist-meine-kundenkennung) ein, gefolgt von **/idp***. Klicken Sie ohne ein Passwort einzugeben auf <code className="action">Login</code>.
+Geben Sie auf der <ManagerLink to="/">OVHcloud Login-Seite</ManagerLink> Ihre [Kundenkennung](/guides/account-and-service-management/account-information/ovhcloud-account-creation#was-ist-meine-kundenkennung) ein, gefolgt von **/idp**. Klicken Sie ohne ein Passwort einzugeben auf <code className="action">Login</code>.
 
 <img className="thumbnail" alt="SSO Login step 1" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_login_1.png" loading="lazy" />
 
@@ -289,6 +292,6 @@ Wenn Ihre E-Mail nicht unterhalb von `Connected via SSO` angezeigt wird, haben S
 
 [Den OVHcloud Kunden-Account mit der Zwei-Faktor-Authentifizierung absichern](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[Verwendung von IAM-Richtlinie über Ihr Kundencenter](/guides/account-and-service-management/account-information/iam-policy-ui).
+[Verwendung von IAM-Richtlinie über Ihr Kundencenter](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Treten Sie unserer [User Community](https://community.ovhcloud.com/community/en) bei.

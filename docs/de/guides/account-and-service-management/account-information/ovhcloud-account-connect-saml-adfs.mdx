@@ -6,7 +6,7 @@ lastUpdated: 2025-05-15
 
 ## Ziel
 
-Sie können die Authentifizierungsmethode **Single Sign-On** (SSO) verwenden, um sich in Ihren OVHcloud Kunden-Account einzuloggen. Um diese Verbindungen zu aktivieren, müssen Ihr Account und Ihr **AD FS** (*Active Directory Federation Services*) mithilfe von SAML-Authentifizierungen (*Security Serving Markup Language*) konfiguriert werden.
+Sie können die Authentifizierungsmethode **Single Sign-On** (SSO) verwenden, um sich in Ihren OVHcloud Kunden-Account einzuloggen. Um diese Verbindungen zu aktivieren, müssen Ihr Account und Ihr **AD FS** (*Active Directory Federation Services*) mithilfe von SAML-Authentifizierungen (*Security Assertion Markup Language*) konfiguriert werden.
 
 **Diese Anleitung erklärt, wie Sie Ihren OVHcloud Kunden-Account mit einem externen Active Directory verbinden.**
 
@@ -75,7 +75,7 @@ Geben Sie einen Anzeigenamen für die Relying Party ein und klicken Sie auf den 
 
 <img className="thumbnail" alt="AD FS - Genehmigung hinzufügen - Schritt 3" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/adfs_add_relying_party_trust_3.png" loading="lazy" />
 
-Klicken Sie im <code className="action">Next</code> im Fenster der Zugriffskontrolle.
+Klicken Sie auf <code className="action">Next</code> im Fenster der Zugriffskontrolle.
 
 <img className="thumbnail" alt="AD FS - Genehmigung hinzufügen - Schritt 4" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/adfs_add_relying_party_trust_4.png" loading="lazy" />
 
@@ -93,7 +93,7 @@ Mit OVHcloud als hinzugefügter Relying Party sollten Sie sich bereits über ein
 :::
 
 
-#### Zuordnung derLDAP Attribute zu den SAML Attributen
+#### Zuordnung der LDAP Attribute zu den SAML Attributen
 
 Klicken Sie auf den Eintrag für OVHcloud im Bereich "Relying Party Trusts".
 
@@ -204,7 +204,10 @@ Anschließend können Sie überprüfen, ob die Gruppe zu Ihrem OVHcloud Account 
 
 Wenn Sie sich später mit dem Active Directory Benutzer "John Doe" verbinden, erkennt Ihr OVHcloud Account, dass der Benutzer die von seiner Gruppe definierte Rolle "REGULAR" hat.
 
-Achtung, wenn Sie die Berechtigung `Keine` wählen, müssen Sie dieser Gruppe Rechte über die [IAM-Richtlinien](/guides/account-and-service-management/account-information/iam-policy-ui) zuweisen.
+:::warning
+Wenn Sie die Berechtigung `Keine` wählen, müssen Sie dieser Gruppe Rechte über die [IAM-Richtlinien](/guides/account-and-service-management/account-information/iam-policy-ui) zuweisen.
+
+:::
 
 Anschließend können Sie sich von Ihrem Account ausloggen und sich mit Ihrem AD FS als Identity Provider neu verbinden.
 

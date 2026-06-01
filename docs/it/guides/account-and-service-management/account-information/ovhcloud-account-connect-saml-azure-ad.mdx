@@ -123,7 +123,7 @@ L'applicazione Entra ID è stata creata. Gli utenti che intendono effettuare le 
 #### Applicazione Entra ID - Destinazione degli utenti
 
 :::info
-Affinché un utente effettui un'autenticazione SSO a partire da un'applicazione Entra ID, deve essere aggiunta a questa applicazione. Di seguito trovi come aggiungere un utente a un'applicazione Entra ID.
+Affinché un utente effettui un'autenticazione SSO a partire da un'applicazione Entra ID, deve essere aggiunto a questa applicazione. Di seguito trovi come aggiungere un utente a un'applicazione Entra ID.
 
 Tuttavia, se disponi di **Entra ID Premium**, è preferibile aggiungere un gruppo di utenti piuttosto che utenti.
 
@@ -173,7 +173,7 @@ Nella sezione <code className="action">Attributes & Claims</code>, clicca sul pu
 
 <img className="thumbnail" alt="Entra ID SSO Step 9" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/azure_ad_sso_9.png" loading="lazy" />
 
-Aggiungere l'attributo UPN (User Principal Name) alle informazioni SAML per notificare a OVHcloud l'indirizzo e-mail dell'utente. Questo step è indispensabile.
+Aggiungere l'attributo UPN (User Principal Name) alle informazioni SAML per notificare a OVHcloud l'indirizzo email dell'utente. Questo step è indispensabile.
 
 Clicca su <code className="action">Add a new claim</code> nel menu in alto.
 
@@ -253,9 +253,12 @@ Il gruppo creato deve figurare sull'elenco.
 
 <img className="thumbnail" alt="Gruppi di gestione utenti Ovhcloud step 3" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-azure-ad/ovhcloud_sso_menu_3.png" loading="lazy" />
 
-Attenzione: se concedi il ruolo `Nessuno`, sarà necessario assegnare i diritti a questo gruppo tramite le [politiche IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Se concedi il ruolo `Nessuno`, sarà necessario assegnare i diritti a questo gruppo tramite le [politiche IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
 
-### Connexion via SSO
+:::
+
+### Connessione via SSO
 
 Nella <ManagerLink to="/">pagina di identificazione OVHcloud</ManagerLink>, inserisci il tuo [identificativo cliente](/guides/account-and-service-management/account-information/ovhcloud-account-creation#qual-e-il-mio-identificativo-cliente) seguito da **/idp** senza password e clicca sul pulsante <code className="action">Login</code>.
 
@@ -289,6 +292,6 @@ Se la tua email non compare sotto `Connected via SSO`, significa che non hai con
 
 [Rendere sicuro il tuo account OVHcloud con la doppia autenticazione](/guides/account-and-service-management/account-information/secure-ovhcloud-account-with-2fa)
 
-[Come utilizzare le politiche IAM dallo Spazio Cliente](/guides/account-and-service-management/account-information/iam-policy-ui).
+[Come utilizzare le politiche IAM dallo Spazio Cliente](/guides/account-and-service-management/account-information/iam-policy-ui)
 
 Contatta la nostra [Community di utenti](https://community.ovhcloud.com/community/en).

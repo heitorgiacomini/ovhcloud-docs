@@ -111,7 +111,7 @@ Haga clic en <code className="action">Next</code>.
 
 Introduzca un nombre de regla y establezca la tabla de correspondencias.
 
-Seleccione `Active Directory` como `Atribute store`.
+Seleccione `Active Directory` como `Attribute store`.
 
 :::info
 Los siguientes parámetros se pueden configurar libremente para que el proveedor de servicios pueda leer correctamente los datos LDAP Active Directory. Puede consultar la siguiente imagen, por ejemplo.
@@ -162,7 +162,7 @@ Su AD FS se considera ahora proveedor de identidad de confianza. No obstante, de
 :::warning
 Si intenta conectarse por SSO, es probable que aparezca un mensaje de error `Not in valid groups`.
 
-Su cuenta de OVHcloud verifica si el usuario se autentifica pertenece a un grupo existente en la cuenta.
+Su cuenta de OVHcloud verifica si el usuario que se autentica pertenece a un grupo existente en la cuenta.
 
 :::
 
@@ -177,7 +177,7 @@ Compruebe la tabla de correspondencias en AD FS :
 
 <img className="thumbnail" alt="Mapeo de aprobación de parte de confianza AD FS" src="/images/account-and-service-management/account-information/ovhcloud-account-connect-saml-adfs/adfs_relying_party_trusts_mapping_4.png" loading="lazy" />
 
-En este ejemplo, el atributo "Group" devuelto por el Active Directory para el usuario "John Doe" es "title" Esto corresponde al "job title" que es `manager@<my-domain>.com`.
+En este ejemplo, el atributo "Group" devuelto por el Active Directory para el usuario "John Doe" es "title". Esto corresponde al "job title" que es `manager@<my-domain>.com`.
 
 También puede comprobarlo en la declaración SAML:
 
@@ -204,7 +204,10 @@ A continuación, compruebe que el grupo se ha añadido a su cuenta de OVHcloud e
 
 Una vez que se conecte posteriormente con el usuario Active Directory "John Doe", su cuenta de OVHcloud reconocerá que el usuario tiene el rol `REGULAR`, especificado por su grupo.
 
-Atención: Si otorga el rol `Ninguno`, será necesario asignar permisos a este grupo a través de las [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+:::warning
+Si otorga el rol `Ninguno`, será necesario asignar permisos a este grupo a través de las [políticas IAM](/guides/account-and-service-management/account-information/iam-policy-ui).
+
+:::
 
 A continuación, podrá desconectarse de su cuenta y reconectarse con su AD FS como proveedor de identidad.
 
