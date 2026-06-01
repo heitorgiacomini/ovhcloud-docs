@@ -128,8 +128,8 @@ Este primeiro exemplo de script tem o efeito de reencaminhar todos os URL recebi
 
 ```bash
 RewriteEngine On
-RewriteCond %&#123;HTTPS&#125; off
-RewriteRule ^(.*)$ https://%&#123;HTTP_HOST&#125;%&#123;REQUEST_URI&#125; [L,R=301]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 ```
 
 Este segundo exemplo de script tem o efeito de transformar todos os URL recebidos via o protocolo *HTTP* em *HTTPS*, conservando intacto o resto do URL situado depois dos `://`.

@@ -81,7 +81,7 @@ You can set write concern for specific operations rather than globally.
 
 ```python
 # Specific write operation with WriteConcern
-result = db.collection.with_options(write_concern=WriteConcern("majority")).insert_one(&#123;"key": "value"&#125;)
+result = db.collection.with_options(write_concern=WriteConcern("majority")).insert_one({"key": "value"})
 ```
 
 ## We want your feedback!

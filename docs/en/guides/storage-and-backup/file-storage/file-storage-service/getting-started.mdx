@@ -113,18 +113,18 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     
     ```json
     [
-      &#123;
+      {
         "id": "581fad02-158d-4dc6-81f0-c1ec2794bbec",
         "name": "Ext-Net",
         "visibility": "public",
         "vlanId": null
-      &#125;,
-      &#123;
+      },
+      {
         "id": "[NETWORK_ID]",
         "name": "`<my-network-name>`",
         "visibility": "private",
         "vlanId": 2701
-      &#125;
+      }
     ]
     ```
     
@@ -141,7 +141,7 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     
     ```json
     [
-      &#123;
+      {
         "id": "[SUBNET_ID]",
         "name": "subnet-name",
         "cidr": "10.1.0.0/24",
@@ -149,16 +149,16 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
         "dhcpEnabled": true,
         "gatewayIp": "10.1.0.1",
         "allocationPools": [
-          &#123;
+          {
             "start": "10.1.0.2",
             "end": "10.1.0.254"
-          &#125;
+          }
         ],
         "hostRoutes": [],
         "dnsNameServers": [
           "1.1.1.1"
         ]
-      &#125;
+      }
     ]
     ```
     
@@ -218,20 +218,20 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     Example output:
     
     ```json
-    &#123;
+    {
       "capabilities": [
-        &#123;
+        {
           "enabled": true,
           "name": "`<my-share-name>`"
-        &#125;
+        }
       ],
       "createdAt": "2026-01-14T08:23:30.079Z",
       "description": "`<my-share-description>`",
       "exportLocations": [
-        &#123;
+        {
           "id": "string",
           "path": "10.1.0.12:/shares/share-abc12345-def6-4abc-8def-123456abcdef"
-        &#125;
+        }
       ],
       "id": "abc12345-def6-4abc-8def-123456abcdef",
       "isPublic": false,
@@ -242,7 +242,7 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
       "status": "available",
       "type": "standard-1az",
       "updatedAt": "2026-01-14T08:23:30.079Z"
-    &#125;
+    }
     ```
     
     **2\. Authorize a client VM**
@@ -256,14 +256,14 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     Example output:
     
     ```json
-    &#123;
+    {
       "accessLevel": "rw",
       "accessTo": "10.1.0.123",
       "createdAt": "2026-01-14T10:26:14.446Z",
       "id": "[ACL_ID]",
       "status": "active",
       "updatedAt": "2026-01-14T10:26:14.446Z"
-    &#125;
+    }
     ```
     
     Verify access to the NFS share from the authorized client VM:
@@ -1092,7 +1092,7 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
       resources:
         requests:
           storage: 150Gi
-      storageClassName: "" # &lt;--- Prevent default Cinder CSI usage
+      storageClassName: "" # <--- Prevent default Cinder CSI usage
       selector:
         matchExpressions:
         - key: name
@@ -1150,17 +1150,17 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     ```
     vim main.tf
     
-    terraform &#123;
-      required_providers &#123;
-        ovh = &#123;
+    terraform {
+      required_providers {
+        ovh = {
           source  = "ovh/ovh"
-        &#125;
+        }
     
-        openstack = &#123;
+        openstack = {
           source  = "terraform-provider-openstack/openstack"
-        &#125;
-      &#125;
-    &#125;
+        }
+      }
+    }
     ```
     
     This block ensures that Terraform uses the correct providers for managing OVH and OpenStack resources.
@@ -1188,12 +1188,12 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     Add the following resource to your `main.tf` to create a share network for your File Storage service:
     
     ```bash
-    resource "openstack_sharedfilesystem_sharenetwork_v2" "sharenetwork" &#123;
+    resource "openstack_sharedfilesystem_sharenetwork_v2" "sharenetwork" {
       name              = "`<YOUR_SHARE_NETWORK_NAME>`"
       region            = "`<YOUR_REGION_NAME>`"
       neutron_net_id    = data.openstack_networking_network_v2.private_network.id
       neutron_subnet_id = data.openstack_networking_subnet_v2.private_subnet.id
-    &#125;
+    }
     ```
     
     This resource creates a share network in OpenStack, associating it with your existing private network and subnet. It is required to provision and manage shared file systems.
@@ -1231,7 +1231,7 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     Example output:
     
     ```bash
-    &#123;'my-private-net': ['10.1.0.123', '57.123.88.111']&#125;
+    {'my-private-net': ['10.1.0.123', '57.123.88.111']}
     ```
     
     Use the private IP (e.g., `10.1.0.123`) to grant access to the NFS share:
@@ -1253,9 +1253,9 @@ It can be accessed via OVHcloud API, OpenStack CLI and API, Manila CSI, OVHcloud
     Add the following output block to your `main.tf` to retrieve the NFS share export path:
     
     ```bash
-    output "export_path" &#123;
+    output "export_path" {
       value = openstack_sharedfilesystem_share_v2.share.export_locations[0].path
-    &#125;
+    }
     ```
     
     This output provides the NFS export path, which can be used by client VMs to mount the share.

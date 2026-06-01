@@ -195,32 +195,32 @@ getTemperature(city);  // Aufrufende Funktion mit dem Parameter "city"
 
 // Ereignis zum Klick auf "Change City"
 let button = document.querySelector('#modify');
-button.addEventListener('click', () => &#123;
+button.addEventListener('click', () => {
     city = prompt('Choose a city');
     getTemperature(city);
-&#125;);
+});
 
 // API-Funktion unter Verwendung eines Objekts "XMLHttpRequest" für eine asynchrone Anfrage
-function getTemperature(city) &#123;
+function getTemperature(city) {
     let url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + apiKey + '&units=metric';
     let xhrQuery = new XMLHttpRequest();
     xhrQuery.open('GET', url);
     xhrQuery.responseType = 'json';
     xhrQuery.send();
 
-    xhrQuery.onload = function() &#123;
-        if (xhrQuery.readyState === XMLHttpRequest.DONE) &#123;
-            if (xhrQuery.status === 200) &#123;
+    xhrQuery.onload = function() {
+        if (xhrQuery.readyState === XMLHttpRequest.DONE) {
+            if (xhrQuery.status === 200) {
                 let city = xhrQuery.response.name;
                 let temperature = xhrQuery.response.main.temp;
                 document.querySelector('#city').textContent = city;
                 document.querySelector('#temperatureValue').textContent = temperature;
-            &#125; else &#123;
+            } else {
                 alert('A problem has occurred, please try later.');
-            &#125;
-        &#125;
-    &#125;;
-&#125;
+            }
+        }
+    };
+}
 ```
 
 ### Tests

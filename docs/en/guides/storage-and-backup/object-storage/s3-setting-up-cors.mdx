@@ -80,16 +80,16 @@ aws s3api put-bucket-cors --bucket my-media --cors-configuration file://cors.jso
 The cors.json file contains the following configuration:
 
 ```json
-&#123;
+{
    "CORSRules": [
-        &#123;
+        {
             "AllowedHeaders": ["Authorization"],
             "AllowedMethods": ["GET", "HEAD"],
             "AllowedOrigins": ["https://my-app.xyz"],
             "ExposeHeaders": ["Access-Control-Allow-Origin"]
-        &#125;
+        }
    ]
-&#125;
+}
 ```
 
 Basically, what has been done here is to tell the client application that the targeted bucket allows CORS requests only if:

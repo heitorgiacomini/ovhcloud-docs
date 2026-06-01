@@ -179,11 +179,11 @@ server {
 3\. Adicione um reencaminhamento automático `HTTP` para `HTTPS`:
 
 ```nginx
-server &#123;
+server {
     listen 80;
     server_name your_domain;
     return 301 https://$host$request_uri;
-&#125;
+}
 ```
 
 4\. Teste e reinicie o Nginx:

@@ -227,71 +227,71 @@ Configure an IAM policy that must contain the following elements: the service ac
 
     
     ```bash
-    cat &lt;<EOF | ovhcloud iam policy create --from-file -
-    &#123;
+    cat <<EOF | ovhcloud iam policy create --from-file -
+    {
       "description": "Trident CSI",
       "identities": [
         "urn:v1:eu:identity:credential:xx11111-ovh/oauth2-EU.xxxxxxxxxxxxxxxx"
       ],
       "name": "trident-policy",
-      "permissions": &#123;
+      "permissions": {
         "allow": [
-          &#123;
+          {
             "action": "storageNetApp:apiovh:get"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:serviceInfos/get"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/accessPath/get"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/acl/create"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/acl/delete"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/acl/get"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/create"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/delete"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/edit"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/extend"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/get"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/revertToSnapshot"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/snapshot/create"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/snapshot/delete"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/snapshot/edit"
-          &#125;,
-          &#123;
+          },
+          {
             "action": "storageNetApp:apiovh:share/snapshot/get"
-          &#125;
+          }
         ]
-      &#125;,
+      },
       "resources": [
-        &#123;
+        {
           "urn": "urn:v1:eu:resource:storageNetApp:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-        &#125;
+        }
       ]
-    &#125;
+    }
     EOF
     ```
     
@@ -387,7 +387,7 @@ Replace `clientID` and `clientSecret` values with the credentials obtained in st
 
 
 ```bash
-cat &lt;<EOF | kubectl create -n trident -f -
+cat <<EOF | kubectl create -n trident -f -
 apiVersion: v1
 kind: Secret
 metadata:

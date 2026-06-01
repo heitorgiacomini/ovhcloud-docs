@@ -129,13 +129,13 @@ You can then access your `nginx-ingress` at `http://[YOUR_LOAD_BALANCER_IP]` via
 Enter the following command to retrieve it:
 
 ```bash
-export INGRESS_URL=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='&#123;.status.loadBalancer.ingress[].ip&#125;')
+export INGRESS_URL=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[].ip}')
 ```
 
 You should have a content like this:
 
 ```console
-$ export INGRESS_URL=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='&#123;.status.loadBalancer.ingress[].ip&#125;')
+$ export INGRESS_URL=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[].ip}')
 echo Ingress URL: http://$INGRESS_URL/
 Ingress URL: http://51.178.69.190/
 ```
