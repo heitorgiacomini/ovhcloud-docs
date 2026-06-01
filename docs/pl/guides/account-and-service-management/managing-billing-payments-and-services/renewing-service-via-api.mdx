@@ -127,30 +127,30 @@ client.get('/service/12345/renew',
 Otrzymasz następującą odpowiedź:
      
 ```json
-&#123;
+{
   "expirationDate": "2018-05-16T15:49:06+02:00",
   "password": "aBcD",
   "date": "2018-05-15T15:49:06+02:00",
-  "priceWithTax": &#123;
+  "priceWithTax": {
     "value": 45.44
     "text": "45.44 \u20ac",
     "currencyCode": "EUR"
-  &#125;,
- "tax": &#123;
+  },
+ "tax": {
     "value": 7.57,
     "text": "7.57 \u20ac",
     "currencyCode": "EUR"
-  &#125;,
+  },
   "pdfUrl": "https://www.ovh.com/cgi-bin/order/displayOrder.cgi?orderId=123456789&orderPassword=aBcD",
   "orderId": 123456789,
   "url": "https://www.ovh.com/cgi-bin/order/displayOrder.cgi?orderId=123456789&orderPassword=aBcD",
-  "priceWithoutTax": &#123;
+  "priceWithoutTax": {
     "value": 37.87,
     "text": "37.87 \u20ac",
     "currencyCode": "EUR"
-  &#125;,
+  },
  "retractionDate": null
-&#125;
+}
 ```
 
 Następnie zamówienie można opłacić za pośrednictwem API `order`:
