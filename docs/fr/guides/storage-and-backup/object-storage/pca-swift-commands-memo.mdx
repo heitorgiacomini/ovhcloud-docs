@@ -156,13 +156,13 @@ swift post -H "X-Remove-Object-My-Custom-Key:" `<conteneur>` `<objet>`
 ### Définir l'ACL de lecture sur un conteneur
 
 ```bash
-swift post `<conteneur>` -r "$&#123;OS_TENANT_ID&#125;:*"
+swift post `<conteneur>` -r "${OS_TENANT_ID}:*"
 ```
 
 ### Définir l'ACL d'écriture sur un conteneur
 
 ```bash
-swift post `<conteneur>` -w "$&#123;OS_TENANT_ID&#125;:*"
+swift post `<conteneur>` -w "${OS_TENANT_ID}:*"
 ```
 
 ### Supprimer l'ACL de lecture sur un conteneur

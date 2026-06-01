@@ -98,9 +98,9 @@ L'API suivante permet de mettre à jour certaines configurations du nom de domai
 <Tabs>
   <Tab label="Exemple de requête">
     ```js
-    &#123;
+    {
       "nameServerType": "external" // (hosted ou external)
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -164,13 +164,13 @@ Pour avoir le détail d'un serveur de noms, il faut appeler l'API suivante :
 <Tabs>
   <Tab label="Exemple de réponse">
     ```js
-    &#123;
+    {
       "id": 33578504,
       "host": "ns16.ovh.net",
       "ip": null,
       "isUsed": true,
       "toDelete": false
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -220,23 +220,23 @@ L'API suivante permet d'ajouter de nouveaux serveurs de noms sur votre nom de do
 <Tabs>
   <Tab label="Exemple de requête">
     ```js
-    &#123;
+    {
       "nameServer": [
-        &#123;
+        {
           // Quand un registre comme eurid (.eu) ne supporte pas les hosts, on déclare directement les glue records ici
           "host": "ns1.test.eu",
           "ip": "140.2.113.151"
-        &#125;,
-        &#123;
+        },
+        {
           "host": "ns1.other-domain.eu"
-        &#125;
+        }
       ]
-    &#125;
+    }
     ```
   </Tab>
   <Tab label="Exemple de réponse">
     ```js
-    &#123;
+    {
       "id": 414283125,
       "status": "todo",
       "function": "DomainDnsUpdate",
@@ -247,7 +247,7 @@ L'API suivante permet d'ajouter de nouveaux serveurs de noms sur votre nom de do
       "canRelaunch": false,
       "canAccelerate": false,
       "canCancel": true
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -312,7 +312,7 @@ Il est aussi possible de supprimer un serveur de noms déclaré sur un nom de do
 <Tabs>
   <Tab label="Exemple de réponse">
     ```js
-    &#123;
+    {
       "id": 414283127,
       "status": "todo",
       "function": "DomainDnsUpdate",
@@ -323,7 +323,7 @@ Il est aussi possible de supprimer un serveur de noms déclaré sur un nom de do
       "canRelaunch": false,
       "canAccelerate": false,
       "canCancel": true
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -393,12 +393,12 @@ Pour avoir les détails d'un **glue record**, il faut récupérer le host et uti
 <Tabs>
   <Tab label="Exemple de réponse">
     ```js
-    &#123;
+    {
       "host": "ns1.test.com",
       "ips": [
           "140.2.113.151"
       ]
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -527,7 +527,7 @@ Vous pouvez appeler l'API suivante pour supprimer le **glue record** :
 <Tabs>
   <Tab label="Exemple de réponse">
     ```js
-    &#123;
+    {
       "id": 414283130,
       "status": "todo",
       "function": "DomainHostDelete",
@@ -538,7 +538,7 @@ Vous pouvez appeler l'API suivante pour supprimer le **glue record** :
       "canRelaunch": false,
       "canAccelerate": false,
       "canCancel": true
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>

@@ -369,23 +369,23 @@ Suivez les **5 étapes** en cliquant successivement sur chacun des 5 onglets ci-
     *Exemple de résultat :*
     
     ```console
-    &#123;
+    {
      "activeSelector": null,
      "autoconfig": true,
      "selectors": [
-       &#123;
+       {
          "selectorName": "ovhmo3456789-selector2",
          "status": "set",
          "cname": "ovhmo3456789-selector2._domainkey.mydomain.ovh CNAME ovhmo3456789-selector2._domainkey.123402.aj.dkim.mail.ovh.net."
-       &#125;,
-       &#123;
+       },
+       {
          "selectorName": "ovhmo3456789-selector1",
          "cname": "ovhmo3456789-selector1._domainkey.mydomain.ovh CNAME ovhmo3456789-selector1._domainkey.123403.aj.dkim.mail.ovh.net.",
          "status": "set"
-       &#125;
+       }
      ],
      "status": "modifying"
-    &#125;
+    }
     ```
     <br/>
     Dans l'exemple ci-dessus, la dernière ligne d'état `"status": "modifying"` signifie que la configuration est en cours. Patientez environ **10 minutes** et relancez l'appel API.
@@ -695,11 +695,11 @@ Suivez les **5 étapes** ci-dessous en cliquant sur chacun des onglets.
     *Exemple de saisie :*
     
     ```console
-    &#123;
+    {
        "autoEnableDKIM": false,
        "configureDkim": false,
        "selectorName": "ovhemp123456-selector1"
-    &#125;
+    }
     ```
     
     Cliquez sur <code className="action">EXECUTE</code> pour lancer la création du sélecteur.<br/>
@@ -856,7 +856,7 @@ Sélectionnez l'offre e-mail concernée dans les onglets suivants :
     
     ```console
     Not Found (404)
-    &#123; "message": "The requested object (selectorName = ovhemp123456-selector1) does not exist" &#125;
+    { "message": "The requested object (selectorName = ovhemp123456-selector1) does not exist" }
     ```
   </Tab>
   <Tab label="E-mail Pro">
@@ -908,12 +908,12 @@ Sélectionnez l'offre e-mail concernée parmi les onglets suivants :
     *Exemple de résultat :*
     
     ```console
-    &#123;
+    {
      "function": "domain/enableDKIM",
      "id": 123456789,
      "domain": "guidesteam.ovh",
      "status": "todo"
-    &#125;
+    }
     ```
   </Tab>
   <Tab label="Exchange">

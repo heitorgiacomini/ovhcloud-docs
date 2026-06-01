@@ -80,17 +80,17 @@ Vous pouvez créer un fichier nommé `object_storage_simple.tf` et écrire ce qu
 
 ```python
 # Créer un bucket Object Storage
-resource "ovh_cloud_project_storage" "my_bucket" &#123;
+resource "ovh_cloud_project_storage" "my_bucket" {
   service_name = "`<service_name>`" # Remplacer par votre OVHcloud project ID
   region_name  = "GRA" # Remplacer par la région voulue en majuscule.
   name         = "object-storage-simple"
-  versioning = &#123;
+  versioning = {
     status = "enabled"
-  &#125;
-  encryption = &#123;
+  }
+  encryption = {
     sse_algorithm = "AES256"
-  &#125;
-&#125;
+  }
+}
 ```
 
 Vous pouvez créer votre ressource en entrant la commande suivante :

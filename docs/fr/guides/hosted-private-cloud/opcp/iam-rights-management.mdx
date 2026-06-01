@@ -326,7 +326,7 @@ Cela permet de gérer vos accès de manière déclarative, reproductible et vers
 Exemple de ressource pour créer un utilisateur :
 
 ```hcl
-resource "keycloak_user" "john_doe" &#123;
+resource "keycloak_user" "john_doe" {
   realm_id = "master"
   username = "john.doe"
   enabled  = true
@@ -335,11 +335,11 @@ resource "keycloak_user" "john_doe" &#123;
   first_name = "John"
   last_name  = "Doe"
 
-  initial_password &#123;
+  initial_password {
     value     = "changeme"
     temporary = true
-  &#125;
-&#125;
+  }
+}
 ```
 
 Pour l'ensemble des ressources disponibles (utilisateurs, groupes, rôles, fédération, etc.), référez-vous à la [documentation du provider Keycloak](https://registry.terraform.io/providers/keycloak/keycloak/latest/docs/resources/user).

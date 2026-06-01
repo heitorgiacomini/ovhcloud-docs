@@ -163,22 +163,22 @@ aws s3api get-bucket-acl --bucket `<bucket_name>`
 ```
 
 ```json
-&#123;
-    "Owner": &#123;
+{
+    "Owner": {
         "DisplayName": "2171889990277389:user-xxxxxxxxxxxx",
         "ID": "2171889990277389:user-xxxxxxxxxxxx"
-    &#125;,
+    },
     "Grants": [
-        &#123;
-            "Grantee": &#123;
+        {
+            "Grantee": {
                 "DisplayName": "po-training:user-yyyyyyyyyy",
                 "ID": "po-training:user-yyyyyyyyyy",
                 "Type": "CanonicalUser"
-            &#125;,
+            },
             "Permission": "WRITE"
-        &#125;
+        }
     ]
-&#125;
+}
 ```
 
 #### Configurer les ACLs sur un objet

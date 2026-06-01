@@ -101,19 +101,19 @@ mkdir terraform-opcp && cd terraform-opcp
 Dans un fichier nommé `provider.tf`, ajoutez les lignes suivantes :
 
 ```hcl
-terraform &#123;
+terraform {
   required_version = ">= 1.0"
-  required_providers &#123;
-    openstack = &#123;
+  required_providers {
+    openstack = {
       source  = "terraform-provider-openstack/openstack"
       version = ">= 3.0.0"
-    &#125;
-  &#125;
-&#125;
+    }
+  }
+}
 
-provider "openstack" &#123;
+provider "openstack" {
   
-&#125;
+}
 ```
 
 Aucun paramètre n'est nécessaire dans le bloc <code className="action">provider</code> : le provider OpenStack récupère automatiquement les informations d'authentification depuis les variables d'environnement `OS_*`.

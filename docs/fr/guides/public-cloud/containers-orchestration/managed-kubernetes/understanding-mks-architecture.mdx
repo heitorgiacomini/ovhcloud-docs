@@ -278,7 +278,7 @@ Lors de la mise à jour des versions Kubernetes, MKS propose deux stratégies po
 |  +-------+                                                     | v1.34 |      |
 |  |Node 1 |  Pods déplacés                                      +---+---+      |
 |  |UPGRADE|  vers autres nodes               2. Cordon & Drain      |          |
-|  +---+---+                                     ancien node    &lt;----+          |
+|  +---+---+                                     ancien node    <----+          |
 |      |                                                                        |
 |      | 2. Mise à jour                         +-------+                       |
 |      v    composants                          |Node 3 |  3. Migrer pods       |
@@ -547,7 +547,7 @@ kind: Service
 metadata:
   name: my-service
   annotations:
-    # Requis pour Kubernetes &lt; 1.31
+    # Requis pour Kubernetes < 1.31
     loadbalancer.ovhcloud.com/class: octavia
     # Optionnel : choisir la taille du LB (small, medium, large, xl)
     loadbalancer.ovhcloud.com/flavor: small
@@ -644,7 +644,7 @@ MKS utilise le driver OpenStack Cinder CSI pour le stockage persistant :
 |           |                 |                                    |
 |           v                 v                                    |
 |  +------------------+     +------------------+                   |
-|  |       PVC        |&lt;--->|       PV         |                   |
+|  |       PVC        |<--->|       PV         |                   |
 |  | (Demande)        |     | (Provisionné)    |                   |
 |  +------------------+     +--------+---------+                   |
 |                                    |                             |
