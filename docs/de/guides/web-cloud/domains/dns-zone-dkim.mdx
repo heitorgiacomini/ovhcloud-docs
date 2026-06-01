@@ -371,23 +371,23 @@ Folgen Sie den **5 Schritten**, indem Sie nacheinander auf die Tabs klicken:
     *Beispielausgabe:*
     
     ```console
-    &#123;
+    {
      "activeSelector": null,
      "autoconfig": true,
      "selectors": [
-       &#123;
+       {
          "selectorName": "ovhmo3456789-selector2",
          "status": "set",
          "cname": "ovhmo3456789-selector2._domainkey.mydomain.ovh CNAME ovhmo3456789-selector2._domainkey.123402.aj.dkim.mail.ovh.net."
-       &#125;,
-       &#123;
+       },
+       {
          "selectorName": "ovhmo3456789-selector1",
          "cname": "ovhmo3456789-selector1._domainkey.mydomain.ovh CNAME ovhmo3456789-selector1._domainkey.123403.aj.dkim.mail.ovh.net.",
          "status": "set"
-       &#125;
+       }
      ],
      "status": "modifying"
-    &#125;
+    }
     ```
     <br/>
     Im obigen Beispiel bedeutet die letzte Statuszeile `"status": "modifying"`, dass die Konfiguration ausgeführt wird. Warten Sie ca. **10 Minuten**, und führen Sie den API-Aufruf erneut aus.
@@ -539,11 +539,11 @@ Folgen Sie den **5 Schritten**, indem Sie auf jeden Tab klicken.
     *Beispiel für den Eintrag:*
     
     ```console
-    &#123;
+    {
        "autoEnableDKIM": false,
        "configureDkim": false,
        "selectorName": "ovhex123456-selector1"
-    &#125;
+    }
     ```
     
     Klicken Sie auf <code className="action">EXECUTE</code>, um mit der Erstellung des Selektors zu beginnen.<br/>
@@ -853,7 +853,7 @@ Klicken Sie auf den Tab für Ihren Dienst:
     
     ```console
     Not Found (404)
-    &#123; "message": "The requested object (selectorName = ovhemp123456-selector1) does not exist" &#125;
+    { "message": "The requested object (selectorName = ovhemp123456-selector1) does not exist" }
     ```
   </Tab>
   <Tab label="E-Mail Pro">
@@ -907,12 +907,12 @@ Wählen Sie das relevante E-Mail-Angebot aus:
     *Beispiel für das Ergebnis:*
     
     ```console
-    &#123;
+    {
      "domain": "guidesteam.ovh",
      "id": 123456789,
      "function": "domain/enableDKIM",
      "status": "todo"
-    &#125;
+    }
     ```
   </Tab>
   <Tab label="Exchange">

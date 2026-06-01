@@ -128,8 +128,8 @@ Dieses erste Beispielskript leitet alle URLs, die über Port 80 mit *HTTP* empfa
 
 ```bash
 RewriteEngine On
-RewriteCond %&#123;HTTPS&#125; off
-RewriteRule ^(.*)$ https://%&#123;HTTP_HOST&#125;%&#123;REQUEST_URI&#125; [L,R=301]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 ```
 
 In diesem zweiten Beispielskript werden alle URLs, die über das *HTTP*-Protokoll empfangen wurden, in *HTTPS* umgewandelt, während der Rest der URL nach den `://`-Zeichen erhalten bleibt.
