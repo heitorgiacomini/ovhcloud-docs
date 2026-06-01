@@ -63,30 +63,30 @@ Una vez que el entorno esté listo y haya generado las claves, ya puede escribir
 Para obtener el serviceName (nombre de su cuenta de SMS) y enviar un SMS, puede utilizar el siguiente código (en caso de que solo tenga una cuenta):
 
 ```
-var ovh = require('ovh')(&#123;
+var ovh = require('ovh')({
   appKey: 'your_app_key',
   appSecret: 'your_app_secret',
   consumerKey: 'your_consumer_key'
-&#125;);
+});
  
  // Obtener el serviceName (nombre de la cuenta de SMS)
-ovh.request('GET', '/sms', function (err, serviceName) &#123;
-  if(err) &#123;
+ovh.request('GET', '/sms', function (err, serviceName) {
+  if(err) {
     console.log(err, serviceName);
-  &#125;
-  else &#123;
+  }
+  else {
     console.log("My SMS account is " + serviceName);
  
     // Enviar un simple SMS con un número corto utilizando el serviceName
-    ovh.request('POST', '/sms/' + serviceName + '/jobs', &#123;
+    ovh.request('POST', '/sms/' + serviceName + '/jobs', {
       message: 'Hello World!',
       senderForResponse: true,
       receivers: ['0034600000000']
-    &#125;, function (errsend, result) &#123;
+    }, function (errsend, result) {
       console.log(errsend, result);
-    &#125;);
-  &#125;
-&#125;);
+    });
+  }
+});
 ```
 
 Ejecute el script para enviar un primer SMS.
@@ -94,10 +94,10 @@ Ejecute el script para enviar un primer SMS.
 ```
 $ nodejs sms.js
 My SMS account is sms-XXXXXXX-1
-&#123; totalCreditsRemoved: 1,
+{ totalCreditsRemoved: 1,
   invalidReceivers: [],
   ids: [ 2700042‡ ],
-  validReceivers: [ '+34600000000' ] &#125;
+  validReceivers: [ '+34600000000' ] }
 ```
 
 En la respuesta se indica la cuenta de SMS (el serviceName), seguida del crédito consumido ( 1, correspondiente a un destinatario válido).
