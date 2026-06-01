@@ -1,10 +1,11 @@
 ---
 title: How to use the Bring Your Own IP feature (EN)
 description: Find out how to easily import your own IP as Additional IP to your OVHcloud account
-lastUpdated: 2026-02-19
+lastUpdated: 2026-06-01
 ---
 
 import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 
 ## Objective
@@ -172,55 +173,73 @@ To be able to slice/merge an existing IP block, it must be unused (i.e. in the p
 :::
 
 
-To slice a block, use the following API call:
+To segment your BYOIP block, follow these steps:
 
-<Api version="v1" section="/ip" method="POST" route={"/ip/\{ip\}/bringYourOwnIp/slice"} />
+<Tabs>
+  <Tab label="Via the OVHcloud Control Panel">
+    1. Navigate to the <code className="action">Public IP Addresses</code> page and locate your BYOIP block.
+    2. Click the <code className="action">⋮</code> button on the right side of the table.
+    3. Select <code className="action">Segment</code>.
+    4. Choose your desired **CIDR subnet mask** to define the size of the child blocks.
+    5. Review the preview of the generated blocks, then click <code className="action">Confirm</code> to finalize the segmentation.
+  </Tab>
+  <Tab label="Via the OVHcloud API">
+    <Api version="v1" section="/ip" method="POST" route={"/ip/\{ip\}/bringYourOwnIp/slice"} />
 
-Use the following parameters:
+    Use the following parameters:
 
-- ip: the IP block you want to slice, in CIDR notation.
-- slicingSize: the resulting size of the sliced blocks, expressed as a network prefix size, in bits. For example if you want to slice a /24 block into 2 smaller blocks of size /25, you should enter the value "25".
+    - ip: the IP block you want to slice, in CIDR notation.
+    - slicingSize: the resulting size of the sliced blocks, expressed as a network prefix size, in bits. For example if you want to slice a /24 block into 2 smaller blocks of size /25, you should enter the value "25".
 
-:::info
-This API call is asynchronous, the newly created blocks are made available shortly after the call. They will be usable as any other Additional IP block or individual address.
+    :::info
+    This API call is asynchronous, the newly created blocks are made available shortly after the call. They will be usable as any other Additional IP block or individual address.
+    :::
 
-:::
+    You can preview the resulting blocks that would be created for each block size, by using the following API call:
 
+    <Api version="v1" section="/ip" method="GET" route={"/ip/\{ip\}/bringYourOwnIp/slice"} />
 
-You can preview the resulting blocks that would be created for each block size, by using the following API call:
+    Use the following parameters:
 
-<Api version="v1" section="/ip" method="GET" route={"/ip/\{ip\}/bringYourOwnIp/slice"} />
+    - ip: the IP block you want to slice, in CIDR notation.
+  </Tab>
+</Tabs>
 
-Use the following parameters:
+To combine several child blocks into a parent block, follow these steps:
 
-- ip: the IP block you want to slice, in CIDR notation.
+<Tabs>
+  <Tab label="Via the OVHcloud Control Panel">
+    1. Navigate to the <code className="action">Public IP Addresses</code> page and locate one of the BYOIP block segments you want to combine.
+    2. Click the <code className="action">⋮</code> button on the right side of the table.
+    3. Select <code className="action">Combine</code>.
+    4. Choose the desired parent block.
+    5. Review the preview of the generated blocks, then click <code className="action">Confirm</code> to finalize the aggregation.
+  </Tab>
+  <Tab label="Via the OVHcloud API">
+    <Api version="v1" section="/ip" method="POST" route={"/ip/\{ip\}/bringYourOwnIp/aggregate"} />
 
-To merge back a block into a parent block, use this API call:
+    Use the following parameters:
 
-<Api version="v1" section="/ip" method="POST" route={"/ip/\{ip\}/bringYourOwnIp/aggregate"} />
+    - ip: the IP block you want to merge, in CIDR notation.
+    - aggregationIp: the resulting block, in CIDR notation.
 
-Use the following parameters:
+    The resulting block will be an aggregate of all its children blocks.
 
-- ip: the IP block you want to merge, in CIDR notation.
-- aggregationIp: the resulting block, in CIDR notation.
+    :::info
+    This API call is asynchronous, the re-aggregated blocks are made available shortly after the call.
+    :::
 
-The resulting block will be an aggregate of all its children blocks.
+    You can preview all the possible configurations of aggregated blocks for a given IP block, by using the following API call:
 
-:::info
-This API call is asynchronous, the re-aggregated blocks are made available shortly after the call.
+    <Api version="v1" section="/ip" method="GET" route={"/ip/\{ip\}/bringYourOwnIp/aggregate"} />
 
-:::
+    Use the following parameters:
 
+    - ip: the IP block you want to merge into a parent block, in CIDR notation.
 
-You can preview all the possible configurations of aggregated blocks for a given IP block, by using the following API call:
-
-<Api version="v1" section="/ip" method="GET" route={"/ip/\{ip\}/bringYourOwnIp/aggregate"} />
-
-Use the following parameters:
-
-- ip: the IP block you want to merge into a parent block, in CIDR notation.
-
-This call returns a list of possible aggregated blocks and, for each one of them, gives the list of children blocks to be merged back.
+    This call returns a list of possible aggregated blocks and, for each one of them, gives the list of children blocks to be merged back.
+  </Tab>
+</Tabs>
 
 **Limitations**:
 
