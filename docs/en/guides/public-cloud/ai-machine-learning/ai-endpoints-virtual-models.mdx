@@ -87,7 +87,7 @@ The following code samples provide a simple example on how to query our API with
     )
     
     def chat_completion(new_message: str) -> str:
-         history_openai_format = [&#123;"role": "user", "content": new_message&#125;]
+         history_openai_format = [{"role": "user", "content": new_message}]
          result = client.chat.completions.create(
              model="mistral@latest",
              messages=history_openai_format,
@@ -98,7 +98,7 @@ The following code samples provide a simple example on how to query our API with
     
     if __name__ == '__main__':
         model, message = chat_completion("Explain gravity for a 6 years old")
-        print(f"Model: &#123;model&#125;:", message)
+        print(f"Model: {model}:", message)
     ```
     
     Output:
@@ -117,19 +117,19 @@ The following code samples provide a simple example on how to query our API with
   </Tab>
   <Tab label="Curl">
     ```sh
-    curl https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions -H "Content-Type: application/json" -d '&#123; 
-      "messages": [&#123;
+    curl https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions -H "Content-Type: application/json" -d '{ 
+      "messages": [{
         "role": "user",
         "content": "What is the capital of France ?"
-      &#125;], "model": "llama@biggest?input_cost&lt;0.5",
+      }], "model": "llama@biggest?input_cost<0.5",
       "seed": 21, "max_tokens": 20
-    &#125;'
+    }'
     ```
     
     Output response:
     
     ```sh
-    &#123;"id":"chatcmpl-5df407ebdf23464f891b1b1d8cb3e76d","object":"chat.completion","created":1755007630,"model":"Llama-3.1-8B-Instruct","choices":[&#123;"index":0,"message":&#123;"role":"assistant","content":"The capital of France is Paris."&#125;,"finish_reason":"stop","logprobs":null&#125;],"usage":&#123;"prompt_tokens":42,"completion_tokens":8,"total_tokens":50&#125;&#125;
+    {"id":"chatcmpl-5df407ebdf23464f891b1b1d8cb3e76d","object":"chat.completion","created":1755007630,"model":"Llama-3.1-8B-Instruct","choices":[{"index":0,"message":{"role":"assistant","content":"The capital of France is Paris."},"finish_reason":"stop","logprobs":null}],"usage":{"prompt_tokens":42,"completion_tokens":8,"total_tokens":50}}
     ```
   </Tab>
 </Tabs>

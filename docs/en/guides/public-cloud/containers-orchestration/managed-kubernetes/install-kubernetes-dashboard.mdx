@@ -145,13 +145,13 @@ secret/admin-user-token created
 Next step is recovering the bearer token you will use to log in your Dashboard. Execute the following command:
 
 ```bash
-kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user-token | awk '&#123;print $1&#125;')
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user-token | awk '{print $1}')
 ```
 
 It should display something like:
 
 ```console
-$ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user-token | awk '&#123;print $1&#125;')
+$ kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user-token | awk '{print $1}')
 Name:         admin-user-token
 Namespace:    kubernetes-dashboard
 Labels:       `<none>`

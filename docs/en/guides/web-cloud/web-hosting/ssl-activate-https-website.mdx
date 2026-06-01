@@ -128,8 +128,8 @@ This first example of a script redirects all URLs that arrive via port 80 to *HT
 
 ```bash
 RewriteEngine On
-RewriteCond %&#123;HTTPS&#125; off
-RewriteRule ^(.*)$ https://%&#123;HTTP_HOST&#125;%&#123;REQUEST_URI&#125; [L,R=301]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 ```
 
 This second example of a script turns all URLs that arrive via the *HTTP* protocol into *HTTPS*, while leaving the rest of the URL after the `://` intact.

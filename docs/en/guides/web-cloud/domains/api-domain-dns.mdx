@@ -98,9 +98,9 @@ The following API allows to update some domain name setup, including the name se
 <Tabs>
   <Tab label="Request example">
     ```js
-    &#123;
+    {
       "nameServerType": "external" // (hosted or external)
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -164,13 +164,13 @@ To get the details of a name server, you need to call the following API:
 <Tabs>
   <Tab label="Response example">
     ```js
-    &#123;
+    {
       "id": 33578504,
       "host": "ns16.ovh.net",
       "ip": null,
       "isUsed": true,
       "toDelete": false
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -220,23 +220,23 @@ The following API allows you to add new name servers on your domain name:
 <Tabs>
   <Tab label="Request example">
     ```js
-    &#123;
+    {
       "nameServer": [
-        &#123;
+        {
           // When a registry like eurid (.eu) doesn't support hosts, we declare the glue records directly here
           "host": "ns1.test.eu",
           "ip": "140.2.113.151"
-        &#125;,
-        &#123;
+        },
+        {
           "host": "ns1.other-domain.eu"
-        &#125;
+        }
       ]
-    &#125;
+    }
     ```
   </Tab>
   <Tab label="Response example">
     ```js
-    &#123;
+    {
       "id": 414283125,
       "status": "todo",
       "function": "DomainDnsUpdate",
@@ -247,7 +247,7 @@ The following API allows you to add new name servers on your domain name:
       "canRelaunch": false,
       "canAccelerate": false,
       "canCancel": true
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -313,7 +313,7 @@ It is also possible to delete a name server declared on a domain name through th
 <Tabs>
   <Tab label="Response example">
     ```js
-    &#123;
+    {
       "id": 414283127,
       "status": "todo",
       "function": "DomainDnsUpdate",
@@ -324,7 +324,7 @@ It is also possible to delete a name server declared on a domain name through th
       "canRelaunch": false,
       "canAccelerate": false,
       "canCancel": true
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -395,12 +395,12 @@ To get the details of a **glue record**, you will have to retrieve the host and 
 <Tabs>
   <Tab label="Response example">
     ```js
-    &#123;
+    {
       "host": "ns1.test.com",
       "ips": [
           "140.2.113.151"
       ]
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>
@@ -530,7 +530,7 @@ Then you can call the following API to delete the **glue record**:
 <Tabs>
   <Tab label="Response example">
     ```js
-    &#123;
+    {
       "id": 414283130,
       "status": "todo",
       "function": "DomainHostDelete",
@@ -541,7 +541,7 @@ Then you can call the following API to delete the **glue record**:
       "canRelaunch": false,
       "canAccelerate": false,
       "canCancel": true
-    &#125;
+    }
     ```
   </Tab>
 </Tabs>

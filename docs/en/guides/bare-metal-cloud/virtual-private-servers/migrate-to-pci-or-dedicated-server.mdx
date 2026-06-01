@@ -170,7 +170,7 @@ Use the command line below to import the database you backed up in [step 1.2](#s
 In the example below, we use MySQL. Use the official DBMS documentation that you installed in the previous step to use the appropriate command line to import the database to your server.
 
 ```bash
-mysql -u user_name -p db_name &lt; root/to/database_backup.sql
+mysql -u user_name -p db_name < root/to/database_backup.sql
 ```
 
 Replace:
@@ -208,8 +208,8 @@ To associate your website with its domain or subdomain, configure a virtual host
            AllowOverride All
            Require all granted
        </Directory>
-       ErrorLog $&#123;APACHE_LOG_DIR&#125;/error.log
-       CustomLog $&#123;APACHE_LOG_DIR&#125;/access.log combined
+       ErrorLog ${APACHE_LOG_DIR}/error.log
+       CustomLog ${APACHE_LOG_DIR}/access.log combined
     </VirtualHost>
     ```
   </Tab>
@@ -244,19 +244,19 @@ To associate your website with its domain or subdomain, configure a virtual host
     In the configuration file, define your virtual host settings. Replace `your_domain.com` with the domain or subdomain associated with your website, and `/var/www/html` with the path to your website directory:
     
     ```console
-    server &#123;
+    server {
       listen 80;
       server_name your_domain.com;
       root /var/www/html;
     
-      location / &#123;
+      location / {
           index.html index.php;
           try_files $uri $uri/ =404;
-      &#125;
+      }
     
        error_log /var/log/nginx/error.log;
        access_log /var/log/nginx/access.log;
-    &#125;
+    }
     ```
   </Tab>
   <Tab label="Step 3">

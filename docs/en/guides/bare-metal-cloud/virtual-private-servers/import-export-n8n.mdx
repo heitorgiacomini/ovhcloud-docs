@@ -247,7 +247,7 @@ ssh <user>@<TARGET_VPS_IP>
 On your target VPS, restore the archive in the `.n8n` folder of the container:
 
 ```bash
-docker exec -i n8n sh -c 'tar xzvf - -C /home/node/.n8n' &lt; n8n-backup.tar.gz
+docker exec -i n8n sh -c 'tar xzvf - -C /home/node/.n8n' < n8n-backup.tar.gz
 ```
 
 #### Step 4 - Restart n8n
