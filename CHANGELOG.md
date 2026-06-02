@@ -7,6 +7,7 @@
 - **seo:** publish sitemap-help.xml and reference it in robots.txt (#84)
 
 ### Fixes
+- **data-platform:** restore clickable image links on Data Platform landing guide (#111)
 - **billing:** use bare community.ovhcloud.com link without locale suffix
 - **content:** decode HTML entities leaked into code blocks (batch 7 of 7)
 - **content:** decode HTML entities leaked into code blocks (batch 6 of 7)
@@ -19,7 +20,7 @@
 - **docs:** update weblinks
 
 ### Documentation
-- 1761 guides updated across de, en, es, fr, it, pl, pt
+- 1762 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.05.29
 
