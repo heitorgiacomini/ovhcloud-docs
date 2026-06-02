@@ -59,9 +59,9 @@ Następnie potwierdź zmianę typu rozliczenia:
 
 Po potwierdzeniu wyboru, natychmiast otrzymają Państwo miesięczny rachunek proporcjonalny. Następny rachunek będzie zawierał część stawki godzinowej z danego miesiąca (od 1. dnia miesiąca do zmiany) oraz nową opłatę miesięczną.
 
-### Z poziomu API Openstack
+### Z poziomu API OpenStack
 
-Podczas tworzenia instancji za pomocą API Openstack, o ile nie zostało to określone w skrypcie tworzenia, instancja jest automatycznie tworzona z abonamentem godzinowym. Aby przejść na abonament miesięczny, wprowadź następującą komendę:
+Podczas tworzenia instancji za pomocą API OpenStack, o ile nie zostało to określone w skrypcie tworzenia, instancja jest automatycznie tworzona z abonamentem godzinowym. Aby przejść na abonament miesięczny, wprowadź następującą komendę:
 
 ```bash
 openstack server set --property ovh-monthly-instance=1 "InstanceID"
@@ -80,7 +80,7 @@ Skorzystaj z następującego połączenia:
 
 ### Ze skryptu Terraform
 
-Jest to możliwe dzięki `metadata` [attribute](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2#metadata) z zasobu [openstack_compute_instance_v2](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2):
+Jest to możliwe dzięki `metadata` [atrybut](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2#metadata) z zasobu [openstack_compute_instance_v2](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/compute_instance_v2):
 
 ```terraform
 metadata = {
@@ -90,4 +90,4 @@ metadata = {
 
 ## Sprawdź również
 
-Dołącz do [grona naszych użytkowników](https://community.ovhcloud.com/community/en).
+Dołącz do [grona naszych użytkowników](https://community.ovhcloud.com/).
