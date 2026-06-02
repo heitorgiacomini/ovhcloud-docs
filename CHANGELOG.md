@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026.06.02
+
+### Features
+- **seo:** add titles and meta descriptions to overview pages (#82)
+- **seo:** publish sitemap-help.xml and reference it in robots.txt (#84)
+
+### Fixes
+- **billing:** use bare community.ovhcloud.com link without locale suffix
+- **content:** decode HTML entities leaked into code blocks (batch 7 of 7)
+- **content:** decode HTML entities leaked into code blocks (batch 6 of 7)
+- **content:** decode HTML entities leaked into code blocks (batch 5 of 7)
+- **content:** decode HTML entities leaked into code blocks (batch 4 of 7)
+- **content:** decode HTML entities leaked into code blocks (batch 3 of 7)
+- **content:** decode HTML entities leaked into code blocks (batch 2 of 7)
+- **content:** decode HTML entities leaked into code blocks (batch 1 of 7)
+- **content:** restore EN frontmatter on 4 Public Cloud guides
+
+### Documentation
+- 1754 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.05.29
 
 ### Features
