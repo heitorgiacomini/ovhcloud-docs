@@ -104,6 +104,7 @@ Public SSH keys added to your OVHcloud Control Panel will be available for Publi
 
 :::
 
+{/* CP-STEPS-START:import-ssh-key */}
 <Tabs>
   <Tab label="via the Control Panel">
     Open <code className="action">SSH Keys</code> in the left-hand menu under **Settings**. Click on the button <code className="action">Add an SSH key</code>.
@@ -171,6 +172,7 @@ Public SSH keys added to your OVHcloud Control Panel will be available for Publi
     Refer to the [Terraform guide for OVHcloud Public Cloud](/guides/public-cloud/cross-functional/how-to-use-terraform) for the initial provider setup.
   </Tab>
 </Tabs>
+{/* CP-STEPS-END:import-ssh-key */}
 
 ### Step 3: Prepare the network configuration
 
@@ -205,6 +207,7 @@ Find out more on the [Local Zones web page](https://www.ovhcloud.com/en-gb/publi
 
 ### Step 4: Create the instance
 
+{/* CP-STEPS-START:create-instance */}
 <Tabs>
   <Tab label="via the Control Panel">
     :::info
@@ -402,6 +405,7 @@ Find out more on the [Local Zones web page](https://www.ovhcloud.com/en-gb/publi
     Refer to the [Terraform guide for OVHcloud Public Cloud](/guides/public-cloud/cross-functional/how-to-use-terraform) for the initial provider setup and authentication.
   </Tab>
 </Tabs>
+{/* CP-STEPS-END:create-instance */}
 
 ### Step 5: Connect to the instance
 
@@ -419,6 +423,7 @@ If you have installed an **OS with application**, refer to our [guide on first s
 
 #### 5.1: Verify the instance status in the OVHcloud Control Panel
 
+{/* CP-STEPS-START:verify-instance-status */}
 Select <code className="action">Instances</code> in the left-hand navigation bar under **Compute**. Your instance is ready when the status is set to `Enabled` in the table. If the instance was recently created and has a different status, click on the "Refresh" button located next to the search filter.
 
 <img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
@@ -428,6 +433,7 @@ Click on the instance's name in this table to open the <code className="action">
 A **user with elevated permissions (*sudo*) is automatically created** on the instance. The username reflects the image installed, e.g "ubuntu", "debian", "fedora", etc. You can verify this on the right-hand side of the <code className="action">Dashboard</code> in the section **Networks**.
 
 <img className="thumbnail" alt="Instance dashboard" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect02.png" loading="lazy" />
+{/* CP-STEPS-END:verify-instance-status */}
 
 :::info
 Via the OVHcloud CLI, check the instance status and retrieve its IP address with:
@@ -551,9 +557,11 @@ The free and open-source software `Remmina Remote Desktop Client` is available f
 
 The VNC console allows you to connect to your instances even when other means of access are not available.
 
+{/* CP-STEPS-START:vnc-console-access */}
 Select <code className="action">Instances</code> in the left-hand navigation bar under **Compute**. Click on the instance name and open the tab <code className="action">VNC console</code>.
 
 <img className="thumbnail" alt="VNC console access in the Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-vnc-login.png" loading="lazy" />
+{/* CP-STEPS-END:vnc-console-access */}
 
 <Tabs>
   <Tab label="Instance with a GNU/Linux OS installed">
