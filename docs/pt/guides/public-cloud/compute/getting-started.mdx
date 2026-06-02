@@ -106,15 +106,13 @@ As chaves SSH públicas adicionadas à sua área de cliente OVHcloud estarão di
 
 <Tabs>
   <Tab label="Através da área de cliente">
-    Ligue-se à <ManagerLink to="/">área de cliente OVHcloud</ManagerLink>, aceda à secção <code className="action">Public Cloud</code> e selecione o projeto Public Cloud em questão.
+    Abra <code className="action">Chaves SSH</code> no menu à esquerda em **Parâmetros**. Clique no botão <code className="action">Adicionar chave SSH</code>.
 
     <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
 
-    Abra <code className="action">Chaves SSH</code> no menu à esquerda em **Parâmetros**. Clique no botão <code className="action">Adicionar chave SSH</code>.
+    Na nova janela, introduza um nome para a chave. Preencha o campo `Chave` com a sua cadeia de chave pública, por exemplo, a criada na [etapa 1](#etapa-1-criar-um-conjunto-de-chaves-ssh). Confirme clicando em <code className="action">Adicionar</code>.
 
     <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
-
-    Na nova janela, introduza um nome para a chave. Preencha o campo `Chave` com a sua cadeia de chave pública, por exemplo, a criada na [etapa 1](#etapa-1-criar-um-conjunto-de-chaves-ssh). Confirme clicando em <code className="action">Adicionar</code>.
 
     Agora pode selecionar esta chave na [Etapa 4](#etapa-4-criar-a-instancia) para a adicionar a uma nova instância.
   </Tab>
@@ -214,7 +212,7 @@ Para saber mais, consulte a [página Web das Local Zones](https://www.ovhcloud.c
 
     :::
 
-    Ligue-se à <ManagerLink to="/">área de cliente OVHcloud</ManagerLink>, aceda à secção <code className="action">Public Cloud</code> e selecione o projeto Public Cloud em questão. Na página **Página Inicial**, clique em <code className="action">Criar uma instância</code>.
+    Na página **Página Inicial**, clique em <code className="action">Criar uma instância</code>.
 
     **4.1 Nome**
 
@@ -421,8 +419,6 @@ Se instalou um **SO com aplicação**, consulte o nosso [guia de primeiros passo
 
 #### 5.1: Verificar o estado da instância na área de cliente
 
-Ligue-se à <ManagerLink to="/">área de cliente OVHcloud</ManagerLink>, aceda à secção <code className="action">Public Cloud</code> e selecione o projeto Public Cloud em questão.
-
 Selecione <code className="action">Instâncias</code> na barra de navegação à esquerda em **Compute**. A sua instância está pronta quando o estado está definido em `Ativado` na tabela. Se a instância tiver sido criada recentemente e tiver um estado diferente, clique no botão "Atualizar" junto do filtro de pesquisa.
 
 <img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
@@ -554,8 +550,6 @@ O software livre e open source `Remmina Remote Desktop Client` está disponível
 #### 5.4: Acesso consola VNC
 
 A consola VNC permite-lhe ligar-se às suas instâncias mesmo quando não estão disponíveis outros meios de acesso.
-
-Ligue-se à <ManagerLink to="/">área de cliente OVHcloud</ManagerLink>, aceda à secção <code className="action">Public Cloud</code> e selecione o projeto Public Cloud em questão.
 
 Selecione <code className="action">Instâncias</code> na barra de navegação à esquerda em **Compute**. Clique no nome da instância e abra o separador <code className="action">Consola VNC</code>.
 

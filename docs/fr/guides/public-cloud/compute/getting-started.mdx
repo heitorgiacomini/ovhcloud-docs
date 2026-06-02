@@ -17,7 +17,17 @@ Vous pourrez ensuite aller plus loin avec votre projet Public Cloud en fonction 
 ## Prérequis
 
 - Un [projet Public Cloud](https://www.ovhcloud.com/fr/public-cloud/) dans votre compte OVHcloud
-- Être connecté à l’<ManagerLink to="/">espace client OVHcloud</ManagerLink>
+
+{/* CP-NAV-START:publiccloud-projects */}
+---
+
+### Accès à l'espace client OVHcloud
+
+- **Lien direct :** <ManagerLink to="/#/pci/projects">Projets Public Cloud</ManagerLink>
+- **Pour accéder à vos services :** <code className="action">Public Cloud</code> > Sélectionnez votre projet
+
+---
+{/* CP-NAV-END:publiccloud-projects */}
 
 :::tip
 Bénéficiez de prix réduits en vous engageant sur une période de 1 à 36 mois sur vos ressources Public Cloud. Plus d’informations sur notre page [Savings Plans](https://www.ovhcloud.com/fr/public-cloud/savings-plan/).
@@ -96,15 +106,13 @@ Les clés SSH publiques ajoutées à votre espace client OVHcloud seront disponi
 
 <Tabs>
   <Tab label="Via l’espace client">
-    Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, rendez-vous dans la section <code className="action">Public Cloud</code> et sélectionnez le projet Public Cloud concerné.
+    Ouvrez <code className="action">Clés SSH</code> dans le menu de gauche sous **Paramètres**. Cliquez sur le bouton <code className="action">Ajouter une clé SSH</code>.
 
     <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
 
-    Ouvrez <code className="action">Clés SSH</code> dans le menu de gauche sous **Paramètres**. Cliquez sur le bouton <code className="action">Ajouter une clé SSH</code>.
+    Dans la nouvelle fenêtre, entrez un nom pour la clé. Remplissez le champ `Clé` avec votre chaîne de clé publique, par exemple celle créée à l'[étape 1](#etape-1-creer-un-jeu-de-cles-ssh). Confirmez en cliquant sur <code className="action">Ajouter</code>.
 
     <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
-
-    Dans la nouvelle fenêtre, entrez un nom pour la clé. Remplissez le champ `Clé` avec votre chaîne de clé publique, par exemple celle créée à l'[étape 1](#etape-1-creer-un-jeu-de-cles-ssh). Confirmez en cliquant sur <code className="action">Ajouter</code>.
 
     Vous pouvez dorénavant sélectionner cette clé à l'[Étape 4](#etape-4-creer-linstance) pour l'ajouter à une nouvelle instance.
   </Tab>
@@ -204,7 +212,7 @@ Pour en savoir plus, consultez la [page web des Local Zones](https://www.ovhclou
 
     :::
 
-    Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, rendez-vous dans la section <code className="action">Public Cloud</code> et sélectionnez le projet Public Cloud concerné. Sur la page **Accueil**, cliquez sur <code className="action">Créer une instance</code>.
+    Sur la page **Accueil**, cliquez sur <code className="action">Créer une instance</code>.
 
     **4.1 Nom**
 
@@ -411,8 +419,6 @@ Si vous avez installé un **OS avec application**, reportez-vous à notre [guide
 
 #### 5.1 : Vérifier l'état de l'instance dans l'espace client
 
-Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, rendez-vous dans la section <code className="action">Public Cloud</code> et sélectionnez le projet Public Cloud concerné.
-
 Sélectionnez <code className="action">Instances</code> dans la barre de navigation de gauche sous **Compute**. Votre instance est prête lorsque l'état est défini sur `Activé` dans le tableau. Si l'instance a été créée récemment et a un statut différent, cliquez sur le bouton « Actualiser » situé à côté du filtre de recherche.
 
 <img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
@@ -544,8 +550,6 @@ Le logiciel libre et open source `Remmina Remote Desktop Client` est disponible 
 #### 5.4 : accès console VNC
 
 La console VNC vous permet de vous connecter à vos instances même lorsque d'autres moyens d'accès ne sont pas disponibles.
-
-Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, rendez-vous dans la section <code className="action">Public Cloud</code> et sélectionnez le projet Public Cloud concerné.
 
 Sélectionnez <code className="action">Instances</code> dans la barre de navigation de gauche sous **Compute**. Cliquez sur le nom de l'instance et ouvrez l'onglet <code className="action">Console VNC</code>.
 
