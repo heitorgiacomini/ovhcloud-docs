@@ -1353,6 +1353,7 @@
                 + [Capabilities and Limitations of Analytics with Kafka](public-cloud/databases/kafka-capabilities)
                 + [Capabilities and Limitations of Analytics with Kafka Connect](public-cloud/databases/kafkaconnect-capabilities)
                 + [Capabilities and Limitations of Analytics with Kafka MirrorMaker](public-cloud/databases/mirrormaker-capabilities)
+                + [Available connectors for Kafka Connect](public-cloud/databases/kafkaconnect-available-connectors)
                 + [Automated Backups for Analytics](public-cloud/data-analytics/analytics/backups)
             + [Getting started](public-cloud-data-analytics-kafka-getting-started)
                 + [Getting started with Analytics with Kafka](public-cloud/databases/kafka-getting-started)
