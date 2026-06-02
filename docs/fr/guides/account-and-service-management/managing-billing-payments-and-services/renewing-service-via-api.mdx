@@ -16,7 +16,7 @@ Nativement, OVHcloud vous propose le renouvellement automatique de votre offre. 
 ## Prérequis
 
 - Être connecté aux [API OVHcloud](https://eu.api.ovh.com/).
-- Avoir créé ses identifiants pour l'API OVHcloud(/guides/manage-and-operate/api/first-steps).
+- Avoir créé ses [identifiants pour l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
 
 ## En pratique
 
@@ -51,7 +51,7 @@ import ovh
 client = ovh.Client()
      
 client.get('/service/12345/renew',
-includeOptions=False, // Include service s option(s) (type: boolean)
+includeOptions=False, // Include service's option(s) (type: boolean)
 )
 ```
      
@@ -100,7 +100,7 @@ Voici un exemple du retour que nous pouvons examiner, l'exemple étant pris sur 
  ]
 ```
 
-Référez-vous à l'API `renew`pour plus d'information sur le format de retour :
+Référez-vous à l'API `renew` pour plus d'information sur le format de retour :
 
 <Api version="v1" section="/service" method="GET" route={"/service/\{serviceId\}/renew"} />
 
@@ -200,7 +200,7 @@ def main():
         paymentMean='paypal',
         paymentMeanId=1234
     )
-:if __name__ == '__main__':
+if __name__ == '__main__':
  
     main()
  
@@ -208,4 +208,4 @@ def main():
 
 ## Aller plus loin
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovhcloud.com/community/fr).
+Échangez avec notre [communauté d'utilisateurs](https://community.ovhcloud.com/).

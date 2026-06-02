@@ -39,7 +39,7 @@ Per consultare le diverse strategie di rinnovo disponibili per un servizio, util
 
 Visualizzerai una lista di `RenewDescription` con due chiavi:
      
-* `reniewPeriod`: una durata di rinnovo (formattata ISO 8601)
+* `renewPeriod`: una durata di rinnovo (formattata ISO 8601)
 * `strategies`: una lista delle possibili strategie di rinnovo (`RenewStrategy`)
 
 Una `RenewStrategy` descrive il prezzo e la lista di servizi da rinnovare. Ad esempio, rinnovare un dominio è un tipo di strategia diversa rispetto a rinnovare un dominio e il relativo hosting. Le strategie mostrano quindi tutte le combinazioni possibili di un determinato servizio: servizi associati, opzioni, ecc...
@@ -51,7 +51,7 @@ import ovh
 client = ovh.Client()
      
 client.get('/service/12345/renew',
-includeOptions=False, // Include service s option(s) (type: boolean)
+includeOptions=False, // Include service's option(s) (type: boolean)
 )
 ```
      
@@ -200,7 +200,7 @@ def main():
         paymentMean='paypal',
         paymentMeanId=1234
     )
-:if __name__ == '__main__':
+if __name__ == '__main__':
  
     main()
  
@@ -208,4 +208,4 @@ def main():
 
 ## Per saperne di più
 
-Contatta la nostra [Community di utenti](https://community.ovhcloud.com/community/en).
+Contatta la nostra [Community di utenti](https://community.ovhcloud.com/).
