@@ -5,6 +5,7 @@ lastUpdated: 2026-05-27
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import Api from '@components/Api';
 
 ## Objetivo
 
@@ -107,7 +108,11 @@ Las claves SSH públicas añadidas al área de cliente de OVHcloud estarán disp
   <Tab label="Desde el área de cliente">
     Conéctese al <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink>, acceda a la sección <code className="action">Public Cloud</code> y seleccione el proyecto Public Cloud correspondiente.
 
+    <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
+
     Abra <code className="action">Claves SSH</code> en el menú de la izquierda en **Parámetros**. Haga clic en el botón <code className="action">Añadir una clave SSH</code>.
+
+    <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
 
     En la nueva ventana, introduzca un nombre para la clave. Rellene el campo `Clave` con su cadena de clave pública, por ejemplo, la creada en el [paso 1](#paso-1-crear-un-juego-de-claves-ssh). Confirme haciendo clic en <code className="action">Añadir</code>.
 
@@ -116,7 +121,7 @@ Las claves SSH públicas añadidas al área de cliente de OVHcloud estarán disp
   <Tab label="Desde la API de OVHcloud">
     Utilice la siguiente llamada para importar su clave SSH pública:
 
-    > **POST** `/cloud/project/{serviceName}/sshkey`
+    <Api version="v1" section="/cloud" method="POST" route={"/cloud/project/\{serviceName\}/sshkey"} />
 
     Parámetros:
 
@@ -287,7 +292,7 @@ Para más información, consulte la [página web de Local Zones](https://www.ovh
 
     Cree la instancia:
 
-    > **POST** `/cloud/project/{serviceName}/instance`
+    <Api version="v1" section="/cloud" method="POST" route={"/cloud/project/\{serviceName\}/instance"} />
 
     Parámetros principales:
 
@@ -420,9 +425,13 @@ Conéctese al <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink>, ac
 
 Seleccione <code className="action">Instancias</code> en la barra de navegación de la izquierda en **Compute**. La instancia está lista cuando el estado se establece en `Activado` en la tabla. Si la instancia se ha creado recientemente y tiene un estado diferente, haga clic en el botón "Actualizar" situado junto al filtro de búsqueda.
 
+<img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
+
 Haga clic en el nombre de la instancia en esta tabla para abrir el <code className="action">Panel de control</code>, donde puede encontrar toda la información relativa a la instancia. Para más información sobre las funciones disponibles en esta página, consulte nuestra guía sobre [la gestión de las instancias en el área de cliente](/guides/public-cloud/compute/first-steps-with-public-cloud-instance).
 
 Se creará automáticamente un **usuario con derechos elevados (*sudo*)** en la instancia. El nombre de usuario refleja la imagen instalada, por ejemplo "ubuntu", "debian", "fedora", etc. Puede comprobarlo en el <code className="action">Panel de control</code> en la sección **Redes**.
+
+<img className="thumbnail" alt="Instance dashboard" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect02.png" loading="lazy" />
 
 :::info
 A través de la CLI de OVHcloud, compruebe el estado y obtenga la dirección IP de su instancia con:
@@ -481,21 +490,31 @@ A continuación, complete la configuración inicial del sistema operativo Window
 <Tabs>
   <Tab label="1. Configuración regional">
     Configure su **país/región**, el **idioma preferido de Windows** y su **distribución de teclado**. Haga clic en el botón <code className="action">Siguiente</code> en la esquina inferior derecha.
+
+    <img className="thumbnail" alt="Windows locale settings" src="/images/assets/screens/other/windows/windows-locale.png" loading="lazy" />
   </Tab>
   <Tab label="2. Contraseña de administrador">
     Establezca una contraseña para su cuenta Windows `Administrator` y confírmela, y haga clic en <code className="action">Finalizar</code>.
+
+    <img className="thumbnail" alt="Set the Windows Administrator password" src="/images/assets/screens/other/windows/windows-admin.png" loading="lazy" />
   </Tab>
   <Tab label="3. Pantalla de conexión">
     Windows aplicará la configuración y mostrará la pantalla de inicio de sesión. Haga clic en el botón <code className="action">Send CtrlAltDel</code> en la esquina superior derecha para conectarse.
+
+    <img className="thumbnail" alt="Windows login screen in the VNC console" src="/images/assets/screens/other/windows/windows-vnc.png" loading="lazy" />
   </Tab>
   <Tab label="4. Inicio de sesión de administrador">
     Introduzca la contraseña `Administrator` que creó en el paso anterior y haga clic en el botón "Arrow".
+
+    <img className="thumbnail" alt="Windows Administrator login" src="/images/assets/screens/other/windows/windows-login.png" loading="lazy" />
   </Tab>
 </Tabs>
 
 ##### 5.3.2: Conéctese de forma remota desde Windows
 
 En su equipo Windows local, puede utilizar la aplicación cliente `Remote Desktop Connection` para conectarse a su instancia.
+
+<img className="thumbnail" alt="Remote Desktop Connection to the instance" src="/images/assets/screens/other/windows/windows-rdp.png" loading="lazy" />
 
 Introduzca la dirección IPv4 de su instancia, su identificador y su contraseña. Normalmente, aparece un mensaje de advertencia solicitándole que confirme la conexión debido a un certificado desconocido. Haga clic en <code className="action">Sí</code> para conectarse.
 
@@ -517,12 +536,18 @@ El software libre y open source `Remmina Remote Desktop Client` está disponible
 <Tabs>
   <Tab label="1. Conexión">
     Abra Remmina y asegúrese de que el protocolo de conexión está establecido en "RDP". Introduzca la dirección IPv4 de su instancia Public Cloud y pulse "Enter".
+
+    <img className="thumbnail" alt="Remmina connection to the instance" src="/images/public-cloud/compute/public-cloud-first-steps/24-rem-connect02.png" loading="lazy" />
   </Tab>
   <Tab label="2. Autenticación">
     Si aparece un mensaje de advertencia de certificado, haga clic en <code className="action">Yes</code>. Introduzca el nombre de usuario y la contraseña de Windows y haga clic en <code className="action">OK</code> para establecer la conexión.
+
+    <img className="thumbnail" alt="Remmina authentication" src="/images/public-cloud/compute/public-cloud-first-steps/24-rem-connect03.png" loading="lazy" />
   </Tab>
   <Tab label="3. Parámetros">
     Puede encontrar elementos útiles en la barra de herramientas de la izquierda. Por ejemplo, haga clic en el icono <code className="action">Toggle dynamic resolution update</code> para mejorar la resolución de la ventana.
+
+    <img className="thumbnail" alt="Remmina session settings" src="/images/public-cloud/compute/public-cloud-first-steps/24-rem-connect04.png" loading="lazy" />
   </Tab>
 </Tabs>
 
@@ -531,6 +556,8 @@ El software libre y open source `Remmina Remote Desktop Client` está disponible
 La consola VNC le permite conectarse a sus instancias incluso cuando otros medios de acceso no están disponibles.
 
 Seleccione <code className="action">Instancias</code> en la barra de navegación de la izquierda en **Compute**. Haga clic en el nombre de la instancia y abra la pestaña <code className="action">Consola VNC</code>.
+
+<img className="thumbnail" alt="VNC console access in the Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-vnc-login.png" loading="lazy" />
 
 <Tabs>
   <Tab label="Instancia con un SO GNU/Linux instalado">
