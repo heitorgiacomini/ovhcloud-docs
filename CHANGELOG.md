@@ -16,9 +16,10 @@
 - **content:** decode HTML entities leaked into code blocks (batch 2 of 7)
 - **content:** decode HTML entities leaked into code blocks (batch 1 of 7)
 - **content:** restore EN frontmatter on 4 Public Cloud guides
+- **docs:** update weblinks
 
 ### Documentation
-- 1754 guides updated across de, en, es, fr, it, pl, pt
+- 1761 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.05.29
 
