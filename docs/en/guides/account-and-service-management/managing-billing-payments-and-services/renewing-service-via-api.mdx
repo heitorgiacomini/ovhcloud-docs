@@ -11,7 +11,7 @@ import Api from '@components/Api';
 
 Natively, OVHcloud offers you the option of renewing your solution automatically. However, you can also use OVHcloud APIs to renew your services.
 
-**This guide will explain how to proceed with this renewal process.**
+**This guide explains how to renew your services via the OVHcloud API.**
 
 ## Requirements
 
@@ -51,7 +51,7 @@ import ovh
 client = ovh.Client()
      
 client.get('/service/12345/renew',
-includeOptions=False, // Include service s option(s) (type: boolean)
+includeOptions=False, // Include service's option(s) (type: boolean)
 )
 ```
      
@@ -200,7 +200,7 @@ def main():
         paymentMean='paypal',
         paymentMeanId=1234
     )
-:if __name__ == '__main__':
+if __name__ == '__main__':
  
     main()
  

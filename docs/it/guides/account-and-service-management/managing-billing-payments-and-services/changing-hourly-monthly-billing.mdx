@@ -1,6 +1,6 @@
 ---
 title: Public Cloud Compute - Passare dalla fatturazione oraria a quella mensile
-description: Scopri come modificare il tipo di fatturazione delle tua istanza Public Cloud
+description: Scopri come modificare il tipo di fatturazione della tua istanza Public Cloud
 lastUpdated: 2025-09-05
 ---
 
@@ -34,7 +34,7 @@ Non è possibile passare da una fatturazione mensile ad una oraria.  Per poterlo
 ### Accesso allo Spazio Cliente OVHcloud
 
 - **Link diretto:** <ManagerLink to="/#/pci/projects">Public Cloud Projects</ManagerLink>
-- **Percorso di navigazione:** <code className="action">Public Cloud</code> > Seleziona il tuo project
+- **Percorso di navigazione:** <code className="action">Public Cloud</code> > Seleziona il tuo progetto
 
 ---
 {/* CP-NAV-END:publiccloud-projects */}
@@ -59,9 +59,9 @@ Seleziona l’istanza per la quale desideri modificare la modalità di fatturazi
 
 In seguito a questa modifica, riceverete immediatamente una fattura mensile pro rata. La prossima fattura comprenderà la parte di tariffa oraria del mese (il 1° del mese fino al cambiamento) e il nuovo costo mensile.
 
-### Da API Openstack
+### Da API OpenStack
 
-Durante la creazione di un'istanza tramite l'API Openstack, tranne se specificato nello script di creazione, l'istanza viene creata automaticamente con una fatturazione oraria. Per effettuare il passaggio a un abbonamento mensile, esegui questo comando:
+Durante la creazione di un'istanza tramite l'API OpenStack, tranne se specificato nello script di creazione, l'istanza viene creata automaticamente con una fatturazione oraria. Per effettuare il passaggio a un abbonamento mensile, esegui questo comando:
 
 ```bash
 openstack server set --property ovh-monthly-instance=1 "InstanceID"

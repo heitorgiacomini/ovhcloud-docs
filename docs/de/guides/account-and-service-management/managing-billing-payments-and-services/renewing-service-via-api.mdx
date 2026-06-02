@@ -51,7 +51,7 @@ import ovh
 client = ovh.Client()
      
 client.get('/service/12345/renew',
-includeOptions=False, // Include service s option(s) (type: boolean)
+includeOptions=False, // Include service's option(s) (type: boolean)
 )
 ```
      
@@ -78,7 +78,7 @@ Und hier ein Beispiel eines Ergebnisses über einen bestimmten Zeitraum:
        },
        {
          "services": [
-           67890
+           67890,
            12345
            ],
            "price": {
@@ -114,7 +114,7 @@ Um einen neuen Bestellschein für die Verlängerung zu erstellen, müssen die zu
 import ovh
 client = ovh.Client()
  
-client.get('/service/12345/renew',
+client.post('/service/12345/renew',
     dryRun=False, // Indicates if renew order is generated (type: boolean)
     duration='P1Y',
     services=[
@@ -137,7 +137,7 @@ Woraufhin folgende Antwort ausgegeben wird:
     "currencyCode": "EUR"
   },
  "tax": {
-    "value": 7.57
+    "value": 7.57,
     "text": "7.57 \u20ac",
     "currencyCode": "EUR"
   },
@@ -200,7 +200,7 @@ def main():
         paymentMean='paypal',
         paymentMeanId=1234
     )
-:if __name__ == '__main__':
+if __name__ == '__main__':
  
     main()
  

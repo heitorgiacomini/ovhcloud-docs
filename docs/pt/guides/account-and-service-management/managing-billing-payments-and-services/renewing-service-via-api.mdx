@@ -7,7 +7,7 @@ lastUpdated: 2020-05-05
 import Api from '@components/Api';
 
 
-## Sumário
+## Objetivo
 
 Inerentemente, a OVHcloud oferece-lhe a renovação automática dos seus serviços. No entanto, é possível renová-los por meio das API.
 
@@ -44,14 +44,14 @@ Vai aparecer uma lista de `RenewDescription` com duas chaves:
 
 Uma `RenewStrategy` descreve um preço, bem como uma lista de serviços a renovar. Renovar um nome de domínio é uma estratégia; renovar um nome de domínio e o seu plano de armazenamento é outra. Portanto, as estratégias listam todas as combinações possíveis de um dado serviço: serviços associados, opções...
 
-Aqui fica um exemplo em Phyton para obter as informações de renovação:
+Aqui fica um exemplo em Python para obter as informações de renovação:
      
 ```python
 import ovh
 client = ovh.Client()
      
 client.get('/service/12345/renew',
-includeOptions=False, // Include service s option(s) (type: boolean)
+includeOptions=False, // Include service's option(s) (type: boolean)
 )
 ```
      
@@ -200,7 +200,7 @@ def main():
         paymentMean='paypal',
         paymentMeanId=1234
     )
-:if __name__ == '__main__':
+if __name__ == '__main__':
  
     main()
  
@@ -208,4 +208,4 @@ def main():
 
 ## Quer saber mais?
 
-Fale com nossa [comunidade de utilizadores](https://community.ovhcloud.com/community/en).
+Fale com a nossa [comunidade de utilizadores](https://community.ovhcloud.com/community/en).
