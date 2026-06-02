@@ -20,7 +20,7 @@
 - **docs:** update weblinks
 
 ### Documentation
-- 1762 guides updated across de, en, es, fr, it, pl, pt
+- 1784 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.05.29
 
