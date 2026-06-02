@@ -109,11 +109,7 @@ Public SSH keys added to your OVHcloud Control Panel will be available for Publi
   <Tab label="via the Control Panel">
     Open <code className="action">SSH Keys</code> in the left-hand menu under **Settings**. Click on the button <code className="action">Add an SSH key</code>.
 
-    <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
-
     In the new window, enter a name for the key. Fill in the `Key` field with your public key string, for example the one created in [Step 1](#step-1-create-an-ssh-key-set). Confirm by clicking <code className="action">Add</code>.
-
-    <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
 
     You can now select this key in [Step 4](#step-4-create-the-instance) to add it to a new instance.
   </Tab>
@@ -426,13 +422,10 @@ If you have installed an **OS with application**, refer to our [guide on first s
 {/* CP-STEPS-START:verify-instance-status */}
 Select <code className="action">Instances</code> in the left-hand navigation bar under **Compute**. Your instance is ready when the status is set to `Enabled` in the table. If the instance was recently created and has a different status, click on the "Refresh" button located next to the search filter.
 
-<img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
-
 Click on the instance's name in this table to open the <code className="action">Dashboard</code> on which you can find all information about the instance. To learn more about the functions available on this page, consult our guide on [managing instances in the Control Panel](/guides/public-cloud/compute/first-steps-with-public-cloud-instance).
 
 A **user with elevated permissions (*sudo*) is automatically created** on the instance. The username reflects the image installed, e.g "ubuntu", "debian", "fedora", etc. You can verify this on the right-hand side of the <code className="action">Dashboard</code> in the section **Networks**.
 
-<img className="thumbnail" alt="Instance dashboard" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect02.png" loading="lazy" />
 {/* CP-STEPS-END:verify-instance-status */}
 
 :::info
@@ -560,7 +553,6 @@ The VNC console allows you to connect to your instances even when other means of
 {/* CP-STEPS-START:vnc-console-access */}
 Select <code className="action">Instances</code> in the left-hand navigation bar under **Compute**. Click on the instance name and open the tab <code className="action">VNC console</code>.
 
-<img className="thumbnail" alt="VNC console access in the Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-vnc-login.png" loading="lazy" />
 {/* CP-STEPS-END:vnc-console-access */}
 
 <Tabs>

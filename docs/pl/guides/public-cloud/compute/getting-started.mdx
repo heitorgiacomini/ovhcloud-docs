@@ -108,11 +108,7 @@ Publiczne klucze SSH dodane do Panelu klienta OVHcloud będą dostępne dla usł
   <Tab label="W Panelu klienta">
     Otwórz <code className="action">Klucze SSH</code> w menu po lewej stronie, w sekcji **Ustawienia**. Kliknij przycisk <code className="action">Dodaj klucz SSH</code>.
 
-    <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
-
     W nowym oknie wpisz nazwę klucza. Wypełnij pole `Klucz` ciągiem klucza publicznego, na przykład kluczem utworzonym w [Kroku 1](#krok-1-tworzenie-zestawu-kluczy-ssh). Potwierdź, klikając <code className="action">Dodaj</code>.
-
-    <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
 
     Możesz teraz wybrać ten klucz w [Kroku 4](#krok-4-tworzenie-instancji), aby dodać go do nowej instancji.
   </Tab>
@@ -421,13 +417,9 @@ Jeśli zainstalowałeś **system OS z aplikacją**, zapoznaj się z naszym [prze
 
 Wybierz <code className="action">Instancje</code> na pasku nawigacyjnym po lewej stronie, w sekcji **Compute**. Twoja instancja jest gotowa, gdy w tabeli stan jest ustawiony na `Włączony`. Jeśli instancja została niedawno utworzona i ma inny stan, kliknij przycisk "Odśwież" znajdujący się obok filtru wyszukiwania.
 
-<img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
-
 Kliknij nazwę instancji w tej tabeli, aby otworzyć <code className="action">Dashboard</code>, na którym znajdziesz wszystkie informacje dotyczące instancji. Aby dowiedzieć się więcej o funkcjach dostępnych na tej stronie, zapoznaj się z naszym przewodnikiem dotyczącym [zarządzania instancjami w Panelu klienta](/guides/public-cloud/compute/first-steps-with-public-cloud-instance).
 
 Na instancji **automatycznie tworzony jest użytkownik z podwyższonymi uprawnieniami (*sudo*)**. Nazwa użytkownika odzwierciedla zainstalowany obraz, np. "ubuntu", "debian", "fedora", itp. Możesz to sprawdzić po prawej stronie <code className="action">Dashboard</code> w sekcji **Sieci**.
-
-<img className="thumbnail" alt="Instance dashboard" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect02.png" loading="lazy" />
 
 :::info
 Za pomocą OVHcloud CLI sprawdź stan instancji i pobierz jej adres IP:
@@ -552,8 +544,6 @@ Wolne oprogramowanie open source `Remmina Remote Desktop Client` jest dostępne 
 Konsola VNC pozwala na łączenie się z instancjami, nawet jeśli inne metody dostępu nie są dostępne.
 
 Wybierz <code className="action">Instancje</code> na pasku nawigacyjnym po lewej stronie, w sekcji **Compute**. Kliknij nazwę instancji i otwórz kartę <code className="action">Konsola VNC</code>.
-
-<img className="thumbnail" alt="VNC console access in the Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-vnc-login.png" loading="lazy" />
 
 <Tabs>
   <Tab label="Instancja z zainstalowanym systemem GNU/Linux">

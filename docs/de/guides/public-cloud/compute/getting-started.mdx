@@ -108,11 +108,7 @@ Die in Ihrem OVHcloud Kundencenter hinzugefügten öffentlichen SSH-Schlüssel s
   <Tab label="Über das Kundencenter">
     Öffnen Sie <code className="action">SSH-Schlüssel</code> im linken Menü unter **Einstellungen**. Klicken Sie auf den Button <code className="action">SSH-Schlüssel hinzufügen</code>.
 
-    <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
-
     Geben Sie im neuen Fenster einen Namen für den Schlüssel ein. Füllen Sie das Feld `Schlüssel` mit der Zeichenfolge Ihres öffentlichen Schlüssels aus, beispielsweise dem in [Schritt 1](#schritt-1-ssh-schlusselpaar-erstellen) erstellten. Bestätigen Sie, indem Sie auf <code className="action">Hinzufügen</code> klicken.
-
-    <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
 
     Sie können diesen Schlüssel nun in [Schritt 4](#schritt-4-instanz-erstellen) auswählen, um ihn einer neuen Instanz hinzuzufügen.
   </Tab>
@@ -421,13 +417,9 @@ Wenn Sie ein **Betriebssystem mit Anwendung** installiert haben, beachten Sie un
 
 Wählen Sie <code className="action">Instanzen</code> in der linken Navigationsleiste unter **Compute** aus. Ihre Instanz ist bereit, wenn der Status in der Tabelle `Aktiviert` anzeigt. Wenn die Instanz kürzlich erstellt wurde und einen anderen Status hat, klicken Sie auf den Button „Aktualisieren" neben dem Suchfilter.
 
-<img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
-
 Klicken Sie auf den Instanznamen in dieser Tabelle, um das <code className="action">Dashboard</code> zu öffnen, auf dem Sie alle Informationen zur Instanz finden. Weitere Informationen zu den auf dieser Seite verfügbaren Funktionen finden Sie in unserer Anleitung zur [Verwaltung von Instanzen im Kundencenter](/guides/public-cloud/compute/first-steps-with-public-cloud-instance).
 
 Ein **Benutzer mit erhöhten Rechten (*sudo*) wird automatisch auf der Instanz erstellt**. Der Benutzername entspricht dem installierten Image, z.B. „ubuntu", „debian", „fedora", etc. Sie können dies auf der rechten Seite des <code className="action">Dashboard</code> im Abschnitt **Netzwerke** überprüfen.
-
-<img className="thumbnail" alt="Instance dashboard" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect02.png" loading="lazy" />
 
 :::info
 Über die OVHcloud CLI können Sie den Status der Instanz überprüfen und ihre IP-Adresse abrufen mit:
@@ -552,8 +544,6 @@ Die freie Open-Source-Software `Remmina Remote Desktop Client` ist für viele GN
 Mit der VNC-Konsole können Sie sich mit Ihren Instanzen verbinden, auch wenn keine anderen Zugriffsmöglichkeiten verfügbar sind.
 
 Wählen Sie <code className="action">Instanzen</code> in der linken Navigationsleiste unter **Compute** aus. Klicken Sie auf den Instanznamen und öffnen Sie den Tab <code className="action">VNC-Konsole</code>.
-
-<img className="thumbnail" alt="VNC console access in the Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-vnc-login.png" loading="lazy" />
 
 <Tabs>
   <Tab label="Instanz mit GNU/Linux Betriebssystem">

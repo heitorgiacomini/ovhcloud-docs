@@ -108,11 +108,7 @@ Las claves SSH públicas añadidas al área de cliente de OVHcloud estarán disp
   <Tab label="Desde el área de cliente">
     Abra <code className="action">Claves SSH</code> en el menú de la izquierda en **Parámetros**. Haga clic en el botón <code className="action">Añadir una clave SSH</code>.
 
-    <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
-
     En la nueva ventana, introduzca un nombre para la clave. Rellene el campo `Clave` con su cadena de clave pública, por ejemplo, la creada en el [paso 1](#paso-1-crear-un-juego-de-claves-ssh). Confirme haciendo clic en <code className="action">Añadir</code>.
-
-    <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
 
     Ahora puede seleccionar esta clave en el [Paso 4](#paso-4-crear-la-instancia) para añadirla a una nueva instancia.
   </Tab>
@@ -421,13 +417,9 @@ Si ha instalado un **SO con aplicación**, consulte nuestra [guía sobre los pri
 
 Seleccione <code className="action">Instancias</code> en la barra de navegación de la izquierda en **Compute**. La instancia está lista cuando el estado se establece en `Activado` en la tabla. Si la instancia se ha creado recientemente y tiene un estado diferente, haga clic en el botón "Actualizar" situado junto al filtro de búsqueda.
 
-<img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
-
 Haga clic en el nombre de la instancia en esta tabla para abrir el <code className="action">Panel de control</code>, donde puede encontrar toda la información relativa a la instancia. Para más información sobre las funciones disponibles en esta página, consulte nuestra guía sobre [la gestión de las instancias en el área de cliente](/guides/public-cloud/compute/first-steps-with-public-cloud-instance).
 
 Se creará automáticamente un **usuario con derechos elevados (*sudo*)** en la instancia. El nombre de usuario refleja la imagen instalada, por ejemplo "ubuntu", "debian", "fedora", etc. Puede comprobarlo en el <code className="action">Panel de control</code> en la sección **Redes**.
-
-<img className="thumbnail" alt="Instance dashboard" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect02.png" loading="lazy" />
 
 :::info
 A través de la CLI de OVHcloud, compruebe el estado y obtenga la dirección IP de su instancia con:
@@ -552,8 +544,6 @@ El software libre y open source `Remmina Remote Desktop Client` está disponible
 La consola VNC le permite conectarse a sus instancias incluso cuando otros medios de acceso no están disponibles.
 
 Seleccione <code className="action">Instancias</code> en la barra de navegación de la izquierda en **Compute**. Haga clic en el nombre de la instancia y abra la pestaña <code className="action">Consola VNC</code>.
-
-<img className="thumbnail" alt="VNC console access in the Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-vnc-login.png" loading="lazy" />
 
 <Tabs>
   <Tab label="Instancia con un SO GNU/Linux instalado">

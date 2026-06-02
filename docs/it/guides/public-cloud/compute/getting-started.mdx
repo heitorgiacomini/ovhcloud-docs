@@ -108,11 +108,7 @@ Le chiavi SSH pubbliche aggiunte al tuo Spazio Cliente OVHcloud saranno disponib
   <Tab label="Tramite lo Spazio Cliente">
     Apri <code className="action">Chiavi SSH</code> nel menu a sinistra sotto **Impostazioni**. Clicca sul pulsante <code className="action">Aggiungi una chiave SSH</code>.
 
-    <img className="thumbnail" alt="SSH Keys section in the OVHcloud Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-sshkeys.png" loading="lazy" />
-
     Nella nuova finestra, inserisci un nome per la chiave. Compila il campo `Chiave` con la tua stringa di chiave pubblica, ad esempio quella creata allo [step 1](#step-1-creare-un-set-di-chiavi-ssh). Conferma cliccando su <code className="action">Aggiungi</code>.
-
-    <img className="thumbnail" alt="Add an SSH key" src="/images/public-cloud/compute/public-cloud-first-steps/24-addkey.png" loading="lazy" />
 
     Da questo momento puoi selezionare questa chiave allo [Step 4](#step-4-creare-listanza) per aggiungerla a una nuova istanza.
   </Tab>
@@ -421,13 +417,9 @@ Se hai installato un **OS con applicazione**, consulta la nostra [guida sui prim
 
 Seleziona <code className="action">Istanze</code> nella barra di navigazione a sinistra sotto **Compute**. La tua istanza è pronta quando lo stato è impostato su `Attivato` nella tabella. Se l'istanza è stata creata di recente e ha uno stato diverso, clicca sul pulsante "Aggiorna" accanto al filtro di ricerca.
 
-<img className="thumbnail" alt="Instances list in the Control Panel" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect01.png" loading="lazy" />
-
 Clicca sul nome dell'istanza in questa tabella per aprire il <code className="action">Dashboard</code>, dove puoi trovare tutte le informazioni relative all'istanza. Per maggiori informazioni sulle funzioni disponibili in questa pagina, consulta la nostra guida sulla [gestione delle istanze nello Spazio Cliente](/guides/public-cloud/compute/first-steps-with-public-cloud-instance).
 
 Un **utente con diritti elevati (*sudo*) viene creato automaticamente** sull'istanza. Il nome utente riflette l'immagine installata, ad esempio "ubuntu", "debian", "fedora", ecc. Puoi verificarlo nel <code className="action">Dashboard</code> nella sezione **Reti**.
-
-<img className="thumbnail" alt="Instance dashboard" src="/images/public-cloud/compute/public-cloud-first-steps/24-instance-connect02.png" loading="lazy" />
 
 :::info
 Tramite l'OVHcloud CLI, verifica lo stato e recupera l'indirizzo IP della tua istanza con:
@@ -552,8 +544,6 @@ Il software libero e open source `Remmina Remote Desktop Client` è disponibile 
 La console VNC ti permette di connetterti alle tue istanze anche quando altri mezzi di accesso non sono disponibili.
 
 Seleziona <code className="action">Istanze</code> nella barra di navigazione a sinistra sotto **Compute**. Clicca sul nome dell'istanza e apri la scheda <code className="action">Console VNC</code>.
-
-<img className="thumbnail" alt="VNC console access in the Control Panel" src="/images/assets/screens/control-panel/product-selection/public-cloud/cp-pci-vnc-login.png" loading="lazy" />
 
 <Tabs>
   <Tab label="Istanza con OS GNU/Linux installato">
