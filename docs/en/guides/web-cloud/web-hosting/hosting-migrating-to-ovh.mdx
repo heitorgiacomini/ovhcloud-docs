@@ -2,8 +2,10 @@
 title: Migrating your website and associated services to OVHcloud
 description: Find out how to migrate your website, domain name, database and emails to OVHcloud without any service interruptions
 lastUpdated: 2026-06-03
+availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
 import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objective
@@ -68,7 +70,9 @@ Several [OVHcloud web hosting plans](https://www.ovhcloud.com/en-gb/web-hosting/
 - Hosting [Personal](https://www.ovhcloud.com/en-gb/web-hosting/personal-offer/) with **10 MX Plan email accounts**
 - Hosting [Pro](https://www.ovhcloud.com/en-gb/web-hosting/professional-offer/) with **100 MX Plan email accounts** (for business)
 - Hosting [Performance](https://www.ovhcloud.com/en-gb/web-hosting/performance-offer/) with **1000 MX Plan email accounts** (scalable dedicated resources)
+<Region zones={['eu']}>
 - Hosting [Cloud Web](https://www.ovhcloud.com/en-gb/web-hosting/cloud-web-offer/) with **200 MX Plan email accounts** (for application developers)
+</Region>
 
 Once you have chosen your hosting plan, click the <code className="action">Order</code> button on the commercial pages above. Follow the steps for the **order without requesting the transfer of your domain name**. (This action will be performed in part 10 of this guide.)
 
@@ -92,9 +96,11 @@ You can also place the order from your OVHcloud Control Panel. To do this, click
 
 Once the payment has been confirmed, the hosting plan installation will begin. An email will be sent to your contact email address. It will contain the credentials for accessing your web hosting plan's FTP (File Transfer Protocol) storage space.
 
+<Region zones={['eu']}>
 :::info
 OVHcloud offers other email services in addition to the MX Plan solution. For example, you can combine email accounts of the [Email Pro offer](https://www.ovhcloud.com/en-gb/emails/email-pro/) and the [Exchange offer](https://www.ovhcloud.com/en-gb/emails/hosted-exchange/) with MX Plan email accounts.
 :::
+</Region>
 
 ### 2 - Create and preconfigure a DNS zone for your domain name at OVHcloud <a name="step2"></a>
 
@@ -179,8 +185,12 @@ Create new email accounts and name them according to your current email addresse
 
 If you have opted for an Email Pro or Exchange solution, please read our documentation on this topic to create your email accounts:
 
+<Region zones={['eu']}>
 - [For Email Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/first-config)
+</Region>
+<Region zones={['eu', 'ca']}>
 - [For Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-hosted)
+</Region>
 
 ### 6 - Declare the OVHcloud email servers in your domain name's active DNS zone <a name="step6"></a>
 
@@ -232,13 +242,17 @@ Once you have migrated your email accounts to OVHcloud, reconfigure your email s
 
 - You can find all of the configuration settings in our guide "[Getting started with the MX Plan solution](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#consult-emails-client)". You will also find links to custom configuration guides for major email software.
 
+<Region zones={['eu']}>
 #### For Email Pro accounts:
 
 - You can find all of our configuration guides in the section `Email client configuration` of [our documentation on the Email Pro offer](/guides/web-cloud/email-and-collaborative-solutions/email-pro/overview).
+</Region>
 
+<Region zones={['eu', 'ca']}>
 #### For Exchange email accounts:
 
 - You can find all of our configuration guides in the `Exchange configuration on computer` and `Exchange configuration on smartphone` sections of [our Exchange documentation](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/overview).
+</Region>
 
 ### 9 - Replace your domain name's active DNS servers with those of OVHcloud <a name="step9"></a>
 

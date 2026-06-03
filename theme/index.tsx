@@ -1,4 +1,11 @@
+import { AnalyticsBootstrap } from '@components/Analytics';
 import { RegionProvider } from '@components/Api/RegionContext';
+import {
+  ZoneBanner,
+  ZoneNotice,
+  ZoneProvider,
+  ZoneSwitcher,
+} from '@components/Zone';
 import { useDark, useFrontmatter } from '@rspress/core/runtime';
 import {
   Layout as BasicLayout,
@@ -6,7 +13,6 @@ import {
 } from '@rspress/core/theme-original';
 import type React from 'react';
 import { lazy, Suspense, useEffect } from 'react';
-import { AnalyticsBootstrap } from '@components/Analytics';
 import { AIChatbotDrawerProvider } from 'theme/components/AIChatbotDrawer/context';
 import Breadcrumbs from 'theme/components/Breadcrumbs/Breadcrumbs.tsx';
 import { EditLink } from 'theme/components/EditLink';
@@ -29,6 +35,7 @@ const LazySurveyWidget = lazy(() =>
     default: m.SurveyWidget,
   })),
 );
+
 import { ELearningLayout } from 'theme/layouts/ELearningLayout';
 import { HomeLayout } from 'theme/layouts/HomeLayout/HomeLayout';
 import { MigrationLayout } from 'theme/layouts/MigrationLayout';
@@ -88,23 +95,37 @@ const Layout = (props: React.ComponentProps<typeof BasicLayout>) => {
 
   // Pass DocLayout explicitly to BasicLayout so it uses our custom one
   return (
-    <RegionProvider>
-      <AIChatbotDrawerProvider>
-        <AnalyticsBootstrap />
-        <SEOHead />
-        <BasicLayout
-          {...props}
-          beforeDocContent={<Breadcrumbs />}
-          beforeDocFooter={<PageFeedback />}
-        />
-        <Suspense fallback={null}>
-          <LazyAIChatbotDrawer />
-        </Suspense>
-        <Suspense fallback={null}>
-          <LazySurveyWidget />
-        </Suspense>
-      </AIChatbotDrawerProvider>
-    </RegionProvider>
+    <ZoneProvider>
+      <RegionProvider>
+        <AIChatbotDrawerProvider>
+          <AnalyticsBootstrap />
+          <SEOHead />
+          <BasicLayout
+            {...props}
+            beforeDocContent={
+              <>
+                {/* ZoneBanner sits at the top of the document column so it
+                    falls naturally below whatever topbar the OVHcloud chrome
+                    renders above the docs theme. Mounting it here (rather
+                    than as a sticky top-level node) avoids the banner
+                    visually covering the topbar at page load. */}
+                <ZoneBanner />
+                <ZoneNotice />
+                <Breadcrumbs />
+              </>
+            }
+            beforeDocFooter={<PageFeedback />}
+          />
+          <Suspense fallback={null}>
+            <LazyAIChatbotDrawer />
+          </Suspense>
+          <Suspense fallback={null}>
+            <LazySurveyWidget />
+          </Suspense>
+          <ZoneSwitcher />
+        </AIChatbotDrawerProvider>
+      </RegionProvider>
+    </ZoneProvider>
   );
 };
 

@@ -2,7 +2,10 @@
 title: Webhosting - Laufzeitumgebung, PHP-Version, .ovhconfig
 description: Erfahren Sie hier, wie Sie die Einstellungen von Laufzeitumgebung, PHP-Version, Firewall, Engine, Modus und .ovhconfig ändern
 lastUpdated: 2025-12-15
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -48,7 +51,12 @@ Sie enthalten Werte für die oben genannten Elemente.
 
 ## Voraussetzungen
 
+<Region zones={['eu']}>
 - Sie verfügen über ein [OVHcloud Webhosting](https://www.ovhcloud.com/de/web-hosting/), mit Ausnahme von [Cloud Web Hosting](https://www.ovhcloud.com/de/web-hosting/cloud-web-offer/).
+</Region>
+<Region zones={['ca', 'apac']}>
+- Sie verfügen über ein [OVHcloud Webhosting](https://www.ovhcloud.com/de/web-hosting/).
+</Region>
 
 {/* CP-NAV-START:web-hosting */}
 ---

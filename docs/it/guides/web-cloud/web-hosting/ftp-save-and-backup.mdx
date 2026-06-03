@@ -2,7 +2,10 @@
 title: Ripristinare i dati dello spazio di storage di un hosting Web
 description: Questa guida ti mostra come recuperare un file o l’intero contenuto dello spazio di storage di un hosting Web OVHcloud
 lastUpdated: 2025-12-19
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -23,7 +26,12 @@ Quando effettui un backup di sicurezza per il tuo sito e utilizzi un database, f
 
 ## Prerequisiti
 
+<Region zones={['eu']}>
 - Disporre di un piano di [hosting Web OVHcloud](https://www.ovhcloud.com/it/web-hosting/) (escluso il servizio [Cloud Web](https://www.ovhcloud.com/it/web-hosting/cloud-web-offer/))
+</Region>
+<Region zones={['ca', 'apac']}>
+- Disporre di un piano di [hosting Web OVHcloud](https://www.ovhcloud.com/it/web-hosting/).
+</Region>
 - In base al metodo utilizzato, disporre dell’accesso alla gestione della soluzione di hosting Web dallo <ManagerLink to="/">Spazio Cliente OVHcloud</ManagerLink> o della password FTP per accedere allo spazio di storage 
 
 ## Procedura

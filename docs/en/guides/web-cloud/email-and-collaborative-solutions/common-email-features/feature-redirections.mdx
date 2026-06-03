@@ -2,12 +2,16 @@
 title: Using email aliases and redirections
 description: Find out how to manage aliases and email redirections
 lastUpdated: 2025-06-03
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region } from '@components/Zone';
 
 ## Objective
 
@@ -87,9 +91,15 @@ Note that you can configure redirections to multiple email addresses. To do this
 
 - A preconfigured OVHcloud email solution:
     - **MX Plan** available with a [web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/), or included in a [100M free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/).
+    <Region zones={['eu', 'ca']}>
     - [Exchange](https://www.ovhcloud.com/en-gb/emails-exchange/).
+    </Region>
+    <Region zones={['eu']}>
     - [Email Pro](https://www.ovhcloud.com/en-gb/emails/email-pro/).
+    </Region>
+    <Region zones={['eu']}>
     - [Zimbra](https://www.ovhcloud.com/en-gb/emails/zimbra-emails/).
+    </Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 {/* CP-NAV-START:web-zimbra */}
@@ -132,9 +142,15 @@ This guide covers all of our email solutions. Depending on the solution, you can
 - **MX Plan Roundcube**: Corresponds to the MX Plan solution using Roundcube webmail.
 - **MX Plan Zimbra**: Corresponds to the MX Plan solution using Zimbra webmail.
 - **MX Plan OWA**: Corresponds to the MX Plan solution using the Outlook Web App (OWA) webmail.
+<Region zones={['eu', 'ca']}>
 - **Exchange**: Applies to **Hosted**, **Private** and **Dedicated** Exchange solutions using the Outlook Web App (OWA) webmail.
+</Region>
+<Region zones={['eu']}>
 - **Email Pro**: Exchange-based email solution using the Outlook Web App (OWA) webmail.
+</Region>
+<Region zones={['eu']}>
 - **Zimbra**: Dedicated solution using Zimbra webmail.
+</Region>
 - **Redirect**: This free solution is automatically available if you have a domain name in your Control Panel without an attached email solution. You can use it to create email redirections.
 
 :::info
@@ -154,19 +170,27 @@ From your MX Plan service, in the <code className="action">General Information</
         - [MX Plan / redirect](#redirect-manager-mxplan)
     - [Via webmail](#redirect-webmail)
         - [Outlook Web App (OWA)](#redirect-webmail-owa)
+        <Region zones={['eu']}>
         - [Zimbra](#redirect-webmail-zimbra)
+        </Region>
 - [Delete a redirection](#redirect-delete)
     - [MX Plan via the Control Panel](#redirect-delete)
     - [Outlook Web App (OWA)](#redirect-delete-owa)
+    <Region zones={['eu']}>
     - [Zimbra](#redirect-delete-zimbra)
+    </Region>
 - [Create an alias](#alias)
     - [Exchange / Email Pro / MX Plan](#alias-exchange-emp-mxplan)
     - [MX Plan Roundcube](#alias-mxplan-roundcube)
+    <Region zones={['eu']}>
     - [Zimbra](#alias-mxplan-roundcube)
+    </Region>
 - [Delete an alias](#alias-delete)
     - [Exchange / Email Pro / MX Plan](#alias-delete-exchange-emp-mxplan)
     - [MX Plan Roundcube](#alias-delete-mxplan-roundcube)
+    <Region zones={['eu']}>
     - [Zimbra](#alias-delete-zimbra)
+    </Region>
 
 ### Creating a redirection <a name="redirect"></a>
 
@@ -250,8 +274,12 @@ You can create a redirection using inbox rules, also called "filters" in webmail
 This chapter covers the following offers:
 
 - **MX Plan OWA**.
+<Region zones={['eu', 'ca']}>
 - **Exchange**.
+</Region>
+<Region zones={['eu']}>
 - **Email Pro**.
+</Region>
 
 :::
 
@@ -312,7 +340,9 @@ To apply a **simple redirection** (see [diagram 1](#diagram) at the beginning of
 This chapter covers the following offers:
 
 - **MX Plan** with zimbra for webmail.
+<Region zones={['eu']}>
 - **Zimbra**.
+</Region>
 
 :::
 

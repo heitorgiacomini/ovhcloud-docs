@@ -2,12 +2,16 @@
 title: E-Mail-Accounts mit MX Plan erstellen
 description: Erfahren Sie hier, wie Sie einen MX Plan E-Mail-Account erstellen
 lastUpdated: 2025-08-26
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { ZoneTabs } from '@components/Zone';
 
 ## Ziel
 
@@ -112,8 +116,8 @@ Gehen Sie auf die [Webmail Loginseite](https://www.ovhcloud.com/de/mail/) und ge
 
 Wählen Sie den Tab für die E-Mail-Technologie Ihres MX Plan Angebots aus:
 
-<Tabs>
-  <Tab label="Zimbra">
+<ZoneTabs>
+  <Tab label="Zimbra" availableIn={['eu']}>
     Wenn Sie im Zimbra Webmail eingeloggt sind, erhalten Sie das unten stehende Interface. Weitere Informationen zur Verwendung von Zimbra Webmail finden Sie in unserer Anleitung „[Zimbra Webmail verwenden](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra)“.
     
     <img className="thumbnail" alt="Zimbra - Schnittstelle" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/zimbra-01.png" loading="lazy" />
@@ -123,7 +127,7 @@ Wählen Sie den Tab für die E-Mail-Technologie Ihres MX Plan Angebots aus:
     
     <img className="thumbnail" alt="E-Mail" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/mxplan-creation-new-step5.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Um Ihre E-Mails über ein E-Mail-Programm einzusehen, finden Sie die entsprechenden Informationen im Bereich "[E-Mail-Account von einem Client aus anzeigen](#configdevices)".

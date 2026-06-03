@@ -2,9 +2,12 @@
 title: Co zrobić, gdy Twój adres e-mail jest zablokowany z powodu spamu
 description: "Odblokuj adres e-mail zablokowany z powodu spamu: zidentyfikuj przyczynę podejrzanej aktywności, usuń ją i skontaktuj się z pomocą techniczną OVHcloud."
 lastUpdated: 2026-05-28
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+
+import { ZoneTabs } from '@components/Zone';
 
 
 ## Wprowadzenie
@@ -124,15 +127,15 @@ Filtr ten konfiguruje się z poziomu webmail lub klienta poczty.
 
 Wybierz odpowiednią usługę e-mail w poniższych zakładkach:
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Przejdź do zakładki <code className="action">Konta e-mail</code> Twojej platformy. Jeśli w kolumnie "Status" danego adresu e-mail widnieje "Zablokowany", kliknij <code className="action">...</code> po prawej stronie konta, a następnie <code className="action">Odblokuj</code>. Odblokowanie adresu e-mail nie odbywa się automatycznie. Skontaktuj się z pomocą techniczną za pośrednictwem zgłoszenia, odpowiadając na 3 zadane pytania.<br/>
 
     Przejdź do [etapu 3](#step3) tego przewodnika.
     
     <img className="thumbnail" alt="Kolumna Status z wartością Zablokowany w zakładce Konta e-mail dla Exchange" src="/images/web-cloud/email-and-collaborative-solutions/troubleshooting/locked-for-spam/blocked-for-SPAM-01-01.png" loading="lazy" />
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     Przejdź do zakładki <code className="action">Konta e-mail</code> Twojej platformy. Jeśli w kolumnie "Status" po prawej stronie danego adresu e-mail widnieje "Spam", kliknij tę pozycję, a następnie <code className="action">Odpowiedz na zgłoszenie</code>. Odblokowanie adresu e-mail nie odbywa się automatycznie. Skontaktuj się z pomocą techniczną za pośrednictwem zgłoszenia, odpowiadając na 3 zadane pytania. <br/>
 
     Przejdź do [etapu 3](#step3) tego przewodnika.
@@ -195,7 +198,7 @@ Wybierz odpowiednią usługę e-mail w poniższych zakładkach:
     Gdy zgłoszenie zostanie przetworzone przez pomoc techniczną, adres zostaje odblokowany. [Etap 3](#step3) nie ma w tym przypadku zastosowania.
 
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Etap 3: Uzyskaj dostęp do zgłoszenia pomocy technicznej <a name="step3"></a>

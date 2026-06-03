@@ -2,9 +2,12 @@
 title: Was tun, wenn Ihre E-Mail-Adresse wegen Spamversands gesperrt wurde
 description: "Eine wegen Spamversands gesperrte E-Mail-Adresse entsperren: Ursache der verdächtigen Aktivität identifizieren, beheben und den OVHcloud Support kontaktieren."
 lastUpdated: 2026-05-28
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+
+import { ZoneTabs } from '@components/Zone';
 
 
 ## Ziel
@@ -124,15 +127,15 @@ Dieser Filter wird über das Webmail oder einen E-Mail-Client konfiguriert.
 
 Wählen Sie in den folgenden Tabs die betroffene E-Mail-Lösung aus:
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Wechseln Sie in den Tab <code className="action">E-Mail-Accounts</code> Ihrer Plattform. Zeigt die Spalte "Status" für die betroffene E-Mail-Adresse "Blockiert" an, klicken Sie auf <code className="action">...</code> rechts neben dem Account und anschließend auf <code className="action">Sperrung aufheben</code>. Die E-Mail-Adresse wird nicht automatisch entsperrt. Kontaktieren Sie den Support über das Support-Ticket, indem Sie die drei dort gestellten Fragen beantworten.<br/>
 
     Fahren Sie mit [Schritt 3](#step3) dieser Anleitung fort.
 
     <img className="thumbnail" alt="Spalte Status auf Blockiert im Tab E-Mail-Accounts für Exchange" src="/images/web-cloud/email-and-collaborative-solutions/troubleshooting/locked-for-spam/blocked-for-SPAM-01-01.png" loading="lazy" />
   </Tab>
-  <Tab label="E-Mail Pro">
+  <Tab label="E-Mail Pro" availableIn={['eu']}>
     Wechseln Sie in den Tab <code className="action">E-Mail-Accounts</code> Ihrer Plattform. Zeigt die Spalte "Status" rechts neben der betroffenen E-Mail-Adresse "Spam" an, klicken Sie darauf und anschließend auf <code className="action">Auf das Ticket antworten</code>. Die E-Mail-Adresse wird nicht automatisch entsperrt. Kontaktieren Sie den Support über das Support-Ticket, indem Sie die drei dort gestellten Fragen beantworten.<br/>
 
     Fahren Sie mit [Schritt 3](#step3) dieser Anleitung fort.
@@ -195,7 +198,7 @@ Wählen Sie in den folgenden Tabs die betroffene E-Mail-Lösung aus:
     Sobald das Ticket vom Support bearbeitet wurde, wird die Adresse entsperrt. [Schritt 3](#step3) ist in diesem Fall nicht anwendbar.
 
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Schritt 3: Auf das Support-Ticket zugreifen <a name="step3"></a>

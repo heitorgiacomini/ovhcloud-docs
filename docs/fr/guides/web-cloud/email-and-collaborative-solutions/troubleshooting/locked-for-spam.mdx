@@ -2,9 +2,12 @@
 title: Que faire en cas d'adresse e-mail bloquée pour spam ?
 description: "Débloquez une adresse e-mail bloquée pour spam : identifiez la cause de l'activité suspecte, corrigez-la et contactez le support OVHcloud."
 lastUpdated: 2026-05-28
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+
+import { ZoneTabs } from '@components/Zone';
 
 
 ## Objectif
@@ -124,15 +127,15 @@ Ce filtre se configure depuis le webmail ou un logiciel de messagerie.
 
 Sélectionnez l'offre e-mail concernée dans les onglets suivants :
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Accédez à l'onglet <code className="action">Comptes e-mail</code> de votre plateforme. Si la colonne « statut » de l'adresse e-mail concernée mentionne « bloqué », cliquez sur <code className="action">...</code> à droite du compte puis sur <code className="action">Débloquer</code>. L'adresse e-mail ne se débloque pas automatiquement. Contactez le support via le ticket d'assistance en répondant aux 3 questions posées.<br/>
 
     Passez à [l'étape 3](#step3) du guide.
     
     <img className="thumbnail" alt="Colonne statut bloqué dans l'onglet Comptes e-mail Exchange" src="/images/web-cloud/email-and-collaborative-solutions/troubleshooting/locked-for-spam/blocked-for-SPAM-01-01.png" loading="lazy" />
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     Accédez à l'onglet <code className="action">Comptes e-mail</code> de votre plateforme. Si la colonne « statut » à droite de l'adresse e-mail concernée mentionne « Spam », cliquez sur cette mention puis sur <code className="action">Répondre au ticket</code>. L'adresse e-mail ne se débloque pas automatiquement. Contactez le support via le ticket d'assistance en répondant aux 3 questions posées. <br/>
 
     Passez à [l'étape 3](#step3) du guide.
@@ -195,7 +198,7 @@ Sélectionnez l'offre e-mail concernée dans les onglets suivants :
     Une fois le ticket traité par le support, l'adresse est débloquée. L'[étape 3](#step3) ne s'applique pas dans ce cas.
 
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Étape 3 : accéder au ticket d'assistance <a name="step3"></a>

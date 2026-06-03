@@ -17,6 +17,7 @@ import type { Locale } from './config/shared';
 import { sidebar } from './config/sidebar';
 import { pluginLastUpdatedFromCache } from './plugins/lastUpdatedFromCache';
 import { rehypeLazyImages } from './plugins/rehypeLazyImages';
+import { remarkCpNavGate } from './plugins/remarkCpNavGate';
 import { remarkNoManagerHardcoded } from './plugins/remarkNoManagerHardcoded';
 
 // Dev performance: only serve selected locales (default: fr + en)
@@ -124,7 +125,7 @@ export default defineConfig({
   lang: activeLocales[0]?.lang || 'fr',
   locales: [...activeLocales],
   markdown: {
-    remarkPlugins: [remarkNoManagerHardcoded],
+    remarkPlugins: [remarkNoManagerHardcoded, remarkCpNavGate],
     rehypePlugins: [rehypeLazyImages],
     globalComponents: [
       path.join(__dirname, 'components/Api/index.tsx'),

@@ -2,9 +2,12 @@
 title: Cosa fare se un indirizzo e-mail è bloccato per spam?
 description: "Sblocca un indirizzo e-mail bloccato per spam: individua la causa dell'attività sospetta, correggila e contatta il supporto OVHcloud."
 lastUpdated: 2026-05-28
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+
+import { ZoneTabs } from '@components/Zone';
 
 
 ## Obiettivo
@@ -124,15 +127,15 @@ Questo filtro si configura dal webmail o da un client di posta.
 
 Seleziona l'offerta e-mail interessata nelle seguenti schede:
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Accedi alla scheda <code className="action">Account email</code> della tua piattaforma. Se la colonna "stato" dell'indirizzo e-mail interessato indica "bloccato", clicca su <code className="action">...</code> a destra dell'account, poi su <code className="action">Sblocca</code>. L'indirizzo e-mail non si sblocca automaticamente. Contatta il supporto tramite il ticket di assistenza rispondendo alle 3 domande poste.<br/>
 
     Passa alla [fase 3](#step3) della guida.
     
     <img className="thumbnail" alt="Colonna stato bloccato nella scheda Account email Exchange" src="/images/web-cloud/email-and-collaborative-solutions/troubleshooting/locked-for-spam/blocked-for-SPAM-01-01.png" loading="lazy" />
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     Accedi alla scheda <code className="action">Account email</code> della tua piattaforma. Se la colonna "stato" a destra dell'indirizzo e-mail interessato indica "Spam", clicca su questa dicitura, poi su <code className="action">Rispondi al ticket</code>. L'indirizzo e-mail non si sblocca automaticamente. Contatta il supporto tramite il ticket di assistenza rispondendo alle 3 domande poste. <br/>
 
     Passa alla [fase 3](#step3) della guida.
@@ -195,7 +198,7 @@ Seleziona l'offerta e-mail interessata nelle seguenti schede:
     Una volta elaborato il ticket dal supporto, l'indirizzo viene sbloccato. La [fase 3](#step3) non si applica in questo caso.
 
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Fase 3: accedere al ticket di assistenza <a name="step3"></a>

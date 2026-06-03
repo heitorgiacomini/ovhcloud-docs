@@ -2,9 +2,12 @@
 title: What to do if your email address is blocked for spam
 description: "Unblock an email address blocked for spam: identify the cause of the suspicious activity, fix it and contact OVHcloud support."
 lastUpdated: 2026-05-28
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+
+import { ZoneTabs } from '@components/Zone';
 
 
 ## Objective
@@ -124,15 +127,15 @@ This filter is configured from the webmail or an email client.
 
 Select the email solution concerned in the following tabs:
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Go to the <code className="action">Email accounts</code> tab of your platform. If the "Status" column for the email address concerned shows "Blocked", click <code className="action">...</code> to the right of the account, then <code className="action">Unblock</code>. The email address is not unblocked automatically. Contact the support team via the support ticket by answering the 3 questions asked.<br/>
 
     Proceed to [step 3](#step3) of the guide.
     
     <img className="thumbnail" alt="Status column Blocked in the Email accounts tab for Exchange" src="/images/web-cloud/email-and-collaborative-solutions/troubleshooting/locked-for-spam/blocked-for-SPAM-01-01.png" loading="lazy" />
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     Go to the <code className="action">Email accounts</code> tab of your platform. If the "Status" column to the right of the email address concerned shows "Spam", click on it, then on <code className="action">Reply to the ticket</code>. The email address is not unblocked automatically. Contact the support team via the support ticket by answering the 3 questions asked. <br/>
 
     Proceed to [step 3](#step3) of the guide.
@@ -195,7 +198,7 @@ Select the email solution concerned in the following tabs:
     Once the ticket has been processed by support, the address is unblocked. [Step 3](#step3) does not apply in this case.
 
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Step 3: Access the support ticket <a name="step3"></a>
