@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.03
+
+### Features
+- **theme:** commercial-zone-driven content gating
+
+### Documentation
+- 1915 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.02.1
 
 ### Features
