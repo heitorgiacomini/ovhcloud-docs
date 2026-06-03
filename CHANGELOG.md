@@ -2,8 +2,16 @@
 
 ## 2026.06.02.1
 
+### Features
+- **theme:** display guide excerpt/description as a lead under the title (#122)
+- add missing anchors (#121)
+
+### Fixes
+- **compute:** repair PCI get started - missing cp-navs
+- **compute:** repair PCI get started - images, formats
+
 ### Documentation
-- 7 guides updated across de, en, es, fr, it, pl, pt
+- 170 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.06.02
 
