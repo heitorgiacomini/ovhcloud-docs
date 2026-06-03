@@ -2,12 +2,16 @@
 title: Creare un account email con MX Plan
 description: Questa guide ti mostra come aggiungere una casella di posta elettronica sulla soluzione MX Plan
 lastUpdated: 2025-08-26
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { ZoneTabs } from '@components/Zone';
 
 ## Obiettivo
 
@@ -110,8 +114,8 @@ Accedi alla [pagina di connessione](https://www.ovhcloud.com/it/mail/), inserisc
 
 Seleziona la scheda corrispondente alla tecnologia email della tua soluzione MX Plan:
 
-<Tabs>
-  <Tab label="Zimbra">
+<ZoneTabs>
+  <Tab label="Zimbra" availableIn={['eu']}>
     Quando siete connessi alla webmail Zimbra, ottenete l'interfaccia qui sotto. Per maggiori informazioni sull’utilizzo della Webmail Zimbra, consulta la nostra guida "[Utilizzare la Webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra)".
     
     <img className="thumbnail" alt="Zimbra - interface" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/zimbra-01.png" loading="lazy" />
@@ -121,7 +125,7 @@ Seleziona la scheda corrispondente alla tecnologia email della tua soluzione MX 
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/mxplan-creation-new-step5.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Per consultare le tue email da un client di posta, consulta la sezione "[Consulta un account email da un dispositivo](#configdevices)".

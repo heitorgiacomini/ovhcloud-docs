@@ -2,12 +2,16 @@
 title: Crear una dirección de correo electrónico en un MX Plan
 description: Cómo crear una dirección de correo electrónico en la solución MX Plan
 lastUpdated: 2025-08-26
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { ZoneTabs } from '@components/Zone';
 
 ## Objetivo
 
@@ -110,8 +114,8 @@ Vaya a la [página de conexión al webmail](https://www.ovhcloud.com/es-es/mail
 
 Seleccione la pestaña correspondiente a la tecnología de correo de su solución MX Plan:
 
-<Tabs>
-  <Tab label="Zimbra">
+<ZoneTabs>
+  <Tab label="Zimbra" availableIn={['eu']}>
     Cuando esté conectado al webmail Zimbra, verá la interfaz de abajo. Para más información sobre el uso del webmail Zimbra, consulte nuestra guía "[Utilizar el webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra)".
     
     <img className="thumbnail" alt="Zimbra - interface" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/zimbra-01.png" loading="lazy" />
@@ -121,7 +125,7 @@ Seleccione la pestaña correspondiente a la tecnología de correo de su solució
     
     <img className="thumbnail" alt="Correo electrónico" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/mxplan-creation-new-step5.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Para consultar su correo desde un cliente de correo, consulte la sección "[Consultar una cuenta de correo desde un dispositivo](#configdevices)".

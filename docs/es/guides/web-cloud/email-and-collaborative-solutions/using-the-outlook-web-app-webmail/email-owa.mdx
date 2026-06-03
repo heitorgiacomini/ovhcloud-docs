@@ -2,7 +2,11 @@
 title: Utilizar una dirección de correo desde el webmail Outlook Web App (OWA)
 description: Cómo utilizar una dirección de correo electrónico desde el webmail OWA
 lastUpdated: 2026-05-04
+availableIn: [eu, ca, apac]
 ---
+
+
+import { Region } from '@components/Zone';
 
 ## Objetivo
 
@@ -14,8 +18,12 @@ Con las soluciones de correo de OVHcloud, puede enviar y recibir sus correos ele
 
 - Disponer de una solución de correo electrónico de OVHcloud previamente configurada, entre las siguientes ofertas:
     - [**MX Plan**](https://www.ovhcloud.com/es-es/web-hosting/), incluida en nuestros planes de alojamiento web, en el [alojamiento gratuito 100M](https://www.ovhcloud.com/es-es/domains/free-web-hosting/) o contratada como solución independiente;
+    <Region zones={['eu', 'ca']}>
     - [**Hosted Exchange**](https://www.ovhcloud.com/es-es/emails/hosted-exchange/);
+    </Region>
+    <Region zones={['eu']}>
     - [**Email Pro**](https://www.ovhcloud.com/es-es/emails/email-pro/).
+    </Region>
 - Conocer las credenciales de acceso de la dirección de correo electrónico que se desea utilizar.
 
 ## Procedimiento

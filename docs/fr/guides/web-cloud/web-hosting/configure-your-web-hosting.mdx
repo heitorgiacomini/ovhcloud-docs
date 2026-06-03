@@ -2,7 +2,10 @@
 title: Hébergement web - Environnement, version PHP, « .ovhconfig »
 description: "Découvrez comment modifier l'environnement d'exécution, la version PHP, le pare-feu applicatif, le moteur, le mode et le « .ovhconfig » d'un hébergement web"
 lastUpdated: 2025-12-15
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -48,7 +51,12 @@ En résumé, modifier la configuration de votre hébergement web depuis l'<Manag
 
 ## Prérequis
 
+<Region zones={['eu']}>
 - Disposer d’une offre d’[hébergement web OVHcloud](https://www.ovhcloud.com/fr/web-hosting/), à l'exception d'une [offre d'hébergement Cloud Web](https://www.ovhcloud.com/fr/web-hosting/cloud-web-offer/).
+</Region>
+<Region zones={['ca', 'apac']}>
+- Disposer d’une offre d’[hébergement web OVHcloud](https://www.ovhcloud.com/fr/web-hosting/).
+</Region>
 
 {/* CP-NAV-START:web-hosting */}
 ---

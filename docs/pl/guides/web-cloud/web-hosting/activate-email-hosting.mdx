@@ -2,7 +2,10 @@
 title: Hosting WWW - Włącz konta e-mail zawarte w ofercie
 description: Dowiedz się, jak aktywować konta e-mail zawarte w hostingu
 lastUpdated: 2026-01-19
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -18,7 +21,12 @@ Jeśli zamówiłeś hosting i nie powiązałeś go bezpośrednio z nazwą domeny
 ## Wymagania początkowe
 
 - Posiadanie [domeny](https://www.ovhcloud.com/pl/domains/) i możliwość zarządzania nią w Panelu klienta.
+<Region zones={['eu']}>
 - Posiadanie [hostingu WWW](https://www.ovhcloud.com/pl/web-hosting/) (poza ofertami "Darmowy hosting 100M" i "Start 10M").
+</Region>
+<Region zones={['ca', 'apac']}>
+- Posiadanie [hostingu WWW](https://www.ovhcloud.com/pl/web-hosting/).
+</Region>
 
 :::warning
 Jeśli chcesz aktywować opcję "adres(y) e-mail zawarty(e) w Twoim hostingu" dla zewnętrznej domeny (niezarejestrowanej w OVHcloud), **której administrator**, musisz utworzyć (co najmniej) strefę DNS w OVHcloud dla Twojej zewnętrznej domeny. W razie potrzeby skorzystaj z naszego przewodnika "[Tworzenie strefy DNS w OVHcloud](/guides/web-cloud/domains/dns-zone-create)". Dzięki temu Twoja domena będzie mogła pojawić się na liście domen dostępnych po aktywacji opcji.

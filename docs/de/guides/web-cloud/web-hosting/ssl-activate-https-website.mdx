@@ -2,7 +2,10 @@
 title: Webhosting - Website auf HTTPS umstellen
 description: Erfahren Sie hier, wie Sie Ihre Website auf HTTPS umstellen, nachdem Sie ein SSL-Zertifikat aktiviert haben
 lastUpdated: 2025-10-27
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Ziel
 
@@ -136,7 +139,9 @@ In diesem zweiten Beispielskript werden alle URLs, die über das *HTTP*-Protokol
 
 Überprüfen Sie in diesem zweiten Beispiel, ob alle Ihre Ziel-Domains oder Subdomains über ein aktives SSL-Zertifikat verfügen.
 
+<Region zones={['eu']}>
 **Achtung**, für die Hosting-Angebote [Cloud Web](https://www.ovhcloud.com/de/web-hosting/cloud-web-offer/) ist folgendes Skript zu verwenden:
+</Region>
 
 ```bash
 RewriteEngine On

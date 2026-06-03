@@ -2,7 +2,10 @@
 title: Web hosting - Habilitar HTTPS en un sitio web
 description: Decubra cómo activar un certificado SSL en un sitio web HTTPS
 lastUpdated: 2025-10-27
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Objetivo
 
@@ -136,7 +139,9 @@ Este segundo script de ejemplo transforma todas las URL recibidas a través del 
 
 En este segundo ejemplo, compruebe que todos los dominios o subdominios de destino tienen un certificado SSL activo.
 
+<Region zones={['eu']}>
 **Atención**, para los planes de hosting [Cloud Web](https://www.ovhcloud.com/es-es/web-hosting/cloud-web-offer/), deberá utilizar el siguiente script:
+</Region>
 
 ```bash
 RewriteEngine On

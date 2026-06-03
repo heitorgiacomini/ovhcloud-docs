@@ -2,6 +2,7 @@
 title: Melhorar a segurança dos e-mails através do registo DKIM
 description: Saiba como configurar um registo DKIM no seu nome de domínio e na sua plataforma de e-mail OVHcloud
 lastUpdated: 2026-02-10
+availableIn: [eu, ca, apac]
 ---
 
 import Api from '@components/Api';
@@ -10,6 +11,9 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 ## Objetivo
 
@@ -21,9 +25,15 @@ O registo DKIM (**D**omain**K**eys **I**dentified **M**ail) permite assinar os e
 
 - Ter adquirido uma das ofertas de correio eletrónico abaixo:
     - MX Plan OVHcloud (disponível através de uma [oferta de alojamento Web Cloud](https://www.ovhcloud.com/pt/web-hosting/), um [alojamento gratuito 100M](https://www.ovhcloud.com/pt/domains/free-web-hosting/) ou uma oferta MX Plan encomendada separadamente).
+    <Region zones={['eu', 'ca']}>
     - [Exchange](https://www.ovhcloud.com/pt/emails/hosted-exchange/) ou [Private Exchange](https://www.ovhcloud.com/pt/emails/hosted-exchange/).
+    </Region>
+    <Region zones={['eu']}>
     - [E-mail Pro](https://www.ovhcloud.com/pt/emails/email-pro/).
+    </Region>
+    <Region zones={['eu']}>
     - [Zimbra](https://www.ovhcloud.com/pt/emails/zimbra-emails/).
+    </Region>
     - Uma oferta de e-mail fora da OVHcloud que dispõe do DKIM.
 
 {/* CP-NAV-START:web-dns-zone */}
@@ -173,9 +183,15 @@ O destinatário **recipient@otherdomain.ovh** poderá decifrar esta assinatura c
 A configuração automática do DKIM está disponível para todas as nossas ofertas de correio eletrónico:
 
 - MX Plan incluída com um [alojamento Web Cloud](https://www.ovhcloud.com/pt/web-hosting/), um [alojamento gratuito 100M](https://www.ovhcloud.com/pt/domains/free-web-hosting/) ou adquirida separadamente.
+<Region zones={['eu', 'ca']}>
 - [Exchange](https://www.ovhcloud.com/pt/emails-exchange/).
+</Region>
+<Region zones={['eu']}>
 - [E-mail Pro](https://www.ovhcloud.com/pt/emails/email-pro/).
+</Region>
+<Region zones={['eu']}>
 - [Zimbra](https://www.ovhcloud.com/pt/emails/zimbra-emails/).
+</Region>
 
 Quando configura o seu nome de domínio numa solução de correio eletrónico OVHcloud, a configuração automática do DKIM é proposta e realizada por defeito se não a desativar.
 
@@ -183,7 +199,7 @@ Se o DKIM não foi ativado quando adicionou um nome de domínio à sua plataform
 
 Clique no separador seguinte da sua oferta.
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan">
     1. Aceda à <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>.
     1. Aceda à secção <code className="action">Web Cloud</code>.
@@ -205,7 +221,7 @@ Clique no separador seguinte da sua oferta.
     
     Esta janela convida-o a introduzir dois valores CNAME na zona DNS do nome de domínio, o que permite ligar este nome de domínio aos seletores DKIM do seu serviço de correio eletrónico. É necessário introduzir estes valores e assegurar-se de que estão propagados antes de clicar em <code className="action">Ativar</code>.
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     1. Aceda à <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>.
     1. Aceda à secção <code className="action">Web Cloud</code>.
     1. Na rubrica `MICROSOFT`, clique em <code className="action">Exchange</code>.
@@ -220,7 +236,7 @@ Clique no separador seguinte da sua oferta.
     
     <img className="thumbnail" alt="email" src="/images/assets/screens/control-panel/product-selection/web-cloud/microsoft/exchange/associated-domains/dkim-auto02.png" loading="lazy" />
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     1. Aceda à <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>.
     1. Aceda à secção <code className="action">Web Cloud</code>.
     1. Clique em <code className="action">Email Pro</code>.
@@ -235,7 +251,7 @@ Clique no separador seguinte da sua oferta.
     
     <img className="thumbnail" alt="email" src="/images/assets/screens/control-panel/product-selection/web-cloud/microsoft/exchange/associated-domains/dkim-auto02.png" loading="lazy" />
   </Tab>
-  <Tab label="Zimbra">
+  <Tab label="Zimbra" availableIn={['eu']}>
     1. Inicie sessão no seu <ManagerLink to="/">espaço cliente OVHcloud</ManagerLink>.
     1. Dirija-se à secção <code className="action">Web Cloud</code>.
     1. Clique em <code className="action">Zimbra Mail</code>.
@@ -255,7 +271,7 @@ Clique no separador seguinte da sua oferta.
     Selecione o separador <code className="action">Zona DNS</code> e clique em <code className="action">Adicionar uma entrada</code> na janela que aparece. Escolha `CNAME` e preencha de acordo com os valores que registou.
     :::
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 A ativação automática do DKIM dura entre 30 minutos e 24 horas no máximo. Para verificar que o seu DKIM está funcional, basta voltar à rubrica de gestão do domínio mencionada nos separadores acima e verificar que o botão `DKIM` está verde ou, para uma oferta Zimbra, que o separador `DKIM` não apresenta mais o ícone de aviso.
@@ -270,8 +286,8 @@ Para uma plataforma Exchange ou E-mail Pro, deve primeiro recuperar a referênci
 
 Clique no separador abaixo correspondente à sua oferta.
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     1. Aceda à <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>.
     1. Aceda à secção <code className="action">Web Cloud</code>.
     1. Na rubrica `MICROSOFT`, clique em <code className="action">Exchange</code>.
@@ -281,7 +297,7 @@ Clique no separador abaixo correspondente à sua oferta.
     
     <img className="thumbnail" alt="email" src="/images/assets/screens/control-panel/product-selection/web-cloud/microsoft/exchange/general-information/dns-dkim-platform-exchange.png" loading="lazy" />
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     1. Aceda à <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>.
     1. Aceda à secção <code className="action">Web Cloud</code>.
     1. Clique em <code className="action">Email Pro</code>.
@@ -291,7 +307,7 @@ Clique no separador abaixo correspondente à sua oferta.
     
     <img className="thumbnail" alt="email" src="/images/assets/screens/control-panel/product-selection/web-cloud/email-pro/general-information/dns-dkim-platform-emailpro.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Certifique-se também de que o domínio que pretende utilizar para os seus e-mails está ativo na rubrica <code className="action">Domínios associados</code>.
@@ -316,17 +332,17 @@ Dirija-se à secção `/email/domain/` (ofertas MX Plan e Zimbra), `/email/excha
 
 Clique no separador da sua oferta:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan e Zimbra">
     <img className="thumbnail" alt="email" src="/images/assets/screens/api/get-email-domain-domain-dkim.png" loading="lazy" />
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     <img className="thumbnail" alt="email" src="/images/assets/screens/api/get-email-exchange-organizationname-service-exchangeservice-domain-domainname-dkim.png" loading="lazy" />
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     <img className="thumbnail" alt="email" src="/images/assets/screens/api/get-email-pro-service-domain-domainname-dkim.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ##### **Para MX Plan e Zimbra** <a name="confemail"></a>
@@ -811,7 +827,7 @@ Siga os **5 passos** abaixo ao clicar em cada separador.
 
 Selecione a oferta de e-mail em questão nos separadores seguintes:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan e Zimbra">
     Quando efetuar as operações no DKIM da sua plataforma Email, utilize a chamada API abaixo para verificar o estado atual do DKIM.
     
@@ -833,7 +849,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     - `toSet`: o seletor não está configurado na zona DNS do domínio. Pressione [etapa 4 "configuração completa do DKIM" para MX Plan e Zimbra](#confemail).
     - `toFix`: o seletor foi corretamente configurado na zona DNS do domínio, mas os valores estão incorretos. Pressione [etapa 4 "configuração completa do DKIM" para MX Plan e Zimbra](#confemail).
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Aquando das suas operações no DKIM da sua plataforma Exchange, utilize a chamada API abaixo para verificar o estado atual do DKIM.
     
     <Api version="v1" section="/email/exchange" method="GET" route={"/email/exchange/\\{organizationName\\}/service/\\{exchangeService\\}/domain/\\{domainName\\}/dkim/\\{selectorName\\}"} />
@@ -859,7 +875,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     { "mensagem": "The requested object (selectorName = ovhemp123456-selector1) does not exist" }
     ```
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     Aquando das suas operações no DKIM da sua plataforma E-mail Pro, utilize a chamada API abaixo para verificar o estado atual do DKIM.
     
     <Api version="v1" section="/email/pro" method="GET" route={"/email/pro/\\{service\\}/domain/\\{domainName\\}/dkim/\\{selectorName\\}"} />
@@ -884,7 +900,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     { "message": "The requested object (selectorName = ovhemp123456-selector1) does not exist" }
     ```
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 #### API - Ativar ou alterar um seletor DKIM <a name="enable-switch"></a>
@@ -896,7 +912,7 @@ O seletor DKIM deve estar no estado `ready` antes de poder ser ativado.
 
 Selecione a oferta de e-mail em questão nos separadores seguintes:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan et Zimbra">
     Para ativar o DKIM, utilize a seguinte chamada API:
     
@@ -916,7 +932,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     }
     ```
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Para ativar o DKIM num seletor, utilize a seguinte chamada API:
     
     <Api version="v1" section="/email/exchange" method="POST" route={"/email/exchange/\\{organizationName\\}/service/\\{exchangeService\\}/domain/\\{domainName\\}/dkim/\\{selectorName\\}/enable"} />
@@ -926,7 +942,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     - `organizationName`: introduza o nome da sua plataforma Exchange na forma "hosted-zz111111-1" ou "private-zz11111-1".<br/>
     - `selectorName`: introduza o nome de um selecionador existente.<br/>
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     Para ativar o DKIM num seletor, utilize a seguinte chamada API:
     
     <Api version="v1" section="/email/pro" method="POST" route={"/email/pro/\\{service\\}/domain/\\{Name\\}/dkim/\\{selectorName\\}/enable"} />
@@ -935,7 +951,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     - `selectorName`: introduza o nome do selecionador que criou.<br/>
     - `service`: introduza o nome da sua plataforma E-mail Pro sob a forma "emailpro-zz111111-1". <br/>
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 :::info
@@ -954,7 +970,7 @@ O seletor DKIM deve estar no estado `in Production` ou `ready` antes de poder se
 
 Selecione a oferta de e-mail em questão nos separadores seguintes:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan e Zimbra">
     Se deseja desativar o DKIM sem eliminar os seletores e o seu par de chaves, utilize a seguinte chamada API:
     
@@ -974,7 +990,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     }
     ```
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Se deseja desativar o DKIM sem eliminar o seletor e o seu par de chaves, utilize a seguinte chamada API:
     
     <Api version="v1" section="/email/exchange" method="POST" route={"/email/exchange/\\{organizationName\\}/service/\\{exchangeService\\}/domain/\\{domainName\\}/dkim/\\{selectorName\\}/disable"} />
@@ -993,7 +1009,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     - `organizationName`: introduza o nome da sua plataforma Exchange na forma "hosted-zz111111-1" ou ">>private-zz11111-1". <br/>
     - `selectorName`: introduza o nome do seletor que deseja eliminar. <br/>
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     Se deseja desativar o DKIM sem eliminar o seletor e o seu par de chaves, utilize a seguinte chamada API:
     
     <Api version="v1" section="/email/pro" method="POST" route={"/email/pro/\\{service\\}/domain/\\{domainName\\}/dkim/\\{selectorName\\}/disable"} />
@@ -1010,7 +1026,7 @@ Selecione a oferta de e-mail em questão nos separadores seguintes:
     - `selectorName`: introduza o nome do seletor que deseja eliminar. <br/>
     - `service`: introduza o nome da sua plataforma E-mail Pro sob a forma "emailpro-zz111111-1". <br/>
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Configurar o DKIM para uma oferta de e-mail fora da sua conta OVHcloud <a name="external-dkim"></a>
@@ -1129,8 +1145,8 @@ Para evitar tentativas de desencriptação da chave DKIM, é aconselhável alter
 
 Clique no separador seguinte da sua oferta.
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Para migrar para o segundo seletor, utilize a seguinte chamada API:
     
     <Api version="v1" section="/email/exchange" method="POST" route={"/email/exchange/\\{organizationName\\}/service/\\{exchangeService\\}/domain/\\{domainName\\}/dkim/\\{selectorName\\}/enable"} />
@@ -1140,7 +1156,7 @@ Clique no separador seguinte da sua oferta.
     - `organizationName`: introduza o nome da sua plataforma Exchange que se apresenta sob a forma "hosted-zz111111-1" ou "private-zz111111-1". <br/>
     - `seletorName`: introduza o nome do seletor no qual pretende migrar. <br/>
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     Para migrar para o segundo seletor, utilize a seguinte chamada API:
     
     <Api version="v1" section="/email/pro" method="POST" route={"/email/pro/\\{service\\}/domain/\\{domainName\\}/dkim/\\{selectorName\\}/enable"} />
@@ -1149,7 +1165,7 @@ Clique no separador seguinte da sua oferta.
     - `service`: introduza o nome da sua plataforma E-mail Pro que se apresenta sob a forma "emailpro-zz111111-1". <br/>
     - `seletorName`: introduza o nome do seletor no qual pretende migrar. <br/>
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Depois de passar para o novo seletor, mantenha o antigo durante 7 dias antes de o eliminar e de criar um novo.
@@ -1165,8 +1181,8 @@ Poderá verificar que os seus e-mails não estão assinados pelo DKIM, apesar da
 
 Clique no separador abaixo correspondente à sua oferta para verificar o estado do DKIM na sua plataforma de e-mail.
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     1. Aceda à <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>.
     1. Aceda à secção <code className="action">Web Cloud</code>.
     1. Na rubrica `MICROSOFT`, clique em <code className="action">Exchange</code>.
@@ -1177,7 +1193,7 @@ Clique no separador abaixo correspondente à sua oferta para verificar o estado 
     
     <img className="thumbnail" alt="email" src="/images/assets/screens/control-panel/product-selection/web-cloud/microsoft/exchange/associated-domains/red-dkim.png" loading="lazy" />
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     1. Aceda à <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>.
     1. Aceda à secção <code className="action">Web Cloud</code>.
     1. Clique em <code className="action">Email Pro</code>.
@@ -1188,7 +1204,7 @@ Clique no separador abaixo correspondente à sua oferta para verificar o estado 
     
     <img className="thumbnail" alt="email" src="/images/assets/screens/control-panel/product-selection/web-cloud/microsoft/exchange/associated-domains/red-dkim.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Eis os 4 estados que têm por resultado o ícone DKIM a vermelho na sua Área de Cliente. Clique no separador correspondente ao seu código de erro:
@@ -1236,8 +1252,8 @@ Se utilizar as API da OVHcloud para configurar o seu DKIM e este não estiver fu
 
 Abaixo irá encontrar os estados que podem bloquear o funcionamento do seu DKIM e a solução adequada a cada situação.
 
-<Tabs>
-  <Tab label="Exchange e E-mail Pro">
+<ZoneTabs>
+  <Tab label="Exchange e E-mail Pro" availableIn={['eu']}>
     - `WaitingRecord`: os registos DNS estão a aguardar uma configuração ou em curso de validação na zona DNS do domínio. É efetuada uma verificação automática regular para verificar se o registo DNS está presente e corretamente indicado. Consoante a sua oferta, siga a **etapa 5** na secção "[API - Configuração completa do DKIM](#firststep)" para configurar corretamente a zona DNS do domínio em questão.
     - `ready`: os registos DNS estão presentes na zona. O DKIM pode agora ser ativado. Basta que ative o seletor recorrendo à secção "[API - Ativar ou alterar um seletor DKIM](#enable-switch)".
     - `deleting`: o DKIM está em curso de eliminação. Após a eliminação, deverá seguir a secção "[API - Configuração completa do DKIM](#firststep)".
@@ -1255,7 +1271,7 @@ Abaixo irá encontrar os estados que podem bloquear o funcionamento do seu DKIM 
     - `toSet`: o seletor não está configurado na zona DNS do domínio. Pressione [etapa 4 "configuração completa do DKIM"  para MX Plan e Zimbra](#confemail).
     - `toFix`: o seletor foi corretamente configurado na zona DNS do domínio, mas os valores estão incorretos. Pressione [etapa 4 "configuração completa do DKIM" para MX Plan e Zimbra](#confemail).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ## Saiba mais

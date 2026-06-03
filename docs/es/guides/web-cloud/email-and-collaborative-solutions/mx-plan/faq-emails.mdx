@@ -2,12 +2,16 @@
 title: FAQ soluciones de correo electrónico de OVHcloud
 description: Encuentre las preguntas más frecuentes sobre el correo electrónico
 lastUpdated: 2026-03-24
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 {/* CP-NAV-START:web-mx-plan */}
 {/* CP-NAV-START:web-zimbra */}
@@ -51,7 +55,7 @@ En esta página encontrará las preguntas más frecuentes sobre el uso de su cor
 
 OVHcloud ofrece actualmente 4 soluciones de correo. Para entender sus especificaciones, navegue por las fichas de abajo:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="Correo electrónico / MX Plan">
     <img className="thumbnail" alt="MX Plan" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/mxplan01.png" loading="lazy" />
     
@@ -59,28 +63,28 @@ OVHcloud ofrece actualmente 4 soluciones de correo. Para entender sus especifica
     2. Incluido con los planes de hosting, puede contratarlo desde el <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink>.
     3. Esta oferta está disponible en tres tecnologías de correo diferentes. **Roundcube**, **OWA** (Outlook Web Access) y **Zimbra**.
   </Tab>
-  <Tab label="Zimbra Mail">
+  <Tab label="Zimbra Mail" availableIn={['eu']}>
     <img className="thumbnail" alt="Zimbra Mail" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/zimbra01.png" loading="lazy" />
     
     1. La solución de correo más reciente de OVHcloud ofrece un servicio de correo flexible y escalable en tres niveles de productos y funcionalidades.
     2. Puede contratar una cuenta Zimbra desde el <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink> o directamente en [ovhcloud.com](https://www.ovhcloud.com/es-es/mail/).
     3. Como su nombre indica, utiliza la interfaz **Zimbra**.
   </Tab>
-  <Tab label="Emails Pro">
+  <Tab label="Emails Pro" availableIn={['eu']}>
     <img className="thumbnail" alt="Email Pro" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/emailpro01.png" loading="lazy" />
     
     1. Solución de correo basada en la tecnología Exchange, que ofrece funcionalidades esenciales con un espacio de almacenamiento de 10 GB.
     2. Puede contratar una cuenta Email Pro desde el <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink> o directamente en [ovhcloud.com](https://www.ovhcloud.com/es-es/mail/).
     3. Esta oferta utiliza la interfaz webmail **OWA** (Outlook Web Access).
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     <img className="thumbnail" alt="Exchange" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/exchange01.png" loading="lazy" />
     
     1. Una completa oferta de correo con funciones colaborativas con 50 GB o 300 GB de espacio de almacenamiento.
     2. Incluido con los planes de hosting, puede contratarlo desde el <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink>.
     3. Esta oferta utiliza la interfaz webmail **OWA** (Outlook Web Access).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 :::tip
@@ -96,9 +100,13 @@ A menos que se indique lo contrario, las siguientes preguntas afectan a todos lo
 
 La solución MX Plan se distingue por su evolución, que se basa en tres tecnologías de correo distintas. Cada una de ellas tiene su propia interfaz webmail:
 
+<Region zones={['eu']}>
 - **Roundcube**.
+</Region>
 - **OWA** (Outlook Web Access).
+<Region zones={['eu']}>
 - **Zimbra**.
+</Region>
 
 Esta diversidad de tecnologías implica una ergonomía de funcionamiento diferente para cada interfaz. Algunas funcionalidades pueden configurarse a través del área de cliente, mientras que otras pueden configurarse a través del webmail.
 
@@ -215,8 +223,8 @@ Para saber cómo configurar un registro DKIM en su servicio de correo, consulte 
 Puede configurar su cuenta de correo con clientes como Outlook, Thunderbird o Mail de macOS, entre otros. OVHcloud pone a su disposición diferentes guías para ayudarle a configurar su dirección de correo. 
 Puede consultar nuestras guías en [este página](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/overview).
 
-<Tabs>
-  <Tab label="Correo electrónico y Zimbra Mail">
+<ZoneTabs>
+  <Tab label="Correo electrónico y Zimbra Mail" availableIn={['eu']}>
     **Equipo Windows**
     - [Outlook para Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-outlook-2016).
     - [Thunderbird para Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-thunderbird-windows).
@@ -233,7 +241,7 @@ Puede consultar nuestras guías en [este página](/guides/web-cloud/email-and-co
     **Smartphone o tableta Android**
     - [Gmail para Android](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-android).
   </Tab>
-  <Tab label="Emails Pro">
+  <Tab label="Emails Pro" availableIn={['eu']}>
     **Equipo Windows**
     - [Outlook para Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/outlook-windows-configuration).
     - [Thunderbird para Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-thunderbird).
@@ -250,7 +258,7 @@ Puede consultar nuestras guías en [este página](/guides/web-cloud/email-and-co
     **Smartphone o tableta Android**
     - [Gmail para Android](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-android).
   </Tab>
-  <Tab label="Microsoft Exchange">
+  <Tab label="Microsoft Exchange" availableIn={['eu', 'ca']}>
     **Equipo Windows**
     - [Outlook para Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-outlook-2016).
     - [Thunderbird para Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/thunderbird-windows-configuration).
@@ -267,7 +275,7 @@ Puede consultar nuestras guías en [este página](/guides/web-cloud/email-and-co
     **Smartphone o tableta Android**
     - [Gmail para Android](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-android).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Gracias al [webmail](https://www.ovhcloud.com/es-es/mail/), podrá acceder a su correo en cualquier momento, desde cualquier dispositivo. Una vez que haya creado su cuenta de correo, haga clic aquí para acceder a ella.

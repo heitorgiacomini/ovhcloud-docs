@@ -2,7 +2,10 @@
 title: Hébergement web - Passer son site web en HTTPS
 description: Découvrez comment passer votre site web en HTTPS après avoir activé un certificat SSL
 lastUpdated: 2025-10-27
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Objectif
 
@@ -136,7 +139,9 @@ Ce deuxième exemple de script a pour effet de transformer toutes les URLs arriv
 
 Pour ce deuxième exemple, vérifiez bien que tous vos noms de domaine ou sous-domaines cibles ont bien un certificat SSL actif.
 
+<Region zones={['eu']}>
 **Attention**, pour les offres d'hébergement [Cloud Web](https://www.ovhcloud.com/fr/web-hosting/cloud-web-offer/), le script à utiliser est le suivant :
+</Region>
 
 ```bash
 RewriteEngine On

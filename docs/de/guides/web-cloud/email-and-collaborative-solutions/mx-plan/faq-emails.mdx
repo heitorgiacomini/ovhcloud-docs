@@ -2,12 +2,16 @@
 title: FAQ OVHcloud E-Mails
 description: Hier finden Sie die am häufigsten gestellten Fragen zu E-Mails
 lastUpdated: 2026-03-24
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 {/* CP-NAV-START:web-mx-plan */}
 {/* CP-NAV-START:web-zimbra */}
@@ -50,7 +54,7 @@ Auf dieser Seite finden Sie die am häufigsten gestellten Fragen zur Verwendung 
 ### E-Mail-Angebote bei OVHcloud
 
 OVHcloud bietet derzeit 4 E-Mail-Angebote an. Um mehr über die Eigenschaften zu erfahren, klicken Sie auf die Tabs:
-<Tabs>
+<ZoneTabs>
   <Tab label="E-Mails / MX Plan">
     <img className="thumbnail" alt="MX Plan" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/mxplan01.png" loading="lazy" />
     
@@ -58,28 +62,28 @@ OVHcloud bietet derzeit 4 E-Mail-Angebote an. Um mehr über die Eigenschaften zu
     2. Es ist in den Webhosting-Angeboten inklusive und kann über das <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> bestellt werden.
     3. Dieses Angebot ist mit 3 verschiedenen E-Mail-Technologien verfügbar. **RoundCube**, **OWA** (Outlook Web App) und **Zimbra**.
   </Tab>
-  <Tab label="Zimbra Mail">
+  <Tab label="Zimbra Mail" availableIn={['eu']}>
     <img className="thumbnail" alt="Zimbra Mail" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/zimbra01.png" loading="lazy" />
     
     1. Sie ist das neueste E-Mail-Angebot von OVHcloud und bietet einen flexiblen und skalierbaren E-Mail-Dienst auf drei Ebenen von Angeboten und Funktionen.
     2. Sie können einen Zimbra-Account über das <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> oder direkt über [ovhcloud.com](https://www.ovhcloud.com/de/mail/) bestellen.
     3. Sie verwendet das **Zimbra**-Interface.
   </Tab>
-  <Tab label="E-Mails Pro">
+  <Tab label="E-Mails Pro" availableIn={['eu']}>
     <img className="thumbnail" alt="E-Mail Pro" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/emailpro01.png" loading="lazy" />
     
     1. E-Mail-Angebot auf Basis von Exchange mit grundlegenden Funktionen und 10 GB Speicherplatz.
     2. Sie können einen E-Mail Pro Account über das <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> oder direkt über [ovhcloud.com](https://www.ovhcloud.com/de/mail/) bestellen.
     3. Dieses Angebot verwendet das Webmail-Interface **OWA** (Outlook Web App).
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     <img className="thumbnail" alt="Exchange" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/exchange01.png" loading="lazy" />
     
     1. Umfassendes E-Mail-Angebot mit kollaborativen Funktionen mit 50 GB oder 300 GB Speicherplatz.
     2. Es ist in den Webhosting-Angeboten inklusive und kann über das <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> bestellt werden.
     3. Dieses Angebot verwendet das Webmail-Interface **OWA** (Outlook Web App).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 :::tip
@@ -95,9 +99,13 @@ Sofern nicht anders angegeben, betreffen die unten aufgeführten Fragen alle OVH
 
 Das MX Plan Angebot zeichnet sich dadurch aus, dass es auf drei verschiedenen E-Mail-Technologien basiert. Jede hat ihr eigenes Webmail-Interface:
 
+<Region zones={['eu']}>
 - **RoundCube**.
+</Region>
 - **OWA** (Outlook Web App).
+<Region zones={['eu']}>
 - **Zimbra**.
+</Region>
 
 Diese Vielfalt an Technologien erfordert eine unterschiedliche Ergonomie des Betriebs für jede Schnittstelle. Einige Funktionen können über das Kundencenter konfiguriert werden, andere über Webmail.
 
@@ -214,8 +222,8 @@ Weitere Informationen zum Konfigurieren eines DKIM-Eintrags für Ihren E-Mail-Di
 Sie können Ihre E-Mail-Accounts auf einem E-Mail-Client wie Outlook, Thunderbird, Mac Mail, etc. einrichten.  
 Hierzu stellen wir Ihnen Anleitungen zur Einrichtung Ihrer E-Mail-Adresse zur Verfügung. Diese finden Sie [hier](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/overview).
 
-<Tabs>
-  <Tab label="E-Mails und Zimbra Mail">
+<ZoneTabs>
+  <Tab label="E-Mails und Zimbra Mail" availableIn={['eu']}>
     **Windows**
     - [Outlook für Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-outlook-2016)
     - [Thunderbird für Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-thunderbird-windows)
@@ -232,7 +240,7 @@ Hierzu stellen wir Ihnen Anleitungen zur Einrichtung Ihrer E-Mail-Adresse zur Ve
     **Android Smartphone oder Tablet**
     - [Google Mail für Android](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-android)
   </Tab>
-  <Tab label="E-Mails Pro">
+  <Tab label="E-Mails Pro" availableIn={['eu']}>
     **Windows**
     - [Outlook für Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/outlook-windows-configuration)
     - [Thunderbird für Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-thunderbird)
@@ -249,7 +257,7 @@ Hierzu stellen wir Ihnen Anleitungen zur Einrichtung Ihrer E-Mail-Adresse zur Ve
     **Android Smartphone oder Tablet**
     - [Google Mail für Android](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-android)
   </Tab>
-  <Tab label="Microsoft Exchange">
+  <Tab label="Microsoft Exchange" availableIn={['eu', 'ca']}>
     **Windows**
     - [Outlook für Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-outlook-2016)
     - [Thunderbird für Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/thunderbird-windows-configuration)
@@ -266,7 +274,7 @@ Hierzu stellen wir Ihnen Anleitungen zur Einrichtung Ihrer E-Mail-Adresse zur Ve
     **Android Smartphone oder Tablet**
     - [Google Mail für Android](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-android)
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Mit [Webmail](https://www.ovhcloud.com/de/mail/) können Sie jederzeit und von jedem beliebigen Gerät aus auf Ihren E-Mail-Dienst zugreifen. Nachdem Sie Ihren E-Mail-Account erstellt haben, können Sie sich hier einloggen, um auf diesen zuzugreifen.

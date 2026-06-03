@@ -2,8 +2,10 @@
 title: Migration Ihrer Website und zugehörigen Dienste zu OVHcloud
 description: Erfahren Sie hier, wie Sie Ihre Website, Ihren Domainnamen, Ihre Datenbank und E-Mails ohne Dienstunterbrechung zu OVHcloud migrieren
 lastUpdated: 2026-06-03
+availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
 import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Ziel
@@ -72,7 +74,9 @@ Mehrere [OVHcloud Shared Hosting Angebote](https://www.ovhcloud.com/de/web-hosti
 - Hosting [Basic](https://www.ovhcloud.com/de/web-hosting/personal-offer/) mit **10 "MX Plan E-Mail-Accounts**
 - Hosting [Pro](https://www.ovhcloud.com/de/web-hosting/professional-offer/) mit **100 "MX Plan E-Mail-Accounts** (für gewerbliche Webseiten)
 - Hosting [Performance](https://www.ovhcloud.com/de/web-hosting/performance-offer/) mit **1000 "MX Plan E-Mail-Accounts** (skalierbare dedizierte Ressourcen)
+<Region zones={['eu']}>
 - Hosting [Cloud Web](https://www.ovhcloud.com/de/web-hosting/cloud-web-offer/) mit **200 E-Mail-Accounts** (für Anwendungsentwickler)
+</Region>
 
 Wenn Sie sich für ein passendes Webhosting-Angebot entschieden haben, klicken Sie auf den Button <code className="action">Bestellen</code> auf unserer Webseite. Folgen Sie den Bestellschritten, aber **leiten Sie dabei noch nicht den Transfer Ihres Domainnamens ein**. (Diese Aktion wird in Schritt 10 dieser Anleitung ausgeführt.)
 
@@ -94,10 +98,12 @@ Sie können die Bestellung auch über Ihr OVHcloud Kundencenter aufgeben. Klicke
 
 Sobald die Zahlung bestätigt wurde, startet die Installation des Hostings. Sie erhalten eine E-Mail an Ihre Kontakt-E-Mail-Adresse, die Zugangsdaten zum FTP-Speicherplatz (File Transfer Protocol) Ihres Webhostings enthält.
 
+<Region zones={['eu']}>
 :::info
 OVHcloud bietet neben MX Plan weitere E-Mail-Angebote an. Sie können beispielsweise [E-Mail Pro](https://www.ovhcloud.com/de/emails/email-pro/)-Accounts und/oder [Exchange](https://www.ovhcloud.com/de/emails/hosted-exchange/)-Accounts mit E-Mail-Accounts kombinieren.
 
 :::
+</Region>
 
 
 ### Schritt 2: Eine DNS-Zone für Ihren Domainnamen bei OVHcloud erstellen und vorkonfigurieren <a name="step2"></a>
@@ -191,8 +197,12 @@ Erstellen Sie neue E-Mail-Accounts und verwenden Sie dabei die gleichen E-Mail-A
 
 Wenn Sie sich für eins der E-Mail-Angebote Email Pro oder Exchange entschieden haben, lesen Sie unsere entsprechenden Anleitungen, um Ihre E-Mail-Adressen zu erstellen:
 
+<Region zones={['eu']}>
 - [E-Mail Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/first-config)
+</Region>
+<Region zones={['eu', 'ca']}>
 - [Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-hosted)
+</Region>
 
 ### Schritt 6: OVHcloud E-Mail-Server in der aktiven DNS-Zone Ihres Domainnamens hinterlegen <a name="step6"></a>
 
@@ -245,13 +255,17 @@ Sobald Ihre E-Mail-Accounts bei OVHcloud eingerichtet und bestehende Inhalte mig
 
 - Alle Konfigurationseinstellungen finden Sie in unserer Anleitung "[Erste Schritte mit MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#consult-emails-client)". Sie finden dort auch Links zu den Konfigurationsanleitungen für die wichtigsten E-Mail-Clients.
 
+<Region zones={['eu']}>
 #### Für E-Mail Pro E-Mail-Accounts:
 
 - Sie finden alle unsere Anleitungen zur Konfigurationsunterstützung unter `Konfiguration des E-Mail-Clients` auf der [Seite für E-Mail Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/overview).
+</Region>
 
+<Region zones={['eu', 'ca']}>
 #### Für Exchange E-Mail-Accounts:
 
 - Sie finden alle unsere Anleitungen zur Konfigurationsunterstützung in den Abschnitten `Konfiguration des Exchange E-Mail-Clients`und `Konfiguration von Exchange auf kompatiblen Smartphones/Tablets` auf der [Seite für Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/overview).
+</Region>
 
 ### Schritt 9: Die aktiven DNS-Server Ihres Domainnamens mit OVHcloud DNS-Servern ersetzen <a name="step9"></a>
 

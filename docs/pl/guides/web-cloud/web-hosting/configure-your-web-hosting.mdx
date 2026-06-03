@@ -2,7 +2,10 @@
 title: Hosting WWW - Środowisko, wersja PHP, .ovhconfig
 description: Dowiedz się, jak zmienić środowisko uruchomieniowe, wersję PHP, zaporę aplikacyjną, silnik, tryb i .ovhconfig na hostingu WWW
 lastUpdated: 2025-12-15
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -48,7 +51,12 @@ Zmiana konfiguracji hostingu w <ManagerLink to="/">Panelu klienta OVHcloud</Mana
 
 ## Wymagania początkowe
 
+<Region zones={['eu']}>
 - Posiadanie [hostingu OVHcloud](https://www.ovhcloud.com/pl/web-hosting/), z wyjątkiem [hostingu Cloud Web](https://www.ovhcloud.com/pl/web-hosting/cloud-web-offer/).
+</Region>
+<Region zones={['ca', 'apac']}>
+- Posiadanie [hostingu OVHcloud](https://www.ovhcloud.com/pl/web-hosting/).
+</Region>
 
 {/* CP-NAV-START:web-hosting */}
 ---

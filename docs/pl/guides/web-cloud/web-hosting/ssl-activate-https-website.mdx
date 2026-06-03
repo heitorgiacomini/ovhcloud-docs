@@ -2,7 +2,10 @@
 title: Hosting WWW - Ustaw HTTPS na stronie WWW
 description: Dowiedz się, jak aktywować certyfikat SSL na Twojej stronie WWW poprzez HTTPS
 lastUpdated: 2025-10-27
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Wprowadzenie
 
@@ -136,7 +139,9 @@ Drugi przykład skryptu powoduje przekształcenie wszystkich adresów URL przych
 
 W tym drugim przykładzie upewnij się, że wszystkie Twoje domeny lub subdomeny docelowe mają aktywny certyfikat SSL.
 
+<Region zones={['eu']}>
 **Uwaga**, w przypadku ofert hostingowych [Cloud Web](https://www.ovhcloud.com/pl/web-hosting/cloud-web-offer/) należy użyć następującego skryptu:
+</Region>
 
 ```bash
 RewriteEngine On
