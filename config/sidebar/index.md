@@ -1750,6 +1750,7 @@
             + [Speeding up your website with CDN](web-cloud/web-hosting/cdn-how-to-use-cdn)
             + [Accessing a website’s logs and statistics on a Web Hosting](web-cloud/web-hosting/logs-and-statistics)
             + [How to view CDN statistics and logs on a Web Hosting plan](web-cloud/web-hosting/cdn-statistics-and-logs)
+            + [How to enable and manage logs on a Web Hosting plan](web-cloud/web-hosting/enable-ldp-web-hosting)
             + [Geolocating your website](web-cloud/web-hosting/multisites-geolocation)
             + [Optimising your website’s performance](web-cloud/web-hosting/optimise-your-website-performance)
             + [Using automated tasks on a Web Hosting plan](web-cloud/web-hosting/cron-tasks)*
