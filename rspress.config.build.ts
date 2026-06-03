@@ -17,6 +17,7 @@ import { locales } from './config/shared';
 import { sidebar } from './config/sidebar';
 import { pluginLastUpdatedFromCache } from './plugins/lastUpdatedFromCache';
 import { rehypeLazyImages } from './plugins/rehypeLazyImages';
+import { remarkCpNavGate } from './plugins/remarkCpNavGate';
 import { remarkNoManagerHardcoded } from './plugins/remarkNoManagerHardcoded';
 
 const locale = process.env.LOCALE || 'fr';
@@ -92,7 +93,7 @@ export default defineConfig({
 
   markdown: {
     crossCompilerCache: true,
-    remarkPlugins: [remarkNoManagerHardcoded],
+    remarkPlugins: [remarkNoManagerHardcoded, remarkCpNavGate],
     rehypePlugins: [rehypeLazyImages],
     globalComponents: [
       path.join(BASE_DIR, 'components/Api/index.tsx'),

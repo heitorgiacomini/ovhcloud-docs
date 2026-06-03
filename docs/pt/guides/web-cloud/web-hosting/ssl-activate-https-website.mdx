@@ -2,7 +2,10 @@
 title: Alojamento web - Passar o seu website em HTTPS
 description: Saiba como passar o seu website em HTTPS após ter ativado um certificado SSL
 lastUpdated: 2025-10-27
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Objetivo
 
@@ -136,7 +139,9 @@ Este segundo exemplo de script tem o efeito de transformar todos os URL recebido
 
 Para este segundo exemplo, verifique se todos os seus nomes de domínio ou subdomínios alvo têm um certificado SSL ativo.
 
+<Region zones={['eu']}>
 **Atenção**, para as ofertas de alojamento [Cloud Web](https://www.ovhcloud.com/pt/web-hosting/cloud-web-offer/), o script a utilizar é o seguinte:
+</Region>
 
 ```bash
 RewriteEngine On

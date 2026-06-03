@@ -2,12 +2,16 @@
 title: E-Mail Alias und Weiterleitung verwenden
 description: Erfahren Sie hier, wie Sie E-Mail Aliase und Weiterleitungen verwalten
 lastUpdated: 2025-06-03
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region } from '@components/Zone';
 
 ## Ziel
 
@@ -87,9 +91,15 @@ Es ist möglich, eine Weiterleitung auf mehrere E-Mail-Adressen einzurichten. Da
 
 - Sie verfügen über eine vorkonfigurierte OVHcloud E-Mail-Lösung, darunter:
     - **MX Plan** mit unseren [Webhosting Angeboten](https://www.ovhcloud.com/de/web-hosting/) oder in einem [100M Gratis-Hosting](https://www.ovhcloud.com/de/domains/free-web-hosting/) inklusive.
+    <Region zones={['eu', 'ca']}>
     - [Exchange](https://www.ovhcloud.com/de/emails-exchange/).
+    </Region>
+    <Region zones={['eu']}>
     - [E-Mail Pro](https://www.ovhcloud.com/de/emails/email-pro/).
+    </Region>
+    <Region zones={['eu']}>
     - [Zimbra](https://www.ovhcloud.com/de/emails/zimbra-emails/).
+    </Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 {/* CP-NAV-START:web-zimbra */}
@@ -132,9 +142,15 @@ Diese Anleitung gilt für alle unsere E-Mail-Angebote. Je nach Angebot können S
 - **MX Plan Roundcube**: Entspricht dem MX Plan Angebot, das Roundcube Webmail verwendet.
 - **MX Plan Zimbra**: entspricht dem MX Plan Angebot mit Zimbra Webmail.
 - **MX Plan OWA**: Entspricht dem MX Plan Angebot, das Outlook Web App (OWA) Webmail verwendet.
+<Region zones={['eu', 'ca']}>
 - **Exchange**: Gilt für Angebote **Hosted**, **Private** und **Dedicated** Exchange, die Outlook Web App (OWA) Webmail verwenden.
+</Region>
+<Region zones={['eu']}>
 - **E-Mail Pro**: Exchange-basiertes E-Mail-Angebot mit Outlook Web App (OWA) Webmail.
+</Region>
+<Region zones={['eu']}>
 - **Zimbra**: Dediziertes Angebot mit Zimbra Webmail.
+</Region>
 - **Redirect**: Dieses kostenlose Angebot ist automatisch verfügbar, wenn Sie einen Domainnamen in Ihrem Kundencenter haben und kein E-Mail-Angebot dazugehört. Sie erlaubt die Erstellung von E-Mail-Weiterleitungen.
 
 :::info
@@ -154,19 +170,27 @@ In Ihrem MX Plan Dienst finden Sie auf der Registerkarte <code className="action
         - [MX Plan / Redirect](#redirect-manager-mxplan)
     - [Aus Webmail](#redirect-webmail)
         - [Outlook Web App (OWA)](#redirect-webmail-owa)
+        <Region zones={['eu']}>
         - [Zimbra](#redirect-webmail-zimbra)
+        </Region>
 - [Weiterleitung löschen](#redirect-delete)
     - [MX Plan via Kundencenter](#redirect-delete)
     - [Outlook Web App (OWA)](#redirect-delete-owa)
+    <Region zones={['eu']}>
     - [Zimbra](#redirect-delete-zimbra)
+    </Region>
 - [Alias erstellen](#alias)
     - [Exchange / E-Mail Pro / MX Plan](#alias-exchange-emp-mxplan)
     - [MX Plan Roundcube](#alias-mxplan-roundcube)
+    <Region zones={['eu']}>
     - [Zimbra](#alias-mxplan-roundcube)
+    </Region>
 - [Alias löschen](#alias-delete)
     - [Exchange / E-Mail Pro / MX Plan](#alias-delete-exchange-emp-mxplan)
     - [MX Plan Roundcube](#alias-delete-mxplan-roundcube)
+    <Region zones={['eu']}>
     - [Zimbra](#alias-delete-zimbra)
+    </Region>
 
 ### Weiterleitung erstellen <a name="redirect"></a>
 
@@ -250,8 +274,12 @@ Die Erstellung einer Weiterleitung erfolgt über Posteingangsregeln, im Webmail 
 Dieses Kapitel betrifft die folgenden Angebote:
 
 - **MX PLAN OWA**.
+<Region zones={['eu', 'ca']}>
 - **Exchange**.
+</Region>
+<Region zones={['eu']}>
 - **E-Mail Pro**.
+</Region>
 
 :::
 
@@ -314,7 +342,9 @@ Um eine einfache **Weiterleitung** anzuwenden (siehe [Schema 1](#diagram) am Anf
 Dieses Kapitel betrifft die folgenden Angebote:
 
 - **MX Plan** mit Zimbra-Kennzeichnung für Webmail.
+<Region zones={['eu']}>
 - **Zimbra**.
+</Region>
 
 :::
 

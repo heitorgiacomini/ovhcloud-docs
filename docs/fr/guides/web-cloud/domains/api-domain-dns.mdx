@@ -2,13 +2,14 @@
 title: Configurer les DNS de son nom de domaine
 description: "Utiliser l'API publique OVHcloud pour configurer les DNS de votre nom de domaine"
 lastUpdated: 2026-02-10
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 import Api from '@components/Api';
 
 
-{/* Rappel à mettre au début de chaque page */}
+{/* Reminder to put at the beginning of each page */}
 
 :::info
 Pour suivre ce guide, vous devez déjà vous connecter à l'API OVHcloud. Vous trouverez plus de détails sur la page d'[introduction à l'API](/guides/web-cloud/domains/api-domain-intro).
@@ -223,7 +224,7 @@ L'API suivante permet d'ajouter de nouveaux serveurs de noms sur votre nom de do
     {
       "nameServer": [
         {
-          // Quand un registre comme eurid (.eu) ne supporte pas les hosts, on déclare directement les glue records ici
+          // When a registry like eurid (.eu) does not support hosts, declare the glue records directly here
           "host": "ns1.test.eu",
           "ip": "140.2.113.151"
         },

@@ -2,12 +2,16 @@
 title: Utilizar os alias e reencaminhamentos de e-mail
 description: Saiba como gerir os seus alias e reencaminhamentos de e-mail
 lastUpdated: 2025-06-03
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region } from '@components/Zone';
 
 ## Objetivo
 
@@ -87,9 +91,15 @@ Tenha em atenção que é possível configurar um reencaminhamento para vários 
 
 - Ter uma solução de e-mail OVHcloud previamente configurada, entre as seguintes:
     - **MX Plan** proposta com os nossos [oferta de alojamento web](https://www.ovhcloud.com/pt/web-hosting/) ou incluída num [alojamento gratuito 100M](https://www.ovhcloud.com/pt/domains/free-web-hosting/).
+    <Region zones={['eu', 'ca']}>
     - [Exchange](https://www.ovhcloud.com/pt/emails-exchange/).
+    </Region>
+    <Region zones={['eu']}>
     - [E-mail Pro](https://www.ovhcloud.com/pt/emails/email-pro/).
+    </Region>
+    <Region zones={['eu']}>
     - [Zimbra](https://www.ovhcloud.com/pt/emails/zimbra-emails/).
+    </Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 {/* CP-NAV-START:web-zimbra */}
@@ -132,9 +142,15 @@ Este guia diz respeito ao conjunto das nossas ofertas de e-mail. Em função da 
 - **MX Plan Roundcube**: Corresponde à oferta MX Plan que utiliza o webmail Roundcube.
 - **MX Plan Zimbra**: Corresponde à oferta MX Plan que utiliza o webmail Zimbra.
 - **MX Plan OWA**: Corresponde à oferta MX Plan utilizando o webmail Outlook Web App (OWA).
+<Region zones={['eu', 'ca']}>
 - **Exchange**: Aplicável às ofertas **Hosted**, **Private** e **Dedicated*** Exchange que utilizam o webmail Outlook Web App (OWA).
+</Region>
+<Region zones={['eu']}>
 - **E-mail Pro**: Oferta de e-mail baseado em Exchange que utiliza o webmail Outlook Web App (OWA).
+</Region>
+<Region zones={['eu']}>
 - **Zimbra**: Oferta dedicada que utiliza o webmail Zimbra.
+</Region>
 - **Redirect**: Esta oferta gratuita está automaticamente disponível se dispuser de um domínio na Área de Cliente sem que tenha recebido uma oferta por e-mail. Permite criar reencaminhamentos de e-mail.
 
 :::info
@@ -154,19 +170,27 @@ No serviço MX Plan, no separador <code className="action">Informações gerais<
         - [MX Plan / redirect](#redirect-manager-mxplan)
     - [Através do webmail](#redirect-webmail)
         - [Outlook Web App (OWA)](#redirect-webmail-owa)
+        <Region zones={['eu']}>
         - [Zimbra](#redirect-webmail-zimbra)
+        </Region>
 - [Eliminar um reencaminhamento](#redirect-delete)
     - [MX Plan através da Área de Cliente](#redirect-delete)
     - [Outlook Web App (OWA)](#redirect-delete-owa)
+    <Region zones={['eu']}>
     - [Zimbra](#redirect-delete-zimbra)
+    </Region>
 - [Criar um alias](#alias)
     - [Exchange / E-mail Pro / MX Plan](#alias-exchange-emp-mxplan)
     - [MX Plan Roundcube](#alias-mxplan-roundcube)
+    <Region zones={['eu']}>
     - [Zimbra](#alias-mxplan-roundcube)
+    </Region>
 - [Eliminar um alias](#alias-delete)
     - [Exchange / E-mail Pro / MX Plan](#alias-delete-exchange-emp-mxplan)
     - [MX Plan Roundcube](#alias-delete-mxplan-roundcube)
+    <Region zones={['eu']}>
     - [Zimbra](#alias-delete-zimbra)
+    </Region>
 
 ### Criar um reencaminhamento <a name="redirect"></a>
 
@@ -250,8 +274,12 @@ Para criar um reencaminhamento, são utilizadas regras da caixa de entrada, tamb
 Este capítulo diz respeito às seguintes ofertas:
 
 - **MX Plan OWA**.
+<Region zones={['eu', 'ca']}>
 - **Exchange**.
+</Region>
+<Region zones={['eu']}>
 - **E-mail Pro**.
+</Region>
 
 :::
 
@@ -314,7 +342,9 @@ Para aplicar um **reencaminhamento simples** (ver [esquema 1](#diagram) no iníc
 Este capítulo diz respeito às seguintes ofertas:
 
 - **MX Plan** com a menção zimbra para o webmail.
+<Region zones={['eu']}>
 - **Zimbra**.
+</Region>
 
 :::
 

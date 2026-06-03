@@ -2,12 +2,16 @@
 title: FAQ email OVHcloud
 description: Rileggi le domande più frequenti sulle email
 lastUpdated: 2026-03-24
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 {/* CP-NAV-START:web-mx-plan */}
 {/* CP-NAV-START:web-zimbra */}
@@ -51,7 +55,7 @@ In questa pagina vengono fornite le domande più frequenti sull’utilizzo delle
 
 OVHcloud propone attualmente 4 offerte email. Per comprenderne le specificità, naviga attraverso le schede seguenti:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="Email/MX Plan">
     <img className="thumbnail" alt="MX Plan" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/mxplan01.png" loading="lazy" />
     
@@ -59,28 +63,28 @@ OVHcloud propone attualmente 4 offerte email. Per comprenderne le specificità, 
     2. Incluso nelle offerte di hosting Web e può essere ordinato dallo <ManagerLink to="/">Spazio Cliente OVHcloud</ManagerLink>.
     3. Questa soluzione è disponibile con 3 diverse tecnologie di posta. **Roundcube**, **OWA** (Outlook Web Access) e **Zimbra**.
   </Tab>
-  <Tab label="Zimbra Mail">
+  <Tab label="Zimbra Mail" availableIn={['eu']}>
     <img className="thumbnail" alt="Zimbra Mail" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/zimbra01.png" loading="lazy" />
     
     1. La soluzione email più recente di OVHcloud propone un servizio email flessibile e scalabile su tre livelli di offerte e funzionalità.
     2. È possibile ordinare un account Zimbra dallo <ManagerLink to="/">Spazio Cliente OVHcloud</ManagerLink> o direttamente da [ovhcloud.com](https://www.ovhcloud.com/it/mail/).
     3. Come indica il nome, utilizza l’interfaccia **Zimbra**.
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     <img className="thumbnail" alt="Email Pro" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/emailpro01.png" loading="lazy" />
     
     1. Offerta email basata sulla tecnologia Exchange, che offre funzionalità essenziali con uno spazio di storage di 10 GB.
     2. È possibile ordinare un account Email Pro dallo <ManagerLink to="/">Spazio Cliente OVHcloud</ManagerLink> o direttamente da [ovhcloud.com](https://www.ovhcloud.com/it/mail/).
     3. Questa soluzione utilizza l’interfaccia Webmail **OWA** (Outlook Web Access).
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     <img className="thumbnail" alt="Exchange" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/exchange01.png" loading="lazy" />
     
     1. Offerta email completa che dispone di funzionalità collaborative con 50 GB o 300 GB di spazio di storage.
     2. Incluso nelle offerte di hosting Web e può essere ordinato dallo <ManagerLink to="/">Spazio Cliente OVHcloud</ManagerLink>.
     3. Questa soluzione utilizza l’interfaccia Webmail **OWA** (Outlook Web Access).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 :::tip
@@ -96,9 +100,13 @@ Tutte le soluzioni di posta elettronica OVHcloud sono soggette alle domande ripo
 
 Il servizio MX Plan si distingue per l’evoluzione che si basa su tre tecnologie email distinte. Ognuna dispone della propria interfaccia Webmail:
 
+<Region zones={['eu']}>
 - **Roundcube**.
+</Region>
 - **OWA** (Outlook Web Access).
+<Region zones={['eu']}>
 - **Zimbra**.
+</Region>
 
 Questa diversità di tecnologie implica una diversa ergonomia di funzionamento per ogni interfaccia. Alcune funzionalità possono essere configurate dallo Spazio Cliente, altre dalla Webmail.
 
@@ -215,8 +223,8 @@ Per informazioni su come configurare un record DKIM sul servizio di posta, consu
 È possibile configurare il tuo account email su un client di posta come Outlook, Thunderbird, Mail di macOS, ecc.
 Per seguire la procedura, puoi consultare le nostre guide disponibili [qui](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/overview).
 
-<Tabs>
-  <Tab label="Email e Zimbra Mail">
+<ZoneTabs>
+  <Tab label="Email e Zimbra Mail" availableIn={['eu']}>
     **Computer Windows**
     - [Outlook per Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-outlook-2016).
     - [Thunderbird per Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-thunderbird-windows).
@@ -233,7 +241,7 @@ Per seguire la procedura, puoi consultare le nostre guide disponibili [qui](/gui
     **Smartphone o tablet Android**
     - [Gmail per Android](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-android).
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     **Computer Windows**
     - [Outlook per Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/outlook-windows-configuration).
     - [Thunderbird per Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-thunderbird).
@@ -250,7 +258,7 @@ Per seguire la procedura, puoi consultare le nostre guide disponibili [qui](/gui
     **Smartphone o tablet Android**
     - [Gmail per Android](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-android).
   </Tab>
-  <Tab label="Microsoft Exchange">
+  <Tab label="Microsoft Exchange" availableIn={['eu', 'ca']}>
     **Computer Windows**
     - [Outlook per Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-outlook-2016).
     - [Thunderbird per Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/thunderbird-windows-configuration).
@@ -267,7 +275,7 @@ Per seguire la procedura, puoi consultare le nostre guide disponibili [qui](/gui
     **Smartphone o tablet Android**
     - [Gmail per Android](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-android).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Attraverso la [Webmail](https://www.ovhcloud.com/it/mail/) è possibile accedere in qualsiasi momento alla tua casella di posta elettronica, da qualsiasi dispositivo connesso. Una volta creato il tuo account email, clicca qui per accedervi.

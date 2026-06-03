@@ -2,7 +2,10 @@
 title: Web Hosting - Environment, PHP version, .ovhconfig
 description: Find out how to modify a web hosting plan’s runtime environment, PHP version, application firewall, engine, mode and .ovhconfig
 lastUpdated: 2025-12-15
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -48,7 +51,12 @@ In short, changing your Web Hosting plan’s configuration from the <ManagerLink
 
 ## Requirements
 
+<Region zones={['eu']}>
 - An [OVHcloud web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/), with the exception of a [Cloud Web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/cloud-web-offer/)
+</Region>
+<Region zones={['ca', 'apac']}>
+- An [OVHcloud web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/).
+</Region>
 
 {/* CP-NAV-START:web-hosting */}
 ---

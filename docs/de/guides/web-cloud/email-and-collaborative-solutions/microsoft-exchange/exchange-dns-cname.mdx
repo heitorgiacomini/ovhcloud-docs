@@ -2,10 +2,14 @@
 title: CNAME-Eintrag erstellen, um Domainnamen für Ihren E-Mail-Dienst zu validieren
 description: Erfahren Sie hier, wie Sie Domainnamen für Ihren E-Mail-Dienst zu validieren, indem Sie einen CNAME-Eintrag anlegen
 lastUpdated: 2023-08-29
+availableIn: [eu, ca]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
+
+
+import { Region } from '@components/Zone';
 
 ## Ziel
 
@@ -24,6 +28,8 @@ Wenn der hinzugefügte Domainname (bzw. dessen DNS-Zone) in demselben Kunden-Acc
 - Sie verfügen über eine der E-Mail-Lösungen [Exchange](https://www.ovhcloud.com/de/emails-exchange/) oder [E-Mail Pro](https://www.ovhcloud.com/de/emails/email-pro/).
 - Sie haben einen Domainnamen zu Ihrem Dienst hinzugefügt, wie in [unserer Anleitung](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-adding-domain) beschrieben.
 - Sie sind berechtigt die zugehörige [DNS-Zone zu konfigurieren](/guides/web-cloud/domains/dns-zone-edit) (im OVHcloud Kundencenter oder einem externen Verwaltungsinterface).
+
+<Region zones={['eu', 'ca']}>
 
 {/* CP-NAV-START:web-exchange */}
 {/* CP-NAV-START:web-email-pro */}
@@ -44,6 +50,8 @@ Wenn der hinzugefügte Domainname (bzw. dessen DNS-Zone) in demselben Kunden-Acc
 ---
 {/* CP-NAV-END:web-email-pro */}
 {/* CP-NAV-END:web-exchange */}
+
+</Region>
 
 ## In der praktischen Anwendung
 

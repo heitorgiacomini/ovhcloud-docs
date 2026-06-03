@@ -2,7 +2,10 @@
 title: Alojamento web - Ambiente, versão PHP, .ovhconfig
 description: Saiba como alterar o ambiente de execução, a versão PHP, a firewall aplicacional, o motor, o modo e o .ovhconfig de um alojamento web
 lastUpdated: 2025-12-15
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -48,7 +51,12 @@ Em resumo, alterar a configuração do seu alojamento web a partir da <ManagerLi
 
 ## Requisitos
 
+<Region zones={['eu']}>
 - Dispor de um serviço de [alojamento web OVHcloud](https://www.ovhcloud.com/pt/web-hosting/), com exceção de um [serviço de alojamento Cloud Web](https://www.ovhcloud.com/pt/web-hosting/cloud-web-offer/).
+</Region>
+<Region zones={['ca', 'apac']}>
+- Dispor de um serviço de [alojamento web OVHcloud](https://www.ovhcloud.com/pt/web-hosting/).
+</Region>
 
 {/* CP-NAV-START:web-hosting */}
 ---

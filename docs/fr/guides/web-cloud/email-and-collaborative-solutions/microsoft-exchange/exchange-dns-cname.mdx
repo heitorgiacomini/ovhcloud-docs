@@ -2,10 +2,14 @@
 title: Ajouter un enregistrement CNAME pour valider votre domaine sur votre offre e-mail
 description: Découvrez comment valider votre nom de domaine sur votre plateforme e-mail en ajoutant un enregistrement CNAME
 lastUpdated: 2023-08-29
+availableIn: [eu, ca]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
+
+
+import { Region } from '@components/Zone';
 
 ## Objectif
 
@@ -24,6 +28,8 @@ Si le nom de domaine ajouté est géré dans le même compte client que la plate
 - Disposer d'une solution [Exchange](https://www.ovhcloud.com/fr/emails-exchange/) ou [Email Pro](https://www.ovhcloud.com/fr/emails/email-pro/).
 - Avoir ajouté un nom de domaine sur votre plateforme e-mail. Vous pouvez vous aider du guide « [Ajouter un nom de domaine sur une plateforme e-mail](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-adding-domain) » si nécessaire.
 - Être en mesure de [configurer la zone DNS](/guides/web-cloud/domains/dns-zone-edit) du nom de domaine concerné, depuis l'espace client OVHcloud ou depuis l'interface de gestion où il est enregistré.
+
+<Region zones={['eu', 'ca']}>
 
 {/* CP-NAV-START:web-exchange */}
 {/* CP-NAV-START:web-email-pro */}
@@ -44,6 +50,8 @@ Si le nom de domaine ajouté est géré dans le même compte client que la plate
 ---
 {/* CP-NAV-END:web-email-pro */}
 {/* CP-NAV-END:web-exchange */}
+
+</Region>
 
 ## En pratique
 

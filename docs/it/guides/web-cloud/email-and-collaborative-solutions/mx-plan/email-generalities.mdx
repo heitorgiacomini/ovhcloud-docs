@@ -2,12 +2,16 @@
 title: Iniziare a utilizzare la soluzione MX Plan
 description: Come eseguire le prime operazioni sul servizio MX Plan
 lastUpdated: 2026-03-05
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { ZoneTabs } from '@components/Zone';
 
 ## Obiettivo
 
@@ -61,8 +65,8 @@ In base alla data di attivazione del servizio MX Plan o a una migrazione recente
 
 Per maggiori informazioni sulla creazione di un indirizzo email, clicca sulla scheda corrispondente alla tecnologia utilizzata dal tuo servizio MX Plan:
 
-<Tabs>
-  <Tab label="Roundcube">
+<ZoneTabs>
+  <Tab label="Roundcube" availableIn={['eu']}>
     Per creare un indirizzo email clicca sulla scheda <code className="action">Email</code>. Visualizzi una tabella con tutti gli account già creati. Per aggiungere un nuovo account email, clicca sul pulsante <code className="action">Aggiungi account</code>.
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities/mxplan-starter-new-step2.png" loading="lazy" />
@@ -78,7 +82,7 @@ Nella nuova finestra, inserisci le informazioni richieste:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities/mxplan-creation-new-step3-roundcube.png" loading="lazy" />
   </Tab>
-  <Tab label="Zimbra e OWA">
+  <Tab label="Zimbra e OWA" availableIn={['eu']}>
     Per creare un indirizzo email clicca sulla scheda <code className="action">Account email</code>. Visualizzi una lista degli account già disponibili e di quelli che è ancora possibile creare. Per aggiungere un nuovo account email, clicca sul pulsante <code className="action">Aggiungi account</code>.
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities/mxplan-starter-new-step2.png" loading="lazy" />
@@ -96,7 +100,7 @@ Nella nuova finestra, inserisci le informazioni richieste:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities/mxplan-starter-new-step3.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Utilizzare gli indirizzi email <a name="consult-emails"></a>
@@ -109,14 +113,14 @@ Accedi alla pagina "[Accedi alla Webmail](https://www.ovhcloud.com/it/mail/)" e 
 
 Seleziona la scheda corrispondente alla tecnologia email della tua soluzione MX Plan:
 
-<Tabs>
-  <Tab label="Roundcube">
+<ZoneTabs>
+  <Tab label="Roundcube" availableIn={['eu']}>
     Dovreste ottenere un'interfaccia simile all'immagine qui sotto con la dicitura "Roundcube" in alto a sinistra.
     Per scoprire l'interfaccia Roundcube e il suo utilizzo, consulta la nostra guida "[Utilizzare il proprio indirizzo e-mail dalla webmail Roundcube](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-roundcube)".
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities/mxplan-webmail-roundcube01.png" loading="lazy" />
   </Tab>
-  <Tab label="Zimbra">
+  <Tab label="Zimbra" availableIn={['eu']}>
     Come nell'immagine qui sotto, si apre una finestra con la scritta "Zimbra" in alto a sinistra.
     Per scoprire come utilizzare il tuo indirizzo email dalla Webmail Zimbra, consulta la nostra guida "[Utilizzare la Webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra)".
     
@@ -129,7 +133,7 @@ Seleziona la scheda corrispondente alla tecnologia email della tua soluzione MX 
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities/mxplan-webmail-owa01.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 #### Utilizza un client di posta <a name="consult-emails-client"></a>
@@ -211,8 +215,8 @@ Vuoi reindirizzare le tue email verso un altro destinatario, creare un alias o c
 
 Per effettuare questa operazione clicca sulla scheda corrispondente alla tua tecnologia di posta:
 
-<Tabs>
-  <Tab label="Roundcube">
+<ZoneTabs>
+  <Tab label="Roundcube" availableIn={['eu']}>
     Per aggiungere un reindirizzamento o un alias, clicca sulla scheda <code className="action">Email</code> del tuo servizio MX Plan e poi sul pulsante <code className="action">Gestione dei reindirizzamenti</code> a destra.
     Visualizzi la tabella dei reindirizzamenti già attivi. Clicca sul pulsante <code className="action">Aggiungi un reindirizzamento</code> per avviare la creazione del reindirizzamento o dell’alias.
     
@@ -222,7 +226,7 @@ Per effettuare questa operazione clicca sulla scheda corrispondente alla tua tec
     
     Per comprendere l’utilizzo dei reindirizzamenti e degli alias sul tuo servizio MX Plan, consulta la nostra guida completa: "[Utilizzare i reindirizzamenti email](/guides/web-cloud/email-and-collaborative-solutions/common-email-features/feature-redirections)".
   </Tab>
-  <Tab label="OWA e Zimbra">
+  <Tab label="OWA e Zimbra" availableIn={['eu']}>
     Quando utilizzi una tecnologia **OWA** o **Zimbra**, puoi procedere in due modi:
     
     1. **Crea il tuo reindirizzamento dalla Webmail**: tramite le regole della posta in arrivo o i filtri. Queste regole, applicate al momento della ricezione di un’email, permettono infatti di trasferire o reindirizzare un’email. Per effettuare questa operazione, consulta la nostra guida "[Regole della posta in arrivo dall’interfaccia OWA](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/creating-inbox-rules-in-owa-mx-plan)" o il capitolo "Filtri" della nostra guida "[Utilizzare la webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra)".
@@ -235,7 +239,7 @@ Per effettuare questa operazione clicca sulla scheda corrispondente alla tua tec
     
     Per comprendere l'utilizzo dei reindirizzamenti e degli alias sul tuo servizio MX Plan, consulta la nostra guida completa: "[Utilizzare i reindirizzamenti email](/guides/web-cloud/email-and-collaborative-solutions/common-email-features/feature-redirections)".
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Risposta automatica <a name="autoreply"></a>
@@ -244,20 +248,20 @@ Quando è necessario uscire, è importante poter impostare una risposta automati
 
 Seleziona la scheda corrispondente alla tecnologia email della tua soluzione MX Plan:
 
-<Tabs>
-  <Tab label="Roundcube">
+<ZoneTabs>
+  <Tab label="Roundcube" availableIn={['eu']}>
     Per aggiungere una risposta automatica a uno degli indirizzi email, clicca sulla scheda <code className="action">Email</code> del tuo servizio MX Plan e poi sul pulsante <code className="action">Gestione delle risposte automatiche</code> a destra.
     Viene visualizzata la tabella delle risposte automatiche già attive. Clicca sul pulsante <code className="action">Aggiungi una risposta automatica</code> a destra per avviare la creazione del reindirizzamento o dell’alias.
     
     Per maggiori dettagli sull’attivazione di una risposta automatica dal servizio MX Plan nello Spazio Cliente OVHcloud, consulta la nostra guida "[MX Plan - Creare una risposta automatica su un indirizzo email](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/feature-auto-responses)".
   </Tab>
-  <Tab label="Zimbra">
+  <Tab label="Zimbra" availableIn={['eu']}>
     Per impostare una risposta automatica, accedi all’indirizzo email dalla Webmail. Per maggiori informazioni, consulta la nostra guida "[Utilizzare la webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra)", seleziona "Risposte automatiche/Segreteria" nel sommario.
   </Tab>
   <Tab label="OWA">
     Per impostare una risposta automatica, accedi all’indirizzo email dalla Webmail. Per maggiori informazioni, consulta la nostra guida "[Utilizzare il proprio indirizzo email dalla webmail Outlook Web App (OWA)](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa)", vai direttamente al capitolo "Aggiungere la risposta automatica".
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ## Per saperne di più <a name="go-further"></a>

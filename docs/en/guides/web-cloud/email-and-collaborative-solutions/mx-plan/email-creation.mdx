@@ -2,12 +2,16 @@
 title: Creating an email address with an MX Plan solution
 description: Find out how to create an email address with an MX Plan solution
 lastUpdated: 2025-08-26
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 ## Objective
 
@@ -112,8 +116,8 @@ On the [Webmail login page](https://www.ovhcloud.com/en-gb/mail/), enter your em
 
 Select the tab corresponding to the email technology of your MX Plan solution:
 
-<Tabs>
-  <Tab label="Zimbra">
+<ZoneTabs>
+  <Tab label="Zimbra" availableIn={['eu']}>
     When you are logged in to the Zimbra webmail, you get the interface below. For more details, please refer to our guide on [Using the Zimbra webmail](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra).
     
     <img className="thumbnail" alt="Zimbra - interface" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/zimbra-01.png" loading="lazy" />
@@ -123,7 +127,7 @@ Select the tab corresponding to the email technology of your MX Plan solution:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/mxplan-creation-new-step5.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 To view your emails using an email client, please refer to the section ["View an email account from a device"](#configdevices).

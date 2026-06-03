@@ -2,10 +2,14 @@
 title: Elimina un account email
 description: Come eliminare o reimpostare un indirizzo email sul servizio di posta
 lastUpdated: 2026-02-19
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 ## Obiettivo
 
@@ -21,9 +25,15 @@ Vuoi:
 
 - Disporre di una soluzione email OVHcloud configurata precedentemente:
     - **MX Plan**, inclusa nelle nostre [soluzioni di hosting Web](https://www.ovhcloud.com/it/web-hosting/), inclusa in un [Hosting gratuito 100M](https://www.ovhcloud.com/it/domains/free-web-hosting/) o ordinata separatamente come soluzione autonoma.
+    <Region zones={['eu', 'ca']}>
     - [**Exchange**](https://www.ovhcloud.com/it/emails-exchange/).
+    </Region>
+    <Region zones={['eu']}>
     - [**Email Pro**](https://www.ovhcloud.com/it/emails/email-pro/).
+    </Region>
+    <Region zones={['eu']}>
     - [**Zimbra**](https://www.ovhcloud.com/it/emails/zimbra-emails/).
+    </Region>
 - Essere il contatto amministratore del servizio email interessato.
 - Disporre delle informazioni di connessione agli account email interessati.
 
@@ -80,13 +90,15 @@ In base alla data di attivazione della tua offerta MX Plan o a una migrazione re
 OVHcloud propone 4 soluzioni email, la nozione di eliminazione di un account è diversa a seconda della tua offerta.
 
 - **Email MX Plan**: questa offerta è venduta sotto forma di un pack di più account email. Una volta eliminato un account, libera una posizione sul tuo pack.
+<Region zones={['eu']}>
 - **Email Pro**, **Hosted Exchange** e **Zimbra**: queste offerte sono on demand, ordinerai un abbonamento individuale per account email. Per eliminare un indirizzo email è necessario procedere alla **reinizializzazione**. Una volta reimpostato l'account email, è possibile riutilizzarlo per creare un nuovo indirizzo email. Per [eliminare definitivamente l'abbonamento](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/manage-billing-exchange#elimina-account), è possibile disattivare l'account.
+</Region>
 
 ### Elimina o reinizializza un account email
 
 Seleziona la scheda corrispondente al tuo servizio di posta:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan Roundcube">
     Per identificare la tecnologia email associata al tuo servizio MX Plan, fai riferimento alla sezione "[Identificare la tecnologia email della tua offerta MX Plan](#whichmxplan)" di questa guida.
     
@@ -103,7 +115,7 @@ Seleziona la scheda corrispondente al tuo servizio di posta:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/email-mxplan-new-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     1. Clicca sulla scheda <code className="action">Account email</code>. Visualizzi una finestra con tutti gli account email esistenti.
     1. Clicca sul pulsante <code className="action">...</code> a destra dell'account da modificare e poi clicca su <code className="action">Reimposta questo account</code>.
     
@@ -111,7 +123,7 @@ Seleziona la scheda corrispondente al tuo servizio di posta:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/emailpro-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     1. Clicca sulla scheda <code className="action">Account email</code>.
     1. Clicca sul pulsante <code className="action">...</code> a destra dell'account da modificare e poi clicca su <code className="action">Reimposta</code>.
     
@@ -119,13 +131,13 @@ Seleziona la scheda corrispondente al tuo servizio di posta:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/exchange-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Zimbra STARTER/PRO">
+  <Tab label="Zimbra STARTER/PRO" availableIn={['eu']}>
     1. Clicca sulla scheda <code className="action">Account email</code>. Visualizzi una finestra con tutti gli account email esistenti.
     1. Clicca sul pulsante <code className="action">⋮</code> a destra dell'account da modificare e poi clicca su <code className="action">Elimina</code>.
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/email-zimbra-reset.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ## Per saperne di più

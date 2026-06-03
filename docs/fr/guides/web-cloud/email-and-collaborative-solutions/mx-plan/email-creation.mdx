@@ -2,12 +2,16 @@
 title: Créer une adresse e-mail avec son offre MX Plan
 description: Découvrez comment créer une adresse e-mail avec votre offre MX Plan
 lastUpdated: 2025-08-26
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { ZoneTabs } from '@components/Zone';
 
 ## Objectif
 
@@ -112,8 +116,8 @@ Accédez à la page « [Connexion au webmail](https://www.ovhcloud.com/fr/mail/)
 
 Sélectionnez l'onglet correspondant à la technologie e-mail de votre offre MX Plan :
 
-<Tabs>
-  <Tab label="Zimbra">
+<ZoneTabs>
+  <Tab label="Zimbra" availableIn={['eu']}>
     Lorsque vous êtes connecté au webmail Zimbra, vous obtenez l'interface ci-dessous. Pour obtenir plus de détails sur l'utilisation du webmail Zimbra, référez-vous à notre guide « [Utiliser le webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra) ».
     
     <img className="thumbnail" alt="Zimbra - interface" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/zimbra-01.png" loading="lazy" />
@@ -123,7 +127,7 @@ Sélectionnez l'onglet correspondant à la technologie e-mail de votre offre MX 
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation/mxplan-creation-new-step5.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Pour consulter vos e-mails depuis un logiciel de messagerie, référez-vous à la rubrique « [Consulter un compte e-mail depuis un appareil](#configdevices) ».

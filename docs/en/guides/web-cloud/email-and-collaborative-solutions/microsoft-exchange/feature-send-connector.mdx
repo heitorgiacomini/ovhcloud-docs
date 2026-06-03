@@ -2,11 +2,15 @@
 title: Configure a send connector on your Private or Trusted Exchange platform
 description: Find out how to add an SMTP send connector to your OVHcloud Exchange platform
 lastUpdated: 2025-10-09
+availableIn: [eu]
 ---
 
 import Api from '@components/Api';
 
 
+
+
+import { Region } from '@components/Zone';
 
 ## Objective
 
@@ -32,6 +36,8 @@ Here is the context of the diagram above:
 - The configuration details needed for the send connector received from your service provider
 
 {/* CP-STEPS-START:web-exchange-nav */}
+<Region zones={['eu', 'ca']}>
+
 {/* CP-NAV-START:web-exchange */}
 ---
 
@@ -42,6 +48,8 @@ Here is the context of the diagram above:
 
 ---
 {/* CP-NAV-END:web-exchange */}
+
+</Region>
 {/* CP-STEPS-END:web-exchange-nav */}
 
 ## Instructions

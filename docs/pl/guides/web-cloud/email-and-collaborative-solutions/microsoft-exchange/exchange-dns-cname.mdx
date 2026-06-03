@@ -2,10 +2,14 @@
 title: Dodanie rekordu CNAME w celu potwierdzenia domeny w usłudze e-mail
 description: Dowiedz się, jak zatwierdzić domenę na platformie e-mail przez dodanie rekordu CNAME
 lastUpdated: 2023-08-29
+availableIn: [eu, ca]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
+
+
+import { Region } from '@components/Zone';
 
 ## Wprowadzenie
 
@@ -24,6 +28,8 @@ Jeśli dodana nazwa domeny jest zarządzana z poziomu tego samego konta klienta 
 - Posiadanie usługi [Exchange](https://www.ovhcloud.com/pl/emails-exchange/) lub [E-mail Pro](https://www.ovhcloud.com/pl/emails/email-pro/).
 - Dodanie domeny do platformy e-mail. W razie potrzeby skorzystaj z przewodnika "[Dodawanie domeny do platformy e-mail](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-adding-domain)".
 - Posiadanie możliwości [skonfigurowania strefy DNS](/guides/web-cloud/domains/dns-zone-edit) danej domeny w Panelu klienta OVHcloud lub z poziomu interfejsu zarządzania, w którym jest ona zarejestrowana.
+
+<Region zones={['eu', 'ca']}>
 
 {/* CP-NAV-START:web-exchange */}
 {/* CP-NAV-START:web-email-pro */}
@@ -44,6 +50,8 @@ Jeśli dodana nazwa domeny jest zarządzana z poziomu tego samego konta klienta 
 ---
 {/* CP-NAV-END:web-email-pro */}
 {/* CP-NAV-END:web-exchange */}
+
+</Region>
 
 ## W praktyce
 

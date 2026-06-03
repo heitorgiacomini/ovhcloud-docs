@@ -2,9 +2,13 @@
 title: Migliora la sicurezza delle email con un record SPF
 description: Questa guida ti mostra come configurare un record SPF sul tuo nome di dominio per migliorare la sicurezza delle email
 lastUpdated: 2026-02-10
+availableIn: [eu, ca, apac]
 ---
 
 
+
+
+import { Region } from '@components/Zone';
 
 ## Obiettivo
 
@@ -136,8 +140,12 @@ Nella nuova finestra, vengono proposti diversi record DNS. Per aggiungere un rec
 Hai scelto il record <code className="action">SPF</code> e vuoi applicare la configurazione OVHcloud. che permette di includere tutti i server di posta in uscita OVHcloud per queste email:
 
 - MX Plan da solo o incluso in un'offerta di [hosting Web OVHcloud](https://www.ovhcloud.com/it/web-hosting/).
+<Region zones={['eu']}>
 - [Email Pro](https://www.ovhcloud.com/it/emails/email-pro/).
+</Region>
+<Region zones={['eu', 'ca']}>
 - [Hosted Exchange](https://www.ovhcloud.com/it/emails/hosted-exchange/)
+</Region>
 
 Clicca sul pulsante <code className="action">Utilizza il record SPF per l'hosting condiviso OVHcloud</code> in cima alla finestra di assistenza. Visualizzi le informazioni relative al record SPF di OVHcloud. Clicca poi sul pulsante <code className="action">Conferma</code> per attivare la modifica.
 
@@ -225,8 +233,12 @@ La tabella mostra la configurazione OVHcloud del tuo nome di dominio. ogni riga 
 La configurazione SPF OVHcloud generale si applica alle seguenti soluzioni:
 
 - MX Plan da solo o incluso in un'offerta di [hosting Web OVHcloud](https://www.ovhcloud.com/it/web-hosting/).
+<Region zones={['eu']}>
 - [Email Pro](https://www.ovhcloud.com/it/emails/email-pro/).
+</Region>
+<Region zones={['eu', 'ca']}>
 - [Hosted Exchange](https://www.ovhcloud.com/it/emails/hosted-exchange/)
+</Region>
 
 La configurazione è questa:
 

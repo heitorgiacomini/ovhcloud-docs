@@ -2,7 +2,10 @@
 title: Hosting Web - Passare il proprio sito Web in HTTPS
 description: Questa guida ti mostra come abilitare il protocollo HTTPS sul tuo sito Web dopo aver attivato un certificato SSL
 lastUpdated: 2025-10-27
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Obiettivo
 
@@ -136,7 +139,9 @@ Questo secondo script di esempio trasforma tutti gli URL arrivati tramite il pro
 
 Per il secondo esempio, verifica che tutti i domini o sottodomini di destinazione abbiano un certificato SSL attivo.
 
+<Region zones={['eu']}>
 **Attenzione**, per le offerte di hosting [Cloud Web](https://www.ovhcloud.com/it/web-hosting/cloud-web-offer/), utilizzare lo script seguente:
+</Region>
 
 ```bash
 RewriteEngine On

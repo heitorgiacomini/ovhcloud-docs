@@ -2,10 +2,14 @@
 title: Eliminar uma conta de e-mail
 description: Saiba como eliminar ou reinicializar um endereço de e-mail na sua oferta de e-mail
 lastUpdated: 2026-02-19
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 ## Objetivo
 
@@ -21,9 +25,15 @@ Deseja:
 
 - Dispor de uma solução de e-mail OVHcloud previamente configurada:
     - **MX Plan**, proposta entre as nossas [ofertas de alojamento web](https://www.ovhcloud.com/pt/web-hosting/), incluída num [Alojamento gratuito 100M](https://www.ovhcloud.com/pt/domains/free-web-hosting/) ou encomendada separadamente como solução autónoma.
+    <Region zones={['eu', 'ca']}>
     - [**Exchange**](https://www.ovhcloud.com/pt/emails-exchange/).
+    </Region>
+    <Region zones={['eu']}>
     - [**E-mail Pro**](https://www.ovhcloud.com/pt/emails/email-pro/).
+    </Region>
+    <Region zones={['eu']}>
     - [**Zimbra**](https://www.ovhcloud.com/pt/emails/zimbra-emails/).
+    </Region>
 - Ser o contacto administrador do serviço de e-mail em questão.
 - Ter acesso aos endereços de e-mail pertinentes.
 
@@ -80,13 +90,15 @@ Em função da data de ativação da sua oferta MX Plan ou de uma migração rec
 A OVHcloud propõe 4 soluções de e-mail, a noção de eliminação de conta é diferente consoante a sua oferta.
 
 - **E-mail MX Plan**: esta oferta é vendida sob a forma de um pack de várias contas de e-mail. Quando eliminar uma conta, liberta um espaço no seu pack.
+<Region zones={['eu']}>
 - **E-mail Pro**, **Hosted Exchange** e **Zimbra**: estas ofertas estão à la carte, encomenda uma subscrição individual por conta de e-mail. Se deseja eliminar um endereço de e-mail, trata-se de efetuar uma **reinicialização**. Uma vez a conta de e-mail reinicializada, pode reutilizar esta conta para criar um novo endereço de e-mail. Também pode [cancelar a assinatura](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/manage-billing-exchange#eliminar-contas) desta conta se pretender eliminá-la definitivamente.
+</Region>
 
 ### Eliminar ou reinicializar uma conta de e-mail
 
 Selecione o separador correspondente à sua oferta de e-mail:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan Roundcube">
     Para identificar a tecnologia de e-mail associada ao seu serviço MX Plan, consulte a parte "[Identificar a tecnologia de e-mail da sua oferta MX Plan](#whichmxplan)" deste guia.
     
@@ -103,7 +115,7 @@ Selecione o separador correspondente à sua oferta de e-mail:
     
     <img className="thumbnail" alt="e-mail" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/email-mxplan-new-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="E-mail Pro">
+  <Tab label="E-mail Pro" availableIn={['eu']}>
     1. Aceda ao separador <code className="action">Contas de e-mail</code>. Na nova janela, podem ver-se as contas de e-mail existentes.
     1. Clique no botão <code className="action">...</code> à direita da conta a modificar e, a seguir, em <code className="action">Reinicializar esta conta</code>.
     
@@ -111,7 +123,7 @@ Selecione o separador correspondente à sua oferta de e-mail:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/emailpro-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     1. Aceda ao separador <code className="action">Contas de e-mail</code>.
     1. Clique no botão <code className="action">...</code> à direita da conta a modificar e, a seguir, em <code className="action">Reinicializar</code>.
     
@@ -119,13 +131,13 @@ Selecione o separador correspondente à sua oferta de e-mail:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/exchange-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Zimbra STARTER/PRO">
+  <Tab label="Zimbra STARTER/PRO" availableIn={['eu']}>
     1. Aceda ao separador <code className="action">Conta email</code>. Na nova janela, podem ver-se as contas de e-mail existentes.
     1. Clique no botão <code className="action">⋮</code> à direita da conta a modificar e, a seguir, clique em <code className="action">Eliminar</code>.
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/email-zimbra-reset.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ## Saiba mais
