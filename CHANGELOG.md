@@ -3,16 +3,18 @@
 ## 2026.06.02.1
 
 ### Features
+- **mks:** add cli in GS (#35)
 - **theme:** restore Tabs selection persistence and cross-block sync (#127)
 - **theme:** display guide excerpt/description as a lead under the title (#122)
 - add missing anchors (#121)
 
 ### Fixes
+- **cross functio:** update center cell (#126)
 - **compute:** repair PCI get started - missing cp-navs
 - **compute:** repair PCI get started - images, formats
 
 ### Documentation
-- 223 guides updated across de, en, es, fr, it, pl, pt
+- 301 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.06.02
 
