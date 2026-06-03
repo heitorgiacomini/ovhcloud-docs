@@ -1,8 +1,10 @@
 ---
 title: Migrar o seu website e os seus serviços associados para a OVHcloud
 description: Descubra como migrar o seu website, o seu nome de domínio, a sua base de dados e os seus e-mails para a OVHcloud sem interrupção de serviços
-lastUpdated: 2025-10-28
+lastUpdated: 2026-06-03
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objetivo
 
@@ -11,7 +13,7 @@ Este guia apresenta-lhe as diferentes ações a realizar para migrar o conjunto 
 :::warning
 A OVHcloud disponibiliza serviços cuja configuração, gestão e responsabilidade lhe incumbem. Assim, deverá certificar-se de que estes funcionam corretamente.
 
-Este manual fornece as instruções necessárias para realizar as operações mais habituais. No entanto, se encontrar dificuldades, recomendamos que recorra a um [fornecedor especializado](https://partner.ovhcloud.com/pt/directory/). Não poderemos proporcionar-lhe assistência técnica. Para mais informações, aceda à secção ["Quer saber mais?"](#go-further) deste manual.
+Este manual fornece as instruções necessárias para realizar as operações mais habituais. No entanto, se encontrar dificuldades, recomendamos que recorra a um [fornecedor especializado](/links/partner). Não poderemos proporcionar-lhe assistência técnica. Para mais informações, aceda à secção ["Quer saber mais?"](#go-further) deste manual.
 
 :::
 
@@ -28,7 +30,7 @@ Este manual fornece as instruções necessárias para realizar as operações ma
 
 ### Acesso à Área de Cliente OVHcloud
 
-- **Ligação direta:** <ManagerLink to="/#/web/hosting">Hosting plans</ManagerLink>
+- **Ligação direta:** <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink>
 - **Caminho de navegação:** <code className="action">Web Cloud</code> > <code className="action">Alojamentos</code> > Selecione o seu alojamento web
 
 ---
@@ -73,16 +75,26 @@ Várias ofertas de [alojamento partilhado OVHcloud](https://www.ovhcloud.com/pt/
 
 Depois de escolher a oferta de alojamento, se ainda não é cliente da OVHcloud, clique no botão <code className="action">Encomendar</code> presente nas páginas comerciais acima. Siga os passos da encomenda **sem solicitar a transferência do seu nome de domínio** (esta ação será realizada na etapa 10 deste manual).
 
-Também pode efetuar a encomenda a partir da sua <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>. Uma vez ligado, siga as instruções seguintes:
+Também pode efetuar a encomenda a partir da sua Área de Cliente OVHcloud. Para isso, clique nos separadores abaixo para visualizar cada uma das **3** etapas.
 
-- Aceda ao separador <code className="action">Web Cloud</code>.
-- No canto superior esquerdo da interface, clique no botão <code className="action">Encomendar</code> e, a seguir, em <code className="action">Alojamento</code>.
-- Prossiga com a encomenda **sem solicitar a transferência do domínio** (a transferência será efetuada na etapa 10 deste manual).
+<Tabs>
+  <Tab label="Etapa 1">
+    Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink>.
+    
+    <img className="thumbnail" alt="Alojamentos" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
+  </Tab>
+  <Tab label="Etapa 2">
+    No canto superior esquerdo da interface, clique no botão <code className="action">Encomendar</code> e, a seguir, em <code className="action">Alojamentos</code>.
+  </Tab>
+  <Tab label="Etapa 3">
+    Prossiga com a encomenda **sem solicitar a transferência do domínio** (a transferência será efetuada na parte 10 deste manual).
+  </Tab>
+</Tabs>
 
 Depois de validar o pagamento, a instalação do alojamento vai iniciar. Um e-mail será enviado para o seu endereço de e-mail de contacto. Este último conterá as credenciais de acesso ao espaço de armazenamento FTP (File Transfer Protocol) do seu alojamento Web.
 
 :::info
-A OVHcloud oferece outras ofertas de e-mail para além da oferta "MX Plan". Por exemplo, pode combinar endereços de e-mail "MX Plan" de endereços ["Email-Pro"](https://www.ovhcloud.com/pt/emails/email-pro/) e/ou contas ["Exchange"](https://www.ovhcloud.com/pt/emails/hosted-exchange/).
+A OVHcloud oferece outras ofertas de e-mail para além da oferta "MX Plan". Por exemplo, pode combinar endereços de e-mail "MX Plan" de endereços ["Email Pro"](https://www.ovhcloud.com/pt/emails/email-pro/) e/ou contas ["Exchange"](https://www.ovhcloud.com/pt/emails/hosted-exchange/).
 
 :::
 
@@ -125,7 +137,7 @@ Obtenha o conteúdo do espaço de armazenamento FTP do seu alojamento atual, ass
 
 Estas operações são realizadas exclusivamente junto do seu alojador atual. Contacte-o se tiver dificuldades em recuperar um backup completo do seu website.
 
-#### Etapa 4 : importar o backup do seu website para a sua oferta de alojamento OVHcloud <a name="step4"></a>
+### Etapa 4 : importar o backup do seu website para a sua oferta de alojamento OVHcloud <a name="step4"></a>
 
 Para importar o backup do espaço de armazenamento FTP do antigo fornecedor, [aceda ao espaço de armazenamento FTP do seu alojamento OVHcloud](/guides/web-cloud/web-hosting/ftp-connection) e elimine o backup da pasta raiz "www" (ou de outra pasta raiz que tenha criado).
 
@@ -178,7 +190,7 @@ Recrie de forma idêntica os endereços de e-mail presentes no seu fornecedor de
 
 Se optou por uma solução "Email Pro" ou "Exchange", consulte o nosso manual para criar os seus endereços de e-mail:
 
-- Para [Email-Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/first-config)
+- Para [Email Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/first-config)
 - Para [Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-hosted)
 
 ### Etapa 6 : declarar os servidores de e-mail OVHcloud na zona DNS ativa do seu nome de domínio <a name="step6"></a>
@@ -231,11 +243,11 @@ Depois de migrar os seus antigos endereços de e-mail para a OVHcloud, reconfigu
 
 #### Para as contas de e-mail "MX Plan": 
 
-- Encontre os parâmetros de configuração no nosso guia "[Generalidades sobre os e-mails MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#2-utilizar-o-software-a-sua-escolha)". Além disso, poderá encontrar links para os guias de configuração personalizados para os principais softwares de e-mail.
+- Encontre os parâmetros de configuração no nosso guia "[Generalidades sobre os e-mails MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#consult-emails-client)". Além disso, poderá encontrar links para os guias de configuração personalizados para os principais softwares de e-mail.
 
-#### Para as contas "Email-Pro"
+#### Para as contas "Email Pro"
 
-- Encontre os nossos guias de ajuda à configuração nas secções `Configuration on computador` e `Configuration no smartphone` de [o nosso manual na oferta Email-Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/overview).
+- Encontre os nossos guias de ajuda à configuração nas secções `Configuration on computador` e `Configuration no smartphone` de [o nosso manual na oferta Email Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/overview).
 
 #### Para as contas de e-mail "Exchange" :
 
@@ -279,8 +291,8 @@ Após ter seguido as dez etapas em ordem, todo o seu website é agora migrado pa
 
 [Gestão de uma base de dados a partir de um alojamento partilhado](/guides/web-cloud/web-hosting/sql-create-database).
 
-Para serviços especializados (referenciamento, desenvolvimento, etc), contacte os [parceiros OVHcloud](https://partner.ovhcloud.com/pt/directory/).
+Para serviços especializados (referenciamento, desenvolvimento, etc), contacte os [parceiros OVHcloud](/links/partner).
 
-Se pretender usufruir de uma assistência na utilização e na configuração das suas soluções OVHcloud, consulte as nossas diferentes [ofertas de suporte](https://www.ovhcloud.com/pt/support-levels/).
+Se pretender usufruir de uma assistência na utilização e na configuração das suas soluções OVHcloud, consulte as nossas diferentes [ofertas de suporte](/links/support).
 
-Fale com nossa [comunidade de utilizadores](https://community.ovhcloud.com/community/en).
+Fale com nossa [comunidade de utilizadores](/links/community).
