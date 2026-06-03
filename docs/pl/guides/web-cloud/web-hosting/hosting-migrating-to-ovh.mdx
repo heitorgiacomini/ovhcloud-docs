@@ -1,8 +1,10 @@
 ---
 title: Przeniesienie strony WWW i powiązanych z nią usług do OVHcloud
 description: Dowiedz się, jak migrować stronę WWW, nazwę domeny, bazę danych oraz konta e-mail do OVHcloud bez przerwy w dostępności usług
-lastUpdated: 2025-10-28
+lastUpdated: 2026-06-03
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Wprowadzenie
 
@@ -11,7 +13,7 @@ Niniejszy przewodnik prezentuje różne działania, jakie należy przeprowadzić
 :::warning
 OVHcloud oddaje do Twojej dyspozycji usługi, których konfiguracja, zarządzanie i odpowiedzialność spoczywa na Ciebie. W związku z tym należy zapewnić ich prawidłowe funkcjonowanie.
 
-Oddajemy w Twojej ręce niniejszy przewodnik, którego celem jest pomoc w jak najlepszym wykonywaniu bieżących zadań. W przypadku trudności zalecamy skorzystanie z pomocy [wyspecjalizowanego usługodawcy](https://partner.ovhcloud.com/pl/directory/). Niestety firma OVHcloud nie będzie mogła udzielić wsparcia w tym zakresie. Więcej informacji znajduje się w sekcji ["Idź dalej"](#go-further) niniejszego przewodnika.
+Oddajemy w Twojej ręce niniejszy przewodnik, którego celem jest pomoc w jak najlepszym wykonywaniu bieżących zadań. W przypadku trudności zalecamy skorzystanie z pomocy [wyspecjalizowanego usługodawcy](/links/partner). Niestety firma OVHcloud nie będzie mogła udzielić wsparcia w tym zakresie. Więcej informacji znajduje się w sekcji ["Idź dalej"](#go-further) niniejszego przewodnika.
 
 :::
 
@@ -28,7 +30,7 @@ Oddajemy w Twojej ręce niniejszy przewodnik, którego celem jest pomoc w jak na
 
 ### Dostęp do Panelu klienta OVHcloud
 
-- **Link bezpośredni:** <ManagerLink to="/#/web/hosting">Hosting plans</ManagerLink>
+- **Link bezpośredni:** <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>
 - **Ścieżka nawigacji:** <code className="action">Web Cloud</code> > <code className="action">Hosting</code> > Wybierz hosting WWW
 
 ---
@@ -73,16 +75,26 @@ Kilka [ofert hostingu OVHcloud](https://www.ovhcloud.com/pl/web-hosting/) zawier
 
 Po wybraniu oferty hostingu, jeśli nie jesteś jeszcze klientem OVHcloud, kliknij przycisk <code className="action">Zamów</code> na powyższych stronach handlowych. Postępuj zgodnie z kolejnymi poleceniami **bez konieczności przenoszenia domeny** (Operacja ta zostanie wykonana na etapie 10 niniejszego przewodnika).
 
-Zamówienie możesz również złożyć w <ManagerLink to="/">Panelu klienta OVHcloud</ManagerLink>. Po zalogowaniu wykonaj następujące instrukcje:
+Zamówienie możesz również złożyć w Panelu klienta OVHcloud. W tym celu kliknij kolejno poniższe karty, aby wyświetlić każdy z **3** kroków.
 
-- Przejdź do zakładki <code className="action">Web Cloud</code>.
-- W lewym górnym rogu interfejsu kliknij przycisk <code className="action">Zamów</code>, a następnie <code className="action">Hosting</code>.
-- Wykonaj kolejne kroki zamówienia **bez żądania transferu domeny** (operacja ta zostanie wykonana na etapie 10 niniejszego przewodnika).
+<Tabs>
+  <Tab label="Krok 1">
+    Przejdź do strony <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>.
+    
+    <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
+  </Tab>
+  <Tab label="Krok 2">
+    W lewym górnym rogu interfejsu kliknij przycisk <code className="action">Zamów</code>, a następnie <code className="action">Hosting</code>.
+  </Tab>
+  <Tab label="Krok 3">
+    Wykonaj kolejne kroki zamówienia **bez żądania transferu domeny** (operacja ta zostanie wykonana w części 10 niniejszego przewodnika).
+  </Tab>
+</Tabs>
 
 Po zatwierdzeniu płatności rozpocznie się instalacja hostingu. Na adres e-mail do kontaktu zostanie wysłana wiadomość. Identyfikatory dostępu do przestrzeni dyskowej FTP (File Transfert Protocol) Twojego hostingu WWW.
 
 :::info
-OVHcloud poza ofertą "MX Plan" proponuje również inne usługi e-mail. Możesz na przykład połączyć konta e-mail "MX Plan" z adresami ["Email-Pro"](https://www.ovhcloud.com/pl/emails/email-pro/) i/lub kontami ["Exchange"](https://www.ovhcloud.com/pl/emails/hosted-exchange/).
+OVHcloud poza ofertą "MX Plan" proponuje również inne usługi e-mail. Możesz na przykład połączyć konta e-mail "MX Plan" z adresami ["Email Pro"](https://www.ovhcloud.com/pl/emails/email-pro/) i/lub kontami ["Exchange"](https://www.ovhcloud.com/pl/emails/hosted-exchange/).
 
 :::
 
@@ -178,7 +190,7 @@ Skorzystaj z naszego przewodnika dotyczącego [tworzenia kont e-mail "MX Plan"](
 
 Jeśli wybrałeś rozwiązanie "Email Pro" lub "Exchange", zapoznaj się z naszą dokumentacją dotyczącą tworzenia kont e-mail:
 
-- Dla [Email-Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/first-config)
+- Dla [Email Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/first-config)
 - W przypadku [Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-hosted)
 
 ### Etap 6: zadeklarować serwery e-mail OVHcloud w strefie DNS domeny <a name="step6"></a>
@@ -231,11 +243,11 @@ Po zakończeniu migracji Twoich poprzednich kont e-mail do OVHcloud możesz pono
 
 #### Dla kont e-mail "MX Plan": 
 
-- Wszystkie parametry konfiguracji znajdziesz w naszym przewodniku "[Informacje ogólne na temat e-maili MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#2-skorzystaj-z-wybranego-programu)". Znajdziesz tam również linki do przewodników dotyczących konfiguracji dla głównych programów pocztowych.
+- Wszystkie parametry konfiguracji znajdziesz w naszym przewodniku "[Informacje ogólne na temat e-maili MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#consult-emails-client)". Znajdziesz tam również linki do przewodników dotyczących konfiguracji dla głównych programów pocztowych.
 
-#### Dla kont "Email-Pro":
+#### Dla kont "Email Pro":
 
-- Wszystkie nasze przewodniki dotyczące konfiguracji znajdują się w sekcjach `Konfiguracja na komputerze` i `Konfiguracja na smartphonie` [dokumentacja dotycząca oferty Email-Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/overview).
+- Wszystkie nasze przewodniki dotyczące konfiguracji znajdują się w sekcjach `Konfiguracja na komputerze` i `Konfiguracja na smartphonie` [dokumentacja dotycząca oferty Email Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/overview).
 
 #### Dla kont e-mail "Exchange":
 
@@ -279,8 +291,8 @@ Po wykonaniu 10 kroków w tej kolejności cała Twoja strona WWW zostanie przeni
 
 [Zarządzanie bazą danych na hostingu](/guides/web-cloud/web-hosting/sql-create-database).
 
-W przypadku wyspecjalizowanych usług (pozycjonowanie, rozwój, etc.) skontaktuj się z [partnerami OVHcloud](https://partner.ovhcloud.com/pl/directory/).
+W przypadku wyspecjalizowanych usług (pozycjonowanie, rozwój, etc.) skontaktuj się z [partnerami OVHcloud](/links/partner).
 
-Jeśli chcesz otrzymywać wsparcie w zakresie konfiguracji i użytkowania Twoich rozwiązań OVHcloud, zapoznaj się z naszymi [ofertami pomocy](https://www.ovhcloud.com/pl/support-levels/).
+Jeśli chcesz otrzymywać wsparcie w zakresie konfiguracji i użytkowania Twoich rozwiązań OVHcloud, zapoznaj się z naszymi [ofertami pomocy](/links/support).
 
-Dołącz do [grona naszych użytkowników](https://community.ovhcloud.com/community/en).
+Dołącz do [grona naszych użytkowników](/links/community).
