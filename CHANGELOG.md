@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.04
+
+### Fixes
+- **web-hosting,file-storage:** blank line before ::: closer after list
+
+### Documentation
+- 50 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.03
 
 ### Features
