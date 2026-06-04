@@ -1,7 +1,7 @@
 ---
 title: "Hébergement web - Comment activer et gérer les logs ?"
 description: "Découvrez comment activer et gérer les logs de vos sites web ou vos applications présentes sur votre hébergement web"
-lastUpdated: 2026-06-03
+lastUpdated: 2026-06-04
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
@@ -28,7 +28,7 @@ De ce fait, les fichiers de logs permettent de :
 - Résoudre les erreurs rencontrées sur le système informatique.
 - Optimiser les performances du système informatique.
 
-Votre offre d'[hébergement web](https://www.ovhcloud.com/fr/web-hosting/) génère donc ses propres logs.
+Votre offre d'[hébergement web](/links/web/hosting) génère donc ses propres logs.
 
 Dans certaines situations, vous pouvez être amené à consulter / récupérer les logs :
 
@@ -43,7 +43,7 @@ Nous mettons à votre disposition ce guide afin de vous accompagner au mieux sur
 
 ## Prérequis
 
-- Disposer d'une offre d'[hébergement web](https://www.ovhcloud.com/fr/web-hosting/).
+- Disposer d'une offre d'[hébergement web](/links/web/hosting).
 
 {/* CP-NAV-START:web-hosting */}
 ---
@@ -96,7 +96,7 @@ Elle fonctionne en récupérant les logs générés par votre infrastructure / v
 
 Pour plus de détails sur Logs Data Platform, consultez notre guide d'[introduction à Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/introduction) (EN).
 
-Du fait que les offres d'[hébergement web](https://www.ovhcloud.com/fr/web-hosting/) peuvent être utilisées avec de nombreux services (bases de données, etc.), celles-ci peuvent, en complément des logs en temps réel déjà disponibles, être abonnées par flux de données à Logs Data Platform.
+Comme les offres d'[hébergement web](/links/web/hosting) peuvent être utilisées avec de nombreux services (bases de données, etc.), vous pouvez les abonner par flux de données à Logs Data Platform, en complément des logs en temps réel déjà disponibles.
 
 Avec un compte Logs Data Platform, vous disposez gratuitement de **1 Go** de rétention de logs. Pour en bénéficier, vous devez [activer gratuitement votre compte Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/getting-started-quick-start) et abonner votre hébergement web à un flux de données.
 
@@ -104,7 +104,7 @@ Avec un compte Logs Data Platform, vous disposez gratuitement de **1 Go** de ré
 En fonction :
 
 - Des logs générés par votre hébergement web
-- Du nombre d'hébergements web abonnés à votre compte Log Data Platform
+- Du nombre d'hébergements web abonnés à votre compte Logs Data Platform
 
 les **1 Go** de données peuvent être consommés plus ou moins rapidement.
 
@@ -113,7 +113,7 @@ En effet et en fonction de vos usages, cette consommation de données peut repr�
 Si vous souhaitez disposer d'un volume supérieur à **1 Go** pour la rétention de vos logs, vous pouvez souscrire à une offre payante complémentaire.
 :::
 
-Pour abonner votre offre d'hébergement web à un flux de données sur Logs Data Platform, 2 cas de figure peuvent se présenter :
+Pour abonner votre offre d'hébergement web à un flux de données sur Logs Data Platform, 2 cas sont possibles :
 
 **Cliquez sur chaque cas pour afficher le contenu.**
 
@@ -197,18 +197,18 @@ Cliquez sur les onglets ci-dessous pour afficher successivement chacune des **6*
     Si le flux concerné n'existe pas encore, cliquez sur le bouton <code className="action">Créer un flux de données</code>.
     Une nouvelle page s'ouvre pour créer un flux de données sur votre solution Logs Data Platform.
     
-    <img className="thumbnail" alt="Log Data Platform" src="/images/assets/screens/control-panel/product-selection/bare-metal-cloud/logs-data-platform/data-stream/add-data-stream.png" loading="lazy" />
+    <img className="thumbnail" alt="Logs Data Platform" src="/images/assets/screens/control-panel/product-selection/bare-metal-cloud/logs-data-platform/data-stream/add-data-stream.png" loading="lazy" />
     
-    Si besoin, consultez nos guides « [Introduction à Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/introduction) » (EN) et « [Démarrer rapidement avec Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/getting-started-quick-start) » (EN) pour réaliser ces actions.
+    Si besoin, consultez nos guides « [Introduction à Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/introduction) » (EN) et « [Démarrer rapidement avec Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/getting-started-quick-start) » (EN) pour ces étapes.
   </Tab>
   <Tab label="Étape 6">
     Une fois les formulaires renseignés, cliquez sur le bouton <code className="action">Sauvegarder</code>.
     
-    Vous serez ensuite redirigé vers l'onglet `Flux de données` de votre solution Logs Data Platform.
+    Vous serez ensuite redirigé vers l'onglet <code className="action">Flux de données</code> de votre solution Logs Data Platform.
     
     Il ne vous reste plus qu'à abonner votre hébergement web à votre flux nouvellement créé sur votre solution Logs Data Platform.
     
-    Pour effectuer cela et, comme expliqué [précédemment](#webhosting-ldp), retournez dans l'onglet <code className="action">Logs</code> de votre offre d'hébergement web pour vous abonner à ce nouveau flux de données, puis suivez cette fois-ci le [Cas n°1](#webhosting-ldp-case1) décrit plus haut.
+    Pour cela, retournez dans l'onglet <code className="action">Logs</code> de votre offre d'hébergement web, comme expliqué [précédemment](#webhosting-ldp), pour vous abonner à ce nouveau flux de données, puis suivez cette fois-ci le [Cas n°1](#webhosting-ldp-case1) décrit plus haut.
   </Tab>
 </Tabs>
 
