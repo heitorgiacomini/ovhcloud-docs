@@ -1750,6 +1750,7 @@
             + [Speeding up your website with CDN](web-cloud/web-hosting/cdn-how-to-use-cdn)
             + [Accessing a website’s logs and statistics on a Web Hosting](web-cloud/web-hosting/logs-and-statistics)
             + [How to view CDN statistics and logs on a Web Hosting plan](web-cloud/web-hosting/cdn-statistics-and-logs)
+            + [Web Hosting - How to enable and manage logs](web-cloud/web-hosting/enable-ldp-web-hosting)
             + [Geolocating your website](web-cloud/web-hosting/multisites-geolocation)
             + [Optimising your website’s performance](web-cloud/web-hosting/optimise-your-website-performance)
             + [Using automated tasks on a Web Hosting plan](web-cloud/web-hosting/cron-tasks)*
@@ -2632,6 +2633,7 @@
                 + [Public Cloud Load Balancer TCP / HTTP / HTTPS Logs Forwarding](public-cloud/network-services/loadbalancer-logs-forward)
                 + [Public Cloud Databases - How to setup logs forwarding](public-cloud/databases/logs-to-customers)
                 + [Web Cloud Databases - How to manage logs](web-cloud/databases/db-retrieve-logs)
+                + [Web Hosting - How to enable and manage logs](web-cloud/web-hosting/enable-ldp-web-hosting)
                 + [Managed Kubernetes Service Audit Logs Forwarding](public-cloud/containers-orchestration/managed-kubernetes/forwarding-audit-logs)
                 + [Pushing logs from OVHcloud KMS to Logs Data Platform](manage-and-operate/kms/logs)
                 + [OVHcloud Connect Logs Forwarding](network/ovhcloud-connect/logs-to-customers)
