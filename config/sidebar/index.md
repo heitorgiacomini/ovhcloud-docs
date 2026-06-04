@@ -163,7 +163,7 @@
                 + [Changing the admin password on a Windows dedicated server](bare-metal-cloud/dedicated-servers/changing-admin-password-on-windows)
                 + [How to reset the Windows Administrator password with the Windows customer rescue system](bare-metal-cloud/dedicated-servers/rcw-changing-admin-password-on-windows)
                 + [How to manage Intel SGX on a dedicated server](bare-metal-cloud/dedicated-servers/sgx-enable-and-use)
-                + [Hardware upgrade on a High Grade or Scale dedicated server](bare-metal-cloud/dedicated-servers/hardware-upgrade-hg-scale)
+                + [Hardware upgrade on an Advance, High Grade or Scale dedicated server](bare-metal-cloud/dedicated-servers/hardware-upgrade-hg-scale)
                 + [How to assign a tag to a Bare Metal server](bare-metal-cloud/dedicated-servers/resource-tag-assign)
                 + [How to install VMware ESXi 8 on a dedicated server](bare-metal-cloud/dedicated-servers/esxi-partitioning)
             + [Storage](bare-metal-cloud-dedicated-servers-configuration-storage)
