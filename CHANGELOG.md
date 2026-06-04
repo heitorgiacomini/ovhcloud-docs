@@ -2,11 +2,14 @@
 
 ## 2026.06.04
 
+### Features
+- **web-hosting:** translate LDP logs guide to all locales
+
 ### Fixes
 - **web-hosting,file-storage:** blank line before ::: closer after list
 
 ### Documentation
-- 57 guides updated across de, en, es, fr, it, pl, pt
+- 64 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.06.03
 
