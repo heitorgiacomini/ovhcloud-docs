@@ -56,9 +56,21 @@ Um eine gute Dienstqualität für die gesamte Shared Hosting Infrastruktur siche
 
 Innerhalb eines gleitenden Zeitraums von 3600 Sekunden (1 Stunde) erlaubt Ihnen Ihr Webhosting folgendes E-Mail-Versandvolumen:
 
+<Region zones={['eu']}>
+
 |Angebote|Kostenloses Hosting|Starter|Basic|Startup|Pro|Performance|Agency|Agency Plus|Agency Max|
 |---|---|---|---|---|---|---|---|---|---|
 |Maximaler E-Mail-Versand pro Stunde und Dienst|10|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Angebote|Starter|Basic|Startup|Pro|Performance|Agency|Agency Plus|Agency Max|
+|---|---|---|---|---|---|---|---|---|
+|Maximaler E-Mail-Versand pro Stunde und Dienst|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
 
 :::info
 Diese Einschränkungen gelten **nur** für E-Mails, die mit der *mail()* Funktion von PHP versendet wurden, nicht für andere E-Mails (SMTP Versand).

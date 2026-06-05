@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Objectif <a name="objective"></a>
 
 La délégation donne la possibilité à l'utilisateur d'un compte e-mail de gérer lui-même différentes fonctionnalités (le changement de mot de passe notamment). Ces fonctionnalités dépendent du type de délégation mis en place :
@@ -17,7 +19,17 @@ La délégation donne la possibilité à l'utilisateur d'un compte e-mail de gé
 
 ## Prérequis
 
+<Region zones={['eu']}>
+
 - Posséder une offre MX Plan. Celle-ci est disponible via : une [offre d’hébergement Web Cloud](https://www.ovhcloud.com/fr/web-hosting/), un [hébergement gratuit 100M](https://www.ovhcloud.com/fr/domains/free-web-hosting/) ou une offre MX Plan commandée séparément.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Posséder une offre MX Plan. Celle-ci est disponible via : une [offre d’hébergement Web Cloud](https://www.ovhcloud.com/fr/web-hosting/) ou une offre MX Plan commandée séparément.
+
+</Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 ---

@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Objective
@@ -185,7 +186,17 @@ Some CMS systems work without a database. If this is the case for the CMS you wa
 :::
 
 
+<Region zones={['eu']}>
+
 Most CMSs require a database to work. Our [web hosting offers](https://www.ovhcloud.com/en-gb/web-hosting/) include them, with the exception of [free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/).
+
+</Region>
+
+<Region zones={['ca','apac']}>
+
+Most CMSs require a database to work. Our [web hosting offers](https://www.ovhcloud.com/en-gb/web-hosting/) include them.
+
+</Region>
 
 Use our documentation to [create a database from your web hosting plan](/guides/web-cloud/web-hosting/sql-create-database).
 

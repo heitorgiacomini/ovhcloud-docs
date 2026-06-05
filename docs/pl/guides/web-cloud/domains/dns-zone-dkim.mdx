@@ -25,7 +25,12 @@ Wpis DKIM (**D**omain**K**eys **I**dentified **M**ail) pozwala na podpisanie e-m
 
 - Posiadanie dostępu do interfejsu zarządzania domeną w <ManagerLink to="/">Panelu klienta OVHcloud</ManagerLink> lub u operatora domeny, jeśli jest zarejestrowany poza OVHcloud.
 - Zamówienie jednej z poniższych ofert e-mail:
+    <Region zones={['eu']}>
     - MX Plan OVHcloud (dostępny w ramach [oferty hostingu Cloud](https://www.ovhcloud.com/pl/web-hosting/), [bezpłatny hosting 100M](https://www.ovhcloud.com/pl/domains/free-web-hosting/) lub w ramach oferty MX Plan zamówionej oddzielnie).
+    </Region>
+    <Region zones={['ca', 'apac']}>
+    - MX Plan OVHcloud (dostępny w ramach [oferty hostingu Cloud](https://www.ovhcloud.com/pl/web-hosting/) lub w ramach oferty MX Plan zamówionej oddzielnie).
+    </Region>
     <Region zones={['eu', 'ca']}>
     - [Exchange](https://www.ovhcloud.com/pl/emails/hosted-exchange/) lub [Private Exchange](https://www.ovhcloud.com/pl/emails/hosted-exchange/).
     </Region>
@@ -70,8 +75,12 @@ Jeśli Twoja domena jest zarejestrowana w OVHcloud, możesz sprawdzić, czy uży
 - [Konfiguracja DKIM przez API dla oferty e-mail OVHcloud](#internal-dkim)
     - [API - Kompletna konfiguracja DKIM](#firststep)
         - [Dla MX Plan i Zimbra](#confemail)
+        <Region zones={['eu', 'ca']}>
         - [Dla usługi Exchange](#confex)
+        </Region>
+        <Region zones={['eu']}>
         - [Dla E-mail Pro](#confemp)
+        </Region>
     - [API - Różne stany DKIM](#dkim-status)
     - [API - Włącz lub zmień selektor DKIM](#enable-switch)
     - [API - Wyłącz i usuń DKIM](#disable-switch)
@@ -183,7 +192,12 @@ Odbiorca **recipient@otherdomain.ovh** będzie mógł odszyfrować ten podpis kl
 
 Automatyczna konfiguracja DKIM jest dostępna dla wszystkich naszych ofert e-mail:
 
+<Region zones={['eu']}>
 - MX Plan wchodzący w skład [hostingu Web Cloud](https://www.ovhcloud.com/pl/web-hosting/), [darmowego 100M hostingu](https://www.ovhcloud.com/pl/domains/free-web-hosting/) lub zamówiony osobno.
+</Region>
+<Region zones={['ca', 'apac']}>
+- MX Plan wchodzący w skład [hostingu Web Cloud](https://www.ovhcloud.com/pl/web-hosting/) lub zamówiony osobno.
+</Region>
 <Region zones={['eu', 'ca']}>
 - [Exchange](https://www.ovhcloud.com/pl/emails-exchange/).
 </Region>
@@ -281,11 +295,21 @@ Automatyczna aktywacja DKIM trwa od 30 minut do maksymalnie 24 godzin. Aby spraw
 
 Po upływie 24 godzin, jeśli Twój przycisk `DKIM` jest czerwony, zapoznaj się z rubryką ["Dlaczego DKIM nie działa i wyświetla się w Panelu klienta na czerwono?"](#reddkim) niniejszego przewodnika.
 
+<Region zones={['eu', 'ca']}>
 ### Konfiguracja DKIM przez API dla oferty e-mail OVHcloud <a name="internal-dkim"></a>
+</Region>
 
+<Region zones={['eu']}>
 W przypadku platformy Exchange lub E-mail Pro należy najpierw pobrać numer referencyjny platformy, aby skonfigurować DKIM.
+</Region>
 
+<Region zones={['ca']}>
+W przypadku platformy Exchange należy najpierw pobrać numer referencyjny platformy, aby skonfigurować DKIM.
+</Region>
+
+<Region zones={['eu', 'ca']}>
 Kliknij kartę poniżej odnoszącą się do Twojej oferty.
+</Region>
 
 <ZoneTabs>
   <Tab label="Exchange" availableIn={['eu', 'ca']}>
@@ -517,6 +541,8 @@ Postępuj zgodnie z instrukcjami **5 kroków**, klikając kolejno na 5 poniższy
 </Tabs>
 
 
+<Region zones={['eu', 'ca']}>
+
 ##### **Dla usługi Exchange** <a name="confex"></a>
 
 Postępuj zgodnie z **5 krokami** poniżej, klikając na każdą z zakładek.
@@ -671,6 +697,10 @@ Postępuj zgodnie z **5 krokami** poniżej, klikając na każdą z zakładek.
 </Tabs>
 
 
+</Region>
+
+<Region zones={['eu']}>
+
 ##### **Dla E-mail Pro** <a name="confemp"></a>
 
 Postępuj zgodnie z **5 krokami** poniżej, klikając na każdą z zakładek.
@@ -823,6 +853,8 @@ Postępuj zgodnie z **5 krokami** poniżej, klikając na każdą z zakładek.
   </Tab>
 </Tabs>
 
+
+</Region>
 
 #### API - Poszczególne państwa DKIM <a name="dkim-status"></a>
 

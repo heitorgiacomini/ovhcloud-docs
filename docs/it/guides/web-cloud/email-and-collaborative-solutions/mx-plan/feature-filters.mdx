@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Obiettivo
 
 Un filtro email permette di applicare diversi trattamenti ai messaggi ricevuti, in base ai criteri che preferisci.
@@ -18,7 +20,17 @@ Ad esempio: vuoi che tutte le email contenenti "[SPAM]" nell'oggetto siano elimi
 
 ## Prerequisiti
 
+<Region zones={['eu']}>
+
 - Disporre di una soluzione email MX Plan (disponibile tramite: un'offerta di [hosting Web](https://www.ovhcloud.com/it/web-hosting/), l'[Hosting gratuito 100M](https://www.ovhcloud.com/it/domains/free-web-hosting/) incluso con un dominio o l'offerta MX Plan ordinata separatamente).
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Disporre di una soluzione email MX Plan (disponibile tramite: un'offerta di [hosting Web](https://www.ovhcloud.com/it/web-hosting/) o l'offerta MX Plan ordinata separatamente).
+
+</Region>
 
 :::warning
 Questa guida ti mostra come utilizzare il servizio MX Plan storico. Per la nuova offerta, i filtri vengono gestiti direttamente tramite la Webmail OWA (**O**utlook **W**eb **A**pp). Utilizza la tabella qui sotto per identificare la tua offerta.

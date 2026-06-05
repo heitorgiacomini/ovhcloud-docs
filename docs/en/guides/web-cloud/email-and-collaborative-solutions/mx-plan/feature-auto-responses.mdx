@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Objective
 
 This OVHcloud feature allows you to set up an automatic email responder (auto-reply) that sends a message to anyone trying to contact you by email in your absence.
@@ -13,7 +15,17 @@ This OVHcloud feature allows you to set up an automatic email responder (auto-re
 
 ## Requirements
 
+<Region zones={['eu']}>
+
 - An OVHcloud MX Plan, available as part of our [web hosting plans](https://www.ovhcloud.com/en-gb/web-hosting/), the [100M free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/) included with a domain name (activated in advance), or ordered separately as a standalone solution
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- An OVHcloud MX Plan, available as part of our [web hosting plans](https://www.ovhcloud.com/en-gb/web-hosting/), or ordered separately as a standalone solution
+
+</Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 ---
