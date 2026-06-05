@@ -2,8 +2,11 @@
 
 ## 2026.06.04.1
 
+### Features
+- **theme:** add llms options and pdf export
+
 ### Documentation
-- 2 guides updated across en, fr
+- 76 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.06.04
 
