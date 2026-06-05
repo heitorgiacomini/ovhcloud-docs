@@ -5,6 +5,8 @@ lastUpdated: 2020-03-11
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Objectif
 
 Avec l’option « Règles de gestion de la boîte de réception », vous pouvez créer un ensemble de règles pour gérer votre courrier entrant. Ces règles vous permettent de maintenir l’ordre dans votre compte de messagerie en acheminant automatiquement les e-mails dans différents dossiers. Il s’agit également d’une méthode qui permet de définir les paramètres de transfert (redirections) et de filtrer les messages indésirables.
@@ -15,8 +17,20 @@ Avec l’option « Règles de gestion de la boîte de réception », vous pouvez
 
 ## Prérequis
 
+<Region zones={['eu']}>
 - une solution e-mail OVHcloud doit avoir été configurée au préalable (**MX Plan**, proposé parmi nos [offres d’hébergement web](https://www.ovhcloud.com/fr/web-hosting/), inclus dans un [hébergement gratuit 100M](https://www.ovhcloud.com/fr/domains/free-web-hosting/) ou commandé séparément comme solution autonome ; [**Hosted Exchange**](https://www.ovhcloud.com/fr/emails/hosted-exchange/) ou [**Email Pro**](https://www.ovhcloud.com/fr/emails/email-pro/))
 - les paramètres de connexion de l’adresse e-mail que vous souhaitez configurer
+</Region>
+
+<Region zones={['ca']}>
+- une solution e-mail OVHcloud doit avoir été configurée au préalable (**MX Plan**, proposé parmi nos [offres d’hébergement web](https://www.ovhcloud.com/fr/web-hosting/) ou commandé séparément comme solution autonome ; [**Hosted Exchange**](https://www.ovhcloud.com/fr/emails/hosted-exchange/))
+- les paramètres de connexion de l’adresse e-mail que vous souhaitez configurer
+</Region>
+
+<Region zones={['apac']}>
+- une solution e-mail OVHcloud doit avoir été configurée au préalable (**MX Plan**, proposé parmi nos [offres d’hébergement web](https://www.ovhcloud.com/fr/web-hosting/) ou commandé séparément comme solution autonome)
+- les paramètres de connexion de l’adresse e-mail que vous souhaitez configurer
+</Region>
 
 ## Instructions
 

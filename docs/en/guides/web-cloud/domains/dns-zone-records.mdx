@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Objective
@@ -112,7 +113,17 @@ Select the record you want by clicking each of the following tabs.
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer <br/><br/> 
-    Links a domain name to an email server. For example, the address *10 mx1.mail.ovh.net* corresponds to one of the OVHcloud email servers when you have an OVHcloud email solution. Your email provider may have several email servers. Several MX fields must therefore be created. Please read our guide on [Adding an MX record to your domain name’s configuration](/guides/web-cloud/domains/dns-zone-mx).
+    Links a domain name to an email server.
+
+    <Region zones={['eu']}>
+    For example, the address *10 mx1.mail.ovh.net* corresponds to one of the OVHcloud email servers when you have an OVHcloud email solution.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    For example, the address *10 mx1.mail.ovh.ca* corresponds to one of the OVHcloud email servers when you have an OVHcloud email solution.
+    </Region>
+
+    Your email provider may have several email servers. Several MX fields must therefore be created. Please read our guide on [Adding an MX record to your domain name’s configuration](/guides/web-cloud/domains/dns-zone-mx).
     
     :::warning
     In general, we recommend using servers from the same email provider in your DNS zone.

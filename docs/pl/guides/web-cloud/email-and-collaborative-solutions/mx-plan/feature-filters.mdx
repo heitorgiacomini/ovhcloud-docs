@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 
 ## Wprowadzenie
 
@@ -19,7 +21,17 @@ Na przykład: chcesz, aby wszystkie e-maile zawierające "[SPAM]" w temacie zost
 
 ## Wymagania początkowe
 
+<Region zones={['eu']}>
+
 - Posiadanie usługi e-mail MX Plan (dostępnej poprzez: [oferta hostingu](https://www.ovhcloud.com/pl/web-hosting/), bezpłatny [Darmowy hosting 100M](https://www.ovhcloud.com/pl/domains/free-web-hosting/) zawarty w ofercie domeny lub oferta MX Plan zamówiona oddzielnie).
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Posiadanie usługi e-mail MX Plan (dostępnej poprzez: [oferta hostingu](https://www.ovhcloud.com/pl/web-hosting/) lub oferta MX Plan zamówiona oddzielnie).
+
+</Region>
 
 :::warning
 Poniższy przewodnik skierowany jest do posiadaczy "historycznej" oferty MX Plan. W przypadku nowej oferty zarządzanie filtrami odbywa się bezpośrednio w Webmail OWA (**O**utlook **W**eb **A**pp). Zidentyfikuj ofertę korzystając z poniższej tabeli.

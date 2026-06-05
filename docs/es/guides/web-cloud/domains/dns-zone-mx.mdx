@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 
@@ -19,7 +20,17 @@ El registro MX permite asociar un nombre de dominio al servidor de su plataforma
 ## Requisitos
 
 - El nombre de dominio debe utilizar la configuración de OVHcloud (es decir, los servidores DNS de OVHcloud).
+<Region zones={['eu']}>
+
 - Tener una solución MX Plan (incluida en el plan de [alojamiento web](https://www.ovhcloud.com/es-es/web-hosting/), el [alojamiento gratuito 100M](https://www.ovhcloud.com/es-es/domains/free-web-hosting/) o la solución MX Plan contratada por separado), una de nuestras [soluciones de correo de OVHcloud](https://www.ovhcloud.com/es-es/emails/) o un servicio de correo externo.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Tener una solución MX Plan (incluida en el plan de [alojamiento web](https://www.ovhcloud.com/es-es/web-hosting/) o la solución MX Plan contratada por separado), una de nuestras [soluciones de correo de OVHcloud](https://www.ovhcloud.com/es-es/emails/) o un servicio de correo externo.
+
+</Region>
 
 {/* CP-NAV-START:web-dns-zone */}
 ---
@@ -51,7 +62,18 @@ Para comprender su funcionamiento, vamos a utilizar un ejemplo:
 - La dirección **sender@otherdomain.ovh** envía un correo electrónico a **contact@mydomain.ovh**.
 - El servidor de envío de correo (**Outgoing mail server**) consulta la zona DNS del nombre de dominio **mydomain.ovh** y lee los registros **MX**.
 - El correo electrónico se transmite a la URL del registro **MX** leído.
+
+<Region zones={['eu']}>
+
 - El correo electrónico se envía al destino **mx0.mail.ovh.net**, precedido del valor **0**. Este valor corresponde a la prioridad: el valor más bajo se consulta primero y el más alto después. Esto significa que la presencia de varios registros MX permite compensar la falta de respuesta del servidor designado por el registro con la prioridad más baja, pasando a los siguientes servidores en orden de prioridad.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- El correo electrónico se envía al destino **mx0.mail.ovh.ca**, precedido del valor **0**. Este valor corresponde a la prioridad: el valor más bajo se consulta primero y el más alto después. Esto significa que la presencia de varios registros MX permite compensar la falta de respuesta del servidor designado por el registro con la prioridad más baja, pasando a los siguientes servidores en orden de prioridad.
+
+</Region>
 
 <img className="thumbnail" alt="Correo electrónico" src="/images/assets/schemas/emails/mx-dns-resolution.png" loading="lazy" />
 
@@ -66,9 +88,27 @@ En caso de duda, le recomendamos que contacte con un [proveedor especializado](h
 
 ### Valores de la configuración MX de OVHcloud <a name="mxovhcloud"></a>
 
+<Region zones={['eu']}>
+
 A continuación ofrecemos la configuración MX de OVHcloud que deberá utilizar para nuestros MX Plan (solo o incluido en un plan de [hosting de OVHcloud](https://www.ovhcloud.com/es-es/web-hosting/)), [Email Pro](https://www.ovhcloud.com/es-es/emails/email-pro/), [Exchange](https://www.ovhcloud.com/es-es/emails-exchange/) y [Zimbra](https://www.ovhcloud.com/es-es/emails/zimbra-emails/). Nuestros servidores de correo disponen de antispam y antivirus integrado.
 
+</Region>
+
+<Region zones={['ca']}>
+
+A continuación ofrecemos la configuración MX de OVHcloud que deberá utilizar para nuestros MX Plan (solo o incluido en un plan de [hosting de OVHcloud](https://www.ovhcloud.com/es-es/web-hosting/)) y [Exchange](https://www.ovhcloud.com/es-es/emails-exchange/). Nuestros servidores de correo disponen de antispam y antivirus integrado.
+
+</Region>
+
+<Region zones={['apac']}>
+
+A continuación ofrecemos la configuración MX de OVHcloud que deberá utilizar para nuestros MX Plan (solo o incluido en un plan de [hosting de OVHcloud](https://www.ovhcloud.com/es-es/web-hosting/)). Nuestros servidores de correo disponen de antispam y antivirus integrado.
+
+</Region>
+
 Estos valores son comunes a todos los productos, excepto [Private Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-private) y Dedicated Exchange.
+
+<Region zones={['eu']}>
 
 |Dominio|TTL|Registro|Prioridad|Destino|
 |---|---|---|---|---|
@@ -77,6 +117,20 @@ Estos valores son comunes a todos los productos, excepto [Private Exchange](/gui
 |*Dejar el campo vacío*|3600|MX|50|mx2.mail.ovh.net.|
 |*Dejar el campo vacío*|3600|MX|100|mx3.mail.ovh.net.|
 |*Dejar el campo vacío*|3600|MX|200|mx4.mail.ovh.net.|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Dominio|TTL|Registro|Prioridad|Destino|
+|---|---|---|---|---|
+|*Dejar el campo vacío*|3600|MX|1|mx0.mail.ovh.ca.|
+|*Dejar el campo vacío*|3600|MX|5|mx1.mail.ovh.ca.|
+|*Dejar el campo vacío*|3600|MX|50|mx2.mail.ovh.ca.|
+|*Dejar el campo vacío*|3600|MX|100|mx3.mail.ovh.ca.|
+|*Dejar el campo vacío*|3600|MX|200|mx4.mail.ovh.ca.|
+
+</Region>
 
 Estos registros MX deben estar configurados en la zona DNS del nombre de dominio.
 

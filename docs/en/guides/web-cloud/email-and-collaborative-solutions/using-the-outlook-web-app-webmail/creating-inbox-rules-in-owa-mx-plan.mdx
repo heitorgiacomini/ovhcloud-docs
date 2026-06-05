@@ -5,6 +5,8 @@ lastUpdated: 2020-03-11
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Objective
 
 With the "Inbox rules" option, you can create an elaborate set of rules to handle incoming emails. These can help you to keep your email account organised by automatically sorting emails into folders. This is also the way to define forwarding settings (redirections) and to filter out spam messages.
@@ -13,8 +15,20 @@ With the "Inbox rules" option, you can create an elaborate set of rules to handl
 
 ## Requirements
 
+<Region zones={['eu']}>
 - an OVHcloud email solution already set up (**MX Plan**, available as part of our [Web Hosting plans](https://www.ovhcloud.com/en-gb/web-hosting/), included in a [100M free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/) or ordered separately as a standalone solution; [**Hosted Exchange**](https://www.ovhcloud.com/en-gb/emails/hosted-exchange/) or [**Email Pro**](https://www.ovhcloud.com/en-gb/emails/email-pro/))
 - login credentials for the email address you want to configure
+</Region>
+
+<Region zones={['ca']}>
+- an OVHcloud email solution already set up (**MX Plan**, available as part of our [Web Hosting plans](https://www.ovhcloud.com/en-gb/web-hosting/), or ordered separately as a standalone solution; [**Hosted Exchange**](https://www.ovhcloud.com/en-gb/emails/hosted-exchange/))
+- login credentials for the email address you want to configure
+</Region>
+
+<Region zones={['apac']}>
+- an OVHcloud email solution already set up (**MX Plan**, available as part of our [Web Hosting plans](https://www.ovhcloud.com/en-gb/web-hosting/), or ordered separately as a standalone solution)
+- login credentials for the email address you want to configure
+</Region>
 
 ## Instructions
 
