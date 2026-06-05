@@ -1,0 +1,73 @@
+---
+title: OVHcloud Load Balancer glossary
+description: Define the core OVHcloud Load Balancer terms — frontend, farm, server, probe, balancing method, stickiness, route, zone, anycast and more.
+lastUpdated: 2026-06-05
+---
+
+## Objective
+
+This guide defines the vocabulary used across the OVHcloud Load Balancer documentation. Consult it whenever a term in another guide is unfamiliar, so that concepts such as frontends, farms, probes, and stickiness carry a consistent meaning throughout your configuration work.
+
+The OVHcloud Load Balancer is a fully managed service that distributes incoming traffic across several backend servers or applications. For a full description of the service, see the [What is the OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer) guide.
+
+**This guide defines the core terms used across the OVHcloud Load Balancer documentation.**
+
+## How the terms fit together
+
+Most Load Balancer terms describe one of three things: an object you configure (frontend, farm, server), a behaviour you apply to traffic (balancing method, stickiness, route, probe), or a property of the underlying platform (zone, anycast, vRack, SSL termination). The diagram below shows how these configuration objects relate as traffic flows from a client to a backend server.
+
+```mermaid
+flowchart LR
+    Client[Client] --> FE[Frontend<br/>protocol + listening port]
+    FE --> RT{Route<br/>conditions}
+    RT --> FARM[Server farm<br/>balancing method + probe]
+    FARM --> S1[Server 1]
+    FARM --> S2[Server 2]
+    FARM --> S3[Server 3]
+```
+
+{/* DRAFT: To screenshot - capture the Load Balancer dashboard in the Control Panel showing the Server Farms and Frontends tabs to anchor the glossary visually */}
+
+## Glossary
+
+The table below defines each core term. The Control Panel column gives the exact label shown in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, where one exists.
+
+| Term | Definition | Control Panel reference |
+|---|---|---|
+| Frontend | The entry point of the Load Balancer. A frontend defines the protocol it listens on (HTTP, HTTPS, TCP, or UDP) and the listening port that clients connect to. Each frontend forwards traffic to one or more server farms. | `Frontends` tab |
+| Server farm | A logical group of backend servers that receive traffic from a frontend. The farm holds the balancing method, the health probe, and the stickiness setting that apply to its members. Also referred to as a farm. | `Server Farms` tab |
+| Server | A single backend instance registered inside a farm. It handles inbound and outbound application traffic. A server can be a Dedicated Server, a Virtual Private Server (VPS), a Public Cloud instance, or any reachable IP address. | `Add server` |
+| Probe | The health check the Load Balancer runs against each server in a farm. It periodically verifies that a server is responsive; servers that fail the probe are removed from rotation until they recover. | Configured per farm |
+| Balancing method | The algorithm that decides which server in a farm receives the next request. Available methods are Round Robin (default), Least Connections, Source Hash, URI Hash, and First Available. | `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, `First Available` |
+| Stickiness | The mechanism that keeps a client tied to the same server across successive requests, also called session persistence. Available options are None, Cookie, and Source IP. | `None`, `Cookie`, `Source IP` |
+| Route | A rule attached to a frontend that decides which farm receives a request based on conditions such as the URL path or HTTP headers. A frontend always has a default route and may have additional conditional routes. | `Default route`, `Route to farm` |
+| Zone | The geographic location in which a frontend and its farms are deployed. A single Load Balancer can host configurations in several zones, and changes are applied per zone. | Selected per object |
+| Anycast | The network technique by which a single IP address is announced from multiple locations at once. The OVHcloud Load Balancer uses an anycast network so that clients reach the closest healthy entry point, improving latency and failover. | Platform property |
+| vRack | The OVHcloud private network that connects your services. A Load Balancer attached to a vRack can reach backend servers over private addressing instead of the public Internet. | `Subnet` tab |
+| SSL termination | The Load Balancer decrypts incoming HTTPS (TLS) traffic at the frontend, then forwards it to the farm. Terminating TLS at the Load Balancer centralises certificate management and offloads encryption from your backend servers. | `SSL Certificates` tab, `TLS Certificate` |
+| Additional IP | An IP address that can be routed to your Load Balancer to expand the set of addresses it serves. This term replaces the legacy "Failover IP". | Configured per service |
+
+## Related terms
+
+A few supporting terms appear regularly in the Load Balancer guides without being core configuration objects.
+
+| Term | Definition |
+|---|---|
+| serviceName | The unique identifier of your Load Balancer service. It is the value used in every OVHcloud API call and shown in the Control Panel. |
+| Apply configuration | The action that pushes your saved changes to the active Load Balancer. Edits are staged until you apply them, after which they take effect on the running service. |
+| Downtime mode | A state you can place a farm or server in so that it stops receiving traffic during maintenance, then rejoins rotation once maintenance is complete. |
+| Layer 4 / Layer 7 | The network layers a frontend operates at. TCP and UDP frontends work at Layer 4 (transport); HTTP and HTTPS frontends work at Layer 7 (application), enabling route conditions on URLs and headers. |
+
+## Considerations and limitations
+
+- The balancing method, probe, and stickiness setting are configured at the farm level, not per server. All servers in a farm share these settings.
+- URI Hash balancing applies to HTTP and HTTPS farms only. It cannot be used on TCP or UDP farms.
+- For exact quotas, supported protocols, and service limits, see the [Prerequisites and limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations) guide. [TODO: confirm any term-specific limits to surface here]
+
+## Go further
+
+- [What is the OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer)
+- [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+
+Join our [community of users](/links/community).

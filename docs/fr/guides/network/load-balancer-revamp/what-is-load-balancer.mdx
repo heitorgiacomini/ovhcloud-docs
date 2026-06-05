@@ -1,0 +1,170 @@
+---
+title: Qu'est-ce que l'OVHcloud Load Balancer
+description: Comprenez ce qu'est l'OVHcloud Load Balancer, en quoi l'équilibrage HTTP, TCP et UDP diffère, ses composants clés et quand utiliser le service.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+
+## Objectif
+
+Ce guide explique ce qu'est l'OVHcloud Load Balancer, comment il répartit le trafic entrant entre vos serveurs backend et quels éléments de base vous assemblez pour le configurer. Il s'adresse à toute personne qui évalue le service ou en découvre les concepts avant de configurer des frontends, des fermes de serveurs et des routes.
+
+**Ce guide explique la différence entre l'équilibrage HTTP, TCP et UDP, le rôle de chaque composant et les cas où le Load Balancer constitue la solution adaptée.**
+
+## Vue d'ensemble
+
+L'OVHcloud Load Balancer est un service managé qui répartit le trafic réseau entrant entre plusieurs serveurs backend. Au lieu de se connecter directement à un serveur unique, les clients se connectent au Load Balancer, qui transmet chaque connexion à l'un des serveurs d'un pool selon un algorithme d'équilibrage configurable.
+
+Cela résout deux problèmes courants. Le service élimine le point de défaillance unique que représente un serveur isolé et il vous permet d'évoluer horizontalement en ajoutant des serveurs pour absorber davantage de trafic, sans changer le point d'entrée public utilisé par vos clients. Le Load Balancer se place en amont de services OVHcloud tels que les serveurs dédiés, les serveurs privés virtuels (VPS) et les instances Public Cloud, ainsi que de serveurs accessibles via un réseau privé.
+
+Le service repose sur des technologies open source éprouvées et expose un point d'entrée public (une adresse IP) vers lequel vous faites pointer vos enregistrements DNS. À partir de là, les frontends, les fermes de serveurs et les routes déterminent la façon dont le trafic est reçu, équilibré et transmis.
+
+```mermaid
+flowchart LR
+    C[Clients] --> LB[OVHcloud Load Balancer]
+    LB --> S1[Serveur 1]
+    LB --> S2[Serveur 2]
+    LB --> S3[Serveur 3]
+```
+
+{/* DRAFT: To screenshot - capture the Load Balancer dashboard in the Control Panel showing the General view */}
+
+## Concepts clés
+
+Le Load Balancer se configure en combinant un petit ensemble d'objets. Comprendre chacun d'eux et la façon dont ils s'articulent constitue le socle de toute tâche de configuration.
+
+### Frontend
+
+Un frontend définit la manière dont le trafic entre dans le Load Balancer. Il précise le protocole d'entrée (HTTP, HTTPS, TCP ou UDP) et le port sur lequel le Load Balancer écoute. Chaque frontend est rattaché à une ferme de serveurs par défaut, qui reçoit le trafic à moins qu'une route ne le dirige ailleurs. Pour les frontends HTTPS, vous associez également un certificat SSL/TLS. Les frontends et les fermes sont spécifiques à un protocole : un frontend UDP se couple uniquement à une ferme UDP, de même qu'un frontend TCP se couple à une ferme TCP.
+
+Dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, les frontends se gèrent depuis l'onglet `Frontends & routage`.
+
+### Ferme de serveurs
+
+Une ferme de serveurs (également appelée ferme) est le pool de serveurs backend qui reçoivent le trafic équilibré. La ferme définit l'algorithme d'équilibrage, le health check utilisé pour détecter les serveurs qui ne répondent pas, ainsi que le comportement de persistance qui maintient un client lié au même serveur lorsque cela est nécessaire. Un frontend transmet le trafic à une ferme ; la ferme décide quel serveur traite chaque connexion.
+
+Les fermes se gèrent depuis l'onglet `Fermes`.
+
+### Serveur
+
+Un serveur est un backend unique qui appartient à une ferme. Il est identifié par une adresse IP et un port. Le Load Balancer vérifie en continu chaque serveur à l'aide d'un health check et n'envoie de trafic qu'aux serveurs signalés comme sains. Vous pouvez placer un serveur individuel en maintenance afin que le trafic cesse de lui être acheminé, sans le retirer de la ferme.
+
+### Route
+
+Une route est une règle qui dirige le trafic HTTP vers une ferme spécifique en fonction de conditions telles que l'hôte demandé ou le chemin de l'URL. Les routes permettent à un seul frontend de servir plusieurs applications, en envoyant chaque requête vers la ferme appropriée. Les routes s'appliquent aux frontends HTTP et HTTPS ; les frontends TCP et UDP transmettent toujours le trafic à leur ferme par défaut.
+
+### Zone
+
+Une zone est l'emplacement géographique où une instance de Load Balancer est déployée. Le Load Balancer peut fonctionner sur plusieurs zones et son IP publique est annoncée sur le réseau Anycast d'OVHcloud afin que les clients atteignent l'instance saine la plus proche. Les zones se gèrent depuis l'onglet `Réseau`.
+
+```mermaid
+flowchart TD
+    F[Frontend : protocole + port] --> R{Correspondance de route HTTP ?}
+    R -->|Oui| FA[Ferme A]
+    R -->|Non / par défaut| FB[Ferme par défaut]
+    FA --> SA1[Serveur]
+    FA --> SA2[Serveur]
+    FB --> SB1[Serveur]
+    FB --> SB2[Serveur]
+```
+
+## Équilibrage HTTP comparé à l'équilibrage TCP et UDP
+
+Le Load Balancer traite le trafic sur deux couches, et le choix entre elles détermine les fonctionnalités disponibles. Il prend en charge trois familles de protocoles : HTTP/HTTPS au niveau de la couche applicative (L7), ainsi que TCP et UDP au niveau de la couche transport (L4). Sélectionnez le type qui correspond au protocole utilisé par votre application.
+
+| Type | Couche | Trafic typique | Capacités |
+|---|---|---|---|
+| HTTP / HTTPS | Couche applicative (L7) | Applications web et API | Routage basé sur l'URL et l'hôte, manipulation des en-têtes HTTP, redirections, terminaison SSL/TLS, routes HTTP |
+| TCP | Couche transport (L4) | Tout service basé sur TCP (bases de données, messagerie, protocoles personnalisés) | Équilibrage au niveau connexion pour toute application TCP, pass-through SSL/TLS |
+| UDP | Couche transport (L4) | Tout service basé sur UDP (DNS, VoIP, jeux, syslog, services de datagrammes personnalisés) | Équilibrage au niveau datagramme pour toute application UDP |
+
+Utilisez l'équilibrage HTTP ou HTTPS lorsque vous avez besoin que le Load Balancer inspecte les requêtes et agisse en conséquence, par exemple pour router `/api` vers une ferme et `/` vers une autre, réécrire des en-têtes ou terminer le TLS. Utilisez l'équilibrage TCP lorsque l'application n'est pas en HTTP, ou lorsque le Load Balancer doit transmettre les connexions sans en inspecter le contenu. Utilisez l'équilibrage UDP pour les services de datagrammes sans connexion tels que DNS, VoIP, les jeux ou syslog ; l'UDP se comporte comme TCP au niveau connexion et transmet le trafic à sa ferme par défaut.
+
+> [!INFO]
+> La terminaison SSL/TLS et les routes HTTP ne sont disponibles que sur les frontends HTTP et HTTPS. TCP et UDP sont des protocoles L4 : un frontend TCP ou UDP transmet le trafic à sa ferme par défaut sans analyser la charge utile, et ne prend pas en charge les routes HTTP, la manipulation des en-têtes, les redirections, la terminaison SSL/TLS ni la persistance par cookie.
+
+## Fonctionnalités et capacités
+
+Au-delà de la distribution de base, le Load Balancer offre plusieurs capacités qui influent sur la disponibilité, la sécurité et l'exploitation. Chacune se configure via son propre objet et fait l'objet d'un guide dédié.
+
+| Capacité | Description |
+|---|---|
+| Algorithmes d'équilibrage | Répartir le trafic par Round Robin, Moins de connexions, Hash Source, Hash URI ou Premier disponible. |
+| Health checks | Détecter les serveurs qui ne répondent pas et cesser automatiquement de leur acheminer du trafic. |
+| Persistance de session | Maintenir un client lié au même serveur backend à l'aide d'un cookie ou de l'IP source. |
+| Certificats SSL/TLS | Terminer le HTTPS au niveau du Load Balancer avec un certificat managé ou importé. |
+| Routes et règles HTTP | Diriger les requêtes vers différentes fermes en fonction de l'hôte, du chemin ou d'autres conditions. |
+| Distribution Anycast | Annoncer l'IP publique sur plusieurs zones pour une faible latence et une meilleure résilience. |
+| vRack et IP additionnelle | Atteindre les backends via un réseau privé ou équilibrer des adresses IP additionnelles. |
+
+Pour les configurer, reportez-vous aux guides dédiés tels que [Configurer des fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms), [Configurer des frontends](/guides/network/load-balancer-revamp/configure-frontends) et [Configurer des health checks](/guides/network/load-balancer-revamp/configure-health-probes).
+
+## Quand utiliser le Load Balancer
+
+Le Load Balancer répond à plusieurs besoins architecturaux courants. Les situations suivantes indiquent que le service est l'outil approprié.
+
+### Faire évoluer une application web horizontalement
+
+Lorsqu'un serveur web unique ne parvient plus à absorber le volume de requêtes, placez plusieurs serveurs identiques derrière un frontend HTTP ou HTTPS et laissez le Load Balancer répartir les requêtes entre eux. Vous ajoutez ou retirez des serveurs de la ferme sans changer le point d'entrée public.
+
+### Éliminer un point de défaillance unique
+
+Lorsque la disponibilité est importante, faites fonctionner deux serveurs backend ou plus dans une ferme dotée d'un health check. Si un serveur cesse de répondre, le Load Balancer n'achemine le trafic que vers les serveurs sains, de sorte que le service reste accessible.
+
+### Servir plusieurs applications depuis un seul point d'entrée
+
+Lorsque plusieurs applications partagent une adresse publique, utilisez des routes HTTP pour envoyer les requêtes vers différentes fermes en fonction de l'hôte ou du chemin de l'URL. Un seul frontend HTTPS peut servir de façade à plusieurs backends distincts.
+
+### Équilibrer des services non HTTP
+
+Lorsque le service est une base de données, un serveur de messagerie ou tout protocole TCP personnalisé, utilisez un frontend TCP pour équilibrer les connexions au niveau de la couche transport. Pour les services de datagrammes sans connexion tels que DNS, VoIP, les jeux ou syslog, utilisez un frontend UDP pour équilibrer le trafic au niveau de la couche transport.
+
+## Automatisation
+
+Le Load Balancer peut être géré de manière programmatique, en complément de l'espace client. L'API OVHcloud expose l'ensemble de la surface de configuration sous la section `/ipLoadbalancing`.
+
+Chaque famille de protocoles expose ses propres fermes, serveurs et frontends sous un segment de chemin parallèle : `http`, `tcp` ou `udp`.
+
+| Méthode | Ressource / Endpoint | Objectif |
+|---|---|---|
+| API OVHcloud | `/ipLoadbalancing/{serviceName}/http/farm` | Gérer les fermes de serveurs HTTP |
+| API OVHcloud | `/ipLoadbalancing/{serviceName}/http/frontend` | Gérer les frontends HTTP |
+| API OVHcloud | `/ipLoadbalancing/{serviceName}/tcp/farm` | Gérer les fermes de serveurs TCP |
+| API OVHcloud | `/ipLoadbalancing/{serviceName}/tcp/frontend` | Gérer les frontends TCP |
+| API OVHcloud | `/ipLoadbalancing/{serviceName}/udp/farm` | Gérer les fermes de serveurs UDP |
+| API OVHcloud | `/ipLoadbalancing/{serviceName}/udp/frontend` | Gérer les frontends UDP |
+| Terraform | [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] | Déclarer les ressources du Load Balancer sous forme de code |
+
+Par exemple, lister les fermes HTTP d'un Load Balancer s'effectue avec l'appel suivant :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+Les fermes UDP se gèrent sous le chemin parallèle `/udp/*`. Par exemple, créer une ferme UDP s'effectue avec l'appel suivant :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/farm"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant unique de votre service Load Balancer. | `loadbalancer-xxxxxxxxxxxx` |
+
+Pour une vue d'ensemble plus large des méthodes d'automatisation disponibles, reportez-vous à [Automatisation](/guides/network/load-balancer-revamp/automation).
+
+## Points d'attention et limitations
+
+Gardez les points suivants à l'esprit lorsque vous raisonnez sur le service.
+
+- Les routes HTTP et la terminaison SSL/TLS s'appliquent uniquement aux frontends HTTP et HTTPS, pas aux frontends TCP ou UDP.
+- L'UDP est un protocole de couche 4 : les frontends et fermes UDP ne prennent pas en charge les routes HTTP, la manipulation des en-têtes, les redirections, la terminaison SSL/TLS ni la persistance par cookie.
+- L'endpoint d'API `/ipLoadbalancing/availableZones` est déprécié ; ne vous appuyez pas dessus dans vos nouvelles automatisations.
+- Les serveurs backend doivent être accessibles depuis le Load Balancer, soit via le réseau public, soit via un réseau privé tel que le vRack.
+- Pour connaître les quotas et limites exacts, reportez-vous à [Prérequis et limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations). [TODO: confirm per-service farm, frontend, and server limits]
+
+## Aller plus loin
+
+- [Démarrage rapide - HTTP et HTTPS](/guides/network/load-balancer-revamp/quickstart-http-https)
+- [Glossaire](/guides/network/load-balancer-revamp/glossary)
+- [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability)
+
+Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).

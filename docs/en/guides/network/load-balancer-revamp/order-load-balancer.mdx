@@ -1,0 +1,101 @@
+---
+title: Order an OVHcloud Load Balancer
+description: Learn how to order an OVHcloud Load Balancer from the Control Panel, choose its size and availability zone, then locate your delivered service.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objective
+
+The OVHcloud Load Balancer distributes incoming traffic across several backend servers to improve the availability and scalability of your applications. Before you can configure frontends, server farms, and probes, you must order a Load Balancer service and select its size and location.
+
+**This guide explains how to order an OVHcloud Load Balancer from the OVHcloud Control Panel, then how to locate the new service once it is delivered.**
+
+## Requirements
+
+- An active <ManagerLink to="/">OVHcloud account</ManagerLink>
+- Access to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>
+- A clear understanding of the size and availability zone you need — see [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones)
+- Reviewed the [prerequisites and limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations) for the service
+
+## Instructions
+
+This section walks you through the order in the Control Panel: starting it, choosing the size and zone, confirming, and finding the delivered service.
+
+### Step 1 - Start the order
+
+Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and navigate to **Network** > **Load Balancer**.
+
+If you have no service yet, the `All Load Balancers` page lets you start a new order. Click the order entry point to open the funnel.
+
+{/* DRAFT: To screenshot - capture the All Load Balancers page with the order entry point */}
+
+### Step 2 - Choose the size and availability zone
+
+The order funnel guides you through configuring your new service. Select the options that match your needs.
+
+| Option | Purpose |
+|---|---|
+| Size | Determines the capacity of the Load Balancer (the supported volume of concurrent connections and requests). Choose the size that matches your expected traffic. |
+| Availability zone | Determines where the Load Balancer is deployed. A single-zone deployment runs in one zone; a multi-zone deployment spreads the service across several zones for higher resilience. |
+
+For guidance on choosing between a single-zone and a multi-zone deployment, refer to [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones) and [High availability](/guides/network/load-balancer-revamp/high-availability).
+
+:::info
+The exact sizes, their capacity figures, and pricing are presented in the order funnel. [TODO: confirm the list of available sizes and their published capacity limits]
+:::
+
+{/* DRAFT: To screenshot - capture the size and availability zone selection step in the order funnel */}
+
+### Step 3 - Confirm and pay for the order
+
+Review your configuration, then complete the order.
+
+1. Verify the selected size, availability zone, and billing period.
+2. Accept the contracts and conditions.
+3. Confirm the order and complete the payment.
+
+After payment, the service is provisioned. Delivery is not always immediate.
+
+:::warning
+The Load Balancer is billed as a service. Cancelling it later follows the cancellation flow described in [Cancel a Load Balancer](/guides/network/load-balancer-revamp/cancel-load-balancer).
+:::
+
+{/* DRAFT: To screenshot - capture the order summary and confirmation step */}
+
+### Step 4 - Locate your new service
+
+Once the order is delivered, the Load Balancer appears in the Control Panel.
+
+1. Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Navigate to **Network** > **Load Balancer**.
+3. Select your service from the `All Load Balancers` list to open its dashboard.
+
+From the service dashboard, you can manage the configuration through the `Server Farms`, `Frontends`, `SSL Certificates`, `Subnet`, `Statistics`, `Logs`, `Tasks`, and `Quota` tabs.
+
+{/* DRAFT: To screenshot - capture the delivered service in the All Load Balancers list */}
+
+To confirm the service is present and read its properties, you can also list your Load Balancer services through the OVHcloud API.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route="/ipLoadbalancing" />
+
+This call returns the service names of every Load Balancer on your account. Use a service name with the following call to read the properties of a specific service.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The unique identifier of your Load Balancer service. | `loadbalancer-abcdef1234567890` |
+
+:::info
+The OVHcloud API cannot order a Load Balancer with a single call. Ordering through the API uses the order and cart endpoints. [TODO: confirm the `/order/cart` flow for ipLoadbalancing] To order with infrastructure-as-code instead, see [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources].
+:::
+
+## Go further
+
+- [Get started in the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel)
+- [Configure your server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones)
+
+Join our [community of users](/links/community).

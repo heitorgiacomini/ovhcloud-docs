@@ -1,0 +1,118 @@
+---
+title: Monitor server health status
+description: Monitor the health status of backend servers in your OVHcloud Load Balancer farms from the Control Panel and the OVHcloud API.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+The OVHcloud Load Balancer continuously checks the state of each backend server attached to a server farm. When a server is detected as down, the Load Balancer stops sending traffic to it and distributes the load across the remaining healthy servers.
+
+**This guide explains how to read the health status of each backend server, both in the OVHcloud Control Panel and through the OVHcloud API.**
+
+The health status helps when a server leaves a farm without your intervention: you can identify the affected server and the reason reported by the health probe.
+
+## Requirements
+
+- An active [OVHcloud account](/links/manager)
+- Access to the [OVHcloud Control Panel](/links/manager)
+- An [OVHcloud Load Balancer](/links/network/load-balancer) service
+- A configured server farm with at least one backend server
+- A configured frontend
+- A configured health probe on the farm — see [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes)
+- Access to the [OVHcloud API](/links/api) (for the API method)
+
+## Introduction
+
+Health status reflects the result of the health probe defined on the farm. Without a probe, the Load Balancer cannot evaluate server state, so the reported status is not meaningful.
+
+> [!INFO]
+> To return valid server status checks, you must have a probe configured on your farm and backend servers that allow access to that probe. For details, see [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes).
+
+## Instructions
+
+You can read server health status either visually in the Control Panel or programmatically through the API. Both methods report the same underlying state.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Navigate to **Network** > **Load Balancer** and select your service.
+3. Open the `Server Farms` tab and select a farm.
+4. Review the status displayed on each server line.
+
+{/* DRAFT: To screenshot — Server Farms tab with a farm selected, showing the status column on each server line */}
+
+To view a server's health status details, click the status in the `Status` column.
+
+{/* DRAFT: To screenshot — server health status detail panel */}
+
+> [!TIP]
+> If a server line shows a non-operational state, open its detail view to read the probe return code and the last check content before investigating the backend.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+The server health status is returned in the `serverState` field of the server object. Use the endpoint that matches the farm type (HTTP, TCP or UDP).
+
+For an HTTP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+For a TCP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
+
+For a UDP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server/\{serverId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The identifier of your Load Balancer service. | `loadbalancer-xxxxxxxxxxxxxxxx` |
+| `farmId` | Yes | The identifier of the farm the server belongs to. | `12345` |
+| `serverId` | Yes | The identifier of the backend server to inspect. | `67890` |
+
+To first list a farm's servers and retrieve every `serverId`, call the list endpoint matching the farm type. For an HTTP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
+
+For a TCP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
+
+For a UDP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server"} />
+
+{/* DRAFT: To screenshot — API console response showing the serverState field */}
+
+</Tab>
+</Tabs>
+
+### Understanding the health status details
+
+The detail view (Control Panel) and the server object (API) expose the same information. The following table describes each field.
+
+| Field | Description |
+|---|---|
+| Status | Current state of the backend server as evaluated by the Load Balancer. |
+| Check code | Return code of the health probe. |
+| Check status | Status of the health probe execution. |
+| Last check content | Content returned by the probe on its last execution. |
+| Check time | Date and time the probe was last executed. |
+
+> [!INFO]
+> The same status values apply to HTTP, TCP and UDP farms. Only the API path segment (`http`, `tcp` or `udp`) differs.
+
+## Go further
+
+- [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting)
+
+Join our [community of users](/links/community).

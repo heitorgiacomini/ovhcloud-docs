@@ -1,0 +1,151 @@
+---
+title: Load Balancer - Disponibilité et zones
+description: Découvrez comment les zones de disponibilité, les régions et le déploiement multizone façonnent le routage, la résilience et le quota du Load Balancer OVHcloud.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+
+## Objectif
+
+Ce guide explique le fonctionnement des zones de disponibilité et des régions pour le Load Balancer OVHcloud. Il décrit la différence entre les déploiements multirégion et multi-AZ, la façon dont les zones influencent le routage du trafic, ainsi que le suivi du quota par zone. Il s'adresse aux architectes et aux opérateurs qui souhaitent comprendre le modèle de disponibilité avant de concevoir ou de faire évoluer un déploiement.
+
+Pour la procédure pas à pas permettant d'ajouter une zone et de l'associer à un frontend, consultez le guide [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones).
+
+**Ce guide présente le modèle de disponibilité du Load Balancer OVHcloud : zones, régions, déploiements multizone, routage et quota par zone.**
+
+## Vue d'ensemble
+
+Le Load Balancer OVHcloud répartit le trafic entrant entre des serveurs backend. Un même service peut être déployé dans une ou plusieurs **zones de disponibilité**, chacune étant rattachée à un emplacement géographique. La zone dans laquelle un frontend est configuré détermine l'endroit depuis lequel son trafic est servi, ainsi que le cluster backend qu'il peut atteindre.
+
+Le déploiement sur plusieurs zones répond à deux objectifs :
+
+- **Résilience.** Si une zone devient indisponible, les zones restantes continuent de servir le trafic.
+- **Latence.** Le trafic provenant d'une zone géographique donnée est acheminé vers la zone la plus proche, ce qui réduit le temps d'aller-retour pour les utilisateurs finaux.
+
+Lorsque vous commandez un Load Balancer OVHcloud, vous choisissez une ou plusieurs zones. Vous pouvez également commander des zones supplémentaires pour un service existant ultérieurement. Pour une vision plus large de la résilience, consultez le guide [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability).
+
+```mermaid
+flowchart TD
+    U[Requête client] --> A[Point d'entrée Anycast]
+    A -->|Acheminé vers la zone la plus proche| Z1[Zone GRA]
+    A -->|Acheminé vers la zone la plus proche| Z2[Zone BHS]
+    Z1 --> F1[Frontend GRA] --> C1[Serveurs backend du cluster GRA]
+    Z2 --> F2[Frontend BHS] --> C2[Serveurs backend du cluster BHS]
+```
+
+## Concepts clés
+
+Cette section définit les termes utilisés tout au long du modèle de disponibilité et explique leurs relations.
+
+### Zone
+
+Une zone est l'unité dans laquelle un service Load Balancer est déployé. Chaque zone est ancrée à un emplacement géographique (par exemple `GRA` pour Gravelines ou `BHS` pour Beauharnois). Un frontend est toujours rattaché à une seule zone et ne peut acheminer le trafic que vers un cluster situé dans cette même zone. Vous commandez et faites évoluer le nombre de zones rattachées à un service au fil du temps.
+
+### Région et zone de disponibilité
+
+Une **région** est une zone géographique qui contient une ou plusieurs zones de disponibilité. La plupart des régions n'exposent historiquement qu'une seule zone : travailler avec plusieurs zones revient donc généralement à travailler avec plusieurs régions. Les régions multi-AZ font exception : elles exposent plusieurs zones indépendantes au sein d'une même région, reliées par des liens à faible latence.
+
+| Terme | Portée | Usage typique |
+|---|---|---|
+| Région | Zone géographique | Sélection de l'emplacement le plus proche de vos serveurs backend et de vos utilisateurs |
+| Zone de disponibilité (AZ) | Emplacement isolé au sein d'une région | Isolation des pannes et répartition du trafic |
+| Région multi-AZ | Région exposant plusieurs AZ | Haute disponibilité au sein d'une même zone géographique |
+
+### Routage Anycast
+
+Le Load Balancer OVHcloud s'appuie sur un réseau Anycast. Une requête entrant dans le réseau est dirigée vers la zone géographiquement la plus proche qui sert la configuration correspondante. Cela permet à un même service de présenter un point d'entrée mondial tout en conservant chaque requête au plus près de son origine. Le routage dépend donc de l'emplacement du client et des zones qui hébergent un frontend actif.
+
+### La zone `ALL`
+
+Lors de la configuration d'un frontend, vous pouvez cibler une seule zone nommée ou la zone spéciale `ALL`. La sélection de `ALL` déploie la même configuration de frontend sur l'ensemble des zones souscrites pour le service : vous n'avez donc pas à la dupliquer pour chaque zone. Utilisez des zones nommées lorsque vous avez besoin de serveurs backend différents par emplacement, et `ALL` lorsque la configuration est identique partout.
+
+## Modèles de déploiement
+
+Le Load Balancer prend en charge deux modèles de déploiement qui se distinguent par l'emplacement des zones. Tous deux reposent sur le routage Anycast, mais ils répondent à des objectifs de disponibilité et de latence différents.
+
+### Multirégion
+
+Dans un déploiement multirégion, les zones sont réparties entre des régions géographiques distinctes. Ce modèle assure une reprise après sinistre face à une panne régionale étendue et crée des points d'entrée mondiaux qui acheminent chaque utilisateur vers la région la plus proche.
+
+Pour bénéficier de ce modèle, définissez un frontend dans chaque zone qui pointe vers un cluster situé dans la même zone. Vous pouvez alors déclarer des serveurs backend différents par zone et contrôler quels serveurs backend servent quelle région.
+
+{/* DRAFT: À capturer - schéma conceptuel d'un Load Balancer s'étendant sur deux régions (GRA et BHS), chacune disposant de son propre frontend et de son propre cluster */}
+
+Par exemple, avec des serveurs backend à Gravelines (GRA) et à Beauharnois (BHS), vous pouvez commander un service dans les zones `GRA` et `BHS` et configurer :
+
+- Un frontend dans la zone `GRA` avec un cluster par défaut dans `GRA` contenant les serveurs de Gravelines.
+- Un frontend dans la zone `BHS` avec un cluster par défaut dans `BHS` contenant les serveurs de Beauharnois.
+
+### Région multi-AZ
+
+Dans un déploiement multi-AZ, les zones appartiennent à la même région. OVHcloud déploie progressivement les régions multi-AZ, en commençant par Paris 3-AZ (avril 2024) et Milan 3-AZ (novembre 2025). Ce modèle assure une haute disponibilité, une tolérance aux pannes face à une panne locale et des performances cohérentes au sein d'une même zone géographique, grâce à des liens inter-AZ à faible latence et à la distribution Anycast.
+
+{/* DRAFT: À capturer - schéma conceptuel d'un Load Balancer s'étendant sur les zones d'une même région multi-AZ */}
+
+| Modèle | Emplacement des zones | Bénéfice principal | Compromis |
+|---|---|---|---|
+| Multirégion | Différentes régions | Reprise après sinistre et réduction de la latence à l'échelle mondiale | Les serveurs backend diffèrent selon la région ; la configuration se fait par zone |
+| Multi-AZ | Une seule région | Haute disponibilité au sein d'une région | Limité aux régions qui exposent plusieurs AZ |
+
+## Influence des zones sur le routage
+
+Le comportement du routage dépend des zones qui hébergent des frontends actifs et de l'emplacement du client. Les points ci-dessous décrivent la façon dont le réseau Anycast sélectionne une zone.
+
+- Une requête est servie par la zone la plus proche qui héberge un frontend actif pour la configuration demandée.
+- Si une zone devient indisponible, le trafic est redirigé vers les zones saines restantes.
+- Un frontend associé à une zone nommée n'achemine le trafic que vers un cluster situé dans cette même zone ; un frontend associé à `ALL` est présent dans chaque zone souscrite.
+
+:::info
+En raison d'une restriction technique, lorsqu'un Load Balancer est configuré avec deux zones dont l'une se trouve dans une région APAC et l'autre non, le trafic est acheminé en priorité par la zone non APAC, même lorsque le service est hors service dans cette zone. Ce comportement est propre aux configurations intercontinentales impliquant des zones APAC, et il n'est pas recommandé de configurer le Load Balancer de cette manière.
+:::
+
+Vous pouvez consulter la [liste des régions OVHcloud](https://www.ovhcloud.com/en-gb/about-us/global-infrastructure/regions/).
+
+## Quota par zone
+
+Le quota d'un service Load Balancer est suivi par zone. Chaque zone possède ses propres limites pour les ressources qui y sont définies : ajouter une zone étend donc la capacité au lieu de partager une limite mutualisée unique. L'onglet `Quota` de l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> affiche ces informations par zone.
+
+Vous pouvez également consulter et modifier le quota d'une zone via l'API OVHcloud.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. |
+
+Pour consulter ou modifier le quota d'une zone en particulier :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. |
+| `zone` | Oui | La zone dont le quota est consulté ou modifié (par exemple `GRA`). |
+
+:::info
+Le endpoint `GET /ipLoadbalancing/availableZones` est déprécié. Déterminez plutôt les zones commandables via le parcours de commande. Consultez le guide [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones) pour la procédure de commande.
+:::
+
+Vous pouvez également gérer les zones et le quota de manière programmatique avec le provider Terraform OVHcloud : [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]. Consultez le guide [Automatisation](/guides/network/load-balancer-revamp/automation) pour un aperçu des méthodes disponibles.
+
+## Points à prendre en compte et limitations
+
+Gardez à l'esprit les points suivants lorsque vous planifiez un déploiement multizone.
+
+- La plupart des régions n'exposent qu'une seule zone : s'étendre sur plusieurs zones revient donc généralement à s'étendre sur plusieurs régions.
+- Les régions multi-AZ ne sont disponibles que là où OVHcloud les a déployées (Paris et Milan au moment de la rédaction). [TODO: confirm the current list of multi-AZ regions and their launch dates]
+- Les configurations intercontinentales associant une zone APAC à une zone non APAC sont soumises à la restriction de routage décrite ci-dessus et ne sont pas recommandées.
+- Le quota est appliqué par zone ; vérifiez les limites par zone avant de faire évoluer votre déploiement. [TODO: confirm exact per-zone resource limits]
+- Un frontend associé à une zone nommée ne peut pas acheminer le trafic vers un cluster situé dans une zone différente.
+
+## Aller plus loin
+
+- [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones)
+- [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability)
+- [Architecture multizone résiliente](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone)
+
+Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).

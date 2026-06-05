@@ -1,0 +1,215 @@
+---
+title: Load Balancer - High availability and redundancy
+description: Understand how the OVHcloud Load Balancer delivers high availability through multi-zone redundancy, Anycast routing, failover, and anti-affinity.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objective
+
+This guide explains how the OVHcloud Load Balancer remains available when individual components, zones, or regions fail. It is intended for architects and operators who need to understand the resilience model before designing a production deployment.
+
+**After reading this guide, you will understand the redundancy layers built into the service, how traffic is steered with Anycast, how failover and anti-affinity behave, and which design choices increase the availability of your infrastructure.**
+
+:::info
+This guide is conceptual. To put these principles into practice, see the [Resilient multi-zone architecture](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone) guide and the [Configure zones](/guides/network/load-balancer-revamp/configure-zones) guide.
+:::
+
+## Overview
+
+The OVHcloud Load Balancer distributes incoming traffic across a pool of backend servers while masking the failure of any individual server, zone, or region. High availability is delivered across several layers that operate together:
+
+- Within a single zone, the service itself runs in a redundant configuration so that the loss of one node does not interrupt traffic.
+- Across multiple zones, the service can be deployed so that an entire zone can fail without taking the service offline.
+- Across regions, Anycast routing directs each client to the nearest healthy entry point and reroutes traffic away from a failed location.
+
+Availability therefore depends both on the redundancy that OVHcloud operates for you and on the topology you choose when you order zones and declare frontends and server farms. The remainder of this guide describes each layer and the design decisions that affect resilience.
+
+The following diagram shows the layered redundancy model, from the Anycast entry point down to the backend servers.
+
+```mermaid
+flowchart TD
+  Client[Client] --> Anycast[Anycast IP address]
+  Anycast --> ZA[Zone A entry point]
+  Anycast --> ZB[Zone B entry point]
+  ZA --> FA[Frontend zone A] --> FarmA[Server farm zone A]
+  ZB --> FB[Frontend zone B] --> FarmB[Server farm zone B]
+  FarmA --> S1[Backend server 1]
+  FarmA --> S2[Backend server 2]
+  FarmB --> S3[Backend server 3]
+  FarmB --> S4[Backend server 4]
+```
+
+## Key concepts
+
+This section describes the building blocks that make the Load Balancer highly available. Each concept addresses a different failure domain, from a single backend server up to an entire region.
+
+### Availability zones
+
+An availability zone is an isolated location in which a Load Balancer service can run. Most OVHcloud regions expose a single zone, so working with several zones usually means working with several regions. OVHcloud is also rolling out multi-Availability Zone (multi-AZ) regions, where several zones exist within a single region and are connected by low-latency links.
+
+When you order a Load Balancer service, you choose one or more zones, and you can order additional zones for an existing service later. Deploying across more than one zone is the primary mechanism for surviving the loss of a zone or a region.
+
+| Topology | Failure domain covered | Latency characteristic |
+|---|---|---|
+| Single zone | Node-level failure inside the zone | Lowest, single location |
+| Multi-AZ (one region) | Loss of one zone within the region | Low, zones linked by low-latency connections |
+| Multi-region | Loss of an entire region | Higher between regions, lowest to nearest region for each client |
+
+For a detailed description of zones and regions, see the [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones) guide.
+
+### Intra-zone redundancy
+
+Within a single zone, the Load Balancer service does not run on a single machine. OVHcloud operates the data plane redundantly so that the failure of an underlying node is absorbed without dropping the service. This redundancy is managed by OVHcloud and requires no configuration from you.
+
+Intra-zone redundancy protects against component-level failures inside a zone. It does not, on its own, protect against the loss of the entire zone or region; that requires a multi-zone topology.
+
+### Anycast routing
+
+The Load Balancer is reachable through an Anycast IP address. The same IP address is announced from every zone in which your service is deployed, and the network routes each client to the topologically nearest entry point. This produces two benefits:
+
+- Latency is reduced because clients reach the closest zone.
+- Availability is increased because, when a zone stops announcing the address, the network converges on the remaining zones.
+
+The diagram below shows how two clients in different locations reach different zones through the same Anycast address, and how traffic shifts when one zone becomes unavailable.
+
+```mermaid
+flowchart LR
+  C1[Client - Europe] --> AnycastIP[Anycast IP]
+  C2[Client - North America] --> AnycastIP
+  AnycastIP -->|nearest healthy| ZEU[Zone GRA]
+  AnycastIP -->|nearest healthy| ZNA[Zone BHS]
+  ZEU -.->|GRA fails: reroute| ZNA
+```
+
+:::info
+Due to technical restrictions, when a Load Balancer is configured with two zones where one is in an APAC region and the other is not, traffic is preferentially routed through the non-APAC zone first, even when the service is out of order in that zone. This behaviour is specific to cross-continent setups involving APAC zones, and OVHcloud does not recommend configuring a Load Balancer in this manner.
+:::
+
+### Health probes and failover
+
+Failover is the process of removing an unhealthy target from rotation and sending its traffic elsewhere. The Load Balancer continuously checks the health of each backend server in a farm using configurable health probes. When a server fails its probe, the Load Balancer stops sending it new requests and distributes traffic across the remaining healthy servers in the farm.
+
+Failover operates at two levels:
+
+- **Backend level.** A failed server is removed from its farm; the frontend continues to serve traffic from the surviving servers.
+- **Zone level.** When a zone becomes unavailable, Anycast convergence steers clients to the entry points still announcing the address in the other zones.
+
+Health probes are essential to this behaviour. Without probes, the Load Balancer cannot detect an unresponsive backend and may continue to send traffic to it. To configure them, see the [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes) guide.
+
+```mermaid
+sequenceDiagram
+  participant P as Health probe
+  participant LB as Load Balancer
+  participant S as Backend server
+  P->>S: Periodic check
+  S-->>P: No response (unhealthy)
+  P->>LB: Mark server down
+  LB->>LB: Remove server from farm rotation
+  Note over LB: Traffic served by remaining healthy servers
+```
+
+### Anti-affinity across zones
+
+Anti-affinity is the principle of placing redundant components in separate failure domains so that a single failure cannot take down more than one of them. For the Load Balancer, this means distributing your frontends and server farms across zones rather than concentrating them in one.
+
+To benefit from zone-level redundancy, declare a frontend in each zone and attach it to a server farm whose backend servers reside in that same zone. This keeps each zone self-sufficient: a request that lands in a zone is served entirely within that zone, so the loss of one zone does not cascade into the others.
+
+When you want the same configuration applied to every subscribed zone without duplicating it, you can attach a frontend to the special `ALL` zone. This deploys an identical configuration across all zones of the service.
+
+The diagram below contrasts a configuration with no anti-affinity against one where each zone is self-contained.
+
+```mermaid
+flowchart TB
+  subgraph Good[Anti-affinity respected]
+    direction TB
+    FZA[Frontend zone A] --> FarmZA[Farm in zone A]
+    FZB[Frontend zone B] --> FarmZB[Farm in zone B]
+  end
+  subgraph Risk[No anti-affinity]
+    direction TB
+    F1[Frontend zone A] --> SharedFarm[Single farm in zone A]
+    F2[Frontend zone B] --> SharedFarm
+  end
+```
+
+## Design considerations
+
+The availability you achieve depends on how you combine the layers above. The following considerations help you match the topology to your resilience goals.
+
+### Match the topology to the failure domain you must survive
+
+Decide which failures the deployment must tolerate before choosing a topology. A single zone absorbs node-level failures managed by OVHcloud. A multi-AZ region adds tolerance to the loss of a zone within that region. A multi-region deployment adds tolerance to the loss of an entire region and reduces latency for a geographically distributed audience.
+
+| Resilience goal | Recommended topology |
+|---|---|
+| Survive node failures only | Single zone |
+| Survive loss of a zone, stay in one region | Multi-AZ region |
+| Survive loss of a region, serve a global audience | Multi-region |
+
+### Keep each zone self-sufficient
+
+Pair every frontend with a server farm in the same zone so that traffic entering a zone is served within it. A frontend in one zone that depends on a farm located only in another zone reintroduces a single point of failure and defeats the purpose of the multi-zone deployment.
+
+### Always configure health probes
+
+Failover relies on health probes to detect unresponsive backends. Configure a probe on every farm so that failed servers are removed from rotation automatically. Without probes, traffic may continue to reach servers that can no longer respond.
+
+### Avoid cross-continent APAC pairings
+
+Pairing an APAC zone with a non-APAC zone produces preferential routing that does not fail over as expected. If you need coverage in APAC and elsewhere, review the routing behaviour described in the [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones) guide before committing to that topology.
+
+### Apply configuration changes deliberately
+
+Changes to frontends and farms take effect only once the configuration is applied to each zone. Confirm that a change has been applied across all subscribed zones before relying on the new behaviour, so that redundancy is not left partially configured.
+
+## Automation
+
+The redundancy topology can be inspected and managed through the OVHcloud API and the OVHcloud Terraform provider. Use automation to provision zones, frontends, and farms consistently across environments and to apply configuration changes reproducibly.
+
+To review the current topology of a service, retrieve its defined frontends and farms:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedFrontends"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedFarms"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. |
+
+After modifying frontends or farms, apply the configuration so the change takes effect across the zones of the service:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. |
+
+For infrastructure-as-code workflows, the OVHcloud Terraform provider exposes equivalent resources for services, frontends, and farms.
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+For a broader overview of automation surfaces, see the [Automation](/guides/network/load-balancer-revamp/automation) guide.
+
+## Considerations and limitations
+
+The availability of the Load Balancer depends on factors that are partly managed by OVHcloud and partly determined by your configuration.
+
+- Intra-zone redundancy is managed by OVHcloud and cannot be configured by the customer.
+- Zone-level and region-level redundancy require you to subscribe to more than one zone and to declare frontends and farms accordingly.
+- Failover behaviour depends on correctly configured health probes; misconfigured probes can either fail to detect outages or remove healthy servers prematurely.
+- Cross-continent topologies involving APAC zones do not fail over as expected and are not recommended.
+- The availability commitment for the service is defined by its service level agreement.
+
+[TODO: confirm the published SLA percentage for the OVHcloud Load Balancer]
+
+For the contractual availability terms, see the [SLAs](/guides/network/load-balancer-revamp/slas) guide.
+
+## Go further
+
+- [Resilient multi-zone architecture](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone)
+- [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones)
+- [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes)
+
+Join our [community of users](/links/community).

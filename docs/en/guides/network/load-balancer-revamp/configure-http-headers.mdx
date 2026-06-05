@@ -1,0 +1,263 @@
+---
+title: Configure HTTP headers
+description: Configure and customise HTTP headers on your OVHcloud Load Balancer frontends to forward the real client IP, port, and protocol to your backend servers.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+The OVHcloud Load Balancer acts as a proxy between your visitors and your backend servers. Because traffic reaches your servers from the Load Balancer rather than from the visitor, your servers see the Load Balancer internal IP address instead of the real client address. To preserve the original connection details, the Load Balancer adds standard HTTP headers and lets you define custom headers on each HTTP frontend.
+
+**This guide explains how to use the default headers added by the Load Balancer, how to trust them safely on your backend servers, and how to add custom headers on an HTTP frontend.**
+
+This guide is for you if your access logs (`access_log`) only show private IP addresses such as `10.108.x.y`.
+
+## Requirements
+
+- Access to the [OVHcloud Control Panel](/links/manager)
+- An OVHcloud Load Balancer service in your account — see [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- At least one HTTP frontend configured — see [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- A web service (for example Apache or Nginx) installed and configured on your backend servers
+
+## Introduction
+
+When the Load Balancer forwards a request, your backend server records the source address of the proxy, not of the visitor. A typical access log entry then looks like this:
+
+```bash
+10.108.0.15 - - [02/Feb/2022:10:56:47 +0100] "GET / HTTP/1.1" 200 706 "-" "Mozilla/5.0 (Linux[...]"
+10.108.0.24 - - [02/Feb/2022:10:56:47 +0100] "GET / HTTP/1.1" 200 706 "-" "Mozilla/5.0 (Linux[...]"
+```
+
+For legal and statistical reasons, your backend servers must be able to identify the real client. For HTTP connections, the Load Balancer adds standard headers by default that carry this information. For TCP connections, use the PROXY protocol instead — see [Configure the PROXY protocol](/guides/network/load-balancer-revamp/configure-proxy-protocol).
+
+:::info
+You may be required to retain connection logs and traffic data in accordance with the laws and regulations that apply to you. It is your responsibility to comply with these obligations. OVHcloud provides you with services for which you are responsible for the configuration and management.
+:::
+
+## Instructions
+
+### Default headers
+
+For each HTTP request, the Load Balancer adds five standard headers that identify the visitor IP address, source port, and original protocol.
+
+| Header | Description |
+|---|---|
+| `X-Forwarded-For` and `X-Remote-Ip` | IP address of the client, as seen by the Load Balancer. |
+| `X-Forwarded-Port` and `X-Remote-Port` | Source port of the client, as seen by the Load Balancer. |
+| `X-Forwarded-Proto` | Original client protocol (`http` or `https`), as seen by the Load Balancer. |
+
+The `X-Forwarded-For` and `X-Remote-Ip` headers carry the same value. Their names differ only for compatibility with different servers.
+
+:::warning
+A malicious client can forge the `X-Forwarded-*` headers. Trust these headers only when they come from a trusted source — the output IP addresses of your Load Balancer. Restrict their use to those addresses with the dedicated module of your web server (Apache or Nginx), as described below.
+:::
+
+### Retrieve the Load Balancer output IP addresses
+
+To configure your backend servers to trust the forwarded headers, you first need the list of output IP addresses used by your Load Balancer.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
+2. On the service dashboard, locate the section that lists the IPv4 output addresses of your Load Balancer.
+
+{/* DRAFT: To screenshot - the Load Balancer dashboard showing the IPv4 output addresses section */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Retrieve the list of NAT IP subnets used by your Load Balancer:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/natIp"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Name of the Load Balancer service. | `loadbalancer-xxxxxxxx` |
+
+</Tab>
+</Tabs>
+
+### Correct the source IP in your logs <a name="ip-source-logs"></a>
+
+This section configures your backend web server to read the visitor IP from `X-Forwarded-For` instead of the Load Balancer internal address — but only when the request comes from your Load Balancer.
+
+Modifying only the log format directive is not enough, because anyone can set the `X-Forwarded-For` header without passing through your Load Balancer. The dedicated module of each web server controls the trust level based on:
+
+- The source IP address, which must be that of your Load Balancer.
+- The depth of the IP address in the header, since each proxy appends the client IP to the field.
+
+:::tip
+Replace `10.108.0.0/14` in the examples below with the subnets returned in the previous section. The values shown here are examples only — confirm your actual output subnets first.
+:::
+
+#### Apache
+
+1. Create the file `/etc/apache2/conf-available/remoteip.conf`.
+2. Insert the following configuration:
+
+```apache
+# Trust X-Forwarded-For headers from the OVHcloud Load Balancer
+RemoteIPHeader X-Forwarded-For
+RemoteIPInternalProxy 10.108.0.0/14
+```
+
+3. Replace `%h` with `%a` in the `LogFormat` directives of your Apache configuration.
+4. Enable the module and configuration, then restart Apache:
+
+```bash
+a2enmod remoteip
+a2enconf remoteip
+service apache2 restart
+```
+
+#### Nginx
+
+For Nginx, apply the configuration to the `http {}` block (all sites), a `server {}` block (one site), or a `location {}` block (one URL).
+
+1. Insert the following configuration in the chosen block:
+
+```nginx
+# Trust X-Forwarded-For headers from the OVHcloud Load Balancer
+set_real_ip_from 10.108.0.0/16;
+real_ip_header X-Forwarded-For;
+```
+
+2. Reload Nginx:
+
+```bash
+service nginx reload
+```
+
+### Redirect HTTP visitors to HTTPS
+
+The Load Balancer receives HTTP traffic, decrypts HTTPS traffic, and forwards both to your servers without distinction of the incoming protocol. This process is called SSL termination. Because your server can no longer tell the two apart, the Load Balancer adds the `X-Forwarded-Proto` header to indicate the original protocol (`http` or `https`).
+
+:::warning
+Like `X-Forwarded-For`, the `X-Forwarded-Proto` header can be forged. Trust it only when it is proven to come from your Load Balancer, using the trust configuration described in the previous section.
+:::
+
+#### Apache
+
+1. Insert the following configuration in your site `.htaccess` file:
+
+```apache
+RewriteEngine on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+```
+
+2. Reload Apache:
+
+```bash
+service apache2 reload
+```
+
+#### Nginx
+
+1. Insert the following configuration in the `server {}` block of your site:
+
+```nginx
+if ($http_x_forwarded_proto = "http") {
+    return 301 https://$host$request_uri;
+}
+```
+
+2. Reload Nginx:
+
+```bash
+service nginx reload
+```
+
+### Pass the headers to PHP
+
+PHP uses the `REMOTE_ADDR` variable to determine the visitor address. This variable is set automatically once you apply the configuration described in [Correct the source IP in your logs](#ip-source-logs). No additional PHP configuration is required.
+
+### Add custom headers
+
+When your application requires a specific header format, or you want to identify which frontend a request arrived through, you can add custom headers on an HTTP frontend.
+
+Each custom header follows the format `X-Header-Name value`: the header name and its value are separated by a space. Prefix non-standard header names with `X-` by convention. You can define several headers on the same frontend.
+
+The following variables are supported in header values:
+
+| Variable | Replaced by |
+|---|---|
+| `%ci` | The visitor IP address. |
+| `%cp` | The visitor source port. |
+
+:::warning
+If a header you define already exists in the request, it is overwritten with your value, which prevents a visitor from forging it through this frontend. You cannot redefine the proxy headers described above (`X-Forwarded-*`, `X-Remote-*`), as the Load Balancer manages them automatically.
+:::
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
+2. Select the `Frontends` tab.
+3. Select an existing HTTP frontend to edit, or click `Create frontend` to add a new one.
+4. In the editor, open the advanced settings and locate the HTTP header field.
+
+{/* DRAFT: To screenshot - the Edit Frontend editor showing the HTTP header field in the advanced settings */}
+
+5. Enter your headers. To configure several headers, separate them with commas and no spaces, for example: `X-Ip-Header %ci,X-Port-Header %cp`.
+6. Confirm the changes, then apply the configuration to the relevant zone.
+
+{/* DRAFT: To verify - exact labels of the HTTP header field, advanced settings section, confirm button, and deploy/apply action in the New Control Panel frontend editor */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+In the API, headers are specified as an `httpHeader` list, with one header per list entry. In the API console, a `+` button appears once you start entering a value, so you can add further entries. The equivalent JSON payload is:
+
+```json
+{
+  "httpHeader": [
+    "X-Ip-Header %ci",
+    "X-Port-Header %cp"
+  ]
+}
+```
+
+Modify an existing HTTP frontend to set its headers:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Name of the Load Balancer service. | `loadbalancer-xxxxxxxx` |
+| `frontendId` | Yes | Identifier of the HTTP frontend to configure. | `12345` |
+| `httpHeader` (body) | No | List of headers to configure. | `["X-Ip-Header %ci"]` |
+
+Then apply the changes to the relevant zone:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Name of the Load Balancer service. | `loadbalancer-xxxxxxxx` |
+| `zone` (body) | Yes | Name of the zone in which to deploy the configuration. | `gra` |
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+:::info
+Configuration changes take effect only once they are applied (deployed) to the relevant zone. Until then, your headers are saved but not yet served.
+:::
+
+## Go further
+
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Configure the PROXY protocol](/guides/network/load-balancer-revamp/configure-proxy-protocol)
+- [Configure HTTP routes](/guides/network/load-balancer-revamp/configure-http-routes)
+
+Join our [community of users](/links/community).

@@ -1,0 +1,151 @@
+---
+title: Route an Additional IP to the OVHcloud Load Balancer
+description: Route an Additional IP to the OVHcloud Load Balancer or to a single frontend to migrate traffic without changing your public IP address.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+An Additional IP is an IP address that you can switch from one OVHcloud service to another. Routing it to the OVHcloud Load Balancer moves existing traffic to the Load Balancer without changing your public IP address and without waiting for DNS propagation.
+
+**This guide explains how to route an Additional IP to the OVHcloud Load Balancer, either for the whole service or for a single frontend.**
+
+## Requirements
+
+- An active [OVHcloud account](/links/manager)
+- Access to the [OVHcloud Control Panel](/links/manager)
+- A configured OVHcloud Load Balancer — see [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- An [Additional IP](/links/network/additional-ip)
+- API credentials, if you route the IP through the OVHcloud API — see [Prerequisites and limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations)
+
+## Introduction
+
+You can route an Additional IP to the OVHcloud Load Balancer in two ways:
+
+- Route it to the **whole Load Balancer service**, making it available to every frontend.
+- Route it to a **single frontend**, so it grants access only to the service exposed by that frontend. Your other frontends stay reachable through the Load Balancer's primary IP address.
+
+Choose the scope that matches your migration: a service-wide IP to replace an existing public IP one-to-one, or a dedicated IP when you want one frontend to answer on its own address.
+
+> [!INFO]
+> After you change the Additional IPs associated with the Load Balancer, you must apply the configuration. For the refresh to succeed, the following conditions must be met:
+>
+> - **vRack configuration:** if the Load Balancer is in a vRack, all server farms must also be in the vRack and the Load Balancer must have its VLAN defined. Otherwise, no farm may be in a vRack.
+> - **Frontend validity:** at least one frontend must exist, and all frontends must be valid (enabled or disabled). Each must have a valid route with routing rules, a redirection, or a default farm.
+> - **Configuration state:** the Load Balancer must not already be running another refresh. A Load Balancer cannot be refreshed more than once at a time.
+
+## Instructions
+
+### Route an Additional IP to the whole Load Balancer
+
+This scope makes the Additional IP available to all frontends of the Load Balancer. Route the IP through the OVHcloud API, then verify the association.
+
+First, move the Additional IP to the Load Balancer service:
+
+<Api version="v1" section="/ip" method="POST" route={"/ip/\{ip\}/move"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `ip` | Yes | The Additional IP to move, in CIDR notation. | `203.0.113.42/32` |
+| `to` (body) | Yes | The service name of the target Load Balancer. | `loadbalancer-a1b2c3d4` |
+
+> [!INFO]
+> The `/ip/{ip}/move` endpoint is part of the `/ip` API section. Confirm the exact parameters in the [OVHcloud API console](/links/api) before running the call. [UNVERIFIED: /ip/{ip}/move - endpoint not present in the SOT cache, confirm path and body]
+
+Then list the Additional IPs already routed to your Load Balancer to confirm the association:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/failover"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The service name of your Load Balancer. | `loadbalancer-a1b2c3d4` |
+
+After the association is confirmed, apply the configuration as described in [Apply the configuration](#apply-the-configuration).
+
+### Route a dedicated Additional IP to a single frontend
+
+This scope attaches the Additional IP to one frontend only. The IP then grants access exclusively to the service exposed by that frontend, while your other frontends stay reachable through the Load Balancer's primary IP address. Configure a dedicated IP from the Control Panel or the OVHcloud API.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Navigate to **Network** > **Load Balancer**.
+3. Select the Load Balancer you want to modify, then open the `Frontends` tab.
+4. Click `Create frontend` to add a new frontend, or select an existing frontend and edit it.
+5. In the advanced settings of the frontend, select the Additional IPs you want to associate with it.
+
+{/* DRAFT: To screenshot - the Frontends editor advanced settings showing the Additional IP selection */}
+
+6. Save the frontend. The button label is `Create Frontend` for a new frontend or `Edit Frontend` for an existing one.
+
+> [!INFO]
+> The advanced-settings field used to select Additional IPs is not present in the SOT cache. [UNVERIFIED: advanced settings dedicated-IP field label - confirm against the New Manager]
+
+After the frontend is saved, apply the configuration as described in [Apply the configuration](#apply-the-configuration).
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Define one or more dedicated Additional IPs when you create a frontend.
+
+- HTTP protocol:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+- TCP protocol:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
+
+Or update an existing frontend to attach the dedicated Additional IPs.
+
+- HTTP protocol:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+- TCP protocol:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend/\{frontendId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The service name of your Load Balancer. | `loadbalancer-a1b2c3d4` |
+| `frontendId` | Yes | The numeric identifier of the frontend (update calls only). | `42` |
+| `dedicatedIpfo` (body) | Yes | The list of dedicated Additional IPs to attach to the frontend. | `["203.0.113.42"]` |
+
+> [!INFO]
+> A UDP frontend variant exists in the Control Panel but is not present in the SOT cache. [UNVERIFIED: /ipLoadbalancing/{serviceName}/udp/frontend - confirm the UDP frontend endpoints in the API console]
+
+After the call succeeds, apply the configuration as described in [Apply the configuration](#apply-the-configuration).
+
+</Tab>
+</Tabs>
+
+### Apply the configuration
+
+<a name="apply-the-configuration"></a>
+
+Changes to Additional IPs are staged until you apply the Load Balancer configuration. You can apply it from the Control Panel in two ways:
+
+- From the `General` tab, click the `...` button next to your Load Balancer and select `Apply configuration`.
+- From the reminder banner that notifies you the configuration has not been applied, click `Apply configuration`.
+
+{/* DRAFT: To screenshot - the Apply configuration action on the General tab */}
+
+> [!INFO]
+> The `Apply configuration` action label and the reminder banner are not present in the SOT cache. [UNVERIFIED: Apply configuration label - confirm against the New Manager]
+
+> [!WARNING]
+> The configuration is not active until it is applied. If the conditions in the Introduction are not met, the refresh fails and the previous configuration remains in place.
+
+## Go further
+
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Configure vRack](/guides/network/load-balancer-revamp/configure-vrack)
+- [Manage via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel)
+
+Join our [community of users](/links/community).

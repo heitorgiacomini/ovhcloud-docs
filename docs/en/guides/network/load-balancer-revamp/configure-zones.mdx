@@ -1,0 +1,230 @@
+---
+title: Configure multiple zones
+description: Deploy the OVHcloud Load Balancer across multiple availability zones to increase reliability and reduce latency for your users.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+The OVHcloud Load Balancer can run in one or more availability zones. When you order the service you select an initial zone, and you can add more zones later. Each zone holds its own quota of frontends, server farms and servers.
+
+**This guide explains how to add a zone to your Load Balancer, attach a frontend to it, and apply the configuration.**
+
+> [!INFO]
+> Working with several zones usually means working with several OVHcloud regions, because most regions expose a single availability zone. Some regions, such as Paris 3-AZ, expose several availability zones.
+
+## Requirements
+
+- An active <ManagerLink to="/">OVHcloud account</ManagerLink>
+- Access to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>
+- An existing OVHcloud Load Balancer service — see [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- Familiarity with availability zones — see [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones)
+
+## Introduction
+
+A zone is the physical location where an instance of your OVHcloud Load Balancer runs. Spreading the service across several zones gives you two benefits:
+
+- **Reliability** — if one zone becomes unavailable, the remaining zones continue to serve traffic.
+- **Latency** — using an Anycast network, the Load Balancer routes each request to the nearest backend servers.
+
+There are two common multi-zone topologies:
+
+- **Multi-region.** Zones sit in different OVHcloud regions (for example `GRA` and `BHS`). This provides disaster recovery against a regional outage and worldwide entry points. You declare a frontend in each zone, each pointing to a server farm in the same zone, so you control which backend servers are used in which zone.
+- **Multi-AZ.** Several availability zones sit within the same region (for example Paris 3-AZ). This provides high availability and fault tolerance against a local outage, using low-latency connections between zones.
+
+```mermaid
+flowchart TB
+    Client([Client traffic]) --> Anycast{{Anycast network}}
+    Anycast --> ZA[Zone GRA<br/>frontend + farm]
+    Anycast --> ZB[Zone BHS<br/>frontend + farm]
+    ZA --> SA[(Backend servers<br/>Gravelines)]
+    ZB --> SB[(Backend servers<br/>Beauharnois)]
+```
+
+> [!warning]
+> Due to technical restrictions, when a Load Balancer uses two zones where one is in an APAC region and the other is not, traffic is preferentially routed through the non-APAC zone first, even when the service is out of order in that zone. This behaviour is specific to cross-continent setups involving APAC zones. We do not recommend this configuration.
+
+For the full list of OVHcloud regions, refer to the [global infrastructure regions](https://www.ovhcloud.com/en-gb/about-us/global-infrastructure/regions/) page.
+
+## Instructions
+
+Configuring an additional zone takes two steps: first order the zone, then attach a frontend to it and apply the configuration.
+
+### Step 1 — Add a zone
+
+Adding a zone generates a purchase order that you must pay before the zone becomes available.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
+2. Open the zone management section of the service and start adding an availability zone.
+3. Select the zone or zones you want to order, then confirm.
+4. Pay the generated purchase order. The zone becomes available once the order is paid.
+
+{/* DRAFT: To screenshot — capture the availability-zone addition panel in the New Manager (zone selection + order confirmation) */}
+
+> [!INFO]
+> You can review the per-zone quota of your service in the `Quota` tab.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Ordering a zone is an order operation: build a cart, add the zone option that matches your service, then check out and pay the resulting order.
+
+1. Create a cart.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart"} />
+
+[UNVERIFIED: /order endpoints are outside the cached ipLoadbalancing scope — confirm method and path against the OVHcloud API]
+
+Note the cart ID returned in the response; the following calls require it.
+
+2. Assign the cart to your OVHcloud account.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/assign"} />
+
+[UNVERIFIED: confirm /order/cart/{cartId}/assign against the OVHcloud API]
+
+3. List the service options available for your Load Balancer to find the entry that matches the desired zone.
+
+<Api version="v1" section="/order" method="GET" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
+
+[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/{serviceName} against the OVHcloud API]
+
+4. Add the chosen option to the cart.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
+
+[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/{serviceName} against the OVHcloud API]
+
+5. Check out the cart to generate the order.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/checkout"} />
+
+[UNVERIFIED: confirm /order/cart/{cartId}/checkout against the OVHcloud API]
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `cartId` | Yes | Identifier of the order cart returned by the cart creation call. | `abcd1234-5678` |
+| `serviceName` | Yes | Identifier of your Load Balancer service. | `loadbalancer-a1b2c3d4` |
+
+Pay the order form once it is generated. The zone becomes available after payment is confirmed.
+
+> [!INFO]
+> The `GET /ipLoadbalancing/{serviceName}/availableZones` endpoint is deprecated and must not be used to discover orderable zones.
+
+</Tab>
+</Tabs>
+
+### Step 2 — Attach a frontend to the zone
+
+Once the zone order is finalised, associate it with a frontend so traffic can be served from that zone.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. In your Load Balancer service, open the `Frontends` tab.
+2. Click `Create frontend` to add a new frontend, or open an existing frontend for editing.
+3. Select the newly added zone for the frontend. To deploy the same configuration across every subscribed zone instead of one specific zone, select the special `ALL` zone, which avoids duplicating the configuration per zone.
+4. Save the frontend by confirming the create or edit dialog.
+
+{/* DRAFT: To screenshot — capture the Create Frontend dialog showing the zone selector and the ALL option */}
+
+> [!TIP]
+> Use the `ALL` zone when every zone shares the same routing logic. Use a specific zone when you need different backend servers per zone, as in a multi-region topology.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Create a frontend bound to the target zone. The zone is passed as the frontend `zone` property.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Identifier of your Load Balancer service. | `loadbalancer-a1b2c3d4` |
+| `zone` (body) | Yes | Zone the frontend is deployed in. Use `all` to deploy on every subscribed zone. | `gra` |
+| `port` (body) | Yes | Port the frontend listens on. | `80` |
+
+For a TCP frontend, use the equivalent `POST /ipLoadbalancing/{serviceName}/tcp/frontend` endpoint.
+
+</Tab>
+</Tabs>
+
+### Step 3 — Apply the configuration
+
+Frontend and farm changes are staged until you apply them, and the new zone does not serve traffic until then.
+
+<Tabs>
+<Tab label="Control Panel">
+
+After saving the frontend, a banner indicates that the configuration is not yet applied. Click `Apply configuration` in the banner to deploy the pending changes.
+
+{/* DRAFT: To screenshot — capture the pending-configuration banner with the Apply configuration action */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Apply all pending configuration changes with the following call.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Identifier of your Load Balancer service. | `loadbalancer-a1b2c3d4` |
+
+To review what will be deployed before applying, list the pending changes first:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+</Tab>
+</Tabs>
+
+### Review per-zone quota
+
+Each zone carries its own quota of frontends, farms and servers. Review a zone's quota before adding more resources to it.
+
+<Tabs>
+<Tab label="Control Panel">
+
+Open the `Quota` tab of your Load Balancer service to see the resource usage and limits for each subscribed zone.
+
+{/* DRAFT: To screenshot — capture the Quota tab listing per-zone usage */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+List the quota across all zones:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota"} />
+
+Get the quota of a single zone:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Identifier of your Load Balancer service. | `loadbalancer-a1b2c3d4` |
+| `zone` | Yes | Zone whose quota you want to read. | `gra` |
+
+[TODO: confirm the maximum number of frontends, farms and servers per zone]
+
+</Tab>
+</Tabs>
+
+> [!TIP]
+> To manage this configuration as code, use the OVHcloud Terraform provider.
+> [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+## Go further
+
+- [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones)
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Resilient multi-zone architecture](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone)
+
+Join our [community of users](/links/community).

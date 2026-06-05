@@ -1,0 +1,139 @@
+---
+title: Configure HTTP/2 on Load Balancer
+description: Enable HTTP/2 on your OVHcloud Load Balancer frontends and learn when a TCP frontend is the right choice for HTTP/2 traffic.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objective
+
+HTTP/2 improves the performance of web applications through multiplexing, header compression, and reduced latency between the client and the Load Balancer.
+
+**This guide explains when HTTP/2 is available natively on your frontends, and how to configure a TCP frontend to balance HTTP/2 traffic when a Layer 4 frontend is the better fit.**
+
+> [!INFO]
+> Since June 2025, HTTP and TLS frontends used by OVHcloud Load Balancer services natively support the HTTP/2 protocol. For these frontends, refresh the configuration to enable HTTP/2. The TCP procedure below is for cases where a Layer 4 frontend is preferable, such as high-performance, low-latency applications.
+
+## Requirements
+
+- An active [OVHcloud account](/links/manager)
+- An [OVHcloud Load Balancer](/links/network/load-balancer) service
+- A TCP frontend on your Load Balancer
+- A TCP server farm with at least one backend server added to it
+- Backend servers configured to support and respond with HTTP/2
+- Access to the [OVHcloud Control Panel](/links/manager) and the [OVHcloud API](/links/api)
+
+## Introduction
+
+A TCP frontend operates at Layer 4 (the transport layer). The Load Balancer establishes a TCP connection between the client and a backend server without inspecting the HTTP/2 data inside the stream. This keeps processing minimal and latency low, but it cannot perform application-layer optimisations such as content-based routing or HTTP header manipulation.
+
+HTTP and TLS frontends operate at Layer 7 (the application layer). They decode the HTTP/2 frames before connecting to a backend server, enabling SSL/TLS termination, content-based routing, request and response modification, and HTTP/2 multiplexing.
+
+Use a **TCP frontend** when:
+
+- You load balance non-HTTP services (databases, custom TCP applications, SSH).
+- You require maximum performance and minimal latency.
+- Your backend servers already handle SSL/TLS termination.
+- You do not need application-layer features such as content-based routing or HTTP header manipulation.
+
+Use an **HTTP or TLS frontend** when:
+
+- You primarily load balance web traffic.
+- You want HTTP/2 performance benefits between the client and the Load Balancer.
+- You want to offload SSL/TLS termination from your backend servers.
+- You require routing logic based on HTTP headers, URLs, or other application-layer attributes.
+
+For more information on frontend types, see the [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends) guide.
+
+## Instructions
+
+### Enable HTTP/2 on an HTTP or TLS frontend
+
+HTTP and TLS frontends support HTTP/2 natively. To enable it on an existing frontend, refresh your Load Balancer configuration, where `{serviceName}` is the internal name of your Load Balancer service.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | Identifier of your OVHcloud Load Balancer service. |
+| `zone` (body) | No | Identifier of the zone on which to apply the configuration. Omit to refresh all zones. |
+
+After the refresh completes, HTTP/2 is active on your HTTP and TLS frontends. Skip the remaining sections unless you need a TCP frontend.
+
+### Configure a TCP frontend for HTTP/2
+
+This section routes HTTP/2 traffic across a TCP frontend. A TCP frontend forwards the encrypted stream to the backend, so your backend servers must terminate TLS and respond with HTTP/2.
+
+> [!WARNING]
+> The order in which you create elements matters: configure the route before you attach a rule to it.
+
+This procedure uses the OVHcloud API. You can review the created elements afterwards from the `Frontends` and `Server farms` tabs of your Load Balancer in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+
+{/* DRAFT: To screenshot - capture the Frontends tab of a Load Balancer showing a TCP frontend on port 443 */}
+
+#### Step 1 - Add a route
+
+Create a route that targets the TCP server farm able to handle HTTP/2 traffic.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/route"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | Identifier of your OVHcloud Load Balancer service. |
+| `frontendId` (body) | Yes | Identifier of your TCP frontend on port 443. |
+| `displayName` (body) | No | A label for the route, for example `HTTP2 TCP route`. |
+| `weight` (body) | No | Evaluation order of the route. The first matching route is executed. |
+| `action.type` (body) | Yes | Set to `farm`. |
+| `action.target` (body) | Yes | Identifier of the TCP farm that handles HTTP/2. |
+
+Note the `routeId` returned in the response. You need it in the next step.
+
+#### Step 2 - Add a rule
+
+Add a rule to the route so that it matches HTTP/2 traffic.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/route/\{routeId\}/rule"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | Identifier of your OVHcloud Load Balancer service. |
+| `routeId` | Yes | Identifier of the route created in the previous step. |
+| `field` (body) | Yes | Set to `protocol`, the field checked by the rule. |
+| `match` (body) | Yes | Set to `is`, the type of check to perform. |
+| `pattern` (body) | Yes | Set to `http/2.0`, the value to check for the specified field. |
+
+#### Step 3 - Apply the configuration
+
+Changes to your Load Balancer must be explicitly applied in each configured zone before they reach your visitors. Refresh every zone that serves your service.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | Identifier of your OVHcloud Load Balancer service. |
+| `zone` (body) | No | Identifier of the zone on which to apply the configuration. Repeat the call for each zone. |
+
+For more information on zones and applying changes, see the [Configure zones](/guides/network/load-balancer-revamp/configure-zones) guide.
+
+#### Step 4 - Verify
+
+Send a request to your Load Balancer and confirm the response uses HTTP/2.
+
+```bash
+curl -I --http2 https://www.example.com/
+HTTP/2 200
+```
+
+An `HTTP/2 200` status line confirms your service is serving HTTP/2 traffic.
+
+> [!TIP]
+> For more information about the HTTP/2 protocol itself, see the [HTTP/2 specification site](https://http2.github.io/).
+
+## Go further
+
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configure HTTP routes](/guides/network/load-balancer-revamp/configure-http-routes)
+
+Join our [community of users](/links/community).

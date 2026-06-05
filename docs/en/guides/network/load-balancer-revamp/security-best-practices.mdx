@@ -1,0 +1,187 @@
+---
+title: Load Balancer security best practices
+description: Harden TLS termination, cipher profiles, and certificate handling on the OVHcloud Load Balancer, and preserve client IP visibility.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+This guide explains how to secure traffic that transits through the OVHcloud Load Balancer. It covers TLS/SSL termination and hardening, the available cipher profiles, certificate management options (including free Let's Encrypt certificates), and the techniques that preserve client information once TLS is terminated.
+
+It is intended for architects and operators who want to apply consistent, defensible security settings to their Load Balancer configuration rather than walk through a single procedure step by step.
+
+**This guide explains how to harden TLS, choose a cipher profile, manage certificates, and preserve the client IP on the OVHcloud Load Balancer.**
+
+## Overview
+
+The OVHcloud Load Balancer distributes incoming traffic across backend servers and can terminate TLS at the edge, before traffic reaches your server farms. Terminating TLS on the Load Balancer decrypts the incoming stream once, then forwards it to the appropriate backend. This reduces the cryptographic load on your backend servers and centralises certificate management, which simplifies renewals and security updates.
+
+Centralising TLS also concentrates risk: a weak cipher profile, an expired certificate, or a misconfigured frontend affects every backend behind it. The recommendations below describe how to keep that single point hardened.
+
+Security on the Load Balancer is divided across three areas:
+
+| Area | What it controls | Where it is configured |
+|---|---|---|
+| TLS termination | Whether encrypted traffic is decrypted at the edge | Frontend |
+| Cipher profile | Which protocol versions and ciphers are accepted | SSL configuration |
+| Certificate management | Which certificate is presented and how it is renewed | `SSL Certificates` tab |
+
+```mermaid
+flowchart LR
+  Client[Client] -- "HTTPS / TLS" --> FE[Load Balancer frontend]
+  FE -- "TLS termination" --> LB[Load Balancer]
+  LB -- "HTTP or re-encrypted TLS" --> F1[Backend server]
+  LB --> F2[Backend server]
+```
+
+:::info
+OVHcloud provides you with services for which you are responsible for the configuration and management. The settings described here are yours to apply and maintain.
+:::
+
+## Key concepts
+
+This section defines the security-relevant building blocks of the Load Balancer before the best-practice recommendations that follow.
+
+### TLS termination
+
+TLS termination is the process of decrypting an incoming encrypted stream at the Load Balancer before forwarding the cleartext (or re-encrypted) request to a backend. Termination is enabled on a frontend: you create an `HTTPS` frontend, attach a certificate, and select the server farm that receives the decrypted traffic.
+
+In the OVHcloud API, termination is controlled by the `ssl` boolean on the frontend. Set it to `true`, then set the destination of the traffic with `defaultFarmId` (route to a farm) or `redirectLocation` (redirect).
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+### Cipher profiles
+
+A cipher profile is the set of TLS protocol versions and cipher suites the Load Balancer negotiates with clients. The Load Balancer exposes two profiles, aligned with the Mozilla SSL configuration recommendations:
+
+| Profile | Manager label | Protocols | Use when |
+|---|---|---|---|
+| Modern | `Modern (TLS 1.3)` | TLS 1.3 only | All clients are recent browsers and operating systems. |
+| Intermediate | `Intermediate (TLS 1.2+)` | TLS 1.2 and above | You must support older clients while excluding legacy protocols. |
+
+The `Modern (TLS 1.3)` profile offers the strongest security but rejects clients that cannot negotiate TLS 1.3. The `Intermediate (TLS 1.2+)` profile is the safe default for general-purpose public services, as it still excludes deprecated TLS 1.0 and TLS 1.1.
+
+### Certificates
+
+A certificate proves the identity of the service to connecting clients and provides the key material used to negotiate the session. On the Load Balancer, certificates are managed in the `SSL Certificates` tab and then attached to an `HTTPS` frontend as its `TLS Certificate`. Three sourcing options exist:
+
+| Source | Cost | Renewal | Notes |
+|---|---|---|---|
+| Free Let's Encrypt certificate | Free | Managed by OVHcloud | The domain must resolve to your Load Balancer before ordering. |
+| Imported certificate | Depends on issuer | Manual | You upload the certificate, the private key, and the chain. |
+| Custom CA chain | Depends on issuer | Manual | Use when clients require a specific certificate authority. |
+
+### Client information after termination
+
+Once TLS is terminated, the connection to the backend originates from the Load Balancer, not from the client. Without additional configuration, backend servers see the Load Balancer IP address as the source of every request. Two mechanisms preserve the original client information:
+
+- **PROXY protocol** prepends a header carrying the original source and destination addresses to the connection. It works for any TCP traffic, including non-HTTP protocols.
+- **HTTP headers** such as `X-Forwarded-For` and `X-Forwarded-Proto` carry the client IP and the original scheme for HTTP and HTTPS traffic.
+
+```mermaid
+sequenceDiagram
+  participant C as Client (203.0.113.10)
+  participant LB as Load Balancer
+  participant B as Backend
+  C->>LB: HTTPS request
+  Note over LB: TLS terminated here
+  LB->>B: HTTP request + X-Forwarded-For: 203.0.113.10
+  Note over B: Logs and ACLs see the real client IP
+```
+
+## Best practices
+
+This section is prescriptive. Apply these recommendations as the baseline for any internet-facing Load Balancer configuration.
+
+### TLS termination
+
+**Do:** Terminate TLS on the Load Balancer for public web services. This centralises certificate management, reduces backend cryptographic load, and lets you enforce a consistent cipher policy at the edge. When you create the `HTTPS` frontend, also configure HTTPS redirection so that plaintext requests are upgraded rather than served over HTTP.
+
+**Avoid:** Leaving an `HTTP` frontend reachable alongside an `HTTPS` frontend without a redirection. Plaintext endpoints expose credentials and session tokens in transit.
+
+### Cipher profile selection
+
+**Do:** Default to the `Intermediate (TLS 1.2+)` profile for general-purpose public services, and move to `Modern (TLS 1.3)` once you confirm that every client population supports TLS 1.3. Both profiles exclude the deprecated TLS 1.0 and TLS 1.1.
+
+**Avoid:** Selecting a permissive profile to accommodate a small number of legacy clients. A single weak profile lowers the security of every backend behind the frontend.
+
+### Certificate management
+
+**Do:** Track certificate expiry and renew well before the deadline. Prefer the free Let's Encrypt certificate where the domain points to your Load Balancer, because OVHcloud renews it automatically. For imported certificates, keep the full chain up to date.
+
+**Avoid:** Letting a certificate expire. An expired certificate causes connection failures for every client of the affected frontend. Avoid reusing a single private key across unrelated services.
+
+### Preserving the client IP
+
+**Do:** Enable the PROXY protocol or the `X-Forwarded-For` header so that backend logs, rate limiting, and access control lists operate on the real client address rather than the Load Balancer address. Choose PROXY protocol for non-HTTP TCP services and HTTP headers for web traffic.
+
+**Avoid:** Building access control or abuse detection on the source IP seen by the backend without first enabling one of these mechanisms — every request would otherwise appear to come from the Load Balancer.
+
+For the configuration steps, refer to [Configure the PROXY protocol](/guides/network/load-balancer-revamp/configure-proxy-protocol) and [Configure HTTP headers](/guides/network/load-balancer-revamp/configure-http-headers).
+
+### Apply and review changes
+
+**Do:** Apply your configuration after every security-relevant change and confirm it is deployed in the relevant zone. In the API, apply changes with the refresh call after modifying frontends or certificates.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+**Avoid:** Assuming a change is live before it is applied. Until the configuration is applied, the running Load Balancer keeps its previous settings.
+
+## Ordering a free certificate
+
+A free Let's Encrypt certificate is the recommended starting point when your domain resolves to your Load Balancer. OVHcloud renews it automatically, which removes the most common cause of TLS outages.
+
+<Tabs>
+<Tab label="Control Panel">
+
+Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the `Load Balancer` page under the **Network** section. Select your Load Balancer, then open the `SSL Certificates` tab and click `Add Certificate`. Provide the fully qualified domain name (FQDN) you want to secure.
+
+{/* DRAFT: To screenshot - capture the SSL Certificates tab with the Add Certificate dialog open */}
+
+For the order to complete, the chosen domain name must already point to your OVHcloud Load Balancer service. Follow the order from the `Tasks` tab.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Order the free certificate with the following call. The chosen domain must resolve to your Load Balancer before you place the order.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/freeCertificate"} />
+
+Follow the resulting task, filtering on the `orderFreeCertificate` action type.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task"} />
+
+Once the order completes, the certificate is installed automatically on your Load Balancer. List installed certificates with the following call.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+For the full ordering walkthrough, refer to [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates).
+
+## Considerations and limitations
+
+- Free certificate ordering requires the domain to resolve to your Load Balancer at order time; otherwise validation fails.
+- Cipher profile choices apply at the frontend level and affect every client of that frontend.
+- The exact list of supported clients per profile, and any per-plan certificate quotas, are [TODO: confirm supported-client matrix and certificate quotas].
+
+:::warning
+Changing the cipher profile can break connectivity for clients that do not support the negotiated protocol versions. Validate the change against a representative client population before applying it in production.
+:::
+
+## Go further
+
+- [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates)
+- [Configure the PROXY protocol](/guides/network/load-balancer-revamp/configure-proxy-protocol)
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+
+Join our [community of users](/links/community).

@@ -1,0 +1,364 @@
+---
+title: Configure server farms and balancing methods
+description: Create and edit OVHcloud Load Balancer server farms, add backend servers, set weights and backups, and choose a balancing method.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+A server farm is the group of backend servers across which the OVHcloud Load Balancer distributes incoming traffic. Each farm has a balancing method that decides which server receives each new connection, and each server can carry a weight and an optional backup role.
+
+**This guide explains how to create and configure OVHcloud Load Balancer server farms, add backend servers, and choose a balancing method.**
+
+**In this guide, you will learn how to:**
+
+- Create an HTTP, TCP, or UDP server farm.
+- Add backend servers to a farm and set their port, weight, and backup role.
+- Choose and change the balancing method (Round Robin, Least Connections, Source Hash, URI Hash, First Available).
+- Apply the configuration so the changes take effect.
+
+:::info
+The OVHcloud Load Balancer uses a deferred-apply model. Changes you make to farms, servers, or balancing methods are staged until you explicitly apply the configuration. Until then, live traffic continues to use the previous configuration.
+:::
+
+## Requirements
+
+- An [OVHcloud Load Balancer](/links/network/load-balancer) service in your OVHcloud account.
+- Access to the [OVHcloud Control Panel](/links/manager).
+- A defined zone for the service. Refer to [Configure zones](/guides/network/load-balancer-revamp/configure-zones).
+- For the API method: valid OVHcloud API credentials. Refer to the [prerequisites and limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations) guide.
+
+## Introduction
+
+A server farm (also called a backend pool) is a logical group of backend servers that serve the same application. The Load Balancer receives client connections on a frontend, then forwards each connection to a server in the farm attached to that frontend. Farms come in three types that match the frontend protocol: HTTP farms for Layer 7 (HTTP/HTTPS) traffic, TCP farms for Layer 4 (TCP) traffic, and UDP farms for Layer 4 (UDP) traffic. UDP behaves like TCP at the connection/datagram level and is suited to datagram services such as DNS, VoIP, gaming, and syslog. The balancing method is set per farm and governs how connections are spread across the servers it contains.
+
+Frontends, farms, and servers are specific to the protocol (HTTP, TCP, or UDP) in which they are defined. Compatibility between these components is only possible within the same protocol: a UDP frontend can only be paired with a UDP farm, just as an HTTP frontend pairs only with an HTTP farm.
+
+## Instructions
+
+**Contents:**
+
+- [Overview and balancing methods](#overview)
+- [Create a server farm](#create-farm)
+- [Add servers to a farm](#add-servers)
+- [Choose or change the balancing method](#balancing-method)
+- [Server weights and backup servers](#weights-backups)
+- [Apply the configuration](#apply)
+- [Verification](#verification)
+- [Limitations](#limitations)
+- [Troubleshooting](#troubleshooting)
+
+### Overview and balancing methods <a name="overview"></a>
+
+The balancing method is applied at the farm level. It defines the algorithm by which the Load Balancer selects a backend server for each new client request. The following diagram shows where the farm sits in the traffic path.
+
+```mermaid
+flowchart LR
+    C[Client] --> F[Frontend]
+    F --> FARM{{Server farm<br/>balancing method}}
+    FARM --> S1[Server 1<br/>weight 1]
+    FARM --> S2[Server 2<br/>weight 1]
+    FARM --> S3[Server 3<br/>backup]
+```
+
+The following balancing methods are available. The Control Panel labels are listed alongside the corresponding API value used in the `balance` field of the farm configuration.
+
+| Control Panel label | API value (`balance`) | Behaviour |
+|---|---|---|
+| `Round Robin` | `roundrobin` | Distributes connections sequentially, one server after another, for each new request. This is the default method. |
+| `Least Connections` | `leastconn` | Selects the server with the fewest active connections. Suited to long-lived sessions with light traffic. Ties are broken using round robin. |
+| `Source Hash` | `source` | Hashes the client source IP address so that the same client IP is consistently sent to the same server, provided that server stays operational. |
+| `URI Hash` | `uri` | Hashes part or all of the request URI so that identical URIs are consistently sent to the same server. Applies to HTTP farms only. |
+| `First Available` | `first` | Sends the connection to the first available server, ordered by server ID from smallest to largest. |
+
+:::tip
+Use `Source Hash` or a stickiness method when your application requires that a given client keeps reaching the same backend. For session affinity managed at Layer 7, see [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness).
+:::
+
+### Create a server farm <a name="create-farm"></a>
+
+Create an HTTP farm to balance HTTP/HTTPS traffic, a TCP farm to balance raw TCP traffic, or a UDP farm to balance datagram (UDP) traffic.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
+2. Select the `Server Farms` tab.
+3. Click `Create farm`. The `Create Server Farm` form opens.
+4. Select the farm type (HTTP, TCP, or UDP), the zone, and the port used to contact the backend servers.
+5. Enter a display name for the farm and select the balancing method.
+6. Confirm to create the farm.
+
+{/* DRAFT: To screenshot - Server Farms tab with the Create farm button */}
+
+{/* DRAFT: To screenshot - Create Server Farm form showing type, zone, port, name and balancing method fields */}
+
+After creating the farm, [apply the configuration](#apply) for it to take effect.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Create an HTTP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+Create a TCP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
+
+Create a UDP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/farm"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. | `loadbalancer-xxxx` |
+| `zone` (body) | Yes | Name of the zone in which the farm is created. | `gra` |
+| `port` (body) | No | Port used to contact the backend servers. | `80` |
+| `balance` (body) | No | Balancing method (`roundrobin`, `leastconn`, `source`, `uri`, `first`). HTTP and TCP farms only. | `roundrobin` |
+| `displayName` (body) | No | Human-readable name of the farm. | `web-farm` |
+
+:::info
+UDP farms (`BackendUdp`) accept only `displayName` and `port` (plus the required `zone`). They do not take a `balance` field or HTTP/TCP-specific options such as `stickiness`, `probe`, or `ssl`.
+:::
+
+After creating the farm, [apply the configuration](#apply).
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Add servers to a farm <a name="add-servers"></a>
+
+Once a farm exists, add the backend servers that receive traffic. Each server is identified by its IP address and port.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. In the `Server Farms` tab, locate the farm and open it for editing.
+2. Click `Add server`.
+3. Enter the server's IP address and the port on which the application listens.
+4. Optionally set the server weight and mark it as a backup server (see [Server weights and backup servers](#weights-backups)).
+5. Confirm to add the server.
+6. Repeat for each backend server, then [apply the configuration](#apply).
+
+{/* DRAFT: To screenshot - farm editor with the Add server button */}
+
+{/* DRAFT: To screenshot - Add server form showing address, port, weight and backup fields */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Add a server to an HTTP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
+
+Add a server to a TCP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
+
+Add a server to a UDP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. | `loadbalancer-xxxx` |
+| `farmId` | Yes | The ID of the farm the server is added to. | `12345` |
+| `address` (body) | Yes | IP address of the backend server. | `10.0.0.10` |
+| `port` (body) | No | Port on which the backend server listens. | `8080` |
+| `weight` (body) | No | Relative weight of the server. HTTP and TCP farms only. | `1` |
+| `backup` (body) | No | Whether the server is a backup server. HTTP and TCP farms only. | `false` |
+| `status` (body) | Yes | Administrative status of the server (`active` or `inactive`). | `active` |
+
+:::info
+UDP servers (`BackendUdpServer`) accept only `address`, `displayName`, `port`, and `status`. Weight and backup roles are not available for UDP servers.
+:::
+
+After adding the servers, [apply the configuration](#apply).
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Choose or change the balancing method <a name="balancing-method"></a>
+
+You can set the balancing method when you create the farm and change it at any time afterwards. Changing the method updates the `balance` field of the farm configuration.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. In the `Server Farms` tab, locate the farm and open it for editing.
+2. In the advanced settings, select the balancing method from the list (`Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, or `First Available`).
+3. Save the change, then [apply the configuration](#apply).
+
+{/* DRAFT: To screenshot - farm advanced settings showing the balancing method selector */}
+
+:::info
+`URI Hash` is available for HTTP farms only. It does not appear for TCP farms. The balancing method (`balance` field) applies to HTTP and TCP farms; UDP farms do not expose a balancing-method selector.
+:::
+
+</Tab>
+<Tab label="OVHcloud API">
+
+First, review the current farm configuration to confirm the `balance` value and farm type. The example below uses an HTTP farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. |
+| `farmId` | Yes | The farm's ID number. |
+
+The response includes the `balance`, `zone`, `port`, `probe`, `displayName`, and `stickiness` fields for the farm.
+
+Then update the farm and set the `balance` field to the method you want:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+For a TCP farm, use:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. | `loadbalancer-xxxx` |
+| `farmId` | Yes | The farm's ID number. | `12345` |
+| `balance` (body) | No | Balancing method to apply (`roundrobin`, `leastconn`, `source`, `uri`, `first`). | `leastconn` |
+
+After updating the farm, [apply the configuration](#apply).
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Server weights and backup servers <a name="weights-backups"></a>
+
+Weights and backup roles let you tune how traffic is shared within a farm. They are set per server, not per farm.
+
+**Weight.** The weight is a relative value that biases how much traffic a server receives compared to the other servers in the same farm. A server with weight `2` receives roughly twice the traffic of a server with weight `1`, when the balancing method honours weights (such as `Round Robin` and `Least Connections`).
+
+**Backup server.** A backup server receives traffic only when all non-backup (primary) servers in the farm are unavailable. Use backup servers to keep reserve capacity for when the primary servers fail.
+
+| Setting | Effect | Typical use |
+|---|---|---|
+| Weight | Scales the share of connections a server receives relative to its peers. | Send more traffic to larger backends. |
+| Backup | Server is used only when all primary servers are down. | Keep a standby backend for failover. |
+
+To change a server's weight or backup role, edit the server using the Control Panel form described in [Add servers to a farm](#add-servers), or update the server via the API:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. | `loadbalancer-xxxx` |
+| `farmId` | Yes | The farm's ID number. | `12345` |
+| `serverId` | Yes | The server's ID number. | `67890` |
+| `weight` (body) | No | Relative weight of the server. | `2` |
+| `backup` (body) | No | Whether the server is a backup server. | `true` |
+
+:::warning
+Marking every server in a farm as a backup leaves the farm with no primary server. The Load Balancer then has no active backend to route traffic to under normal conditions. Always keep at least one primary (non-backup) server.
+:::
+
+After updating the server, [apply the configuration](#apply).
+
+### Apply the configuration <a name="apply"></a>
+
+Changes to farms and servers are staged until you apply them. Applying deploys the staged configuration to the zone so that it affects live traffic.
+
+<Tabs>
+<Tab label="Control Panel">
+
+After saving your changes, apply the configuration from the banner that appears in the service interface.
+
+{/* DRAFT: To screenshot - the apply-configuration banner shown after staging changes */}
+
+:::info
+You can review the changes waiting to be applied before deploying them. The set of staged changes is available from the service.
+:::
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Apply the staged configuration for a zone:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service ID. | `loadbalancer-xxxx` |
+| `zone` (body) | No | Name of the zone in which to deploy the configuration. | `gra` |
+
+To review the staged changes before applying them, use:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Verification <a name="verification"></a>
+
+After applying the configuration, confirm that the farm and its servers are configured as expected.
+
+| Check | How | Expected result |
+|---|---|---|
+| Farm exists | List defined farms via `GET /ipLoadbalancing/{serviceName}/definedFarms`, or view the `Server Farms` tab. | The new farm appears with the chosen type and zone. |
+| Balancing method | `GET /ipLoadbalancing/{serviceName}/http/farm/{farmId}` (replace `http` with `tcp` for a TCP farm), check the `balance` field. | Field matches the method you selected. UDP farms have no `balance` field. |
+| Servers attached | List farm servers via `GET /ipLoadbalancing/{serviceName}/{http\|tcp\|udp}/farm/{farmId}/server`, using the farm's protocol. | Each backend appears with its address and port (and weight and backup flag for HTTP/TCP farms). |
+| Backend health | Review server health. Refer to [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health). | Primary servers report as up. |
+| No pending changes | `GET /ipLoadbalancing/{serviceName}/pendingChanges`. | No staged changes remain after applying. |
+
+### Limitations <a name="limitations"></a>
+
+This section lists constraints that apply to farms and balancing methods.
+
+| Limitation | Details |
+|---|---|
+| `URI Hash` scope | The `URI Hash` (`uri`) method applies to HTTP farms only. It is not available on TCP farms. |
+| Balancing method scope | Balancing methods apply to HTTP and TCP farms. UDP farms do not expose a balancing method. |
+| UDP capabilities | UDP is Layer 4 only. UDP farms and frontends do not support HTTP routes, HTTP header manipulation, redirections, SSL/TLS termination, or cookie stickiness. |
+| Farm type and frontend | A farm can only be attached to a frontend of the same protocol type (HTTP farm to HTTP frontend, TCP farm to TCP frontend, UDP farm to UDP frontend). |
+| Per-zone quotas | The number of farms and servers is subject to per-zone quotas. Review them via `GET /ipLoadbalancing/{serviceName}/quota`. |
+| Maximum servers per farm | [TODO: confirm maximum number of servers per farm] |
+| Maximum farms per service | [TODO: confirm maximum number of farms per service] |
+
+### Troubleshooting <a name="troubleshooting"></a>
+
+This section covers the most common problems when configuring farms.
+
+| Issue | Possible cause | Solution |
+|---|---|---|
+| Changes do not take effect | The configuration was saved but not applied. | Apply the configuration (see [Apply the configuration](#apply)) and confirm `pendingChanges` is empty. |
+| Traffic is not distributed as expected | Server weights are unequal, or the method does not honour weights. | Review server weights and confirm the balancing method (`Round Robin` and `Least Connections` honour weights). |
+| All traffic goes to one server | A `Source Hash` method maps a single client IP, or only one primary server is available. | Confirm the method and that all intended primary servers are up and not marked as backup. |
+| Farm has no active backend | Every server in the farm is marked as backup. | Keep at least one primary (non-backup) server, then re-apply the configuration. |
+| `URI Hash` not available | The farm is a TCP farm. | `URI Hash` is HTTP-only. Use a different method for TCP farms. |
+
+## Go further
+
+- [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness)
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+
+Join our [community of users](/links/community).

@@ -1,0 +1,351 @@
+---
+title: OVHcloud Load Balancer FAQ and answers
+description: Browse the most frequently asked questions about the OVHcloud Load Balancer, with direct answers and links to detailed configuration guides.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+This guide answers the most frequently asked questions about the OVHcloud Load Balancer. If your question is not listed here, see the [What is the OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer) guide or contact our [community of users](/links/community).
+
+## General
+
+This section covers what the OVHcloud Load Balancer is, what it can do, and how its main concepts fit together.
+
+### What is the OVHcloud Load Balancer?
+
+The OVHcloud Load Balancer distributes incoming traffic across several backend servers, so that no single server is overloaded and your service remains available if one server fails. It supports HTTP/HTTPS traffic (Layer 7) as well as TCP and UDP traffic (Layer 4).
+
+For a full description, refer to the [What is the OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer) guide.
+
+### What is the difference between a frontend, a server farm, and a route?
+
+A frontend is the entry point that listens for client traffic on a given IP address and port. A server farm is the group of backend servers that receive the traffic. A route applies rules that decide which farm a request is sent to.
+
+For the full vocabulary, refer to the [Glossary](/guides/network/load-balancer-revamp/glossary).
+
+### What is the difference between an HTTP farm, a TCP farm, and a UDP farm?
+
+An HTTP farm understands the HTTP protocol and can act on requests, for example by reading headers, applying routes, or managing cookie-based stickiness. A TCP farm forwards raw TCP connections without inspecting their content, which suits any TCP-based protocol. A UDP farm works at the same connection/datagram level as a TCP farm but forwards UDP datagrams, which suit datagram-based protocols such as DNS, VoIP, gaming, or syslog. TCP and UDP farms are Layer 4 only and do not inspect or act on the content they forward.
+
+The protocol of a farm, a frontend, and a server must match: a UDP frontend pairs only with a UDP farm, just as a TCP frontend pairs only with a TCP farm. The table below summarises the differences.
+
+| Capability | HTTP/HTTPS (L7) | TCP (L4) | UDP (L4) |
+|------------|-----------------|----------|----------|
+| Layer | 7 | 4 | 4 |
+| Inspects content | Yes | No | No |
+| HTTP routes and header manipulation | Yes | No | No |
+| Redirections | Yes | No | No |
+| SSL/TLS termination | Yes | No | No |
+| Cookie stickiness | Yes | No | No |
+| Source IP stickiness | Yes | Yes | No |
+| Typical use cases | Websites, APIs | Databases, custom TCP services | DNS, VoIP, gaming, syslog |
+
+Refer to the [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) guide for details.
+
+### Do I need to apply my changes for them to take effect?
+
+Yes. Configuration changes are staged and only become active once you apply them. In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, apply the pending changes from your service. Through the OVHcloud API, call the refresh endpoint:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+You can list which changes are still pending:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+## Ordering and billing
+
+This section covers how to order the OVHcloud Load Balancer and how to cancel it.
+
+### How do I order an OVHcloud Load Balancer?
+
+Order it from the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, or through the OVHcloud API. The [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer) guide describes the ordering procedure, including plan and zone selection.
+
+### How much does the OVHcloud Load Balancer cost?
+
+Pricing depends on the plan and the number of zones you select. For current rates, refer to the OVHcloud Load Balancer [product page](/links/network/load-balancer).
+
+[TODO: confirm pricing model and whether a usage-based tier exists]
+
+### How do I cancel my OVHcloud Load Balancer?
+
+You can request cancellation from the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>. The service remains active until the end of the current billing period.
+
+:::warning
+Cancelling the service removes its configuration, including frontends, farms, and certificates. Export any configuration you want to keep before you confirm.
+:::
+
+For the full procedure, refer to the [Cancel your Load Balancer](/guides/network/load-balancer-revamp/cancel-load-balancer) guide. Through the OVHcloud API, confirm termination with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/confirmTermination"} />
+
+## Configuration
+
+This section answers common setup questions and points to the relevant configuration guides.
+
+### How do I configure my firewall to accept traffic from the OVHcloud Load Balancer?
+
+When you use the Load Balancer, clients do not connect directly to your servers. We recommend configuring your firewall to allow only traffic from the Load Balancer. The source addresses to allow are the NAT IP subnets of your service.
+
+<Tabs>
+<Tab label="Control Panel">
+
+Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open your Load Balancer service, and read its outbound IPv4 information. These values are the source addresses to allow in your firewall.
+
+{/* DRAFT: To screenshot - capture the service General page showing the outbound IPv4 / NAT IP information */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+List the NAT IP subnets your service uses as a source:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/natIp"} />
+
+Allow every returned subnet in your firewall rules.
+
+</Tab>
+</Tabs>
+
+### How do I create a server farm?
+
+Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open your service, select the <code className="action">Server Farms</code> tab, then click <code className="action">Create farm</code> and choose the farm type that matches your traffic (HTTP, TCP, or UDP). Through the OVHcloud API, the path segment selects the protocol. Create an HTTP farm with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+Create a TCP farm with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
+
+Create a UDP farm with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/farm"} />
+
+For the complete procedure, refer to the [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) guide.
+
+### How do I add a backend server to a farm?
+
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the <code className="action">Server Farms</code> tab, open the relevant farm, then click <code className="action">Add server</code>. Through the OVHcloud API, add a server to an HTTP farm with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
+
+Add a server to a TCP farm with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
+
+Add a server to a UDP farm with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server"} />
+
+### How do I create a frontend?
+
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, select the <code className="action">Frontends</code> tab, then click <code className="action">Create frontend</code> and choose the frontend type that matches your farm (HTTP, TCP, or UDP). A frontend forwards traffic to a default farm of the same protocol. Through the OVHcloud API, create an HTTP frontend with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+Create a TCP frontend with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
+
+Create a UDP frontend with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/frontend"} />
+
+For details, refer to the [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends) guide.
+
+### Which load balancing algorithms are available?
+
+HTTP, TCP, and UDP farms support `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, and `First Available`. You can list the values your service supports with:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableFarmType"} />
+
+Refer to the [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) guide to choose an algorithm.
+
+### Can I keep a client on the same backend server (session stickiness)?
+
+Yes. Server farms support stickiness based on a `Cookie` or on the `Source IP` of the client, or no stickiness at all. `Cookie` stickiness is an HTTP/HTTPS (Layer 7) feature only; TCP farms also support `Source IP` stickiness, while UDP farms do not expose a stickiness setting. Refer to the [Configure session stickiness](/guides/network/load-balancer-revamp/configure-stickiness) guide.
+
+### How do I add an Additional IP to the OVHcloud Load Balancer?
+
+An Additional IP is a secondary IP address you can attach to your service in addition to its primary IP. Move the IP onto your service, then apply the configuration.
+
+<Tabs>
+<Tab label="Control Panel">
+
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the <code className="action">Frontends</code> tab and select the Additional IP in the advanced settings of your frontend.
+
+{/* DRAFT: To screenshot - capture the frontend creation form advanced settings showing the Additional IP selector */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Move the Additional IP onto your service:
+
+<Api version="v1" section="/ip" method="POST" route={"/ip/\{ip\}/move"} />
+
+Then apply the change:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+</Tab>
+</Tabs>
+
+For more information, refer to the [Route an Additional IP](/guides/network/load-balancer-revamp/route-additional-ip) guide.
+
+### How do I list the Additional IPs routed to the OVHcloud Load Balancer?
+
+Use the following OVHcloud API call:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/failover"} />
+
+## Security and certificates
+
+This section covers SSL/TLS certificates and the configuration that protects your traffic.
+
+### How do I order a free SSL certificate?
+
+You can order a free SSL certificate for your service. The domain name must already point to your OVHcloud Load Balancer for the order to complete.
+
+<Tabs>
+<Tab label="Control Panel">
+
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the <code className="action">SSL Certificates</code> tab and start the free certificate order. Enter the fully qualified domain name (FQDN), then confirm.
+
+{/* DRAFT: To screenshot - capture the SSL Certificates tab with the free certificate order form */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Order a free certificate and enter your domain in the `fqdn` field:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/freeCertificate"} />
+
+The `fqdn` field accepts a string, so you can request a multi-domain certificate.
+
+</Tab>
+</Tabs>
+
+For the full procedure, refer to the [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates) guide.
+
+### How do I list the SSL certificates associated with my service?
+
+<Tabs>
+<Tab label="Control Panel">
+
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the <code className="action">SSL Certificates</code> tab. The table lists every certificate associated with the service.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+List every certificate:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
+
+Certificates ordered through OVHcloud (free or paid) appear as `built`. Certificates you upload yourself appear as `custom`. A certificate shown as `built_not_routed` was ordered and delivered, but its domain could not be validated, usually because the domain no longer points to your Load Balancer.
+
+Retrieve the details of a single certificate:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl/\{id\}"} />
+
+</Tab>
+</Tabs>
+
+### Which TLS versions can I enforce on a frontend?
+
+You can apply a `Modern (TLS 1.3)` or an `Intermediate (TLS 1.2+)` cipher profile to a frontend that carries a TLS certificate. Refer to the [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates) guide.
+
+### Where can I find security recommendations?
+
+Refer to the [Security best practices](/guides/network/load-balancer-revamp/security-best-practices) guide, which covers firewall filtering, certificate management, and TLS configuration.
+
+## Monitoring and status
+
+This section covers how to check the state of your service and its backend servers.
+
+### How do I know the status of my service?
+
+Retrieve the global status of your service with the OVHcloud API:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
+
+You can also review the live state from the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> on your service page.
+
+### How do I check the health of my backend servers?
+
+The Load Balancer uses health probes to detect whether each backend server can receive traffic. Servers that fail their probe are removed from rotation automatically. Refer to the [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health) and [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes) guides.
+
+### Can I forward my Load Balancer logs?
+
+Yes. You can subscribe your service logs to a stream destination. Create a subscription with:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/log/subscription"} />
+
+For the full setup, refer to the [Configure logs forwarding](/guides/network/load-balancer-revamp/configure-logs-forwarding) guide.
+
+## Availability and resilience
+
+This section covers zones, high availability, and service-level commitments.
+
+### Where is the OVHcloud Load Balancer available?
+
+The Load Balancer is offered in several zones, and you can spread your configuration across multiple zones for resilience. Refer to the [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones) guide.
+
+### How does the OVHcloud Load Balancer stay available if a zone fails?
+
+When you deploy across multiple zones, traffic continues to be served from the remaining zones if one zone becomes unavailable. Refer to the [High availability](/guides/network/load-balancer-revamp/high-availability) guide and the [Resilient multi-zone architecture](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone) reference.
+
+### What is the SLA for the OVHcloud Load Balancer?
+
+[TODO: confirm the SLA percentage and the conditions under which it applies]
+
+Refer to the [SLAs](/guides/network/load-balancer-revamp/slas) guide for the current commitment.
+
+## Automation and API
+
+This section covers how to manage the Load Balancer programmatically.
+
+### Can I manage the OVHcloud Load Balancer through the API?
+
+Yes. Every configuration task is available through the OVHcloud API under the `/ipLoadbalancing` section. Remember to apply your changes with the refresh endpoint after each modification. Refer to the [Automation](/guides/network/load-balancer-revamp/automation) guide.
+
+### Is there a Terraform provider for the OVHcloud Load Balancer?
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+Refer to the [Automation](/guides/network/load-balancer-revamp/automation) guide for supported automation methods.
+
+### How do I find the right API endpoint for a task?
+
+The `/ipLoadbalancing` section is split by protocol (`http`, `tcp`, and `udp`) and by object (`farm`, `frontend`, `route`, `ssl`, `log`). Route and SSL objects exist only under the `http` protocol, since they are Layer 7 features. You can also list what your service supports, for example the available route actions:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableRouteActions"} />
+
+## Troubleshooting
+
+This section covers what to do when something does not work as expected.
+
+### My configuration changes are not taking effect. Why?
+
+Changes are staged until you apply them. Apply the pending changes from the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, or call the refresh endpoint through the OVHcloud API:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+### My SSL certificate shows as `built_not_routed`. What does that mean?
+
+The certificate was ordered and delivered, but its domain could not be validated. This usually happens when the domain no longer points to your OVHcloud Load Balancer. Repoint the domain, then apply your configuration. Refer to the [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates) guide.
+
+### Traffic is not reaching my backend servers. What should I check?
+
+First confirm that your firewall allows the NAT IP subnets of your service, then check that your health probes succeed and that your frontend routes traffic to the correct farm. For a structured diagnosis, refer to the [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting) guide.
+
+### How do I report an incident?
+
+If you suspect a platform issue, see the [Declare an incident](/guides/network/load-balancer-revamp/declare-an-incident) guide for the procedure.
+
+## Go further
+
+- [What is the OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer)
+- [HTTP and HTTPS quickstart](/guides/network/load-balancer-revamp/quickstart-http-https)
+- [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting)
+
+Join our [community of users](/links/community).

@@ -1,0 +1,255 @@
+---
+title: Troubleshooting OVHcloud Load Balancer
+description: Diagnose and fix common OVHcloud Load Balancer issues: servers reported DOWN, 503 errors, TLS failures, unapplied configuration, and routing problems.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+
+## Objective
+
+This guide helps you diagnose and resolve the most common issues with the OVHcloud Load Balancer service. Each scenario follows the same pattern: the symptom you observe, how to confirm the cause, and how to fix it.
+
+Use the diagnostic checklist below to identify your symptom, then jump to the matching section. If none of the resolutions apply, follow the escalation steps at the end of this guide.
+
+**This guide explains how to diagnose and resolve the most common OVHcloud Load Balancer issues.**
+
+## Requirements
+
+- An [OVHcloud Load Balancer](/links/network/load-balancer) service in your OVHcloud account
+- Access to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>
+- Access to the [OVHcloud API](/links/api)
+- A configured server farm and at least one frontend
+
+## Introduction
+
+The OVHcloud Load Balancer acts as a reverse proxy. It receives client requests on a frontend and distributes them across the servers of a farm, according to the balancing algorithm and health probe results. Clients connect to the Load Balancer, never directly to your backend servers.
+
+Two characteristics of this architecture explain most issues:
+
+- A server is removed from rotation when its health probe fails. Traffic continues to flow to the remaining healthy servers.
+- Configuration changes are not live until you apply them. Until the change is deployed, the Load Balancer keeps serving the previous configuration.
+
+For background on these mechanisms, see [How health probes work](/guides/network/load-balancer-revamp/configure-health-probes) and [Manage your Load Balancer via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel).
+
+## Instructions
+
+### Diagnostic checklist
+
+Match your symptom to the relevant section.
+
+| Symptom | Likely cause | Section |
+|---|---|---|
+| A server shows as DOWN or is removed from the farm | Health probe failing | [Server reported DOWN](#server-down) |
+| Clients receive `503 Service Unavailable` | No healthy server in the farm, or no route matches | [503 Service Unavailable](#error-503) |
+| TLS handshake fails, certificate warnings, or HTTPS does not load | Certificate state, SNI, or protocol mismatch | [TLS and certificate errors](#tls-errors) |
+| A configuration change has no effect | Change not applied (deployed) | [Configuration not applied](#config-not-applied) |
+| Requests reach the wrong farm or return unexpected content | Frontend, route, or default-route misconfiguration | [Routing problems](#routing-problems) |
+
+<a name="server-down"></a>
+
+### Server reported DOWN
+
+A server is marked DOWN when its health probe fails. The Load Balancer then stops sending traffic to it and redistributes the load across the remaining servers in the farm.
+
+**Symptoms:**
+
+- A server appears with a DOWN or failed status in the `Server Farms` tab.
+- Backend capacity is reduced even though the server is running.
+
+**Diagnosis:**
+
+Retrieve the detailed health status of the affected server. In the API, the result is available in the `serverState` field of the server object.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
+
+Alternatively, in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the `Server Farms` tab, select the farm, and read the status on each server line. Click the status text, or the `...` button followed by `See status`, to open the detail view.
+
+{/* DRAFT: To screenshot — capture the Server Farms tab showing a server in DOWN state and the status detail panel */}
+
+The status detail provides the following fields:
+
+| Field | Description |
+|---|---|
+| Status | Current server status (UP / DOWN). |
+| Check code | Return code of the health check probe. |
+| Check status | Status of the health check probe. |
+| Last check content | Content returned by the probe. |
+| Check time | Date and time the probe was last executed. |
+
+**Resolution:**
+
+Work through these checks, from most common to least common:
+
+1. Confirm the backend service is listening on the configured port and is reachable from the probe.
+2. Verify the probe definition matches what the backend expects. For an HTTP probe, confirm the request method, URL path, and the expected response code. A backend returning `301`, `403`, or `404` on the probe path is treated as a failed check.
+3. Verify that your backend firewall allows traffic from the Load Balancer. List the source addresses to allow:
+
+   <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/natIp"} />
+
+4. If the server was intentionally removed for maintenance, re-enable it and confirm the probe passes before relying on it for traffic.
+
+> [!TIP]
+> A probe must be configured on the farm for status checks to be meaningful. Without a probe, the Load Balancer cannot detect an unresponsive backend. See [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes).
+
+<a name="error-503"></a>
+
+### 503 Service Unavailable
+
+A `503` response is returned by the Load Balancer itself, not by your backend. It indicates that the Load Balancer received the request but had no available server to serve it.
+
+**Symptoms:**
+
+- Clients receive `503 Service Unavailable` for all or some requests.
+- The error appears even though backend servers are running.
+
+**Diagnosis:**
+
+Two common causes apply; identify which one:
+
+- **No healthy server in the target farm.** Every server in the farm is DOWN, so there is nowhere to route the request. Check the health status of each server as described in [Server reported DOWN](#server-down).
+- **No route matches the request.** The frontend has no default farm and no HTTP route matched the incoming request, so the Load Balancer has no destination.
+
+Check the global status of the service to confirm it is active:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
+
+**Resolution:**
+
+| Cause | Resolution |
+|---|---|
+| All servers DOWN | Restore at least one healthy server (see [Server reported DOWN](#server-down)). Confirm the probe passes. |
+| No matching route | In the `Frontends` tab, edit the frontend and set a `Default route` (or `Route to farm`) so unmatched traffic has a destination. See [Configure HTTP routes](/guides/network/load-balancer-revamp/configure-http-routes). |
+| Frontend points to an empty farm | Add at least one server to the farm in the `Server Farms` tab using `Add server`. |
+
+After changing the configuration, apply it (see [Configuration not applied](#config-not-applied)) before testing again.
+
+<a name="tls-errors"></a>
+
+### TLS and certificate errors
+
+TLS issues appear as failed handshakes, browser certificate warnings, or HTTPS frontends that do not respond while HTTP works.
+
+**Symptoms:**
+
+- The browser reports an invalid, expired, or mismatched certificate.
+- The TLS handshake fails or times out on the HTTPS frontend.
+- A newly ordered certificate is not served.
+
+**Diagnosis:**
+
+List the certificates associated with the service and check their state:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
+
+Interpret the state as follows:
+
+| State | Meaning |
+|---|---|
+| `built` | Certificate ordered through OVHcloud (free or paid) and in service. |
+| `custom` | Certificate you uploaded yourself. |
+| `built_not_routed` | Certificate ordered and delivered, but the domain could not be validated — usually because the domain no longer points to the Load Balancer. |
+
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, the same information is available in the `SSL Certificates` tab.
+
+{/* DRAFT: To screenshot — capture the SSL Certificates tab listing certificate states */}
+
+**Resolution:**
+
+| Cause | Resolution |
+|---|---|
+| Domain does not point to the Load Balancer (`built_not_routed`) | Update your DNS so the domain resolves to the Load Balancer, then re-attempt validation. |
+| Expired or wrong certificate served | In the `SSL Certificates` tab, add or replace the certificate with `Add Certificate`, then attach it to the frontend. |
+| Certificate present but not used | Edit the frontend in the `Frontends` tab and select the certificate under `TLS Certificate`. |
+| Handshake fails for older clients | Review the TLS configuration. `Modern (TLS 1.3)` rejects older clients; switch to `Intermediate (TLS 1.2+)` if you must support them. See [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates). |
+
+> [!INFO]
+> A new or replaced certificate is only served after the configuration is applied. See [Configuration not applied](#config-not-applied).
+
+<a name="config-not-applied"></a>
+
+### Configuration not applied
+
+Changes made to farms, servers, frontends, routes, or certificates are staged but not active until the configuration is deployed. This is the single most common reason a change "has no effect".
+
+**Symptoms:**
+
+- A change saved in the Control Panel or via the API does not appear to take effect.
+- The Load Balancer continues to serve the previous behaviour.
+- The service status reports a pending or reload state.
+
+**Diagnosis:**
+
+Check the global status of the service. A status indicating a reload or pending deployment means a configuration change is staged but not yet live.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
+
+You can also review the `Tasks` tab in the Control Panel to see the state of in-progress operations.
+
+{/* DRAFT: To screenshot — capture the Tasks tab showing a deployment in progress */}
+
+**Resolution:**
+
+Apply (deploy) the staged configuration:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+In the Control Panel, use the deployment action presented after saving a change. Wait until the operation completes in the `Tasks` tab before testing.
+
+> [!WARNING]
+> Applying the configuration briefly reloads the Load Balancer. Deploy during a maintenance window if you are sensitive to short reload events, and apply related changes together rather than one at a time.
+
+<a name="routing-problems"></a>
+
+### Routing problems
+
+Routing problems occur when requests reach the Load Balancer but are sent to the wrong farm, return unexpected content, or are dropped.
+
+**Symptoms:**
+
+- Requests for one hostname or path return content from a different backend.
+- Some requests succeed while others fail depending on the URL.
+- Traffic is not balanced as expected across servers.
+
+**Diagnosis:**
+
+Review the frontends and routes defined on the service:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedFrontends"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedRoutes"} />
+
+In the Control Panel, inspect the `Frontends` tab and the route configuration attached to each frontend.
+
+**Resolution:**
+
+| Cause | Resolution |
+|---|---|
+| Frontend has no default farm | Set a `Default route` so traffic without a matching rule still reaches a farm. |
+| Route conditions overlap or order incorrectly | Review route match rules; the first matching route wins. Reorder or tighten conditions. See [Configure HTTP routes](/guides/network/load-balancer-revamp/configure-http-routes). |
+| Frontend bound to the wrong port or protocol | Edit the frontend and confirm the listening port and protocol match the client traffic. See [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends). |
+| Uneven balancing | Confirm the balancing algorithm and stickiness settings on the farm match your intent. See [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness). |
+
+Apply the configuration after any change (see [Configuration not applied](#config-not-applied)).
+
+### Escalation
+
+If the steps above do not resolve the issue:
+
+1. Gather the relevant diagnostic information: the service name, the affected farm and server IDs, the output of the `serverState` and `/status` API calls, and any error message returned to the client.
+2. Note the time the problem started and whether it correlates with a recent configuration change.
+3. Contact [OVHcloud support](https://help.ovhcloud.com/) and provide the information collected above.
+
+> [!INFO]
+> OVHcloud provides you with services for which you are responsible for the configuration and management. Most routing, probe, and certificate issues are resolved within your configuration.
+
+## Go further
+
+- [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health)
+- [Frequently asked questions](/guides/network/load-balancer-revamp/faq)
+
+Join our [community of users](/links/community).

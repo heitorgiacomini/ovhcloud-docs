@@ -1,0 +1,267 @@
+---
+title: Manage your Load Balancer via the Control Panel
+description: Navigate the Load Balancer interface in the OVHcloud Control Panel and learn the apply-configuration model that activates your changes.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+You manage the OVHcloud Load Balancer from a dedicated dashboard in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>. The interface groups every part of the service into tabs and applies a staged configuration model: most changes are saved as pending edits and take effect only once you apply them.
+
+This guide tours the management interface, describes the purpose of each tab, and explains the apply-configuration (refresh) model that activates your changes.
+
+**In this guide, you will learn how to:**
+
+- Locate and open your Load Balancer in the Control Panel.
+- Identify the role of each tab: Server Farms, Frontends, SSL Certificates, Subnet, Statistics, Logs, Tasks, and Quota.
+- Understand how pending changes are staged and applied.
+
+## Requirements
+
+- An [OVHcloud Load Balancer](/links/network/load-balancer) in your account.
+- Access to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+
+## Introduction
+
+The OVHcloud Load Balancer distributes incoming traffic across multiple backend servers to improve availability and scale. It runs as a managed service: OVHcloud operates the underlying infrastructure, and you define the configuration (server farms, frontends, certificates, and routing) through the Control Panel or the OVHcloud API. For a conceptual overview, see [What is OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer).
+
+## Instructions
+
+**Contents:**
+
+- [Open your Load Balancer](#open)
+- [Tour of the tabs](#tabs)
+- [The apply-configuration model](#apply)
+- [Limitations](#limitations)
+- [Troubleshooting](#troubleshooting)
+
+### Open your Load Balancer <a name="open"></a>
+
+To reach the management dashboard for an existing Load Balancer:
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Open the `Network` menu and select `Load Balancer`.
+3. Select your service from the list to open its dashboard.
+
+{/* DRAFT: To screenshot - capture the Load Balancer listing under Network > Load Balancer */}
+
+The dashboard opens on the `General` view, which summarises the service: status, attached IP addresses, availability zone, and the number of frontends, farms, and servers configured. The tabs across the top give access to each configurable area.
+
+To list your services through the OVHcloud API instead:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route="/ipLoadbalancing" />
+
+To read the properties of a single service:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The identifier of your Load Balancer service. | `loadbalancer-a1b2c3...` |
+
+### Tour of the tabs <a name="tabs"></a>
+
+The management interface is organised into eight tabs, each mapping to a configurable area of the service. The table below summarises their purpose; the dedicated guides cover each area in detail.
+
+| Tab | Purpose | Dedicated guide |
+|---|---|---|
+| `Server Farms` | Create and manage backend server groups (farms), add servers, and set the balancing algorithm and stickiness. | [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) |
+| `Frontends` | Define listening endpoints (protocol, port, zone) and link them to a default farm or route. | [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends) |
+| `SSL Certificates` | Add custom certificates or order a free certificate, and review the TLS configuration profile. | [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates) |
+| `Subnet` | Manage the private subnets used when the Load Balancer reaches backends over a vRack. | [Configure vRack](/guides/network/load-balancer-revamp/configure-vrack) |
+| `Statistics` | View traffic graphs such as concurrent connections and requests per minute. | [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health) |
+| `Logs` | Subscribe to log forwarding and review log streams. | [Configure logs forwarding](/guides/network/load-balancer-revamp/configure-logs-forwarding) |
+| `Tasks` | Track the asynchronous operations triggered by your changes, including apply operations. | This guide |
+| `Quota` | Review the resource limits (farms, frontends, servers) per availability zone. | This guide |
+
+The diagram below shows how the tabs relate to the service and to one another.
+
+```mermaid
+flowchart TD
+    LB[Load Balancer service] --> F[Frontends]
+    LB --> SF[Server Farms]
+    LB --> SSL[SSL Certificates]
+    LB --> SUB[Subnet]
+    F -->|default route or route to farm| SF
+    SSL -->|TLS termination| F
+    SUB -->|private reach| SF
+    LB --> STAT[Statistics]
+    LB --> LOG[Logs]
+    LB --> TASK[Tasks]
+    LB --> QUOTA[Quota]
+```
+
+#### Server Farms
+
+The `Server Farms` tab lists every backend farm. A farm groups the servers that receive traffic and defines how that traffic is distributed. Click <code className="action">Create farm</code> to add a farm and <code className="action">Add server</code> to attach a backend to it.
+
+Available balancing algorithms are `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, and `First Available`. Stickiness options are `None`, `Cookie`, and `Source IP`. These options are described in [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness).
+
+{/* DRAFT: To screenshot - capture the Server Farms tab with one farm expanded */}
+
+#### Frontends
+
+The `Frontends` tab lists the listening endpoints. A frontend defines the protocol, the listening port, and the availability zone, then sends traffic to a `Default route` or `Route to farm`. Click <code className="action">Create frontend</code> to add one. For HTTPS frontends, attach a `TLS Certificate` from the SSL Certificates tab.
+
+{/* DRAFT: To screenshot - capture the Frontends tab */}
+
+#### SSL Certificates
+
+The `SSL Certificates` tab manages the certificates used for TLS termination. Click <code className="action">Add Certificate</code> to upload your own certificate, or order a free certificate. Set the TLS configuration profile to `Modern (TLS 1.3)` or `Intermediate (TLS 1.2+)`. See [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates).
+
+{/* DRAFT: To screenshot - capture the SSL Certificates tab */}
+
+#### Subnet
+
+The `Subnet` tab manages the private subnets the Load Balancer uses to reach backends across a vRack. Configure this tab when your servers are not reachable over a public address. See [Configure vRack](/guides/network/load-balancer-revamp/configure-vrack).
+
+#### Statistics
+
+The `Statistics` tab displays traffic graphs for the service, such as concurrent connections and requests per minute. Use it to observe load patterns and confirm that traffic is reaching your farms.
+
+{/* DRAFT: To screenshot - capture the Statistics tab graphs */}
+
+#### Logs
+
+The `Logs` tab manages log forwarding. Create a subscription that streams Load Balancer logs to a destination such as Logs Data Platform. See [Configure logs forwarding](/guides/network/load-balancer-revamp/configure-logs-forwarding).
+
+#### Tasks
+
+The `Tasks` tab lists the asynchronous operations the platform runs on your behalf, including each apply-configuration operation. Each task shows its status, so you can confirm whether a change has finished propagating.
+
+
+To list tasks through the OVHcloud API:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task"} />
+
+#### Quota
+
+The `Quota` tab shows the resource limits that apply to your service per availability zone, such as the maximum number of farms, frontends, and servers. Review it before scaling a configuration. Exact values depend on your offer [TODO: confirm per-zone quota limits].
+
+To read quota information through the OVHcloud API:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota"} />
+
+### The apply-configuration model <a name="apply"></a>
+
+This section explains how the Load Balancer activates your changes. This model is essential to understand, because most edits do not take effect the moment you save them.
+
+When you create or modify a farm, frontend, route, or certificate, the change is stored as a **pending change** rather than applied immediately. This lets you stage several edits and activate them together in a single, atomic operation. The active configuration keeps serving traffic with the previous settings until you apply.
+
+```mermaid
+sequenceDiagram
+    participant You
+    participant CP as Control Panel / API
+    participant LB as Load Balancer
+    You->>CP: Create or modify a farm, frontend, route, or certificate
+    CP->>CP: Store as a pending change
+    You->>CP: Apply the configuration
+    CP->>LB: Push staged changes (refresh)
+    LB-->>CP: Task completes
+    Note over LB: New configuration now serves traffic
+```
+
+#### Review pending changes
+
+Before applying, review what is staged so you activate only the changes you intend.
+
+<Tabs>
+<Tab label="Control Panel">
+
+A banner or indicator appears on the dashboard when changes are pending. Review the listed edits, then click the apply action to activate them.
+
+{/* DRAFT: To screenshot - capture the pending-changes banner / apply prompt on the dashboard */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+List the staged changes that have not yet been applied:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The identifier of your Load Balancer service. | `loadbalancer-a1b2c3...` |
+
+</Tab>
+</Tabs>
+
+#### Apply the configuration
+
+Applying pushes every pending change to the active configuration in one operation.
+
+<Tabs>
+<Tab label="Control Panel">
+
+When changes are pending, the dashboard offers an apply action. Confirm it to activate the staged configuration. The operation runs as a task you can follow in the `Tasks` tab.
+
+{/* DRAFT: To screenshot - capture the apply confirmation dialog */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Apply all pending changes with a single call:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The identifier of your Load Balancer service. | `loadbalancer-a1b2c3...` |
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+:::warning
+Applying the configuration affects live traffic. Review the pending changes before you apply, and where possible schedule the operation during a maintenance window.
+:::
+
+:::tip
+Stage related edits together — for example a new farm, its servers, and the frontend that points to it — then apply once. A single apply operation is atomic and avoids leaving the service in a half-configured state.
+:::
+
+#### Verify the change took effect
+
+| Check | How | Expected result |
+|---|---|---|
+| Apply task finished | Open the `Tasks` tab, or call `GET /ipLoadbalancing/{serviceName}/task`. | The most recent apply task shows a completed status. |
+| No changes remain staged | Call `GET /ipLoadbalancing/{serviceName}/pendingChanges`. | The list is empty. |
+| Service status healthy | Open the `General` view, or call `GET /ipLoadbalancing/{serviceName}/status`. | The status reflects the new configuration. |
+
+### Limitations <a name="limitations"></a>
+
+This section lists constraints that apply to the management interface and the apply model.
+
+| Limitation | Details |
+|---|---|
+| Changes are not live until applied | Edits to farms, frontends, routes, and certificates remain pending until you apply the configuration. |
+| Apply is service-wide | An apply operation activates all pending changes at once; you cannot apply a single change in isolation. |
+| Quota varies by offer and zone | Resource limits per availability zone depend on your offer. [TODO: confirm per-zone quota limits] |
+
+### Troubleshooting <a name="troubleshooting"></a>
+
+This section covers the most common issues you may encounter when managing the service from the Control Panel.
+
+| Issue | Possible cause | Solution |
+|---|---|---|
+| A saved change is not visible to clients | The configuration has not been applied. | Review pending changes, then apply the configuration. |
+| The apply action is greyed out or absent | There are no pending changes to apply. | Make a configuration change first, then apply. |
+| An apply task is stuck or failed | A staged change conflicts with the current configuration. | Open the `Tasks` tab to read the task status, correct the conflicting change, and apply again. |
+| A new farm or frontend cannot be created | The zone quota has been reached. | Review the `Quota` tab and remove unused resources or request more. |
+
+For a broader set of issues, see [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting).
+
+## Go further
+
+- [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Automation](/guides/network/load-balancer-revamp/automation)
+
+Join our [community of users](/links/community).

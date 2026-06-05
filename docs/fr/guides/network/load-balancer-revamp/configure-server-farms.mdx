@@ -1,0 +1,364 @@
+---
+title: Configurer les fermes de serveurs et les méthodes d'équilibrage
+description: Créez et modifiez des fermes de serveurs OVHcloud Load Balancer, ajoutez des serveurs backend, définissez poids et backups, et choisissez une méthode d'équilibrage.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+Une ferme de serveurs est le groupe de serveurs backend sur lequel l'OVHcloud Load Balancer répartit le trafic entrant. Chaque ferme dispose d'une méthode d'équilibrage qui détermine quel serveur reçoit chaque nouvelle connexion, et chaque serveur peut porter un poids et un rôle de backup facultatif.
+
+**Ce guide explique comment créer et configurer des fermes de serveurs OVHcloud Load Balancer, ajouter des serveurs backend et choisir une méthode d'équilibrage.**
+
+**Dans ce guide, vous apprendrez à :**
+
+- Créer une ferme de serveurs HTTP, TCP ou UDP.
+- Ajouter des serveurs backend à une ferme et définir leur port, leur poids et leur rôle de backup.
+- Choisir et modifier la méthode d'équilibrage (Round Robin, Moins de connexions, Hash Source, Hash URI, Premier disponible).
+- Appliquer la configuration pour que les modifications prennent effet.
+
+:::info
+L'OVHcloud Load Balancer utilise un modèle d'application différée. Les modifications que vous apportez aux fermes, aux serveurs ou aux méthodes d'équilibrage sont mises en attente jusqu'à ce que vous appliquiez explicitement la configuration. Jusque-là, le trafic en production continue d'utiliser la configuration précédente.
+:::
+
+## Prérequis
+
+- Un service [OVHcloud Load Balancer](/links/network/load-balancer) dans votre compte OVHcloud.
+- Avoir accès à l'[espace client OVHcloud](/links/manager).
+- Une zone définie pour le service. Consultez le guide [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones).
+- Pour la méthode API : des identifiants API OVHcloud valides. Consultez le guide [prérequis et limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations).
+
+## Introduction
+
+Une ferme de serveurs (aussi appelée pool de backends) est un groupe logique de serveurs backend qui servent la même application. Le Load Balancer reçoit les connexions clientes sur un frontend, puis transmet chaque connexion à un serveur de la ferme rattachée à ce frontend. Les fermes existent en trois types correspondant au protocole du frontend : les fermes HTTP pour le trafic de couche 7 (HTTP/HTTPS), les fermes TCP pour le trafic de couche 4 (TCP) et les fermes UDP pour le trafic de couche 4 (UDP). Le protocole UDP se comporte comme TCP au niveau connexion/datagramme et convient aux services par datagramme tels que DNS, VoIP, jeux en ligne et syslog. La méthode d'équilibrage est définie par ferme et régit la manière dont les connexions sont réparties entre les serveurs qu'elle contient.
+
+Les frontends, les fermes et les serveurs sont spécifiques au protocole (HTTP, TCP ou UDP) dans lequel ils sont définis. La compatibilité entre ces composants n'est possible qu'au sein d'un même protocole : un frontend UDP ne peut être associé qu'à une ferme UDP, de même qu'un frontend HTTP ne s'associe qu'à une ferme HTTP.
+
+## En pratique
+
+**Sommaire :**
+
+- [Présentation et méthodes d'équilibrage](#overview)
+- [Créer une ferme de serveurs](#create-farm)
+- [Ajouter des serveurs à une ferme](#add-servers)
+- [Choisir ou modifier la méthode d'équilibrage](#balancing-method)
+- [Poids des serveurs et serveurs de backup](#weights-backups)
+- [Appliquer la configuration](#apply)
+- [Vérification](#verification)
+- [Limitations](#limitations)
+- [Résolution des problèmes](#troubleshooting)
+
+### Présentation et méthodes d'équilibrage <a name="overview"></a>
+
+La méthode d'équilibrage s'applique au niveau de la ferme. Elle définit l'algorithme selon lequel le Load Balancer sélectionne un serveur backend pour chaque nouvelle requête cliente. Le schéma suivant montre où se situe la ferme dans le chemin du trafic.
+
+```mermaid
+flowchart LR
+    C[Client] --> F[Frontend]
+    F --> FARM{{Ferme de serveurs<br/>méthode d'équilibrage}}
+    FARM --> S1[Serveur 1<br/>poids 1]
+    FARM --> S2[Serveur 2<br/>poids 1]
+    FARM --> S3[Serveur 3<br/>backup]
+```
+
+Les méthodes d'équilibrage suivantes sont disponibles. Les libellés de l'espace client sont indiqués à côté de la valeur API correspondante utilisée dans le champ `balance` de la configuration de la ferme.
+
+| Libellé espace client | Valeur API (`balance`) | Comportement |
+|---|---|---|
+| `Round Robin` | `roundrobin` | Distribue les connexions de façon séquentielle, un serveur après l'autre, pour chaque nouvelle requête. C'est la méthode par défaut. |
+| `Moins de connexions` | `leastconn` | Sélectionne le serveur ayant le moins de connexions actives. Convient aux sessions de longue durée avec un trafic léger. Les égalités sont départagées par round robin. |
+| `Hash Source` | `source` | Hache l'adresse IP source du client afin que la même IP cliente soit toujours dirigée vers le même serveur, tant que ce serveur reste opérationnel. |
+| `Hash URI` | `uri` | Hache une partie ou la totalité de l'URI de la requête afin que des URI identiques soient toujours dirigées vers le même serveur. S'applique uniquement aux fermes HTTP. |
+| `Premier disponible` | `first` | Envoie la connexion au premier serveur disponible, classé par identifiant de serveur du plus petit au plus grand. |
+
+:::tip
+Utilisez `Hash Source` ou une méthode de persistance lorsque votre application exige qu'un client donné continue d'atteindre le même backend. Pour l'affinité de session gérée au niveau de la couche 7, consultez le guide [Configurer la persistance](/guides/network/load-balancer-revamp/configure-stickiness).
+:::
+
+### Créer une ferme de serveurs <a name="create-farm"></a>
+
+Créez une ferme HTTP pour équilibrer le trafic HTTP/HTTPS, une ferme TCP pour équilibrer le trafic TCP brut, ou une ferme UDP pour équilibrer le trafic par datagramme (UDP).
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
+2. Sélectionnez l'onglet `Fermes de serveurs`.
+3. Cliquez sur `Créer une ferme`. Le formulaire `Créer une ferme de serveurs` s'ouvre.
+4. Sélectionnez le type de ferme (HTTP, TCP ou UDP), la zone et le port utilisé pour contacter les serveurs backend.
+5. Saisissez un nom d'affichage pour la ferme et sélectionnez la méthode d'équilibrage.
+6. Confirmez pour créer la ferme.
+
+{/* DRAFT: À capturer - onglet Fermes de serveurs avec le bouton Créer une ferme */}
+
+{/* DRAFT: À capturer - formulaire Créer une ferme de serveurs montrant les champs type, zone, port, nom et méthode d'équilibrage */}
+
+Après avoir créé la ferme, [appliquez la configuration](#apply) pour qu'elle prenne effet.
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Créez une ferme HTTP :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+Créez une ferme TCP :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
+
+Créez une ferme UDP :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/farm"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `zone` (body) | Oui | Nom de la zone dans laquelle la ferme est créée. | `gra` |
+| `port` (body) | Non | Port utilisé pour contacter les serveurs backend. | `80` |
+| `balance` (body) | Non | Méthode d'équilibrage (`roundrobin`, `leastconn`, `source`, `uri`, `first`). Fermes HTTP et TCP uniquement. | `roundrobin` |
+| `displayName` (body) | Non | Nom lisible de la ferme. | `web-farm` |
+
+:::info
+Les fermes UDP (`BackendUdp`) n'acceptent que `displayName` et `port` (en plus de la `zone` obligatoire). Elles ne prennent pas de champ `balance` ni d'options spécifiques à HTTP/TCP telles que `stickiness`, `probe` ou `ssl`.
+:::
+
+Après avoir créé la ferme, [appliquez la configuration](#apply).
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Ajouter des serveurs à une ferme <a name="add-servers"></a>
+
+Une fois la ferme créée, ajoutez les serveurs backend qui reçoivent le trafic. Chaque serveur est identifié par son adresse IP et son port.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Dans l'onglet `Fermes de serveurs`, repérez la ferme et ouvrez-la pour la modifier.
+2. Cliquez sur `Ajouter un serveur`.
+3. Saisissez l'adresse IP du serveur et le port sur lequel l'application écoute.
+4. Définissez éventuellement le poids du serveur et marquez-le comme serveur de backup (consultez la section [Poids des serveurs et serveurs de backup](#weights-backups)).
+5. Confirmez pour ajouter le serveur.
+6. Répétez l'opération pour chaque serveur backend, puis [appliquez la configuration](#apply).
+
+{/* DRAFT: À capturer - éditeur de ferme avec le bouton Ajouter un serveur */}
+
+{/* DRAFT: À capturer - formulaire Ajouter un serveur montrant les champs adresse, port, poids et backup */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Ajoutez un serveur à une ferme HTTP :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
+
+Ajoutez un serveur à une ferme TCP :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
+
+Ajoutez un serveur à une ferme UDP :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `farmId` | Oui | L'identifiant de la ferme à laquelle le serveur est ajouté. | `12345` |
+| `address` (body) | Oui | Adresse IP du serveur backend. | `10.0.0.10` |
+| `port` (body) | Non | Port sur lequel le serveur backend écoute. | `8080` |
+| `weight` (body) | Non | Poids relatif du serveur. Fermes HTTP et TCP uniquement. | `1` |
+| `backup` (body) | Non | Indique si le serveur est un serveur de backup. Fermes HTTP et TCP uniquement. | `false` |
+| `status` (body) | Oui | Statut administratif du serveur (`active` ou `inactive`). | `active` |
+
+:::info
+Les serveurs UDP (`BackendUdpServer`) n'acceptent que `address`, `displayName`, `port` et `status`. Les rôles de poids et de backup ne sont pas disponibles pour les serveurs UDP.
+:::
+
+Après avoir ajouté les serveurs, [appliquez la configuration](#apply).
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Choisir ou modifier la méthode d'équilibrage <a name="balancing-method"></a>
+
+Vous pouvez définir la méthode d'équilibrage lors de la création de la ferme et la modifier à tout moment par la suite. La modification de la méthode met à jour le champ `balance` de la configuration de la ferme.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Dans l'onglet `Fermes de serveurs`, repérez la ferme et ouvrez-la pour la modifier.
+2. Dans les paramètres avancés, sélectionnez la méthode d'équilibrage dans la liste (`Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI` ou `Premier disponible`).
+3. Enregistrez la modification, puis [appliquez la configuration](#apply).
+
+{/* DRAFT: À capturer - paramètres avancés de la ferme montrant le sélecteur de méthode d'équilibrage */}
+
+:::info
+`Hash URI` est disponible uniquement pour les fermes HTTP. Il n'apparaît pas pour les fermes TCP. La méthode d'équilibrage (champ `balance`) s'applique aux fermes HTTP et TCP ; les fermes UDP n'exposent pas de sélecteur de méthode d'équilibrage.
+:::
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Commencez par consulter la configuration actuelle de la ferme pour confirmer la valeur `balance` et le type de ferme. L'exemple ci-dessous utilise une ferme HTTP :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+| Paramètre | Obligatoire | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. |
+| `farmId` | Oui | Le numéro d'identifiant de la ferme. |
+
+La réponse inclut les champs `balance`, `zone`, `port`, `probe`, `displayName` et `stickiness` de la ferme.
+
+Mettez ensuite à jour la ferme et définissez le champ `balance` sur la méthode souhaitée :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+Pour une ferme TCP, utilisez :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `farmId` | Oui | Le numéro d'identifiant de la ferme. | `12345` |
+| `balance` (body) | Non | Méthode d'équilibrage à appliquer (`roundrobin`, `leastconn`, `source`, `uri`, `first`). | `leastconn` |
+
+Après avoir mis à jour la ferme, [appliquez la configuration](#apply).
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Poids des serveurs et serveurs de backup <a name="weights-backups"></a>
+
+Les poids et les rôles de backup vous permettent d'ajuster la manière dont le trafic est partagé au sein d'une ferme. Ils sont définis par serveur, et non par ferme.
+
+**Poids.** Le poids est une valeur relative qui pondère la quantité de trafic qu'un serveur reçoit par rapport aux autres serveurs de la même ferme. Un serveur de poids `2` reçoit environ deux fois plus de trafic qu'un serveur de poids `1`, lorsque la méthode d'équilibrage tient compte des poids (comme `Round Robin` et `Moins de connexions`).
+
+**Serveur de backup.** Un serveur de backup ne reçoit du trafic que lorsque tous les serveurs non-backup (primaires) de la ferme sont indisponibles. Utilisez des serveurs de backup pour conserver une capacité de réserve en cas de défaillance des serveurs primaires.
+
+| Paramètre | Effet | Usage typique |
+|---|---|---|
+| Poids | Module la part de connexions qu'un serveur reçoit par rapport à ses pairs. | Envoyer plus de trafic vers les backends les plus puissants. |
+| Backup | Le serveur n'est utilisé que lorsque tous les serveurs primaires sont hors service. | Conserver un backend en attente pour le basculement. |
+
+Pour modifier le poids ou le rôle de backup d'un serveur, modifiez le serveur à l'aide du formulaire de l'espace client décrit dans la section [Ajouter des serveurs à une ferme](#add-servers), ou mettez à jour le serveur via l'API :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `farmId` | Oui | Le numéro d'identifiant de la ferme. | `12345` |
+| `serverId` | Oui | Le numéro d'identifiant du serveur. | `67890` |
+| `weight` (body) | Non | Poids relatif du serveur. | `2` |
+| `backup` (body) | Non | Indique si le serveur est un serveur de backup. | `true` |
+
+:::warning
+Marquer tous les serveurs d'une ferme comme backup laisse la ferme sans aucun serveur primaire. Le Load Balancer ne dispose alors d'aucun backend actif vers lequel router le trafic en conditions normales. Conservez toujours au moins un serveur primaire (non-backup).
+:::
+
+Après avoir mis à jour le serveur, [appliquez la configuration](#apply).
+
+### Appliquer la configuration <a name="apply"></a>
+
+Les modifications apportées aux fermes et aux serveurs sont mises en attente jusqu'à ce que vous les appliquiez. L'application déploie la configuration en attente dans la zone afin qu'elle affecte le trafic en production.
+
+<Tabs>
+<Tab label="Espace client">
+
+Après avoir enregistré vos modifications, appliquez la configuration depuis la bannière qui s'affiche dans l'interface du service.
+
+{/* DRAFT: À capturer - la bannière d'application de la configuration affichée après la mise en attente des modifications */}
+
+:::info
+Vous pouvez consulter les modifications en attente d'application avant de les déployer. L'ensemble des modifications en attente est accessible depuis le service.
+:::
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Appliquez la configuration en attente pour une zone :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `zone` (body) | Non | Nom de la zone dans laquelle déployer la configuration. | `gra` |
+
+Pour consulter les modifications en attente avant de les appliquer, utilisez :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Vérification <a name="verification"></a>
+
+Après avoir appliqué la configuration, vérifiez que la ferme et ses serveurs sont configurés comme prévu.
+
+| Vérification | Méthode | Résultat attendu |
+|---|---|---|
+| La ferme existe | Listez les fermes définies via `GET /ipLoadbalancing/{serviceName}/definedFarms`, ou consultez l'onglet `Fermes de serveurs`. | La nouvelle ferme apparaît avec le type et la zone choisis. |
+| Méthode d'équilibrage | `GET /ipLoadbalancing/{serviceName}/http/farm/{farmId}` (remplacez `http` par `tcp` pour une ferme TCP), vérifiez le champ `balance`. | Le champ correspond à la méthode que vous avez sélectionnée. Les fermes UDP n'ont pas de champ `balance`. |
+| Serveurs rattachés | Listez les serveurs de la ferme via `GET /ipLoadbalancing/{serviceName}/{http\|tcp\|udp}/farm/{farmId}/server`, en utilisant le protocole de la ferme. | Chaque backend apparaît avec son adresse et son port (ainsi que le poids et l'indicateur de backup pour les fermes HTTP/TCP). |
+| Santé des backends | Consultez la santé des serveurs. Reportez-vous au guide [Surveiller la santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health). | Les serveurs primaires sont signalés comme actifs. |
+| Aucune modification en attente | `GET /ipLoadbalancing/{serviceName}/pendingChanges`. | Aucune modification en attente ne subsiste après l'application. |
+
+### Limitations <a name="limitations"></a>
+
+Cette section liste les contraintes qui s'appliquent aux fermes et aux méthodes d'équilibrage.
+
+| Limitation | Détails |
+|---|---|
+| Portée de `Hash URI` | La méthode `Hash URI` (`uri`) s'applique uniquement aux fermes HTTP. Elle n'est pas disponible sur les fermes TCP. |
+| Portée de la méthode d'équilibrage | Les méthodes d'équilibrage s'appliquent aux fermes HTTP et TCP. Les fermes UDP n'exposent pas de méthode d'équilibrage. |
+| Capacités UDP | UDP est uniquement de couche 4. Les fermes et frontends UDP ne prennent pas en charge les routes HTTP, la manipulation des en-têtes HTTP, les redirections, la terminaison SSL/TLS ni la persistance par cookie. |
+| Type de ferme et frontend | Une ferme ne peut être rattachée qu'à un frontend du même type de protocole (ferme HTTP vers frontend HTTP, ferme TCP vers frontend TCP, ferme UDP vers frontend UDP). |
+| Quotas par zone | Le nombre de fermes et de serveurs est soumis à des quotas par zone. Consultez-les via `GET /ipLoadbalancing/{serviceName}/quota`. |
+| Nombre maximal de serveurs par ferme | [TODO: confirm maximum number of servers per farm] |
+| Nombre maximal de fermes par service | [TODO: confirm maximum number of farms per service] |
+
+### Résolution des problèmes <a name="troubleshooting"></a>
+
+Cette section couvre les problèmes les plus courants lors de la configuration des fermes.
+
+| Problème | Cause possible | Solution |
+|---|---|---|
+| Les modifications ne prennent pas effet | La configuration a été enregistrée mais non appliquée. | Appliquez la configuration (consultez la section [Appliquer la configuration](#apply)) et vérifiez que `pendingChanges` est vide. |
+| Le trafic n'est pas réparti comme prévu | Les poids des serveurs sont inégaux, ou la méthode ne tient pas compte des poids. | Vérifiez les poids des serveurs et confirmez la méthode d'équilibrage (`Round Robin` et `Moins de connexions` tiennent compte des poids). |
+| Tout le trafic est dirigé vers un seul serveur | Une méthode `Hash Source` mappe une seule IP cliente, ou un seul serveur primaire est disponible. | Confirmez la méthode et vérifiez que tous les serveurs primaires prévus sont actifs et non marqués comme backup. |
+| La ferme n'a aucun backend actif | Tous les serveurs de la ferme sont marqués comme backup. | Conservez au moins un serveur primaire (non-backup), puis réappliquez la configuration. |
+| `Hash URI` indisponible | La ferme est une ferme TCP. | `Hash URI` est réservé au protocole HTTP. Utilisez une autre méthode pour les fermes TCP. |
+
+## Aller plus loin
+
+- [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Configurer la persistance](/guides/network/load-balancer-revamp/configure-stickiness)
+- [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
+
+Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).

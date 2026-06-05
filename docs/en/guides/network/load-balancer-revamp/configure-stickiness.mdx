@@ -1,0 +1,137 @@
+---
+title: Configure session stickiness on Load Balancer
+description: Configure session stickiness on an OVHcloud Load Balancer server farm using cookie or source IP persistence, via the Control Panel or API.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+Session stickiness (also known as session persistence) routes requests from the same client to the same backend server in a farm. This helps applications that store session state locally, such as shopping carts or authenticated sessions.
+
+**This guide explains how to configure session stickiness on an OVHcloud Load Balancer server farm.**
+
+## Requirements
+
+- An active [OVHcloud account](/links/manager)
+- An OVHcloud Load Balancer service with at least one server farm — see [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- Access to the [OVHcloud Control Panel](/links/manager), or access to the [OVHcloud API](/links/api)
+
+## Introduction
+
+The OVHcloud Load Balancer distributes incoming traffic across the backend servers of a farm according to a balancing algorithm. By default, a request can go to any server in the farm. Stickiness overrides this by binding a client to a single server for the duration of its session.
+
+Stickiness is configured per farm, at the application layer. Three modes are available:
+
+| Mode | Label in the Control Panel | Behaviour |
+|---|---|---|
+| None | `None` | No persistence. Each request is balanced independently according to the farm algorithm. |
+| Cookie | `Cookie` | The Load Balancer inserts a session cookie that pins the HTTP session to a single server. Available on HTTP farms only. |
+| Source IP | `Source IP` | A hash of the client source IP address is used to route each client consistently to the same server. Available on HTTP and TCP farms. |
+
+The following events cause traffic to be rebalanced, which may break existing stickiness associations:
+
+- The configured weight of a server changes.
+- A server in the farm is re-enabled.
+- A server in the farm stops responding.
+
+:::warning
+When you apply a new configuration, existing connections are rebalanced and their associated sessions are lost. Apply changes during a maintenance window when possible.
+:::
+
+## Instructions
+
+You can configure stickiness through the OVHcloud Control Panel or the OVHcloud API. In both cases, the change takes effect only after you apply (deploy) the configuration.
+
+<Tabs>
+<Tab label="Control Panel">
+
+### Edit the server farm
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and select your Load Balancer service.
+2. Open the <code className="action">Server Farms</code> tab.
+3. Locate the farm you want to configure, click the <code className="action">...</code> options button to its right, then select <code className="action">Edit</code>.
+
+{/* DRAFT: To screenshot - the Server Farms tab with the options menu open on a farm, showing the Edit entry */}
+
+### Set the stickiness mode
+
+1. In the farm editor, open the <code className="action">Advanced settings</code> section.
+2. In the stickiness field, select `None`, `Cookie`, or `Source IP`.
+
+:::info
+The `Cookie` mode is only available on HTTP farms. For TCP farms, use `Source IP`.
+:::
+
+{/* DRAFT: To screenshot - the Advanced settings section of the farm editor showing the stickiness selector */}
+
+3. Confirm the change to save the farm settings.
+
+### Apply the configuration
+
+The new stickiness setting is staged until you deploy it to the Load Balancer. Apply the configuration in one of these ways:
+
+- From the reminder banner indicating the configuration has not been applied, click <code className="action">Apply configuration</code>.
+- From the service overview, click the <code className="action">...</code> options button of your Load Balancer, then select <code className="action">Apply configuration</code>.
+
+{/* DRAFT: To screenshot - the Apply configuration reminder banner */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+### Retrieve the farm details
+
+Use the following call to view a farm's current properties, including its `stickiness` value. The example uses an HTTP farm; for a TCP farm, replace `http` with `tcp` in the route.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The ID of your Load Balancer service. | `loadbalancer-a1b2c3` |
+| `farmId` | Yes | The ID of the farm to inspect. | `12345` |
+
+The response includes the `stickiness` field, which holds the connection tracking method currently set for the farm.
+
+### Modify the stickiness mode
+
+Update the farm's `stickiness` field with one of the available values: `none`, `cookie`, or `sourceIp`.
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The ID of your Load Balancer service. | `loadbalancer-a1b2c3` |
+| `farmId` | Yes | The ID of the farm to modify. | `12345` |
+| `stickiness` (body) | No | The connection tracking method to apply. | `cookie` |
+
+### Apply the configuration
+
+Deploy the staged changes to make the new stickiness setting active.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The ID of your Load Balancer service. | `loadbalancer-a1b2c3` |
+| `zone` (body) | No | The zone in which to deploy the configuration. | `all` |
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+After changing the farm resource, the configuration must be deployed with a refresh resource. [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+## Go further
+
+- [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Manage your Load Balancer via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel)
+
+Join our [community of users](/links/community).

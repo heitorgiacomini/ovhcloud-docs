@@ -1,0 +1,144 @@
+---
+title: Prérequis et limitations du Load Balancer
+description: Découvrez les prérequis de compte, les protocoles pris en charge et les limites techniques pour planifier un déploiement de Load Balancer OVHcloud.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objectif
+
+Ce guide explique ce dont vous avez besoin avant de déployer un Load Balancer OVHcloud, ainsi que les limites techniques qui en conditionnent la configuration. Il s'adresse aux architectes et aux administrateurs qui souhaitent confirmer que le service répond à leurs besoins avant de le commander. Lisez-le en complément du guide [Présentation du Load Balancer OVHcloud](/guides/network/load-balancer-revamp/what-is-load-balancer) pour une vue d'ensemble complète du produit.
+
+**Ce guide présente les prérequis, les protocoles pris en charge et les limites techniques du Load Balancer OVHcloud.**
+
+## Prérequis liés au compte et au service
+
+Avant de pouvoir configurer la répartition du trafic, les éléments suivants doivent être réunis. Il s'agit de conditions nécessaires au fonctionnement du service, et non de recommandations facultatives.
+
+- Un [compte OVHcloud](/links/manager) actif.
+- L'accès à l'[espace client OVHcloud](/links/manager) avec les droits suffisants pour gérer le service.
+- Un service Load Balancer OVHcloud commandé et actif sur votre compte. Consultez le guide [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer).
+- Au moins une ressource backend sur laquelle répartir le trafic — par exemple un serveur dédié, un Virtual Private Server (VPS) ou une instance Public Cloud.
+- Une accessibilité réseau entre le Load Balancer et vos backends, soit via le réseau public (avec une IP additionnelle), soit via un réseau privé (vRack).
+
+> [!INFO]
+> Le Load Balancer répartit le trafic mais n'héberge pas vos applications. Vous restez responsable du provisionnement, de la sécurisation et de la maintenance des serveurs backend vers lesquels il achemine le trafic. OVHcloud met à votre disposition des services dont vous êtes responsable de la configuration et de la gestion.
+
+## Protocoles pris en charge
+
+Le Load Balancer achemine plusieurs types de trafic, chacun étant traité par un moteur open source dédié. Le protocole que vous sélectionnez sur un frontend détermine quelles fonctionnalités sont disponibles et vers quel type de ferme le frontend peut router.
+
+| Protocole | Couche | À utiliser pour | Moteur |
+|---|---|---|---|
+| HTTP / HTTPS | L7 (application) | Services web et API nécessitant du routage, de la manipulation d'en-têtes et des listes de contrôle d'accès | HAProxy |
+| TCP | L4 (transport) | Tout service non HTTP transporté via TCP | HAProxy |
+| SSL / TLS (TCP) | L4 (transport) | Services TCP avec terminaison TLS au niveau du Load Balancer | HAProxy |
+| UDP | L4 (transport) | Services transportés via UDP | Nginx |
+
+Deux conséquences découlent de cette répartition et contraignent votre architecture :
+
+- Les fonctionnalités de couche 7 (routes HTTP, réécriture d'en-têtes, redirections HTTP, ACL) sont disponibles **uniquement sur les frontends et les fermes HTTP/HTTPS**. Le trafic TCP et UDP est acheminé sans traitement de couche applicative.
+- Un frontend ne peut router que vers une ferme de type correspondant. Un frontend HTTP route vers une ferme HTTP ; un frontend TCP route vers une ferme TCP. Vous ne pouvez pas mélanger les types de ferme et de frontend sur une même route.
+
+Pour la configuration propre à chaque protocole, consultez les guides [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends) et [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms).
+
+## Composants principaux et leurs relations
+
+Une configuration de Load Balancer repose sur trois types d'objets. Comprendre comment ils s'articulent permet de situer les limites techniques décrites ci-dessous.
+
+```mermaid
+flowchart LR
+    Client([Trafic client]) --> FE[Frontend\nprotocole + port d'écoute]
+    FE --> FARM[Ferme de serveurs\néquilibrage + sonde de santé]
+    FARM --> S1[Serveur 1]
+    FARM --> S2[Serveur 2]
+    FARM --> S3[Serveur n]
+```
+
+| Composant | Rôle | Onglet du Manager |
+|---|---|---|
+| Frontend | Définit le protocole d'entrée et le port d'écoute qui reçoit le trafic client. | `Frontends` |
+| Ferme de serveurs | Reçoit le trafic d'un frontend et le répartit entre ses serveurs à l'aide d'un algorithme d'équilibrage et d'une sonde de santé. | `Fermes de serveurs` |
+| Serveur | Un backend unique qui traite les requêtes, identifié par son adresse IP et son port. | `Fermes de serveurs` |
+
+Pour les définitions complètes de chaque objet et de chaque paramètre, reportez-vous au [Glossaire](/guides/network/load-balancer-revamp/glossary).
+
+## Limites techniques
+
+Le Load Balancer applique des quotas sur le nombre d'objets que vous pouvez créer. Les quotas sont comptabilisés par zone de disponibilité et par type d'objet, et ils varient selon le plan commercial associé à votre service.
+
+> [!INFO]
+> Les quotas numériques exacts (nombre maximal de fermes, de frontends, de serveurs par ferme, de routes et de certificats SSL) dépendent du plan que vous avez commandé et ne sont pas reproduits ici, car ils évoluent avec l'offre. Consultez toujours le quota en temps réel de votre service plutôt que de vous fier à une valeur figée.
+>
+> - Dans l'espace client, ouvrez l'onglet `Quota` de votre service.
+> - Via l'API, listez le quota actuel à l'aide de l'appel ci-dessous.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant unique de votre service Load Balancer. | `loadbalancer-abcd1234` |
+
+Pour inspecter le quota d'une seule zone de disponibilité, utilisez l'endpoint à portée de zone :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+Le tableau ci-dessous répertorie les types d'objets soumis à quota. Les valeurs dépendent du plan et doivent être confirmées auprès de votre service.
+
+| Objet | Portée | Maximum |
+|---|---|---|
+| Fermes de serveurs | Par zone, par type de ferme | [TODO: confirm maximum farms per plan] |
+| Frontends | Par zone, par type de frontend | [TODO: confirm maximum frontends per plan] |
+| Serveurs par ferme | Par ferme | [TODO: confirm maximum servers per farm] |
+| Routes HTTP | Par service | [TODO: confirm maximum HTTP routes] |
+| Certificats SSL | Par service | [TODO: confirm maximum SSL certificates] |
+
+> [!TIP]
+> Les quotas sont contrôlés au moment où la configuration est appliquée. Une modification qui dépasserait un quota est rejetée lors de son déploiement, et non lors de sa rédaction.
+
+## Contraintes connues
+
+Au-delà des quotas numériques, plusieurs contraintes de conception s'appliquent à chaque Load Balancer, quel que soit le plan. Tenez-en compte lors de la planification pour éviter d'avoir à retravailler votre configuration par la suite.
+
+### La configuration est appliquée, pas immédiatement active
+
+Les modifications que vous effectuez dans l'espace client ou via l'API sont mises en attente sous forme de changements en attente et ne prennent effet que lorsque vous les appliquez. Jusque-là, la configuration en cours d'exécution reste inchangée.
+
+- Dans l'espace client, déployez vos changements en attente depuis la zone `Tâches` de votre service.
+- Via l'API, listez les changements en attente, puis appliquez-les.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+### Portée des protocoles et des fonctionnalités
+
+- Le routage de couche 7, la manipulation des en-têtes HTTP et les redirections HTTP ne sont pas disponibles pour le trafic TCP ou UDP.
+- Une route ne peut rattacher un frontend qu'à une ferme du même type.
+- La restriction d'accès par IP sur un frontend s'applique uniquement à l'IPv4.
+
+### Réseau
+
+- Les backends doivent être accessibles depuis le Load Balancer. Les backends publics nécessitent une IP additionnelle ; les backends privés nécessitent une connectivité [vRack](/guides/network/load-balancer-revamp/configure-vrack).
+- Les objets sont créés au sein d'une zone de disponibilité, et les quotas sont comptabilisés par zone. Consultez le guide [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones).
+
+### Sondes de santé
+
+Une ferme dépourvue de sonde de santé configurée ne peut pas détecter les backends qui ne répondent pas ; le trafic risque donc d'être envoyé vers un serveur hors service. Configurez une sonde sur chaque ferme de production. Consultez le guide [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes).
+
+### Automatisation
+
+Le service peut être géré via l'[API OVHcloud](/links/api) et le provider Terraform d'OVHcloud. Lorsque vous automatisez la création d'objets, vos scripts sont soumis aux mêmes quotas par zone que l'espace client.
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+Pour une vue d'ensemble du périmètre d'automatisation, consultez le guide [Automatisation](/guides/network/load-balancer-revamp/automation).
+
+## Aller plus loin
+
+- [Présentation du Load Balancer OVHcloud](/guides/network/load-balancer-revamp/what-is-load-balancer)
+- [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

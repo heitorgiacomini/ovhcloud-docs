@@ -1,0 +1,144 @@
+---
+title: Load Balancer prerequisites and limitations
+description: Understand the account requirements, supported protocols, and technical limits to plan an OVHcloud Load Balancer deployment before you order.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objective
+
+This guide explains what you need before deploying an OVHcloud Load Balancer and the technical boundaries that shape its configuration. It is intended for architects and administrators who want to confirm that the service fits their requirements before ordering. Read it alongside [What is OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer) for a full product overview.
+
+**This guide covers the prerequisites, supported protocols, and technical limits of OVHcloud Load Balancer.**
+
+## Account and service prerequisites
+
+Before you can configure traffic distribution, the following must be in place. These are requirements for the service to function, not optional recommendations.
+
+- An active [OVHcloud account](/links/manager).
+- Access to the [OVHcloud Control Panel](/links/manager) with sufficient rights to manage the service.
+- An OVHcloud Load Balancer service ordered and active in your account. See [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer).
+- At least one backend resource to balance traffic across — for example a Dedicated Server, a Virtual Private Server (VPS), or a Public Cloud instance.
+- Reachability between the Load Balancer and your backends, either over the public network (with an Additional IP) or over a private network (vRack).
+
+> [!INFO]
+> The Load Balancer distributes traffic but does not host your applications. You remain responsible for provisioning, securing, and maintaining the backend servers it forwards traffic to. OVHcloud provides you with services for which you are responsible for the configuration and management.
+
+## Supported protocols
+
+The Load Balancer routes several traffic types, each handled by a dedicated open-source engine. The protocol you select on a frontend determines which features are available and which farm type the frontend can route to.
+
+| Protocol | Layer | Use for | Engine |
+|---|---|---|---|
+| HTTP / HTTPS | L7 (application) | Web services and APIs requiring routing, header manipulation, and access control lists | HAProxy |
+| TCP | L4 (transport) | Any non-HTTP service carried over TCP | HAProxy |
+| SSL / TLS (TCP) | L4 (transport) | TCP services with TLS termination at the Load Balancer | HAProxy |
+| UDP | L4 (transport) | Services carried over UDP | Nginx |
+
+Two points follow from this split and constrain your design:
+
+- Layer 7 features (HTTP routes, header rewriting, HTTP redirections, ACLs) are available **only on HTTP/HTTPS frontends and farms**. TCP and UDP traffic is forwarded without application-layer processing.
+- A frontend can only route to a farm of a matching type. An HTTP frontend routes to an HTTP farm; a TCP frontend routes to a TCP farm. You cannot mix farm and frontend types on a single route.
+
+For protocol-specific configuration, see [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends) and [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms).
+
+## Core components and their relationships
+
+A Load Balancer configuration is built from three object types. Understanding how they relate shows where the technical limits below apply.
+
+```mermaid
+flowchart LR
+    Client([Client traffic]) --> FE[Frontend\nprotocol + listening port]
+    FE --> FARM[Server farm\nbalancing + health probe]
+    FARM --> S1[Server 1]
+    FARM --> S2[Server 2]
+    FARM --> S3[Server n]
+```
+
+| Component | Role | Manager tab |
+|---|---|---|
+| Frontend | Defines the entry protocol and the listening port that receives client traffic. | `Frontends` |
+| Server farm | Receives traffic from a frontend and distributes it across its servers using a balancing algorithm and a health probe. | `Server Farms` |
+| Server | A single backend that handles requests, identified by its IP address and port. | `Server Farms` |
+
+For full definitions of every object and setting, refer to the [Glossary](/guides/network/load-balancer-revamp/glossary).
+
+## Technical limits
+
+The Load Balancer applies quotas to the number of objects you can create. Quotas are tracked per availability zone and per object type, and they vary with the commercial plan attached to your service.
+
+> [!INFO]
+> The exact numeric quotas (maximum farms, frontends, servers per farm, routes, and SSL certificates) depend on the plan you ordered and are not reproduced here because they change with the offer. Always read the live quota for your service rather than relying on a fixed figure.
+>
+> - In the Control Panel, open the `Quota` tab of your service.
+> - Through the API, list the current quota with the call below.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The unique identifier of your Load Balancer service. | `loadbalancer-abcd1234` |
+
+To inspect the quota for a single availability zone, use the zone-scoped endpoint:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+The table below lists the quota-bound object types. The values are plan-dependent and must be confirmed against your service.
+
+| Object | Scope | Maximum |
+|---|---|---|
+| Server farms | Per zone, per farm type | [TODO: confirm maximum farms per plan] |
+| Frontends | Per zone, per frontend type | [TODO: confirm maximum frontends per plan] |
+| Servers per farm | Per farm | [TODO: confirm maximum servers per farm] |
+| HTTP routes | Per service | [TODO: confirm maximum HTTP routes] |
+| SSL certificates | Per service | [TODO: confirm maximum SSL certificates] |
+
+> [!TIP]
+> Quotas are enforced at the moment configuration is applied. A change that would exceed a quota is rejected when you deploy it, not when you draft it.
+
+## Known constraints
+
+Beyond numeric quotas, several design constraints apply to every Load Balancer regardless of plan. Account for them during planning to avoid reworking your configuration later.
+
+### Configuration is applied, not live
+
+Changes you make in the Control Panel or through the API are staged as pending changes and take effect only when you apply them. Until then, the running configuration is unchanged.
+
+- In the Control Panel, deploy your staged changes from the `Tasks` area of your service.
+- Through the API, list pending changes and then apply them.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+### Protocol and feature scope
+
+- Layer 7 routing, HTTP header manipulation, and HTTP redirections are not available for TCP or UDP traffic.
+- A route can only attach a frontend to a farm of the same type.
+- IP access restriction on a frontend applies to IPv4 only.
+
+### Networking
+
+- Backends must be reachable from the Load Balancer. Public backends require an Additional IP; private backends require [vRack](/guides/network/load-balancer-revamp/configure-vrack) connectivity.
+- Objects are created within an availability zone, and quotas are counted per zone. See [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones).
+
+### Health probes
+
+A farm without a configured health probe cannot detect unresponsive backends, so traffic may be sent to a server that is down. Configure a probe on every production farm. See [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes).
+
+### Automation
+
+The service can be managed through the [OVHcloud API](/links/api) and the OVHcloud Terraform provider. When automating object creation, your scripts are subject to the same per-zone quotas as the Control Panel.
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+For an overview of the automation surface, see [Automation](/guides/network/load-balancer-revamp/automation).
+
+## Go further
+
+- [What is OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer)
+- [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones)
+
+Join our [community of users](/links/community).

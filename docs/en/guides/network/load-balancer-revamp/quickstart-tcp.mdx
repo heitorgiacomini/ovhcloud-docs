@@ -1,0 +1,344 @@
+---
+title: "Quick start: deploy a TCP Load Balancer"
+description: "Deploy a working TCP Load Balancer end to end: create a farm, attach servers, add a probe and frontend, then apply and verify."
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+This guide walks you through deploying a working TCP Load Balancer from scratch. You will create a TCP server farm, attach your backend servers, add a TCP health probe, expose the service through a TCP frontend, apply the configuration, and verify that traffic reaches your backends. The example targets a typical TCP service such as SMTP (port 25) or a database, but the same flow applies to any TCP-based protocol.
+
+**In this guide, you will learn how to:**
+
+- Create a TCP server farm and attach backend servers.
+- Add a TCP health probe so that traffic only reaches healthy backends.
+- Create a TCP frontend that exposes the service to the internet.
+- Apply the configuration to each zone and verify the result.
+
+**This guide explains how to deploy a TCP Load Balancer end to end and verify that it routes traffic to your backends.**
+
+:::warning
+The order in which you create components matters. The server farm must exist before you can attach servers to it, and the farm must exist before you can set it as the default farm of a frontend.
+:::
+
+## Requirements
+
+- An active <ManagerLink to="/">OVHcloud account</ManagerLink>.
+- Access to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+- An OVHcloud Load Balancer service already ordered. If you have not ordered one yet, refer to the [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer) guide.
+- At least one backend server reachable from your Load Balancer service, listening on the TCP port you intend to balance (for example, port 25 for SMTP).
+- For the API channel: OVHcloud API credentials. Refer to the [First steps with the OVHcloud API](/guides/manage-and-operate/api/first-steps) guide.
+
+## Introduction
+
+The OVHcloud Load Balancer distributes incoming network traffic across multiple backend servers. Each protocol family (HTTP, TCP and UDP) has its own independent set of frontends, farms and servers. A TCP Load Balancer operates at layer 4 and forwards raw TCP connections without inspecting the application payload, which makes it suitable for protocols such as SMTP, database connections, or any non-HTTP service.
+
+In a TCP setup, three components work together:
+
+- A **server farm** groups your backend servers and applies a balancing algorithm.
+- A **health probe** checks that each backend is responsive before traffic reaches it.
+- A **frontend** listens on a public port and forwards connections to the default farm.
+
+## Instructions
+
+**Contents:**
+
+- [Overview](#overview)
+- [Step 1 — Create a TCP server farm](#step-1)
+- [Step 2 — Attach your backend servers](#step-2)
+- [Step 3 — Add a TCP health probe](#step-3)
+- [Step 4 — Create a TCP frontend](#step-4)
+- [Step 5 — Apply the configuration](#step-5)
+- [Step 6 — Verify the deployment](#step-6)
+- [Limitations](#limitations)
+- [Troubleshooting](#troubleshooting)
+
+### Overview <a name="overview"></a>
+
+The diagram below shows how a TCP connection flows from a client through the Load Balancer to a backend server. The frontend accepts the connection on a public port and hands it to the default farm, which selects a healthy backend using the balancing algorithm.
+
+```mermaid
+flowchart LR
+    Client([Client]) -->|TCP connection| FE[TCP frontend\npublic port]
+    FE --> Farm[TCP server farm\nbalancing algorithm]
+    Probe[Health probe] -. checks .-> S1
+    Probe -. checks .-> S2
+    Farm --> S1[Backend server 1]
+    Farm --> S2[Backend server 2]
+```
+
+The following table lists the key parameters you will set in this guide.
+
+| Parameter | Component | Description | Example |
+|---|---|---|---|
+| Port | Farm and frontend | TCP port the component listens on or forwards to. | `25` (SMTP) |
+| Zone | Farm and frontend | The zone the component is deployed in. Each component belongs to a zone. | `gra` |
+| Balancing algorithm | Farm | Method used to distribute connections across servers. | `Round Robin` |
+| IPv4 address | Server | The address of the backend server. | `203.0.113.10` |
+| Default farm | Frontend | The farm that receives traffic from the frontend. | The farm created in Step 1 |
+
+:::tip
+If you have several zones, repeat the apply step for each zone. A component is only active once the configuration has been applied to its zone.
+:::
+
+### Step 1 — Create a TCP server farm <a name="step-1"></a>
+
+The server farm balances traffic across your backend servers. Create it first, before attaching any servers.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service under **Network** > **Load Balancer**.
+2. Select the `Server Farms` tab.
+3. Click `Create farm`.
+4. In the `Create Server Farm` form, select **TCP** as the protocol.
+5. Fill in the fields. For a basic configuration, the mandatory fields are the port and the zone. For SMTP, use port `25`. If you leave the port empty, the Load Balancer uses the same port as the attached frontend.
+6. Optionally, select a balancing algorithm such as `Round Robin`.
+7. Click `Create farm` to confirm.
+
+{/* DRAFT: To screenshot — capture the Create Server Farm form with TCP protocol selected */}
+
+The new farm appears in the `Server Farms` tab.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Create a TCP server farm with the following call:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service identifier. | `loadbalancer-xxxxx` |
+| `zone` (body) | Yes | Zone the farm is deployed in. | `gra` |
+| `port` (body) | No | Default backend port. Falls back to the frontend port if omitted. | `25` |
+| `balance` (body) | No | Balancing algorithm. | `roundrobin` |
+
+To list existing TCP farms:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+Note the farm identifier returned by the API (`farmId`); you will need it in the next steps.
+
+### Step 2 — Attach your backend servers <a name="step-2"></a>
+
+Add one or more backend servers to the farm you created. Each server is identified by its IPv4 address and receives the TCP connections forwarded by the frontend.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. In the `Server Farms` tab, click the farm you created to expand it.
+2. Click `Add server`.
+3. Fill in the fields. The mandatory fields are the IPv4 address and the status. Set the status so the server is active and eligible to receive traffic.
+4. If your backend needs to know the original client IP address, enable the PROXY protocol. For more information, refer to the [Configure the PROXY protocol](/guides/network/load-balancer-revamp/configure-proxy-protocol) guide.
+5. Click `Add server` to confirm.
+
+{/* DRAFT: To screenshot — capture the Add server form */}
+
+The server appears in the farm's server list.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Add a server to the farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service identifier. | `loadbalancer-xxxxx` |
+| `farmId` | Yes | Identifier of the farm created in Step 1. | `12345` |
+| `address` (body) | Yes | IPv4 address of the backend server. | `203.0.113.10` |
+| `status` (body) | Yes | Server status (for example, active). | `active` |
+| `port` (body) | No | Overrides the farm port for this server. | `25` |
+| `proxyProtocolVersion` (body) | No | PROXY protocol version, to preserve the client source IP. | `v1` |
+
+To list the servers in a farm:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+Repeat this step for each backend server you want to add to the farm.
+
+### Step 3 — Add a TCP health probe <a name="step-3"></a>
+
+A health probe lets the Load Balancer detect unresponsive backends and stop sending them traffic. Without a probe, the Load Balancer may forward connections to a server that is down. You configure the probe on the farm.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. In the `Server Farms` tab, open the farm you created.
+2. Edit the farm and configure the probe section. For a TCP service such as SMTP, a TCP probe on the backend port is sufficient.
+3. Save the farm.
+
+{/* DRAFT: To screenshot — capture the probe configuration on the farm editor */}
+
+</Tab>
+<Tab label="OVHcloud API">
+
+The probe is part of the farm configuration. Update the farm to set the probe:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service identifier. | `loadbalancer-xxxxx` |
+| `farmId` | Yes | Identifier of the farm. | `12345` |
+| `probe` (body) | No | Probe definition, including type and port. | `{ "type": "tcp", "port": 25 }` |
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+For more detail on probe types and tuning, refer to the [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes) guide.
+
+### Step 4 — Create a TCP frontend <a name="step-4"></a>
+
+The frontend exposes your service to the internet. It listens on a public port and forwards connections to the default farm.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Select the `Frontends` tab.
+2. Click `Create frontend`.
+3. In the `Create Frontend` form, select **TCP** as the protocol.
+4. Fill in the fields. For a basic configuration, the mandatory fields are the port (`25` for a standard SMTP service), the zone, and the default farm. To expose several ports at once, enter a comma-separated list of ports or a range in the format `<start_port>-<end_port>`.
+5. Set the default farm to the farm you created in Step 1.
+6. If you have routed Additional IPs to your service, you can attach the frontend to one or more specific Additional IPs.
+7. Click `Create frontend` to confirm.
+
+{/* DRAFT: To screenshot — capture the Create Frontend form with the default farm selected */}
+
+The frontend appears in the `Frontends` tab.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Create a TCP frontend:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service identifier. | `loadbalancer-xxxxx` |
+| `zone` (body) | Yes | Zone the frontend is deployed in. | `gra` |
+| `port` (body) | Yes | Public port(s) the frontend listens on. | `25` |
+| `defaultFarmId` (body) | No | Identifier of the farm that receives traffic. | `12345` |
+
+To list existing TCP frontends:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Step 5 — Apply the configuration <a name="step-5"></a>
+
+Changes to your Load Balancer are not active until you apply them in each configured zone. This lets you prepare a complete configuration and activate it only when ready. If your service spans several zones, apply the configuration to each one.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Return to your Load Balancer service overview.
+2. Apply the pending configuration for each zone that contains the components you created.
+
+{/* DRAFT: To screenshot — capture the apply/refresh action on the service overview */}
+
+:::info
+The configuration becomes visible to your users only after it has been applied.
+:::
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Apply (refresh) the pending configuration:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | Your Load Balancer service identifier. | `loadbalancer-xxxxx` |
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Step 6 — Verify the deployment <a name="step-6"></a>
+
+After applying, confirm that the Load Balancer accepts connections and forwards them to a healthy backend. The checks below use SMTP on port 25 as the example; adapt the port and client tool to your protocol.
+
+| Check | How | Expected result |
+|---|---|---|
+| Frontend accepts connections | From a client, open a TCP connection to the Load Balancer IP on the service port (for example, `telnet <lb_ip> 25`). | The connection is accepted and, for SMTP, the backend banner is returned. |
+| Backend is healthy | Review the probe status of the farm in the `Server Farms` tab. | Each attached server reports as healthy. |
+| Traffic reaches backends | Inspect connection logs on your backend servers. | Incoming connections from the Load Balancer are visible. |
+| Source IP preserved (if PROXY protocol enabled) | Check that the backend records the real client IP. | The original client IP appears in the backend logs. |
+
+For an SMTP backend running Postfix, enable PROXY protocol support so the real client IP is preserved. Add the following line to `main.cf` and restart the Postfix daemon:
+
+```bash
+smtp_upstream_proxy_protocol = haproxy
+```
+
+### Limitations <a name="limitations"></a>
+
+This section lists constraints to keep in mind for a TCP deployment.
+
+| Limitation | Details |
+|---|---|
+| Layer 4 only | A TCP frontend forwards raw connections and does not inspect or route on application content. For content-based routing, use HTTP frontends. |
+| Per-zone activation | A component is active only after the configuration has been applied to its zone. |
+| Component order | A server cannot be attached before its farm exists; a frontend cannot reference a farm that does not yet exist. |
+| Service capacity | The number of farms, servers, and frontends depends on your service plan. [TODO: confirm farm/server/frontend limits per plan] |
+
+### Troubleshooting <a name="troubleshooting"></a>
+
+The table below covers the most common problems when deploying a TCP Load Balancer.
+
+| Issue | Possible cause | Solution |
+|---|---|---|
+| Connection to the frontend is refused | The configuration has not been applied to the frontend's zone. | Apply the configuration in each zone (Step 5). |
+| Connections are accepted but never reach a backend | No healthy server in the farm, or the probe is failing. | Verify the probe configuration and that at least one server is active and healthy (Step 3). |
+| Backend sees the Load Balancer IP instead of the client IP | PROXY protocol is not enabled, or the backend does not support it. | Enable PROXY protocol on the server and configure the backend to accept it. Refer to the [Configure the PROXY protocol](/guides/network/load-balancer-revamp/configure-proxy-protocol) guide. |
+| Frontend cannot be created with a default farm | The farm was not created or is in a different zone. | Create the farm first (Step 1) and ensure the frontend and default farm are consistent. |
+
+If the issue persists after these checks, gather the relevant connection logs and probe status, then refer to the [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting) guide or contact [OVHcloud support](https://help.ovhcloud.com/).
+
+## Go further
+
+- [Quick start: deploy an HTTP/HTTPS Load Balancer](/guides/network/load-balancer-revamp/quickstart-http-https)
+- [Configure SMTP on a Load Balancer](/guides/network/load-balancer-revamp/configure-smtp)
+- [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes)
+
+Join our [community of users](/links/community).

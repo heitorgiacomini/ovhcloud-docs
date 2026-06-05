@@ -1,0 +1,151 @@
+---
+title: Load Balancer - Availability and zones
+description: Learn how availability zones, regions, and multi-zone deployment shape routing, resilience, and quota for the OVHcloud Load Balancer.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+
+## Objective
+
+This guide explains how availability zones and regions work for the OVHcloud Load Balancer. It describes the difference between multi-region and multi-AZ deployments, how zones affect traffic routing, and how quota is tracked per zone. It targets architects and operators who want to understand the availability model before designing or scaling a deployment.
+
+For the step-by-step procedure to add a zone and bind it to a frontend, see [Configure zones](/guides/network/load-balancer-revamp/configure-zones).
+
+**This guide explains the OVHcloud Load Balancer availability model: zones, regions, multi-zone deployments, routing, and per-zone quota.**
+
+## Overview
+
+The OVHcloud Load Balancer distributes incoming traffic across backend servers. A single service can be deployed in one or more **availability zones**, each tied to a geographic location. The zone in which a frontend is configured determines where its traffic is served from and which backend cluster it can reach.
+
+Deploying across several zones serves two goals:
+
+- **Resilience.** If one zone becomes unavailable, the remaining zones continue to serve traffic.
+- **Latency.** Traffic from a given geographic area is routed to the nearest zone, reducing round-trip time for end users.
+
+When you order an OVHcloud Load Balancer, you choose one or more zones. You can also order additional zones for an existing service later. For the broader resilience picture, see [High availability](/guides/network/load-balancer-revamp/high-availability).
+
+```mermaid
+flowchart TD
+    U[Client request] --> A[Anycast entry point]
+    A -->|Routed to nearest zone| Z1[Zone GRA]
+    A -->|Routed to nearest zone| Z2[Zone BHS]
+    Z1 --> F1[Frontend GRA] --> C1[Cluster GRA backends]
+    Z2 --> F2[Frontend BHS] --> C2[Cluster BHS backends]
+```
+
+## Key concepts
+
+This section defines the terms used throughout the availability model and how they relate to one another.
+
+### Zone
+
+A zone is the unit in which a Load Balancer service is deployed. Each zone is anchored to a geographic location (for example `GRA` for Gravelines or `BHS` for Beauharnois). A frontend is always attached to a single zone and can only route to a cluster in that same zone. You order and scale the number of zones attached to a service over time.
+
+### Region versus availability zone
+
+A **region** is a geographic area that contains one or more availability zones. Most regions historically expose a single zone, so working with several zones usually means working with several regions. Multi-AZ regions differ: they expose several independent zones within the same region, connected by low-latency links.
+
+| Term | Scope | Typical use |
+|---|---|---|
+| Region | Geographic area | Selecting the location closest to your backends and users |
+| Availability zone (AZ) | Isolated location within a region | Fault isolation and traffic distribution |
+| Multi-AZ region | Region exposing several AZs | High availability within one geographic area |
+
+### Anycast routing
+
+The OVHcloud Load Balancer uses an Anycast network. A request entering the network is directed to the geographically nearest zone that serves the corresponding configuration. This lets a single service present a worldwide entry point while keeping each request close to its origin. Routing therefore depends on where the client is and which zones host an active frontend.
+
+### The `ALL` zone
+
+When configuring a frontend, you can target a single named zone or the special `ALL` zone. Selecting `ALL` deploys the same frontend configuration across every zone subscribed to the service, so you do not have to duplicate it per zone. Use named zones when you need different backends per location, and `ALL` when the configuration is identical everywhere.
+
+## Deployment models
+
+The Load Balancer supports two deployment models that differ in where the zones sit. Both rely on Anycast routing, but they address different availability and latency goals.
+
+### Multi-region
+
+In a multi-region deployment, zones are spread across separate geographic regions. This model provides disaster recovery against a widespread regional outage and creates worldwide entry points that route each user to the nearest region.
+
+To benefit from this model, define a frontend in each zone that points to a cluster in the same zone. You can then declare different backend servers per zone and control which backends serve which region.
+
+{/* DRAFT: To screenshot - conceptual diagram of a Load Balancer spanning two regions (GRA and BHS), each with its own frontend and cluster */}
+
+For example, with backends in Gravelines (GRA) and Beauharnois (BHS), you can order a service in the `GRA` and `BHS` zones and configure:
+
+- A frontend in the `GRA` zone with a default cluster in `GRA` containing the Gravelines servers.
+- A frontend in the `BHS` zone with a default cluster in `BHS` containing the Beauharnois servers.
+
+### Multi-AZ region
+
+In a multi-AZ deployment, the zones belong to the same region. OVHcloud is rolling out multi-AZ regions, starting with Paris 3-AZ (April 2024) and Milan 3-AZ (November 2025). This model provides high availability, fault tolerance against a local outage, and consistent performance within one geographic area, using low-latency inter-AZ links and Anycast distribution.
+
+{/* DRAFT: To screenshot - conceptual diagram of a Load Balancer spanning the zones of a single multi-AZ region */}
+
+| Model | Zones located in | Primary benefit | Trade-off |
+|---|---|---|---|
+| Multi-region | Different regions | Disaster recovery and global latency reduction | Backends differ per region; configuration is per zone |
+| Multi-AZ | One region | High availability within a region | Limited to regions that expose several AZs |
+
+## How zones affect routing
+
+Routing behaviour depends on which zones host active frontends and on the client location. The points below describe how the Anycast network selects a zone.
+
+- A request is served by the nearest zone that hosts an active frontend for the requested configuration.
+- If a zone becomes unavailable, traffic is redirected to the remaining healthy zones.
+- A frontend bound to a named zone only routes to a cluster in that same zone; a frontend bound to `ALL` is present in every subscribed zone.
+
+:::info
+Due to a technical restriction, when a Load Balancer is configured with two zones where one is in an APAC region and the other is not, traffic is preferentially routed through the non-APAC zone first, even when the service is out of order in that zone. This behaviour is specific to cross-continent setups involving APAC zones, and configuring the Load Balancer in this manner is not recommended.
+:::
+
+You can review the [list of OVHcloud regions](https://www.ovhcloud.com/en-gb/about-us/global-infrastructure/regions/).
+
+## Quota per zone
+
+Quota for a Load Balancer service is tracked per zone. Each zone has its own limits for the resources defined within it, so adding a zone extends capacity rather than sharing a single pooled limit. The `Quota` tab in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> displays this information per zone.
+
+You can also read and modify zone quota through the OVHcloud API.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | The identifier of your Load Balancer service. |
+
+To inspect or change the quota of a single zone:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | The identifier of your Load Balancer service. |
+| `zone` | Yes | The zone whose quota is read or modified (for example `GRA`). |
+
+:::info
+The `GET /ipLoadbalancing/availableZones` endpoint is deprecated. Determine orderable zones through the ordering flow instead. See [Configure zones](/guides/network/load-balancer-revamp/configure-zones) for the ordering procedure.
+:::
+
+You can also manage zones and quota programmatically with the OVHcloud Terraform provider: [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]. See [Automation](/guides/network/load-balancer-revamp/automation) for an overview of the available methods.
+
+## Considerations and limitations
+
+Keep the following points in mind when planning a multi-zone deployment.
+
+- Most regions expose a single zone, so spanning several zones generally means spanning several regions.
+- Multi-AZ regions are available only where OVHcloud has rolled them out (Paris and Milan at the time of writing). [TODO: confirm the current list of multi-AZ regions and their launch dates]
+- Cross-continent setups mixing an APAC zone with a non-APAC zone are subject to the routing restriction described above and are not recommended.
+- Quota is enforced per zone; review the per-zone limits before scaling. [TODO: confirm exact per-zone resource limits]
+- A frontend bound to a named zone cannot route to a cluster in a different zone.
+
+## Go further
+
+- [Configure zones](/guides/network/load-balancer-revamp/configure-zones)
+- [High availability](/guides/network/load-balancer-revamp/high-availability)
+- [Resilient multi-zone architecture](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone)
+
+Join our [community of users](/links/community).

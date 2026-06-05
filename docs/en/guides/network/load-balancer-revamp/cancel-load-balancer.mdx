@@ -1,0 +1,108 @@
+---
+title: Cancel your Load Balancer
+description: Cancel an OVHcloud Load Balancer from the Control Panel or with the OVHcloud API, and understand the impact on traffic and configuration.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+Cancelling stops the renewal of the service and schedules its termination.
+
+**This guide explains how to cancel an OVHcloud Load Balancer from the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> or with the OVHcloud API.**
+
+:::danger
+Cancelling a Load Balancer is irreversible once the termination is confirmed. When the service is terminated, its IP address, frontends, server farms, health probes, routes, and SSL certificates are permanently deleted. Any traffic still pointing at the Load Balancer IP address will stop being distributed to your backend servers. Make sure you have redirected production traffic elsewhere before you proceed.
+:::
+
+## Requirements
+
+- An active <ManagerLink to="/">OVHcloud account</ManagerLink>
+- Access to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>
+- An existing OVHcloud Load Balancer service in your account
+- The administrative rights required to cancel a service
+
+## Introduction
+
+When you cancel a Load Balancer, you choose when the service stops: at the next renewal date (the service keeps running until the end of the current billing term) or immediately. In both cases the configuration is removed when the service is terminated, so plan your traffic migration in advance.
+
+Before cancelling, confirm that no DNS records, applications, or upstream services still rely on the Load Balancer IP address. For background on how the service is structured, see the [What is OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer) guide.
+
+## Instructions
+
+You can cancel your Load Balancer through the Control Panel or with the OVHcloud API. Choose the channel that matches your workflow.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Navigate to **Network** > **Load Balancer** and select the service you want to cancel.
+3. Open the service actions menu using the `...` button.
+
+{/* DRAFT: To screenshot — capture the Load Balancer dashboard with the `...` actions menu open */}
+
+4. Select the cancellation action for the service.
+
+{/* DRAFT: To verify — confirm the exact label of the cancellation entry in the New Manager actions menu (not present in the SOT cache) */}
+
+5. Choose when the cancellation takes effect:
+   - At the next renewal date — the Load Balancer keeps running until the end of the current term.
+   - Immediately — the service is terminated as soon as the request is processed.
+6. Read the cancellation summary, then confirm to schedule the termination.
+
+{/* DRAFT: To screenshot — capture the cancellation confirmation dialog */}
+
+The Load Balancer status changes to reflect the scheduled termination. You can review the request from the `Tasks` tab of the service.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+Cancelling a service with the OVHcloud API is a two-step flow: you request the termination, then confirm it with the token you receive.
+
+1. Request the termination of the service. This call returns a confirmation token, usually sent by email.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/confirmTermination"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The unique identifier of your Load Balancer service. | `loadbalancer-a1b2c3d4` |
+| `token` (body) | Yes | The confirmation token received after requesting the termination. | `xxxxxxxxxxxxxxxx` |
+| `reason` (body) | No | The reason for the cancellation, used for feedback. | `MIGRATED_TO_ANOTHER_OVH_PRODUCT` |
+
+2. Confirm the termination by submitting the token with the call above. Once the call succeeds, the termination is scheduled according to the service expiration settings.
+
+:::info
+To review or adjust when the service stops renewing, inspect the service information with `GET /ipLoadbalancing/{serviceName}/serviceInfos`.
+:::
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+Service cancellation is generally handled outside Terraform. Removing the resource from your configuration and running `terraform destroy` deletes the managed resources but does not necessarily cancel the underlying service subscription. Cancel the service from the Control Panel or with the OVHcloud API to stop renewal.
+
+</Tab>
+</Tabs>
+
+### Verify the cancellation
+
+After confirming, verify that the cancellation was recorded.
+
+- In the Control Panel, open the service and check the `Tasks` tab for the termination request, then review the service renewal or expiration date.
+- With the API, call `GET /ipLoadbalancing/{serviceName}/serviceInfos` and check the expiration and renewal fields.
+
+:::warning
+Until the termination date is reached, traffic continues to be distributed if the Load Balancer is still configured. Redirect your production traffic away from the Load Balancer IP address before the service is terminated to avoid an outage.
+:::
+
+## Go further
+
+- [What is OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer)
+- [Manage your Load Balancer via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel)
+- [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting)
+
+Join our [community of users](/links/community).

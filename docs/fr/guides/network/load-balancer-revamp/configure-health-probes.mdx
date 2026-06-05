@@ -1,0 +1,217 @@
+---
+title: Configurer les sondes de santé du Load Balancer
+description: Configurez les sondes de santé sur les fermes de votre OVHcloud Load Balancer pour détecter les serveurs défaillants et n'acheminer le trafic que vers les backends sains.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+Les sondes de santé interrogent périodiquement chaque serveur d'une ferme afin de confirmer qu'il est opérationnel. Lorsqu'une sonde détecte une erreur, le serveur concerné est automatiquement retiré de la rotation jusqu'à ce qu'il se rétablisse, de sorte que le trafic n'est jamais acheminé vers un backend qui ne répond pas.
+
+**Ce guide explique comment configurer les sondes sur vos fermes de serveurs, définir leur intervalle et leur comportement, puis interpréter l'état de santé des serveurs qui en résulte.**
+
+Pour comprendre comment les sondes s'intègrent à la surveillance de l'état de santé, consultez le guide [Surveiller l'état de santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health).
+
+## Prérequis
+
+- Un service [OVHcloud Load Balancer](/links/manager) actif, avec au moins une ferme et un serveur configurés
+- Accès à l'[espace client OVHcloud](/links/manager)
+- Pour la méthode API : des identifiants de l'API OVHcloud. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
+
+## Introduction
+
+Les sondes se configurent **au niveau de la ferme**, si bien que tous les serveurs d'une même ferme utilisent la même définition de sonde. Toutefois, la sonde doit également être **activée par serveur**, ce qui vous permet de surveiller uniquement certains serveurs d'une ferme.
+
+Chaque type de ferme prend en charge un ensemble défini de types de sondes :
+
+| Type de sonde | Description | Port | Méthode | URL | Comparateurs |
+|---|---|---|---|---|---|
+| `tcp` | Tente une connexion TCP. Si le serveur renvoie une bannière, celle-ci peut être comparée à un motif. | Configurable | Non pris en charge | Non pris en charge | `default`, `contains`, `matches` |
+| `http` | Tente une connexion HTTP et vérifie le code de statut ou le corps de la réponse. Le test par défaut envoie une requête `OPTIONS` vers `/` en HTTP/1.0. | Configurable | `GET`, `HEAD`, `OPTIONS` | `[[https?://]host]/path` | `default`, `contains`, `matches` |
+| `smtp` | Ouvre une connexion SMTP, envoie `HELLO localhost` et vérifie la présence d'une réponse `2xx`. | Configurable | Non pris en charge | Non pris en charge | `default` |
+| `mysql` | Ouvre une connexion MySQL et analyse la réponse. | Configurable | Non pris en charge | Non pris en charge | `default` |
+| `pgsql` | Ouvre une connexion PostgreSQL et analyse la réponse. | Configurable | Non pris en charge | Non pris en charge | `default` |
+| `oco` | Ouvre une connexion TCP sur le port 79 et vérifie la présence d'une réponse `2xx`. | Non configurable | Non pris en charge | Non pris en charge | `default` |
+
+Pour récupérer la liste complète et à jour des sondes prises en charge par votre service ainsi que leurs champs configurables, utilisez cet appel :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableFarmProbes"} />
+
+| Champ | Description |
+|---|---|
+| `type` | Le type de sonde à renseigner dans le champ `probe.type` de la ferme. |
+| `port` | Indique si le port peut être configuré pour cette sonde. |
+| `method` | La liste des méthodes HTTP prises en charge, ou `null` s'il n'y en a aucune. |
+| `url` | Indique si l'URL de la sonde peut être configurée. |
+| `matches` | La liste des comparateurs disponibles pour cette sonde. |
+
+### Comparateurs
+
+Les comparateurs valident le résultat renvoyé par une sonde :
+
+| Comparateur | Description |
+|---|---|
+| `default` | Exécute le test de base, sans paramètre. |
+| `status` | Liste de codes de retour HTTP valides, séparés par des virgules. |
+| `contains` | Vérifie que le motif apparaît dans la réponse. |
+| `matches` | Vérifie que la réponse correspond au motif (expression régulière). |
+
+Les comparateurs `contains` et `matches` ne recherchent que dans les 16 premiers Ko de la réponse. Pour de meilleures performances, renvoyez le moins de données possible depuis le point de terminaison de votre sonde.
+
+## En pratique
+
+Vous pouvez configurer une sonde via l'espace client OVHcloud, lors de la création ou de la modification d'une ferme, ou directement via l'API OVHcloud.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez la section `Network`.
+2. Sélectionnez votre service Load Balancer, puis ouvrez l'onglet `Fermes de serveurs`.
+3. Cliquez sur `Créer une ferme` pour définir une nouvelle ferme, ou ouvrez une ferme existante pour la modifier.
+4. Dans l'éditeur de ferme, dépliez les paramètres avancés pour faire apparaître la configuration de la sonde.
+
+{/* DRAFT: À capturer - la section des paramètres avancés de l'éditeur de ferme repliée, montrant où se trouvent les options de sonde */}
+
+5. Sélectionnez le type de sonde qui correspond à votre service backend (par exemple `tcp` ou `http`).
+
+{/* DRAFT: À capturer - le sélecteur de type de sonde déplié */}
+
+6. Si le type de sonde sélectionné le permet, configurez les paramètres avancés de la sonde (port, méthode, URL, comparateur, motif, intervalle).
+
+{/* DRAFT: À capturer - la boîte de dialogue des paramètres avancés de la sonde */}
+
+7. Confirmez les paramètres de la ferme pour appliquer la configuration.
+
+> [!INFO]
+> Les sondes configurées dans l'espace client s'appliquent à l'ensemble de la ferme. L'activation de la sonde par serveur est gérée automatiquement lorsque les serveurs sont ajoutés via l'espace client.
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Vous pouvez définir une sonde lors de la création d'une nouvelle ferme (`POST`) ou lors de la modification d'une ferme existante (`PUT`). Les deux opérations prennent le même objet `probe` ; l'exemple ci-dessous montre l'appel de modification.
+
+**1. Configurer la sonde sur la ferme**
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+Pour les fermes TCP, utilisez la route TCP équivalente :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}"} />
+
+Pour créer une ferme avec la sonde déjà définie, utilisez plutôt les routes `POST` :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre OVHcloud Load Balancer. |
+| `farmId` | Oui (PUT) | L'identifiant numérique de la ferme. |
+| `probe.type` | Oui | Le type de sonde à activer (`tcp`, `http`, `smtp`, `mysql`, `pgsql`, `oco`). |
+| `probe.interval` | Non | L'intervalle en secondes entre deux tentatives de sonde. Minimum 30 secondes. |
+| `probe.port` | Non | Le port que la sonde doit utiliser, s'il diffère du port de la ferme. |
+| `probe.method` | Non | La méthode HTTP à utiliser lorsque `probe.type` vaut `http`. |
+| `probe.url` | Non | L'URL à tester lorsque `probe.type` vaut `http`. |
+| `probe.match` | Non | Le comparateur utilisé pour déterminer si le serveur est sain. |
+| `probe.pattern` | Non | La valeur transmise au comparateur lorsqu'il n'est pas `default`. |
+| `probe.forceSsl` | Non | Force la sonde à utiliser SSL/TLS même si la ferme se connecte en TCP simple. |
+
+> [!INFO]
+> Si un port autre que celui de la ferme est défini sur la sonde, les paramètres `proxyprotocol` et `ssl` sont réinitialisés pour la connexion de la sonde. Le SSL peut être réactivé avec `probe.forceSsl`.
+
+> [!warning]
+> Configurer une sonde sur une ferme ne suffit pas à elle seule. La sonde doit également être activée sur chaque serveur que vous souhaitez surveiller (voir l'étape 2).
+
+**2. Activer la sonde sur chaque serveur**
+
+Pour qu'une sonde s'exécute sur un serveur, définissez le paramètre `probe` du serveur sur `true` :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+Pour les fermes TCP, utilisez la route de serveur TCP équivalente :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre OVHcloud Load Balancer. |
+| `farmId` | Oui | L'identifiant numérique de la ferme. |
+| `serverId` | Oui | L'identifiant numérique du serveur. |
+| `probe` | Oui | Indique si la sonde est prise en compte pour ce serveur. |
+
+**3. Appliquer la configuration**
+
+Les modifications effectuées via l'API sont mises en attente jusqu'à ce que vous appliquiez la configuration en attente. Pour connaître les étapes permettant d'appliquer les modifications, consultez le guide [Gérer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel).
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Scénarios de sonde courants
+
+Les exemples ci-dessous présentent des définitions de sonde typiques ainsi que les champs à renseigner pour chacune. Les champs non mentionnés conservent leurs valeurs par défaut.
+
+#### Vérifier que le serveur accepte les connexions TCP
+
+Il s'agit de la sonde la plus simple ; elle fonctionne aussi bien sur les fermes `tcp` que `http`. Elle ouvre périodiquement une connexion vers chaque serveur ; si la connexion échoue deux fois de suite, le serveur est retiré de la rotation jusqu'à ce qu'il réponde de nouveau.
+
+| Champ | Valeur |
+|---|---|
+| `probe.type` | `tcp` |
+
+#### Tester une page HTTP spécifique
+
+Une bonne pratique courante consiste à exposer un point de terminaison de santé dédié (tel que `/status`, `/health` ou `/check`) qui renvoie un résumé de l'état du service. Pour envoyer une requête `GET` vers ce point de terminaison et valider le code de statut :
+
+| Champ | Valeur |
+|---|---|
+| `probe.type` | `http` |
+| `probe.method` | `GET` |
+| `probe.url` | `http://api.example.com/status` |
+| `probe.match` | `status` |
+| `probe.pattern` | `200` (plusieurs codes peuvent être listés, séparés par des virgules) |
+
+> [!TIP]
+> Configurez la méthode sur `GET` plutôt que de vous fier à la valeur par défaut `OPTIONS`. Certains serveurs, dont Nginx, ne gèrent pas `OPTIONS` sans configuration supplémentaire.
+
+#### Utiliser un test HTTP externe pour un service dépendant
+
+Lorsqu'un backend dépend d'un autre composant (par exemple un service IMAP qui s'authentifie auprès d'un serveur LDAP), une simple sonde `tcp` peut signaler le serveur comme sain alors même que le service sous-jacent n'est pas utilisable. Exposez un petit point de terminaison HTTP sur un port dédié qui teste la dépendance réelle et renvoie `OK` lorsqu'elle fonctionne :
+
+| Champ | Valeur |
+|---|---|
+| `probe.type` | `http` |
+| `probe.port` | `8080` |
+| `probe.method` | `GET` |
+| `probe.url` | `/service/imap/status` |
+| `probe.match` | `contains` |
+| `probe.pattern` | `OK` |
+
+> [!warning]
+> Si le point de terminaison HTTP dédié à la surveillance du service dépendant tombe lui-même en panne, le service backend sera marqué comme défaillant même s'il fonctionne correctement. Gardez le point de terminaison de surveillance aussi simple et résilient que possible.
+
+### Interpréter l'état de santé des serveurs
+
+Une fois les sondes en cours d'exécution, le Load Balancer évalue en continu chaque serveur surveillé :
+
+- Un serveur qui réussit sa sonde est maintenu **dans la rotation** et reçoit du trafic.
+- Un serveur qui échoue à sa sonde est retiré **de la rotation** et cesse de recevoir de nouveau trafic jusqu'à ce qu'il réussisse de nouveau.
+- Un serveur **sans sonde activée** est toujours considéré comme disponible, même si le service sous-jacent est hors service.
+
+Choisissez un `probe.interval` qui équilibre une détection rapide des pannes et la charge sur vos backends. L'intervalle minimal est de 30 secondes. Pour découvrir où l'état de santé des serveurs est affiché et comment l'interpréter, consultez le guide [Surveiller l'état de santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health).
+
+## Aller plus loin
+
+- [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Surveiller l'état de santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health)
+- [Dépannage](/guides/network/load-balancer-revamp/troubleshooting)
+
+Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).

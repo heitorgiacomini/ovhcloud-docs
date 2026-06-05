@@ -1,0 +1,118 @@
+---
+title: Declare an OVHcloud Load Balancer incident
+description: Report an OVHcloud Load Balancer incident to support, gather the right diagnostic information, and follow up until the issue is resolved.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objective
+
+This guide explains how to report an incident affecting your OVHcloud Load Balancer to OVHcloud support and how to follow up until it is resolved. It covers the information to collect before opening a ticket, the available channels, and how to track progress.
+
+Before declaring an incident, confirm that the problem is not a configuration issue you can resolve yourself. Most server, routing, and certificate problems are fixed within your own configuration. See [Troubleshooting OVHcloud Load Balancer](/guides/network/load-balancer-revamp/troubleshooting) first.
+
+**This guide shows you how to declare an OVHcloud Load Balancer incident to support and follow up until it is resolved.**
+
+> [!WARNING]
+> OVHcloud provides you with services for which you are responsible for the configuration and management. An incident report is appropriate when the service itself is degraded or unavailable, not when a configuration change has not yet been applied.
+
+## Requirements
+
+- An [OVHcloud Load Balancer](/links/network/load-balancer) service in your OVHcloud account
+- Access to the [OVHcloud Control Panel](/links/manager)
+- Access to the [OVHcloud API](/links/api)
+- The administrative or technical contact role on the service, to open a support request
+
+## Introduction
+
+An incident is an unplanned interruption or degradation of the service. For the Load Balancer this typically means the service is unreachable, returns errors that do not originate from your backends, or behaves inconsistently across availability zones despite a correct and applied configuration.
+
+OVHcloud distinguishes between two situations:
+
+- A **service incident** affecting OVHcloud infrastructure. These are tracked and published on the OVHcloud status page.
+- An **incident specific to your service** that requires investigation by the support teams.
+
+The steps below help you identify which situation applies, collect the right evidence, and open a follow-up request.
+
+## Instructions
+
+### Step 1 — Check for a known platform incident
+
+Before opening a ticket, check whether OVHcloud has already reported an incident affecting the Load Balancer platform or your datacentre.
+
+1. Open the [OVHcloud status page](https://status.ovhcloud.com/) and search for the Load Balancer service and your region.
+2. If an ongoing incident matches your symptoms, subscribe to it to receive updates. No individual ticket is required while the platform incident is being handled.
+
+> [!TIP]
+> Subscribe to the status page for the services you depend on. You will be notified of maintenance and incidents without having to poll the page manually.
+
+### Step 2 — Confirm the issue is not in your configuration
+
+Verify that the symptom is not caused by a staged-but-unapplied change or a failing health probe.
+
+Check the global status of the service:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
+
+Review the recent operations on the service. A pending or failed task can explain a change that has "no effect":
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task"} />
+
+| Parameter | Required | Description | Example |
+|---|---|---|---|
+| `serviceName` | Yes | The name of your Load Balancer service. | `loadbalancer-a1b2c3d4` |
+
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open your Load Balancer and select the `Tasks` tab to review in-progress and recent operations.
+
+{/* DRAFT: To screenshot — capture the Tasks tab showing the operation history */}
+
+For the full diagnostic flow, see [Troubleshooting OVHcloud Load Balancer](/guides/network/load-balancer-revamp/troubleshooting). If the problem persists after these checks, proceed to declare an incident.
+
+### Step 3 — Gather diagnostic information
+
+Collect the following before opening a ticket. Complete information shortens the time to resolution.
+
+| Information | Where to find it |
+|---|---|
+| Service name | The `serviceName` of your Load Balancer, visible in the Control Panel and used in every API call. |
+| Affected zone(s) | The availability zone(s) where the symptom appears. See [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones). |
+| Symptom and impact | What you observe (errors, timeouts, unreachable frontend) and which clients or endpoints are affected. |
+| Start time | When the problem began, in UTC, and whether it correlates with a recent change. |
+| `/status` output | Result of the global status API call from Step 2. |
+| Task history | Result of the `/task` API call, or a note of the relevant task IDs from the `Tasks` tab. |
+| Client-side evidence | Error messages returned to clients, HTTP status codes, and reproduction steps. |
+
+### Step 4 — Declare the incident to OVHcloud support
+
+Open a support request through the OVHcloud help platform and attach the information collected in Step 3.
+
+1. Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Open the help and support area, then create a new request describing the incident. The OVHcloud help platform is available at [help.ovhcloud.com](https://help.ovhcloud.com/).
+3. Select the affected service (your Load Balancer) and the incident category.
+4. Provide a clear summary, the impact, the start time, and the diagnostic information from Step 3.
+5. Submit the request and note the ticket reference returned.
+
+{/* DRAFT: To screenshot — capture the support request creation form in the Control Panel */}
+
+> [!INFO]
+> The exact support channels and response times depend on your support level. [TODO: confirm Load Balancer support entry point and any product-specific incident procedure].
+
+### Step 5 — Follow up until resolution
+
+Track the request until the incident is closed.
+
+1. Monitor the ticket through the OVHcloud help platform for updates and requests for additional information.
+2. Respond promptly to any question from the support teams. Provide fresh `/status` and `/task` output if the situation changes.
+3. Re-test the service after each proposed fix and report the result in the ticket.
+4. Once the service is restored, confirm normal operation across all affected zones before closing the request.
+
+After resolution, review the [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting) and [Security best practices](/guides/network/load-balancer-revamp/security-best-practices) guides to reduce the chance of a recurrence.
+
+## Go further
+
+- [Troubleshooting OVHcloud Load Balancer](/guides/network/load-balancer-revamp/troubleshooting)
+- [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health)
+- [Service level agreements](/guides/network/load-balancer-revamp/slas)
+
+Join our [community of users](/links/community).

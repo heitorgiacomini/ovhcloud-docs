@@ -1,0 +1,187 @@
+---
+title: Bonnes pratiques de sécurité du Load Balancer
+description: Renforcez la terminaison TLS, les profils de chiffrement et la gestion des certificats sur le Load Balancer OVHcloud, et préservez l'IP cliente.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+Ce guide explique comment sécuriser le trafic qui transite par le Load Balancer OVHcloud. Il couvre la terminaison et le renforcement TLS/SSL, les profils de chiffrement disponibles, les options de gestion des certificats (y compris les certificats Let's Encrypt gratuits) ainsi que les techniques qui préservent les informations du client une fois la terminaison TLS effectuée.
+
+Il s'adresse aux architectes et aux opérateurs qui souhaitent appliquer des paramètres de sécurité cohérents et justifiables à leur configuration de Load Balancer, plutôt que de suivre une procédure unique étape par étape.
+
+**Ce guide explique comment renforcer le TLS, choisir un profil de chiffrement, gérer les certificats et préserver l'IP cliente sur le Load Balancer OVHcloud.**
+
+## Vue d'ensemble
+
+Le Load Balancer OVHcloud répartit le trafic entrant entre les serveurs backend et peut assurer la terminaison TLS en périphérie, avant que le trafic n'atteigne vos fermes de serveurs. La terminaison TLS sur le Load Balancer déchiffre le flux entrant une seule fois, puis le transmet au backend approprié. Cela réduit la charge cryptographique sur vos serveurs backend et centralise la gestion des certificats, ce qui simplifie les renouvellements et les mises à jour de sécurité.
+
+La centralisation du TLS concentre aussi le risque : un profil de chiffrement faible, un certificat expiré ou un frontend mal configuré affecte chaque backend situé derrière lui. Les recommandations ci-dessous décrivent comment maintenir ce point unique renforcé.
+
+La sécurité sur le Load Balancer se répartit en trois domaines :
+
+| Domaine | Ce qu'il contrôle | Où il se configure |
+|---|---|---|
+| Terminaison TLS | Si le trafic chiffré est déchiffré en périphérie | Frontend |
+| Profil de chiffrement | Quelles versions de protocole et quels chiffrements sont acceptés | Configuration SSL |
+| Gestion des certificats | Quel certificat est présenté et comment il est renouvelé | Onglet `Certificats SSL` |
+
+```mermaid
+flowchart LR
+  Client[Client] -- "HTTPS / TLS" --> FE[Frontend du Load Balancer]
+  FE -- "Terminaison TLS" --> LB[Load Balancer]
+  LB -- "HTTP ou TLS rechiffré" --> F1[Serveur backend]
+  LB --> F2[Serveur backend]
+```
+
+:::info
+OVHcloud met à votre disposition des services dont vous êtes responsable de la configuration et de la gestion. Les paramètres décrits ici vous appartiennent et c'est à vous de les appliquer et de les maintenir.
+:::
+
+## Concepts clés
+
+Cette section définit les éléments constitutifs du Load Balancer pertinents pour la sécurité, avant les recommandations de bonnes pratiques qui suivent.
+
+### Terminaison TLS
+
+La terminaison TLS est le processus consistant à déchiffrer un flux chiffré entrant au niveau du Load Balancer avant de transmettre la requête en clair (ou rechiffrée) à un backend. La terminaison s'active sur un frontend : vous créez un frontend `HTTPS`, vous y attachez un certificat et vous sélectionnez la ferme de serveurs qui reçoit le trafic déchiffré.
+
+Dans l'API OVHcloud, la terminaison est contrôlée par le booléen `ssl` du frontend. Réglez-le sur `true`, puis définissez la destination du trafic avec `defaultFarmId` (routage vers une ferme) ou `redirectLocation` (redirection).
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+### Profils de chiffrement
+
+Un profil de chiffrement est l'ensemble des versions de protocole TLS et des suites de chiffrement que le Load Balancer négocie avec les clients. Le Load Balancer expose deux profils, alignés sur les recommandations de configuration SSL de Mozilla :
+
+| Profil | Libellé dans l'espace client | Protocoles | À utiliser quand |
+|---|---|---|---|
+| Moderne | `Moderne (TLS 1.3)` | TLS 1.3 uniquement | Tous les clients sont des navigateurs et systèmes d'exploitation récents. |
+| Intermédiaire | `Intermédiaire (TLS 1.2+)` | TLS 1.2 et versions ultérieures | Vous devez prendre en charge des clients plus anciens tout en excluant les protocoles obsolètes. |
+
+Le profil `Moderne (TLS 1.3)` offre la sécurité la plus forte, mais rejette les clients qui ne peuvent pas négocier TLS 1.3. Le profil `Intermédiaire (TLS 1.2+)` est le choix par défaut sûr pour les services publics à usage général, car il exclut toujours les protocoles obsolètes TLS 1.0 et TLS 1.1.
+
+### Certificats
+
+Un certificat prouve l'identité du service auprès des clients qui s'y connectent et fournit le matériel de clé utilisé pour négocier la session. Sur le Load Balancer, les certificats sont gérés dans l'onglet `Certificats SSL`, puis attachés à un frontend `HTTPS` en tant que `Certificat TLS`. Trois options d'approvisionnement existent :
+
+| Source | Coût | Renouvellement | Remarques |
+|---|---|---|---|
+| Certificat Let's Encrypt gratuit | Gratuit | Géré par OVHcloud | Le domaine doit pointer vers votre Load Balancer avant la commande. |
+| Certificat importé | Dépend de l'émetteur | Manuel | Vous téléversez le certificat, la clé privée et la chaîne. |
+| Chaîne d'AC personnalisée | Dépend de l'émetteur | Manuel | À utiliser lorsque les clients exigent une autorité de certification spécifique. |
+
+### Informations sur le client après la terminaison
+
+Une fois la terminaison TLS effectuée, la connexion vers le backend provient du Load Balancer, et non du client. Sans configuration supplémentaire, les serveurs backend voient l'adresse IP du Load Balancer comme source de chaque requête. Deux mécanismes préservent les informations d'origine du client :
+
+- Le **protocole PROXY** ajoute en tête de connexion un en-tête transportant les adresses source et destination d'origine. Il fonctionne pour tout trafic TCP, y compris les protocoles non HTTP.
+- Les **en-têtes HTTP** tels que `X-Forwarded-For` et `X-Forwarded-Proto` transportent l'IP cliente et le schéma d'origine pour le trafic HTTP et HTTPS.
+
+```mermaid
+sequenceDiagram
+  participant C as Client (203.0.113.10)
+  participant LB as Load Balancer
+  participant B as Backend
+  C->>LB: Requête HTTPS
+  Note over LB: Terminaison TLS ici
+  LB->>B: Requête HTTP + X-Forwarded-For: 203.0.113.10
+  Note over B: Les journaux et ACL voient l'IP cliente réelle
+```
+
+## Bonnes pratiques
+
+Cette section est prescriptive. Appliquez ces recommandations comme base de référence pour toute configuration de Load Balancer exposée sur Internet.
+
+### Terminaison TLS
+
+**À faire :** assurez la terminaison TLS sur le Load Balancer pour les services web publics. Cela centralise la gestion des certificats, réduit la charge cryptographique du backend et vous permet d'appliquer une politique de chiffrement cohérente en périphérie. Lorsque vous créez le frontend `HTTPS`, configurez également la redirection HTTPS afin que les requêtes en clair soient redirigées plutôt que servies en HTTP.
+
+**À éviter :** laisser un frontend `HTTP` accessible en parallèle d'un frontend `HTTPS` sans redirection. Les points d'accès en clair exposent les identifiants et les jetons de session pendant le transit.
+
+### Choix du profil de chiffrement
+
+**À faire :** privilégiez par défaut le profil `Intermédiaire (TLS 1.2+)` pour les services publics à usage général, et passez à `Moderne (TLS 1.3)` une fois que vous avez confirmé que l'ensemble de votre population de clients prend en charge TLS 1.3. Les deux profils excluent les protocoles obsolètes TLS 1.0 et TLS 1.1.
+
+**À éviter :** choisir un profil permissif pour accueillir un petit nombre de clients obsolètes. Un seul profil faible abaisse la sécurité de chaque backend situé derrière le frontend.
+
+### Gestion des certificats
+
+**À faire :** suivez l'expiration des certificats et renouvelez-les bien avant l'échéance. Privilégiez le certificat Let's Encrypt gratuit lorsque le domaine pointe vers votre Load Balancer, car OVHcloud le renouvelle automatiquement. Pour les certificats importés, maintenez la chaîne complète à jour.
+
+**À éviter :** laisser un certificat expirer. Un certificat expiré entraîne des échecs de connexion pour chaque client du frontend concerné. Évitez de réutiliser une même clé privée pour des services sans rapport entre eux.
+
+### Préservation de l'IP cliente
+
+**À faire :** activez le protocole PROXY ou l'en-tête `X-Forwarded-For` afin que les journaux du backend, la limitation de débit et les listes de contrôle d'accès fonctionnent sur l'adresse cliente réelle plutôt que sur l'adresse du Load Balancer. Choisissez le protocole PROXY pour les services TCP non HTTP et les en-têtes HTTP pour le trafic web.
+
+**À éviter :** baser le contrôle d'accès ou la détection d'abus sur l'IP source vue par le backend sans avoir d'abord activé l'un de ces mécanismes — sans quoi chaque requête semblerait provenir du Load Balancer.
+
+Pour les étapes de configuration, consultez [Configurer le protocole PROXY](/guides/network/load-balancer-revamp/configure-proxy-protocol) et [Configurer les en-têtes HTTP](/guides/network/load-balancer-revamp/configure-http-headers).
+
+### Appliquer et vérifier les modifications
+
+**À faire :** appliquez votre configuration après chaque modification pertinente pour la sécurité et confirmez qu'elle est déployée dans la zone concernée. Dans l'API, appliquez les modifications avec l'appel de rafraîchissement après avoir modifié des frontends ou des certificats.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+**À éviter :** supposer qu'une modification est active avant qu'elle ne soit appliquée. Tant que la configuration n'est pas appliquée, le Load Balancer en cours d'exécution conserve ses paramètres précédents.
+
+## Commander un certificat gratuit
+
+Un certificat Let's Encrypt gratuit est le point de départ recommandé lorsque votre domaine pointe vers votre Load Balancer. OVHcloud le renouvelle automatiquement, ce qui supprime la cause la plus fréquente des interruptions TLS.
+
+<Tabs>
+<Tab label="Espace client">
+
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez la page `Load Balancer` dans la section **Network**. Sélectionnez votre Load Balancer, puis ouvrez l'onglet `Certificats SSL` et cliquez sur `Ajouter un certificat`. Indiquez le nom de domaine complet (FQDN) que vous souhaitez sécuriser.
+
+{/* DRAFT: To screenshot - capture the SSL Certificates tab with the Add Certificate dialog open */}
+
+Pour que la commande aboutisse, le nom de domaine choisi doit déjà pointer vers votre service Load Balancer OVHcloud. Suivez la commande depuis l'onglet `Tâches`.
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Commandez le certificat gratuit avec l'appel suivant. Le domaine choisi doit pointer vers votre Load Balancer avant que vous ne passiez la commande.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/freeCertificate"} />
+
+Suivez la tâche résultante en filtrant sur le type d'action `orderFreeCertificate`.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task"} />
+
+Une fois la commande terminée, le certificat est installé automatiquement sur votre Load Balancer. Listez les certificats installés avec l'appel suivant.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+Pour le déroulé complet de la commande, consultez [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates).
+
+## Points à considérer et limitations
+
+- La commande d'un certificat gratuit nécessite que le domaine pointe vers votre Load Balancer au moment de la commande ; sinon, la validation échoue.
+- Les choix de profil de chiffrement s'appliquent au niveau du frontend et affectent chaque client de ce frontend.
+- La liste exacte des clients pris en charge par profil, ainsi que les éventuels quotas de certificats par offre, sont [TODO: confirm supported-client matrix and certificate quotas].
+
+:::warning
+Changer le profil de chiffrement peut rompre la connectivité des clients qui ne prennent pas en charge les versions de protocole négociées. Validez la modification auprès d'une population de clients représentative avant de l'appliquer en production.
+:::
+
+## Aller plus loin
+
+- [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates)
+- [Configurer le protocole PROXY](/guides/network/load-balancer-revamp/configure-proxy-protocol)
+- [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
+
+Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).

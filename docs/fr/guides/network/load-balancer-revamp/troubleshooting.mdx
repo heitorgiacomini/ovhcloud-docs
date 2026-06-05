@@ -1,0 +1,255 @@
+---
+title: Résoudre les problèmes de l'OVHcloud Load Balancer
+description: Diagnostiquez et corrigez les problèmes courants de l'OVHcloud Load Balancer : serveurs DOWN, erreurs 503, échecs TLS, configuration non appliquée et problèmes de routage.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+
+## Objectif
+
+Ce guide vous aide à diagnostiquer et résoudre les problèmes les plus courants du service OVHcloud Load Balancer. Chaque scénario suit le même schéma : le symptôme que vous observez, la manière de confirmer la cause et la manière de la corriger.
+
+Utilisez la liste de contrôle de diagnostic ci-dessous pour identifier votre symptôme, puis passez directement à la section correspondante. Si aucune des résolutions ne s'applique, suivez les étapes d'escalade à la fin de ce guide.
+
+**Ce guide explique comment diagnostiquer et résoudre les problèmes les plus courants de l'OVHcloud Load Balancer.**
+
+## Prérequis
+
+- Disposer d'un service [OVHcloud Load Balancer](/links/network/load-balancer) dans votre compte OVHcloud
+- Avoir accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>
+- Avoir accès à l'[API OVHcloud](/links/api)
+- Disposer d'une ferme de serveurs configurée et d'au moins un frontend
+
+## Introduction
+
+L'OVHcloud Load Balancer joue le rôle de reverse proxy. Il reçoit les requêtes des clients sur un frontend et les répartit entre les serveurs d'une ferme, en fonction de l'algorithme de répartition et des résultats des sondes de santé. Les clients se connectent au Load Balancer, jamais directement à vos serveurs backend.
+
+Deux caractéristiques de cette architecture expliquent la plupart des problèmes :
+
+- Un serveur est retiré de la rotation lorsque sa sonde de santé échoue. Le trafic continue d'être acheminé vers les serveurs sains restants.
+- Les modifications de configuration ne sont pas actives tant que vous ne les avez pas appliquées. Tant que la modification n'est pas déployée, le Load Balancer continue de servir la configuration précédente.
+
+Pour en savoir plus sur ces mécanismes, consultez [Fonctionnement des sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes) et [Gérer votre Load Balancer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel).
+
+## En pratique
+
+### Liste de contrôle de diagnostic
+
+Faites correspondre votre symptôme à la section concernée.
+
+| Symptôme | Cause probable | Section |
+|---|---|---|
+| Un serveur apparaît comme DOWN ou est retiré de la ferme | Échec de la sonde de santé | [Serveur signalé DOWN](#server-down) |
+| Les clients reçoivent une erreur `503 Service Unavailable` | Aucun serveur sain dans la ferme, ou aucune route ne correspond | [503 Service Unavailable](#error-503) |
+| L'établissement de la liaison TLS échoue, des avertissements de certificat apparaissent ou le HTTPS ne se charge pas | État du certificat, SNI ou incompatibilité de protocole | [Erreurs TLS et de certificat](#tls-errors) |
+| Une modification de configuration reste sans effet | Modification non appliquée (déployée) | [Configuration non appliquée](#config-not-applied) |
+| Les requêtes atteignent la mauvaise ferme ou renvoient un contenu inattendu | Mauvaise configuration du frontend, de la route ou de la route par défaut | [Problèmes de routage](#routing-problems) |
+
+<a name="server-down"></a>
+
+### Serveur signalé DOWN
+
+Un serveur est marqué DOWN lorsque sa sonde de santé échoue. Le Load Balancer cesse alors de lui envoyer du trafic et redistribue la charge entre les serveurs restants de la ferme.
+
+**Symptômes :**
+
+- Un serveur apparaît avec un statut DOWN ou en échec dans l'onglet `Fermes`.
+- La capacité du backend est réduite alors même que le serveur fonctionne.
+
+**Diagnostic :**
+
+Récupérez l'état de santé détaillé du serveur concerné. Dans l'API, le résultat est disponible dans le champ `serverState` de l'objet serveur.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
+
+Vous pouvez aussi, dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, ouvrir l'onglet `Fermes`, sélectionner la ferme et lire le statut sur la ligne de chaque serveur. Cliquez sur le texte du statut, ou sur le bouton `...` suivi de `Voir le statut`, pour ouvrir la vue détaillée.
+
+{/* DRAFT: À illustrer — capturer l'onglet Fermes montrant un serveur à l'état DOWN ainsi que le panneau de détail du statut */}
+
+Le détail du statut fournit les champs suivants :
+
+| Champ | Description |
+|---|---|
+| Statut | Statut actuel du serveur (UP / DOWN). |
+| Code de vérification | Code de retour de la sonde de vérification de santé. |
+| État de la vérification | État de la sonde de vérification de santé. |
+| Contenu de la dernière vérification | Contenu renvoyé par la sonde. |
+| Heure de la vérification | Date et heure de la dernière exécution de la sonde. |
+
+**Résolution :**
+
+Procédez à ces vérifications, de la plus courante à la moins courante :
+
+1. Vérifiez que le service backend écoute sur le port configuré et qu'il est accessible depuis la sonde.
+2. Vérifiez que la définition de la sonde correspond à ce qu'attend le backend. Pour une sonde HTTP, vérifiez la méthode de requête, le chemin de l'URL et le code de réponse attendu. Un backend renvoyant `301`, `403` ou `404` sur le chemin de la sonde est considéré comme une vérification en échec.
+3. Vérifiez que le pare-feu de votre backend autorise le trafic provenant du Load Balancer. Listez les adresses source à autoriser :
+
+   <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/natIp"} />
+
+4. Si le serveur a été retiré intentionnellement pour maintenance, réactivez-le et vérifiez que la sonde réussit avant de lui acheminer du trafic.
+
+> [!TIP]
+> Une sonde doit être configurée sur la ferme pour que les vérifications de statut aient un sens. Sans sonde, le Load Balancer ne peut pas détecter un backend qui ne répond pas. Consultez [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes).
+
+<a name="error-503"></a>
+
+### 503 Service Unavailable
+
+Une réponse `503` est renvoyée par le Load Balancer lui-même, et non par votre backend. Elle indique que le Load Balancer a reçu la requête mais ne disposait d'aucun serveur disponible pour la traiter.
+
+**Symptômes :**
+
+- Les clients reçoivent une erreur `503 Service Unavailable` pour toutes les requêtes ou pour certaines d'entre elles.
+- L'erreur apparaît alors même que les serveurs backend fonctionnent.
+
+**Diagnostic :**
+
+Deux causes courantes s'appliquent ; identifiez laquelle :
+
+- **Aucun serveur sain dans la ferme cible.** Tous les serveurs de la ferme sont DOWN, il n'y a donc nulle part où acheminer la requête. Vérifiez l'état de santé de chaque serveur comme décrit dans [Serveur signalé DOWN](#server-down).
+- **Aucune route ne correspond à la requête.** Le frontend n'a pas de ferme par défaut et aucune route HTTP ne correspond à la requête entrante : le Load Balancer n'a donc aucune destination.
+
+Vérifiez le statut global du service pour confirmer qu'il est actif :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
+
+**Résolution :**
+
+| Cause | Résolution |
+|---|---|
+| Tous les serveurs sont DOWN | Rétablissez au moins un serveur sain (voir [Serveur signalé DOWN](#server-down)). Vérifiez que la sonde réussit. |
+| Aucune route correspondante | Dans l'onglet `Frontends & routage`, modifiez le frontend et définissez une `Route par défaut` (ou `Router vers une ferme`) afin que le trafic non associé dispose d'une destination. Consultez [Configurer les routes HTTP](/guides/network/load-balancer-revamp/configure-http-routes). |
+| Le frontend pointe vers une ferme vide | Ajoutez au moins un serveur à la ferme dans l'onglet `Fermes` à l'aide du bouton `Ajouter un serveur`. |
+
+Après avoir modifié la configuration, appliquez-la (voir [Configuration non appliquée](#config-not-applied)) avant de tester à nouveau.
+
+<a name="tls-errors"></a>
+
+### Erreurs TLS et de certificat
+
+Les problèmes TLS se manifestent par des échecs de liaison, des avertissements de certificat dans le navigateur ou des frontends HTTPS qui ne répondent pas alors que le HTTP fonctionne.
+
+**Symptômes :**
+
+- Le navigateur signale un certificat invalide, expiré ou non concordant.
+- L'établissement de la liaison TLS échoue ou expire sur le frontend HTTPS.
+- Un certificat nouvellement commandé n'est pas servi.
+
+**Diagnostic :**
+
+Listez les certificats associés au service et vérifiez leur état :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
+
+Interprétez l'état comme suit :
+
+| État | Signification |
+|---|---|
+| `built` | Certificat commandé via OVHcloud (gratuit ou payant) et en service. |
+| `custom` | Certificat que vous avez téléversé vous-même. |
+| `built_not_routed` | Certificat commandé et livré, mais dont le domaine n'a pas pu être validé — généralement parce que le domaine ne pointe plus vers le Load Balancer. |
+
+Dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, ces mêmes informations sont disponibles dans l'onglet `SSL`.
+
+{/* DRAFT: À illustrer — capturer l'onglet SSL listant les états des certificats */}
+
+**Résolution :**
+
+| Cause | Résolution |
+|---|---|
+| Le domaine ne pointe pas vers le Load Balancer (`built_not_routed`) | Mettez à jour votre DNS afin que le domaine pointe vers le Load Balancer, puis relancez la validation. |
+| Certificat expiré ou incorrect servi | Dans l'onglet `SSL`, ajoutez ou remplacez le certificat à l'aide du bouton `Ajouter un certificat`, puis associez-le au frontend. |
+| Certificat présent mais non utilisé | Modifiez le frontend dans l'onglet `Frontends & routage` et sélectionnez le certificat sous `Certificat TLS`. |
+| La liaison échoue pour les clients plus anciens | Vérifiez la configuration TLS. Le profil `Moderne (TLS 1.3)` rejette les clients plus anciens ; passez à `Intermédiaire (TLS 1.2+)` si vous devez les prendre en charge. Consultez [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates). |
+
+> [!INFO]
+> Un certificat nouveau ou remplacé n'est servi qu'après l'application de la configuration. Consultez [Configuration non appliquée](#config-not-applied).
+
+<a name="config-not-applied"></a>
+
+### Configuration non appliquée
+
+Les modifications apportées aux fermes, aux serveurs, aux frontends, aux routes ou aux certificats sont préparées mais ne deviennent actives qu'une fois la configuration déployée. C'est de loin la raison la plus courante pour laquelle une modification « reste sans effet ».
+
+**Symptômes :**
+
+- Une modification enregistrée dans l'espace client ou via l'API ne semble pas prendre effet.
+- Le Load Balancer continue de présenter le comportement précédent.
+- Le statut du service indique un état de rechargement ou en attente.
+
+**Diagnostic :**
+
+Vérifiez le statut global du service. Un statut indiquant un rechargement ou un déploiement en attente signifie qu'une modification de configuration est préparée mais pas encore active.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
+
+Vous pouvez également consulter l'onglet `Tâches` dans l'espace client pour connaître l'état des opérations en cours.
+
+{/* DRAFT: À illustrer — capturer l'onglet Tâches montrant un déploiement en cours */}
+
+**Résolution :**
+
+Appliquez (déployez) la configuration préparée :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+Dans l'espace client, utilisez l'action de déploiement proposée après l'enregistrement d'une modification. Attendez la fin de l'opération dans l'onglet `Tâches` avant de tester.
+
+> [!WARNING]
+> L'application de la configuration recharge brièvement le Load Balancer. Effectuez le déploiement pendant une fenêtre de maintenance si vous êtes sensible aux courts événements de rechargement, et appliquez les modifications liées ensemble plutôt qu'une par une.
+
+<a name="routing-problems"></a>
+
+### Problèmes de routage
+
+Les problèmes de routage surviennent lorsque les requêtes atteignent le Load Balancer mais sont envoyées vers la mauvaise ferme, renvoient un contenu inattendu ou sont rejetées.
+
+**Symptômes :**
+
+- Les requêtes pour un nom d'hôte ou un chemin renvoient le contenu d'un autre backend.
+- Certaines requêtes aboutissent tandis que d'autres échouent selon l'URL.
+- Le trafic n'est pas réparti comme prévu entre les serveurs.
+
+**Diagnostic :**
+
+Vérifiez les frontends et les routes définis sur le service :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedFrontends"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedRoutes"} />
+
+Dans l'espace client, examinez l'onglet `Frontends & routage` et la configuration de route associée à chaque frontend.
+
+**Résolution :**
+
+| Cause | Résolution |
+|---|---|
+| Le frontend n'a pas de ferme par défaut | Définissez une `Route par défaut` afin que le trafic sans règle correspondante atteigne tout de même une ferme. |
+| Les conditions de route se chevauchent ou sont mal ordonnées | Vérifiez les règles de correspondance des routes ; la première route correspondante l'emporte. Réordonnez ou affinez les conditions. Consultez [Configurer les routes HTTP](/guides/network/load-balancer-revamp/configure-http-routes). |
+| Le frontend est lié au mauvais port ou protocole | Modifiez le frontend et vérifiez que le port d'écoute et le protocole correspondent au trafic client. Consultez [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends). |
+| Répartition déséquilibrée | Vérifiez que l'algorithme de répartition et les paramètres de persistance de la ferme correspondent à votre intention. Consultez [Configurer la persistance](/guides/network/load-balancer-revamp/configure-stickiness). |
+
+Appliquez la configuration après toute modification (voir [Configuration non appliquée](#config-not-applied)).
+
+### Escalade
+
+Si les étapes ci-dessus ne résolvent pas le problème :
+
+1. Rassemblez les informations de diagnostic pertinentes : le nom du service, les identifiants de la ferme et du serveur concernés, le résultat des appels d'API `serverState` et `/status`, ainsi que tout message d'erreur renvoyé au client.
+2. Notez l'heure à laquelle le problème a commencé et indiquez s'il coïncide avec une modification de configuration récente.
+3. Contactez le [support OVHcloud](https://help.ovhcloud.com/) et fournissez les informations collectées ci-dessus.
+
+> [!INFO]
+> OVHcloud met à votre disposition des services dont vous êtes responsable de la configuration et de la gestion. La plupart des problèmes de routage, de sonde et de certificat se résolvent au sein de votre configuration.
+
+## Aller plus loin
+
+- [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Surveiller la santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health)
+- [Foire aux questions](/guides/network/load-balancer-revamp/faq)
+
+Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).

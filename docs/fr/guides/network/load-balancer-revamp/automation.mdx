@@ -1,0 +1,202 @@
+---
+title: Automatiser l'OVHcloud Load Balancer avec l'API
+description: Découvrez la surface d'automatisation de l'API OVHcloud pour le Load Balancer, le modèle de configuration en attente puis appliquée, et le support Terraform.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objectif
+
+Ce guide décrit la surface d'automatisation exposée par l'API OVHcloud sous la section `/ipLoadbalancing`, le modèle de configuration en deux temps où les changements sont appliqués via une opération d'actualisation, ainsi que les options disponibles via le provider Terraform d'OVHcloud.
+
+Il s'adresse aux ingénieurs qui souhaitent administrer le Load Balancer de manière programmatique plutôt que via l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, ainsi qu'aux architectes qui évaluent des workflows d'infrastructure-as-code pour leur couche de répartition de charge.
+
+**Ce guide explique comment automatiser la configuration de l'OVHcloud Load Balancer.**
+
+:::info
+Ce guide est descriptif. Il ne fournit pas de procédures détaillées pour chaque opération. Pour des instructions pratiques, suivez les liens de la section [Aller plus loin](#aller-plus-loin).
+:::
+
+## Vue d'ensemble
+
+L'OVHcloud Load Balancer peut être configuré via trois interfaces : l'espace client OVHcloud, l'API OVHcloud et le provider Terraform d'OVHcloud. L'espace client convient à une administration interactive, tandis que l'API et Terraform constituent le socle de l'automatisation, des déploiements reproductibles et de l'intégration aux pipelines de livraison continue.
+
+Chaque composant du Load Balancer (frontends, fermes de serveurs, serveurs backend, routes, règles de routage, certificats SSL et zones) est exposé via l'API. L'espace client et le provider Terraform sont eux-mêmes des clients de cette même API : toute configuration réalisable depuis l'espace client peut donc l'être également de manière programmatique.
+
+| Méthode | Idéal pour | Documentation |
+|---|---|---|
+| API OVHcloud | Contrôle programmatique direct, scripting, outillage sur mesure. | [Console API](/links/api) |
+| Terraform | Infrastructure-as-code déclarative, état versionné. | [Registre Terraform](/links/terraform) |
+| Espace client OVHcloud | Administration interactive et manuelle. | [Gérer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel) |
+
+Le schéma ci-dessous montre comment chaque interface interagit avec la configuration du Load Balancer.
+
+```mermaid
+flowchart LR
+    CP[Espace client OVHcloud]
+    TF[Provider Terraform]
+    SCRIPT[Scripts personnalisés]
+    API[API OVHcloud<br/>/ipLoadbalancing]
+    CONF[Configuration en attente]
+    LIVE[Load Balancer en production]
+
+    CP --> API
+    TF --> API
+    SCRIPT --> API
+    API --> CONF
+    CONF -->|actualisation| LIVE
+```
+
+## La surface de l'API OVHcloud
+
+L'API OVHcloud expose le Load Balancer sous la section `/ipLoadbalancing`. Les endpoints sont organisés autour du service lui-même, des composants propres à chaque protocole et des tâches asynchrones qui appliquent les changements.
+
+### Endpoints de service et de découverte
+
+Ces endpoints renvoient des informations sur vos services et sur les valeurs que la plateforme accepte pour la configuration. Utilisez-les pour découvrir les zones disponibles, les types de fermes, les types de frontends, les sondes et les actions de routage avant de construire une configuration.
+
+| Opération | Méthode | Route |
+|---|---|---|
+| Lister les services actifs | `GET` | `/ipLoadbalancing` |
+| Renvoyer les détails d'un service | `GET` | `/ipLoadbalancing/{serviceName}` |
+| Lister les fermes définies et leur type | `GET` | `/ipLoadbalancing/{serviceName}/definedFarms` |
+| Lister les types de fermes disponibles | `GET` | `/ipLoadbalancing/{serviceName}/availableFarmType` |
+| Lister les types de frontends disponibles | `GET` | `/ipLoadbalancing/{serviceName}/availableFrontendType` |
+| Lister les sondes disponibles | `GET` | `/ipLoadbalancing/{serviceName}/availableFarmProbes` |
+| Lister les actions de routage disponibles | `GET` | `/ipLoadbalancing/{serviceName}/availableRouteActions` |
+| Lister les règles de routage disponibles | `GET` | `/ipLoadbalancing/{serviceName}/availableRouteRules` |
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing"} />
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre Load Balancer, par exemple `loadbalancer-abcdef0123456789`. |
+
+:::warning
+L'endpoint `GET /ipLoadbalancing/availableZones` est déprécié. Pour lister les zones disponibles pour un service, utilisez plutôt les endpoints de zone rattachés au service. Pour en savoir plus sur les zones, consultez le guide [Zones](/guides/network/load-balancer-revamp/configure-zones).
+:::
+
+### Composants propres à chaque protocole
+
+Les frontends, les fermes et les serveurs sont définis par protocole : HTTP, TCP ou UDP. Chaque composant dispose donc d'un ensemble distinct d'endpoints par protocole : vous devez appeler l'endpoint qui correspond au composant que vous gérez.
+
+:::info
+Les frontends, les fermes et les serveurs sont propres au protocole (HTTP, TCP ou UDP) dans lequel ils sont définis. La compatibilité entre ces composants n'est possible qu'au sein d'un même protocole. Par exemple, un frontend HTTP ne peut être associé qu'à une ferme HTTP, et ne peut pas être utilisé avec une ferme UDP.
+:::
+
+Le tableau ci-dessous résume les opérations de création, lecture, mise à jour et suppression pour chaque composant, en prenant le protocole HTTP comme exemple. Remplacez `http` par `tcp` ou `udp` pour les autres protocoles.
+
+| Composant | Lister | Créer | Lire | Mettre à jour | Supprimer |
+|---|---|---|---|---|---|
+| Ferme | `GET .../http/farm` | `POST .../http/farm` | `GET .../http/farm/{farmId}` | `PUT .../http/farm/{farmId}` | `DELETE .../http/farm/{farmId}` |
+| Serveur | `GET .../http/farm/{farmId}/server` | `POST .../http/farm/{farmId}/server` | `GET .../{serverId}` | `PUT .../{serverId}` | `DELETE .../{serverId}` |
+| Frontend | `GET .../http/frontend` | `POST .../http/frontend` | `GET .../http/frontend/{frontendId}` | `PUT .../http/frontend/{frontendId}` | `DELETE .../http/frontend/{frontendId}` |
+| Route | `GET .../http/route` | `POST .../http/route` | `GET .../http/route/{routeId}` | `PUT .../http/route/{routeId}` | `DELETE .../http/route/{routeId}` |
+| Règle de routage | `GET .../http/route/{routeId}/rule` | `POST .../http/route/{routeId}/rule` | `GET .../rule/{ruleId}` | `PUT .../rule/{ruleId}` | `DELETE .../rule/{ruleId}` |
+
+À titre d'exemple, l'appel permettant de créer une ferme de serveurs HTTP est présenté ci-dessous.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre Load Balancer. |
+| `zone` | Oui | Le nom de la zone, par exemple `all`. |
+| `displayName` | Non | Le nom à attribuer à la ferme. |
+| `balance` | Non | La méthode de répartition de charge de la ferme. |
+| `port` | Non | Le port d'écoute de la ferme. Hérité du frontend s'il n'est pas défini (de 1 à 65535). |
+
+Les certificats SSL sont gérés au niveau du service et ne sont pas propres à un protocole.
+
+| Opération | Méthode | Route |
+|---|---|---|
+| Lister les certificats SSL | `GET` | `/ipLoadbalancing/{serviceName}/ssl` |
+| Créer un certificat SSL | `POST` | `/ipLoadbalancing/{serviceName}/ssl` |
+| Récupérer un certificat SSL | `GET` | `/ipLoadbalancing/{serviceName}/ssl/{id}` |
+| Supprimer un certificat SSL | `DELETE` | `/ipLoadbalancing/{serviceName}/ssl/{id}` |
+
+Pour une référence complète de chaque endpoint et de ses paramètres, consultez la [console API](/links/api).
+
+## Le modèle « en attente puis appliquée »
+
+L'API du Load Balancer met en attente les changements de configuration au lieu de les appliquer immédiatement. Lorsque vous créez, modifiez ou supprimez un frontend, une ferme, un serveur, une route ou un certificat, le changement est enregistré en tant que configuration en attente mais n'affecte pas le trafic en production. Les changements ne prennent effet qu'après les avoir appliqués via une opération d'actualisation.
+
+Ce modèle vous permet d'assembler un ensemble complet de changements liés (par exemple, ajouter une ferme, y rattacher plusieurs serveurs et créer un frontend qui pointe vers la ferme) puis de les déployer ensemble en une seule opération cohérente. Il réduit également le risque d'exposer une configuration incomplète au trafic de production.
+
+### Appliquer les changements
+
+Pour appliquer tous les changements en attente d'un service, appelez l'endpoint d'actualisation.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre Load Balancer. |
+
+L'opération d'actualisation est asynchrone. Elle renvoie une tâche dont vous pouvez suivre l'exécution jusqu'à son achèvement.
+
+### Suivre les tâches
+
+Les changements de configuration qui affectent le service en production sont traités sous forme de tâches. Utilisez les endpoints de tâches pour lister les tâches et interroger le statut d'une tâche précise jusqu'à son achèvement.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task"} />
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task/\{id\}"} />
+
+| Paramètre | Requis | Description |
+|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre Load Balancer. |
+| `id` | Oui | L'identifiant de la tâche à inspecter. |
+
+Le schéma ci-dessous illustre la boucle d'automatisation typique : mettre en attente un ou plusieurs changements, déclencher une actualisation, puis interroger la tâche résultante jusqu'à ce qu'elle signale son achèvement.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API as /ipLoadbalancing
+    Client->>API: POST/PUT/DELETE composant
+    Note over API: Changement mis en attente
+    Client->>API: POST /{serviceName}/refresh
+    API-->>Client: Tâche créée
+    loop Jusqu'à l'achèvement de la tâche
+        Client->>API: GET /{serviceName}/task/{id}
+        API-->>Client: Statut de la tâche
+    end
+```
+
+:::tip
+Regroupez les changements liés et appelez l'actualisation une seule fois, après avoir mis en attente l'ensemble complet des changements. Une seule actualisation applique toute la configuration en attente, ce qui maintient le service en production cohérent et évite les états intermédiaires.
+:::
+
+## Terraform
+
+Le provider Terraform d'OVHcloud vous permet de décrire la configuration du Load Balancer de manière déclarative et de la gérer comme une infrastructure-as-code versionnée. Terraform suit l'état souhaité dans son fichier d'état et réconcilie la configuration en production pour qu'elle y corresponde, ce qui le rend adapté aux déploiements reproductibles entre environnements.
+
+Le provider Terraform est un client de l'API OVHcloud : les composants qu'il gère correspondent donc aux mêmes ressources `/ipLoadbalancing` décrites ci-dessus : services, fermes, serveurs, frontends, routes et certificats.
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+:::warning
+Le modèle « en attente puis appliquée » s'applique également lors de l'utilisation de Terraform. Une fois la configuration réconciliée par Terraform, une actualisation du service est nécessaire pour que les changements prennent effet sur le Load Balancer en production. [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+:::
+
+Pour la liste actuelle des ressources, leurs arguments et des exemples d'utilisation, consultez le [registre Terraform](/links/terraform).
+
+## Points d'attention et limitations
+
+Gardez à l'esprit les points suivants lorsque vous automatisez le Load Balancer.
+
+- **Les changements en attente nécessitent une actualisation.** Aucun changement de configuration n'atteint le trafic en production tant qu'une tâche d'actualisation n'est pas terminée pour le service.
+- **Les composants sont liés à un protocole.** Les frontends, les fermes et les serveurs ne peuvent pas être combinés entre protocoles. Appelez toujours l'endpoint qui correspond au protocole.
+- **Certains endpoints sont dépréciés.** `GET /ipLoadbalancing/availableZones` est déprécié ; utilisez plutôt les endpoints de zone rattachés au service.
+- **Authentification.** Les appels à l'API nécessitent des identifiants de l'API OVHcloud. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
+- **Limites de débit et quotas.** [TODO: confirm API rate limits and per-service component quotas for the Load Balancer]
+
+## Aller plus loin
+
+- [Gérer le Load Balancer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel)
+- [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

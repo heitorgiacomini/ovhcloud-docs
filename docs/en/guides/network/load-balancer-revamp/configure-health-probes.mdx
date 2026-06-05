@@ -1,0 +1,217 @@
+---
+title: Configure Load Balancer health-check probes
+description: Configure health-check probes on your OVHcloud Load Balancer farms to detect failing servers and route traffic only to healthy backends.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objective
+
+Health-check probes periodically query each server in a farm to confirm it is operational. When a probe detects an error, the affected server is automatically taken out of rotation until it recovers, so traffic is never routed to an unresponsive backend.
+
+**This guide explains how to configure probes on your server farms, set their interval and behaviour, and interpret the resulting server health.**
+
+For background on how probes fit into health monitoring, see the [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health) guide.
+
+## Requirements
+
+- An active [OVHcloud Load Balancer](/links/manager) service, with at least one farm and one server configured
+- Access to the [OVHcloud Control Panel](/links/manager)
+- For the API method: OVHcloud API credentials. See the [First steps with the OVHcloud API](/guides/manage-and-operate/api/first-steps) guide.
+
+## Introduction
+
+Probes are configured **on the farm**, so every server in the same farm uses the same probe definition. However, the probe must also be **enabled per server**, which lets you monitor only certain servers in a farm.
+
+Each farm type supports a defined set of probe types:
+
+| Probe type | Description | Port | Method | URL | Comparators |
+|---|---|---|---|---|---|
+| `tcp` | Attempts a TCP connection. If the server sends a banner, it can be matched against a pattern. | Configurable | Not supported | Not supported | `default`, `contains`, `matches` |
+| `http` | Attempts an HTTP connection and checks the status code or response body. Default test sends an `OPTIONS` request to `/` in HTTP/1.0. | Configurable | `GET`, `HEAD`, `OPTIONS` | `[[https?://]host]/path` | `default`, `contains`, `matches` |
+| `smtp` | Opens an SMTP connection, sends `HELLO localhost`, and checks for a `2xx` reply. | Configurable | Not supported | Not supported | `default` |
+| `mysql` | Opens a MySQL connection and analyses the response. | Configurable | Not supported | Not supported | `default` |
+| `pgsql` | Opens a PostgreSQL connection and analyses the response. | Configurable | Not supported | Not supported | `default` |
+| `oco` | Opens a TCP connection on port 79 and checks for a `2xx` reply. | Not configurable | Not supported | Not supported | `default` |
+
+To retrieve the full, up-to-date list of probes supported by your service and their configurable fields, use this call:
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableFarmProbes"} />
+
+| Field | Description |
+|---|---|
+| `type` | The probe type to set in the farm's `probe.type` field. |
+| `port` | Indicates whether the port can be configured for this probe. |
+| `method` | The list of supported HTTP methods, or `null` if none. |
+| `url` | Indicates whether the probe URL can be configured. |
+| `matches` | The list of comparators available for this probe. |
+
+### Comparators
+
+Comparators validate the result returned by a probe:
+
+| Comparator | Description |
+|---|---|
+| `default` | Runs the basic test, with no parameter. |
+| `status` | Comma-separated list of valid HTTP return codes. |
+| `contains` | Checks that the pattern appears in the response. |
+| `matches` | Checks that the response matches the pattern (regular expression). |
+
+The `contains` and `matches` comparators search only the first 16 KB of the response. For better performance, return as little data as possible from your probe endpoint.
+
+## Instructions
+
+You can configure a probe either through the OVHcloud Control Panel, when creating or editing a farm, or directly through the OVHcloud API.
+
+<Tabs>
+<Tab label="Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the `Network` section.
+2. Select your Load Balancer service, then open the `Server Farms` tab.
+3. Click `Create farm` to define a new farm, or open an existing farm to edit it.
+4. In the farm editor, expand the advanced settings to reveal the probe configuration.
+
+{/* DRAFT: To screenshot - the farm editor advanced settings section collapsed, showing where probe options live */}
+
+5. Select the probe type that matches your backend service (for example `tcp` or `http`).
+
+{/* DRAFT: To screenshot - the probe type selector expanded */}
+
+6. If the selected probe type allows it, configure the advanced probe settings (port, method, URL, comparator, pattern, interval).
+
+{/* DRAFT: To screenshot - the probe advanced settings dialog */}
+
+7. Confirm the farm settings to apply the configuration.
+
+> [!INFO]
+> Probes configured in the Control Panel are applied to the whole farm. Enabling the probe per server is handled automatically when servers are added through the Control Panel.
+
+</Tab>
+<Tab label="OVHcloud API">
+
+You can set a probe when creating a new farm (`POST`) or when modifying an existing one (`PUT`). Both operations take the same `probe` object; the example below shows the editing call.
+
+**1. Configure the probe on the farm**
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+For TCP farms, use the equivalent TCP route:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}"} />
+
+To create a farm with the probe already defined, use the `POST` routes instead:
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | The identifier of your OVHcloud Load Balancer. |
+| `farmId` | Yes (PUT) | The numeric identifier of the farm. |
+| `probe.type` | Yes | The probe type to enable (`tcp`, `http`, `smtp`, `mysql`, `pgsql`, `oco`). |
+| `probe.interval` | No | The interval in seconds between two probe attempts. Minimum 30 seconds. |
+| `probe.port` | No | The port the probe should use, if different from the farm port. |
+| `probe.method` | No | The HTTP method to use when `probe.type` is `http`. |
+| `probe.url` | No | The URL to test when `probe.type` is `http`. |
+| `probe.match` | No | The comparator used to decide whether the server is healthy. |
+| `probe.pattern` | No | The value passed to the comparator when it is not `default`. |
+| `probe.forceSsl` | No | Forces the probe to use SSL/TLS even if the farm connects over plain TCP. |
+
+> [!INFO]
+> If a port other than the farm port is set on the probe, the `proxyprotocol` and `ssl` settings are reset for the probe connection. SSL can be re-enabled with `probe.forceSsl`.
+
+> [!warning]
+> Configuring a probe on a farm is not enough on its own. The probe must also be enabled on each server you want to monitor (see step 2).
+
+**2. Enable the probe on each server**
+
+For a probe to run against a server, set the server's `probe` parameter to `true`:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+For TCP farms, use the equivalent TCP server route:
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
+
+| Parameter | Required | Description |
+|---|---|---|
+| `serviceName` | Yes | The identifier of your OVHcloud Load Balancer. |
+| `farmId` | Yes | The numeric identifier of the farm. |
+| `serverId` | Yes | The numeric identifier of the server. |
+| `probe` | Yes | Whether the probe is taken into account for this server. |
+
+**3. Apply the configuration**
+
+API changes are staged until you apply the pending configuration. For the steps to apply changes, see the [Manage via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel) guide.
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Common probe scenarios
+
+The examples below show typical probe definitions and the fields you set for each. Fields not listed keep their default values.
+
+#### Check that the server accepts TCP connections
+
+This is the simplest probe and works on both `tcp` and `http` farms. It periodically opens a connection to each server; if the connection fails twice in a row, the server is taken out of rotation until it responds again.
+
+| Field | Value |
+|---|---|
+| `probe.type` | `tcp` |
+
+#### Test a specific HTTP page
+
+A common best practice is to expose a dedicated health endpoint (such as `/status`, `/health`, or `/check`) that returns a summary of the service state. To send a `GET` request to that endpoint and validate the status code:
+
+| Field | Value |
+|---|---|
+| `probe.type` | `http` |
+| `probe.method` | `GET` |
+| `probe.url` | `http://api.example.com/status` |
+| `probe.match` | `status` |
+| `probe.pattern` | `200` (several codes can be listed, comma-separated) |
+
+> [!TIP]
+> Configure the method as `GET` rather than relying on the default `OPTIONS`. Some servers, including Nginx, do not handle `OPTIONS` without additional configuration.
+
+#### Use an external HTTP test for a dependent service
+
+When a backend depends on another component (for example an IMAP service that authenticates against an LDAP server), a plain `tcp` probe may report the server as healthy even though the underlying service is not usable. Expose a small HTTP endpoint on a dedicated port that tests the real dependency and returns `OK` when it is working:
+
+| Field | Value |
+|---|---|
+| `probe.type` | `http` |
+| `probe.port` | `8080` |
+| `probe.method` | `GET` |
+| `probe.url` | `/service/imap/status` |
+| `probe.match` | `contains` |
+| `probe.pattern` | `OK` |
+
+> [!warning]
+> If the HTTP endpoint dedicated to monitoring the dependent service itself fails, the backend service will be marked as failed even when it is working correctly. Keep the monitoring endpoint as simple and resilient as possible.
+
+### Interpret server health
+
+Once probes are running, the Load Balancer continuously evaluates each monitored server:
+
+- A server that passes its probe is kept **in rotation** and receives traffic.
+- A server that fails its probe is taken **out of rotation** and stops receiving new traffic until it passes again.
+- A server with **no probe enabled** is always considered available, even if the underlying service is down.
+
+Choose a `probe.interval` that balances fast failure detection against load on your backends. The minimum interval is 30 seconds. For a walkthrough of where server health is displayed and how to read it, see the [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health) guide.
+
+## Go further
+
+- [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Monitor server health](/guides/network/load-balancer-revamp/monitor-server-health)
+- [Troubleshooting](/guides/network/load-balancer-revamp/troubleshooting)
+
+Join our [community of users](/links/community).
