@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Ziel
 
 Mit diesem OVHcloud Feature können Sie einen E-Mail-Responder einrichten, der automatisch Nachrichten an alle sendet, die in Ihrer Abwesenheit versuchen, Sie per E-Mail zu kontaktieren.
@@ -13,7 +15,17 @@ Mit diesem OVHcloud Feature können Sie einen E-Mail-Responder einrichten, der a
 
 ## Voraussetzungen
 
+<Region zones={['eu']}>
+
 - Sie verfügen über einen MX Plan, als E-Mail-Dienst enthalten in einem [OVHcloud Webhosting-Angebot](https://www.ovhcloud.com/de/web-hosting/) oder [Kostenloses Hosting 100M](https://www.ovhcloud.com/de/domains/free-web-hosting/), oder als eigenständige Lösung bestellbar.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Sie verfügen über einen MX Plan, als E-Mail-Dienst enthalten in einem [OVHcloud Webhosting-Angebot](https://www.ovhcloud.com/de/web-hosting/) oder als eigenständige Lösung bestellbar.
+
+</Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 ---

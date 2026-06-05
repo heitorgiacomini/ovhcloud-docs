@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Objetivo
@@ -112,7 +113,17 @@ Selecione o registo à sua escolha clicando nos separadores seguintes.
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer <br/><br/>
-    Associe um nome de domínio a um servidor de e-mail. Por exemplo, o endereço *10 mx1.mail.ovh.net* corresponde a um dos servidores de e-mail OVHcloud quando possui uma oferta de e-mail OVHcloud. É provável que o seu fornecedor de e-mail disponha de vários servidores de e-mail: assim, devem ser criados vários campos MX. Consulte o nosso manual "[Adicionar um campo MX à configuração do nome de domínio](/guides/web-cloud/domains/dns-zone-mx)".
+    Associe um nome de domínio a um servidor de e-mail.
+
+    <Region zones={['eu']}>
+    Por exemplo, o endereço *10 mx1.mail.ovh.net* corresponde a um dos servidores de e-mail OVHcloud quando possui uma oferta de e-mail OVHcloud.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    Por exemplo, o endereço *10 mx1.mail.ovh.ca* corresponde a um dos servidores de e-mail OVHcloud quando possui uma oferta de e-mail OVHcloud.
+    </Region>
+
+    É provável que o seu fornecedor de e-mail disponha de vários servidores de e-mail: assim, devem ser criados vários campos MX. Consulte o nosso manual "[Adicionar um campo MX à configuração do nome de domínio](/guides/web-cloud/domains/dns-zone-mx)".
     
     :::warning
     De forma geral, recomendamos que na zona DNS utilize apenas um ou vários servidores do mesmo fornecedor de e-mail.

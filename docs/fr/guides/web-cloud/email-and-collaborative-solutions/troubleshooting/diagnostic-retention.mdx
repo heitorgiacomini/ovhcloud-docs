@@ -6,6 +6,9 @@ availableIn: [eu, ca]
 ---
 
  
+
+import { Region } from '@components/Zone';
+
 ## Objectif
 
 Vous avez supprimé par erreur un ou plusieurs éléments (e-mail, contact, rendez-vous du calendrier) et vous avez vidé votre corbeille. Il est toujours possible de les restaurer jusqu'à 14 jours après leur suppression via le webmail OWA (Outlook Web App).
@@ -15,7 +18,12 @@ Vous avez supprimé par erreur un ou plusieurs éléments (e-mail, contact, rend
 ## Prérequis
  
 - Disposer d'une solution e-mail OVHcloud:
+    <Region zones={['eu']}>
     - **MX Plan** ([nouvelle version uniquement](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#en-pratique)) proposée parmi nos [offres d’hébergement web](https://www.ovhcloud.com/fr/web-hosting/), incluse dans un [Hébergement gratuit 100M](https://www.ovhcloud.com/fr/domains/free-web-hosting/)
+    </Region>
+    <Region zones={['ca']}>
+    - **MX Plan** ([nouvelle version uniquement](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities#en-pratique)) proposée parmi nos [offres d’hébergement web](https://www.ovhcloud.com/fr/web-hosting/)
+    </Region>
     - ou [**Hosted Exchange**](https://www.ovhcloud.com/fr/emails/hosted-exchange/)
     - ou [**Email Pro**](https://www.ovhcloud.com/fr/emails/email-pro/)
 - Connaître les identifiants de connexion de l’adresse e-mail concernée

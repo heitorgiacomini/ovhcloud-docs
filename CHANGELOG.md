@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026.06.04.1
+
+### Features
+- **web-cloud:** adapt guide content to commercial zones (EU/CA/APAC) - wave 2
+- **theme:** add llms options and pdf export
+
+### Documentation
+- 396 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.04
 
 ### Features

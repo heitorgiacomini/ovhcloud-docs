@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Obiettivo
@@ -111,7 +112,17 @@ Selezionare il record desiderato facendo clic su ognuna delle schede seguenti.
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer <br/><br/>
-    Associa un nome di dominio a un server di posta Ad esempio, l'indirizzo *10 mx1.mail.ovh.net* corrisponde a uno dei server di posta OVHcloud quando possiedi un'offerta email OVHcloud. È probabile che il tuo provider di posta disponga di diversi server di posta: è necessario creare diversi record MX. Consulta la nostra guida [Aggiungere un record MX alla configurazione di un nome di dominio](/guides/web-cloud/domains/dns-zone-mx).
+    Associa un nome di dominio a un server di posta.
+
+    <Region zones={['eu']}>
+    Ad esempio, l'indirizzo *10 mx1.mail.ovh.net* corrisponde a uno dei server di posta OVHcloud quando possiedi un'offerta email OVHcloud.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    Ad esempio, l'indirizzo *10 mx1.mail.ovh.ca* corrisponde a uno dei server di posta OVHcloud quando possiedi un'offerta email OVHcloud.
+    </Region>
+
+    È probabile che il tuo provider di posta disponga di diversi server di posta: è necessario creare diversi record MX. Consulta la nostra guida [Aggiungere un record MX alla configurazione di un nome di dominio](/guides/web-cloud/domains/dns-zone-mx).
     
     :::warning
     In generale, ti consigliamo di utilizzare uno o più server di uno stesso provider email nella tua zona DNS.

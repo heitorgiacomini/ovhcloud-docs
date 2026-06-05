@@ -5,6 +5,8 @@ lastUpdated: 2020-03-11
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Ziel
 
 Unter der Option „Posteingangsregeln“ können Sie ein umfangreiches Regelwerk für die Verarbeitung eingehender E-Mails erstellen. Diese können Ihnen helfen, Ihr E-Mail-Konto zu organisieren, indem E-Mails automatisch in die passenden Ordner sortiert werden. Auf diese Weise können Sie auch Weiterleitungen definieren und Spam-Nachrichten herausfiltern.
@@ -13,8 +15,20 @@ Unter der Option „Posteingangsregeln“ können Sie ein umfangreiches Regelwer
 
 ## Voraussetzungen
 
+<Region zones={['eu']}>
 - Sie haben bereits einen OVHcloud E-Mail-Dienst eingerichtet ([**Exchange**](https://www.ovhcloud.com/de/emails/), [**E-Mail Pro**](https://www.ovhcloud.com/de/emails/email-pro/) oder **MX Plan**, aus dem MX Plan Angebot oder enthalten in [OVHcloud Webhostings](https://www.ovhcloud.com/de/web-hosting/) und [Kostenloses Hosting 100M](https://www.ovhcloud.com/de/domains/free-web-hosting/)).
 - Sie verfügen über Anmeldeinformationen für die E-Mail-Adresse, die Sie konfigurieren möchten.
+</Region>
+
+<Region zones={['ca']}>
+- Sie haben bereits einen OVHcloud E-Mail-Dienst eingerichtet ([**Exchange**](https://www.ovhcloud.com/de/emails/) oder **MX Plan**, aus dem MX Plan Angebot oder enthalten in [OVHcloud Webhostings](https://www.ovhcloud.com/de/web-hosting/)).
+- Sie verfügen über Anmeldeinformationen für die E-Mail-Adresse, die Sie konfigurieren möchten.
+</Region>
+
+<Region zones={['apac']}>
+- Sie haben bereits einen OVHcloud E-Mail-Dienst eingerichtet (**MX Plan**, aus dem MX Plan Angebot oder enthalten in [OVHcloud Webhostings](https://www.ovhcloud.com/de/web-hosting/)).
+- Sie verfügen über Anmeldeinformationen für die E-Mail-Adresse, die Sie konfigurieren möchten.
+</Region>
 
 ## In der praktischen Anwendung
 

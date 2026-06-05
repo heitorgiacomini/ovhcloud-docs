@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Objectif
 
 Lorsque vous êtes absent et que vous n'êtes pas en mesure de consulter votre adresse e-mail, vous pouvez mettre en place une réponse automatique (ou répondeur) qui transmettra un e-mail aux interlocuteurs qui vous envoient un e-mail.
@@ -13,7 +15,17 @@ Lorsque vous êtes absent et que vous n'êtes pas en mesure de consulter votre a
 
 ## Prérequis
 
+<Region zones={['eu']}>
+
 - Disposer d’une offre MX Plan. Celle-ci est disponible via : une offre d’[hébergement web](https://www.ovhcloud.com/fr/web-hosting/), l’[hébergement gratuit 100M](https://www.ovhcloud.com/fr/domains/free-web-hosting/) compris avec un nom de domaine (activé au préalable) ou l’offre MX Plan commandée séparément.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Disposer d’une offre MX Plan. Celle-ci est disponible via : une offre d’[hébergement web](https://www.ovhcloud.com/fr/web-hosting/) ou l’offre MX Plan commandée séparément.
+
+</Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 ---

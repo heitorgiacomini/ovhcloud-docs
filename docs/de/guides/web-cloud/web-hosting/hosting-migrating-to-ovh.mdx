@@ -105,6 +105,13 @@ OVHcloud bietet neben MX Plan weitere E-Mail-Angebote an. Sie können beispielsw
 :::
 </Region>
 
+<Region zones={['ca']}>
+:::info
+OVHcloud bietet neben MX Plan weitere E-Mail-Angebote an. Sie können beispielsweise [Exchange](https://www.ovhcloud.com/de/emails/hosted-exchange/)-Accounts mit E-Mail-Accounts kombinieren.
+
+:::
+</Region>
+
 
 ### Schritt 2: Eine DNS-Zone für Ihren Domainnamen bei OVHcloud erstellen und vorkonfigurieren <a name="step2"></a>
 
@@ -118,6 +125,7 @@ Fügen Sie folgende Einträge hinzu, sofern diese nicht existieren:
 
 **Beispiel** (für die Domain "domain.tld"):
 
+<Region zones={['eu']}>
 |Domain|Datensatztyp|Priorität|Ziel|
 |---|---|---|---|
 |domain.tld.|MX|1|mx1.mail.ovh.net.|
@@ -125,17 +133,41 @@ Fügen Sie folgende Einträge hinzu, sofern diese nicht existieren:
 |domain.tld.|MX|100|mx3.mail.ovh.net.|
 |www.domain.tld.|CNAME|-|domain.tld.|
 |domain.tld.|A|-|`Ziel_IP-Adresse`|
+</Region>
+
+<Region zones={['ca', 'apac']}>
+|Domain|Datensatztyp|Priorität|Ziel|
+|---|---|---|---|
+|domain.tld.|MX|1|mx1.mail.ovh.ca.|
+|domain.tld.|MX|5|mx2.mail.ovh.ca.|
+|domain.tld.|MX|100|mx3.mail.ovh.ca.|
+|www.domain.tld.|CNAME|-|domain.tld.|
+|domain.tld.|A|-|`Ziel_IP-Adresse`|
+</Region>
 
 Die richtige Ziel-IP-Adresse Ihres OVHcloud Hostings finden Sie in unserer Anleitung [IP-Adressen der verschiedenen Shared Hosting Cluster](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip).
 
 **Beispiel**: Für den Domainnamen "domain.tld" müssen die Einträge wie folgt aussehen:
 
+<Region zones={['eu']}>
 <img className="thumbnail" alt="hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/dashboard-mx-a-cname.png" loading="lazy" />
+</Region>
 
+{/* TODO zone-adapt (CA/APAC): produce a localized screenshot `dashboard-mx-a-cname-ca.png` showing `.ovh.ca` nameservers, then wrap it in <Region zones={['ca','apac']}>. The EU screenshot above is gated so CA/APAC readers are not shown `.ovh.net`. */}
+
+<Region zones={['eu']}>
 :::tip
 Beachten Sie die beiden Zielwerte für den Eintragstyp NS. Die Werte `dnsXX.ovh.net` und `nsXX.ovh.net` (oder `dns200.anycast.me` und `ns200.anycast.me`) entsprechen den DNS-Servern, die die DNS-Zone für Ihre Domain bereitstellen. Sie werden im [Schritt 9](#step9) dieser Anleitung verwendet.
 
 :::
+</Region>
+
+<Region zones={['ca', 'apac']}>
+:::tip
+Beachten Sie die beiden Zielwerte für den Eintragstyp NS. Die Werte `dnsXX.ovh.ca` und `nsXX.ovh.ca` (oder `dns200.anycast.me` und `ns200.anycast.me`) entsprechen den DNS-Servern, die die DNS-Zone für Ihre Domain bereitstellen. Sie werden im [Schritt 9](#step9) dieser Anleitung verwendet.
+
+:::
+</Region>
 
 
 ### Schritt 3: Vollständiges Backup Ihrer Website erstellen <a name="step3"></a>
@@ -185,7 +217,11 @@ Kontaktieren Sie gegebenenfalls den Administrator Ihrer aktiven DNS-Zone, um die
 
 **Beispiel** für "domain.tld":
 
+<Region zones={['eu']}>
 <img className="thumbnail" alt="hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/dashboard-a-txt-cname.png" loading="lazy" />
+</Region>
+
+{/* TODO zone-adapt (CA/APAC): produce a localized screenshot `dashboard-a-txt-cname-ca.png` showing `.ovh.ca` nameservers, then wrap it in <Region zones={['ca','apac']}>. The EU screenshot above is gated so CA/APAC readers are not shown `.ovh.net`. */}
 
 **Die Änderung der DNS-Einträge vom Typ "A", "CNAME" und "TXT" muss beim aktuellen DNS-Provider Ihres Domainnamens durchgeführt werden und erfordert eine Propagationszeit von 4 bis maximal 24 Stunden, bis die Änderungen voll wirksam sind.**
 
@@ -195,12 +231,16 @@ Nach der Propagation der DNS-Konfiguration wird die bei OVHcloud gehostete Websi
 
 Erstellen Sie neue E-Mail-Accounts und verwenden Sie dabei die gleichen E-Mail-Adressen, die Sie aktuell bei Ihrem E-Mail Provider haben. Sie finden mehr Informationen in unserer Anleitung zur [Erstellung von E-Mail-Accounts mit MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-creation).
 
+<Region zones={['eu']}>
 Wenn Sie sich für eins der E-Mail-Angebote Email Pro oder Exchange entschieden haben, lesen Sie unsere entsprechenden Anleitungen, um Ihre E-Mail-Adressen zu erstellen:
 
-<Region zones={['eu']}>
 - [E-Mail Pro](/guides/web-cloud/email-and-collaborative-solutions/email-pro/first-config)
+- [Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-hosted)
 </Region>
-<Region zones={['eu', 'ca']}>
+
+<Region zones={['ca']}>
+Wenn Sie sich für das E-Mail-Angebot Exchange entschieden haben, lesen Sie unsere entsprechende Anleitung, um Ihre E-Mail-Adressen zu erstellen:
+
 - [Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-hosted)
 </Region>
 
@@ -211,9 +251,17 @@ Das bewirkt, dass Ihre E-Mails fortan in Ihren neuen E-Mail-Accounts bei OVHclou
 
 Ersetzen Sie bei Ihrem DNS-Provider Ihre Einträge vom Typ mit den folgenden drei Einträgen (ohne bestehende Einträge beizubehalten):
 
+<Region zones={['eu']}>
 - Ihr Domainname ohne "www" als Eintragstyp "MX", zum Ziel: `mx1.mail.ovh.net.`
 - Ihr Domainname ohne "www" als Eintragstyp "MX", zum Ziel: `mx2.mail.ovh.net.`
 - Ihr Domainname ohne "www" als Eintragstyp "MX", zum Ziel: `mx3.mail.ovh.net.`
+</Region>
+
+<Region zones={['ca', 'apac']}>
+- Ihr Domainname ohne "www" als Eintragstyp "MX", zum Ziel: `mx1.mail.ovh.ca.`
+- Ihr Domainname ohne "www" als Eintragstyp "MX", zum Ziel: `mx2.mail.ovh.ca.`
+- Ihr Domainname ohne "www" als Eintragstyp "MX", zum Ziel: `mx3.mail.ovh.ca.`
+</Region>
 
 Die Änderung der "MX"-Server erfolgt beim aktuellen Ihrem DNS-Provider und **benötigt zwischen 4 bis 24 Stunden**.<br/>
 Das bedeutet, dass während der Propagation der DNS-Einstellungen immmer weniger E-Mails in Ihren alten Accounts ankommen und Ihre neuen Accounts bei OVHcloud E-Mails damit beginnen, E-Mails zu empfangen. Sobald die Propagation abgeschlossen ist, werden alle E-Mails auf Ihren OVHcloud E-Mail-Accounts empfangen.
@@ -271,7 +319,13 @@ Sobald Ihre E-Mail-Accounts bei OVHcloud eingerichtet und bestehende Inhalte mig
 
 Die in [Schritt 2](#step2) vorkonfigurierte DNS-Zone wird noch nicht auf Ihren Domainnamen angewendet. Ihr Domainname nutzt noch immer die DNS-Server Ihres ursprünglichen Anbieters.
 
+<Region zones={['eu']}>
 Ersetzen Sie die aktuell aktiven DNS-Server (des bisherigen Registrars) durch die beiden in der OVHcloud DNS-Zone deklarierten DNS-Server (Format `dnsXX.ovh.net` und `nsXX.ovh.net` oder `dns200.anycast.me` und `ns200.anycast.me`). Dieser Vorgang erfolgt über das Verwaltungsinterface des bisherigen Registrars.
+</Region>
+
+<Region zones={['ca', 'apac']}>
+Ersetzen Sie die aktuell aktiven DNS-Server (des bisherigen Registrars) durch die beiden in der OVHcloud DNS-Zone deklarierten DNS-Server (Format `dnsXX.ovh.ca` und `nsXX.ovh.ca` oder `dns200.anycast.me` und `ns200.anycast.me`). Dieser Vorgang erfolgt über das Verwaltungsinterface des bisherigen Registrars.
+</Region>
 
 :::warning
 Die Änderung der DNS-Server muss beim aktuellen Registrar Ihres Domainnamens durchgeführt werden und **benötigt bis zu 24 bis 48 Stunden**, bis sie voll wirksam ist.

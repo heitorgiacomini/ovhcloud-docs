@@ -5,6 +5,8 @@ lastUpdated: 2020-03-11
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Wprowadzenie
 
 Przy użyciu opcji „Reguły skrzynki odbiorczej” można utworzyć złożone zestawy reguł do obsługi e-maili przychodzących. Ułatwia to utrzymanie porządku na koncie poczty elektronicznej dzięki automatycznemu sortowaniu wiadomości w folderach. Jest też możliwe zdefiniowanie ustawień przesyłania dalej e-maili (przekierowywania) i filtrowanie wiadomości będących spamem.
@@ -13,8 +15,20 @@ Przy użyciu opcji „Reguły skrzynki odbiorczej” można utworzyć złożone 
 
 ## Wymagania początkowe
 
+<Region zones={['eu']}>
 - skonfigurowane rozwiązanie poczty elektronicznej OVHcloud (**usługa MX Plan** dostępna w ramach [hostingu WWW](https://www.ovhcloud.com/pl/web-hosting/), zawarta w [Darmowy hosting 100M](https://www.ovhcloud.com/pl/domains/free-web-hosting/) lub zamówiona oddzielnie jako rozwiązanie autonomiczne; [**Hosted Exchange**](https://www.ovhcloud.com/pl/emails/hosted-exchange/) lub [**E-mail Pro**](https://www.ovhcloud.com/pl/emails/email-pro/))
 - dane do logowania dla adresu e-mail, który chcesz skonfigurować
+</Region>
+
+<Region zones={['ca']}>
+- skonfigurowane rozwiązanie poczty elektronicznej OVHcloud (**usługa MX Plan** dostępna w ramach [hostingu WWW](https://www.ovhcloud.com/pl/web-hosting/) lub zamówiona oddzielnie jako rozwiązanie autonomiczne; [**Hosted Exchange**](https://www.ovhcloud.com/pl/emails/hosted-exchange/))
+- dane do logowania dla adresu e-mail, który chcesz skonfigurować
+</Region>
+
+<Region zones={['apac']}>
+- skonfigurowane rozwiązanie poczty elektronicznej OVHcloud (**usługa MX Plan** dostępna w ramach [hostingu WWW](https://www.ovhcloud.com/pl/web-hosting/) lub zamówiona oddzielnie jako rozwiązanie autonomiczne)
+- dane do logowania dla adresu e-mail, który chcesz skonfigurować
+</Region>
 
 ## W praktyce
 

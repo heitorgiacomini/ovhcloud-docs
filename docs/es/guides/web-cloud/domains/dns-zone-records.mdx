@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Objetivo
@@ -112,7 +113,17 @@ Seleccione el registro que desee haciendo clic en cada una de las fichas siguien
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer <br/><br/>
-    Conecta un nombre de dominio a un servidor de correo. Por ejemplo, la dirección *10 mx1.mail.ovh.net* corresponde a uno de los servidores de correo de OVHcloud cuando usted dispone de una solución de correo de OVHcloud. Es probable que su proveedor de correo disponga de varios servidores de correo: es necesario crear varios registros MX. Consulte nuestra guía [Añadir un registro MX a la configuración del nombre de dominio](/guides/web-cloud/domains/dns-zone-mx).
+    Conecta un nombre de dominio a un servidor de correo.
+
+    <Region zones={['eu']}>
+    Por ejemplo, la dirección *10 mx1.mail.ovh.net* corresponde a uno de los servidores de correo de OVHcloud cuando usted dispone de una solución de correo de OVHcloud.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    Por ejemplo, la dirección *10 mx1.mail.ovh.ca* corresponde a uno de los servidores de correo de OVHcloud cuando usted dispone de una solución de correo de OVHcloud.
+    </Region>
+
+    Es probable que su proveedor de correo disponga de varios servidores de correo: es necesario crear varios registros MX. Consulte nuestra guía [Añadir un registro MX a la configuración del nombre de dominio](/guides/web-cloud/domains/dns-zone-mx).
     
     :::warning
     En general, le recomendamos que utilice solo uno o más servidores de un mismo proveedor de correo en su zona DNS.

@@ -5,6 +5,8 @@ lastUpdated: 2020-03-11
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Obiettivo
 
 Tramite l’opzione “Regole Posta in arrivo” è possibile creare una serie di regole per gestire i messaggi in arrivo. In questo modo puoi mantenere la posta elettronica organizzata, spostando automaticamente le email in diverse cartelle. È anche un metodo per definire le impostazioni di inoltro (o reindirizzamento) e per filtrare i messaggi indesiderati.
@@ -13,8 +15,20 @@ Tramite l’opzione “Regole Posta in arrivo” è possibile creare una serie d
 
 ## Prerequisiti
 
+<Region zones={['eu']}>
 - Disporre di una soluzione di posta elettronica OVHcloud attiva (**MX Plan**, disponibile nell'ambito delle nostre offerte di [hosting Web](https://www.ovhcloud.com/it/web-hosting/), inclusa in un [Hosting gratuito 100M](https://www.ovhcloud.com/it/domains/free-web-hosting/) oppure ordinata separatamente con una soluzione indipendente; [**Hosted Exchange**](https://www.ovhcloud.com/it/emails/hosted-exchange/)o ancora [**Email Pro**](https://www.ovhcloud.com/it/emails/email-pro/))
 - Disporre delle credenziali di accesso dell’indirizzo email da configurare
+</Region>
+
+<Region zones={['ca']}>
+- Disporre di una soluzione di posta elettronica OVHcloud attiva (**MX Plan**, disponibile nell'ambito delle nostre offerte di [hosting Web](https://www.ovhcloud.com/it/web-hosting/) oppure ordinata separatamente con una soluzione indipendente; [**Hosted Exchange**](https://www.ovhcloud.com/it/emails/hosted-exchange/))
+- Disporre delle credenziali di accesso dell’indirizzo email da configurare
+</Region>
+
+<Region zones={['apac']}>
+- Disporre di una soluzione di posta elettronica OVHcloud attiva (**MX Plan**, disponibile nell'ambito delle nostre offerte di [hosting Web](https://www.ovhcloud.com/it/web-hosting/) oppure ordinata separatamente con una soluzione indipendente)
+- Disporre delle credenziali di accesso dell’indirizzo email da configurare
+</Region>
 
 ## Procedura
 

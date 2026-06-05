@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Objetivo
 
 Quando estiver em falta e não conseguir consultar o seu endereço de e-mail, poderá ativar uma resposta automática (ou resposta automática) que enviará um e-mail aos interlocutores que lhe enviam um e-mail.
@@ -13,7 +15,17 @@ Quando estiver em falta e não conseguir consultar o seu endereço de e-mail, po
 
 ## Requisitos
 
+<Region zones={['eu']}>
+
 - Dispor de uma oferta MX Plan. Esta última está disponível através de: uma oferta de [alojamento web](https://www.ovhcloud.com/pt/web-hosting/), o [alojamento gratuito 100M](https://www.ovhcloud.com/pt/domains/free-web-hosting/) incluído com um domínio (ativado anteriormente) ou a oferta MX Plan encomendada separadamente.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Dispor de uma oferta MX Plan. Esta última está disponível através de: uma oferta de [alojamento web](https://www.ovhcloud.com/pt/web-hosting/) ou a oferta MX Plan encomendada separadamente.
+
+</Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 ---

@@ -56,9 +56,21 @@ A fim de garantir uma boa qualidade de serviço em toda a infraestrutura partilh
 
 Num período escorregadio de 3600 segundos (1 hora), a sua oferta de alojamento web permitir-lhe-á enviar as seguintes quotas de e-mail:
 
+<Region zones={['eu']}>
+
 |Ofertas|Alojamento gratuito 100M|Starter|Perso|Pro|Performance|
 |---|---|---|---|---|---|
 |Quantidade máxima de envio de e-mails por hora e por serviço|10|20|100|200|2000|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Ofertas|Starter|Perso|Pro|Performance|
+|---|---|---|---|---|
+|Quantidade máxima de envio de e-mails por hora e por serviço|20|100|200|2000|
+
+</Region>
 
 :::info
 Estas limitações aplicam-se apenas **unicamente** aos e-mails emitidos com a função *mail()* de PHP e não diz respeito aos outros pacotes de e-mail (envio SMTP).
