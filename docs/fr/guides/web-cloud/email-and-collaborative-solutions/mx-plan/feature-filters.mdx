@@ -5,6 +5,8 @@ lastUpdated: 2024-03-20
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Objectif
 
 Un filtre e-mail permet d'appliquer différents traitements sur les messages que vous recevez, selon les critères de votre choix.
@@ -18,7 +20,17 @@ Par exemple : vous souhaitez que tout e-mail contenant « [SPAM] » dans le suje
 
 ## Prérequis
 
+<Region zones={['eu']}>
+
 - Disposer d'une offre e-mail MX Plan (disponible via : une offre d’[hébergement web](https://www.ovhcloud.com/fr/web-hosting/), l'[hébergement gratuit 100M](https://www.ovhcloud.com/fr/domains/free-web-hosting/) compris avec un nom de domaine, ou l'offre MX Plan commandée séparément).
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Disposer d'une offre e-mail MX Plan (disponible via : une offre d’[hébergement web](https://www.ovhcloud.com/fr/web-hosting/), ou l'offre MX Plan commandée séparément).
+
+</Region>
 
 {/* CP-NAV-START:web-mx-plan */}
 ---

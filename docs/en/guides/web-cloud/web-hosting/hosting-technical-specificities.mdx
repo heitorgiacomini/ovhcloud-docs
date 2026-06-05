@@ -56,9 +56,21 @@ In order to guarantee a good quality of service on the entire shared infrastruct
 
 Over a rolling period of 3600 seconds (1 hour), your Web Hosting plan will allow you to send the following email quotas:
 
+<Region zones={['eu']}>
+
 |Offers|Free 100M Hosting|Starter|Personal|Pro|Performance|
 |---|---|---|---|---|---|
 |Maximum number of emails sent per hour and per service|10|20|100|200|2000|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Offers|Starter|Personal|Pro|Performance|
+|---|---|---|---|---|
+|Maximum number of emails sent per hour and per service|20|100|200|2000|
+
+</Region>
 
 :::info
 These limitations apply to emails sent using the PHP *mail()* function **only**, and do not apply to other email solutions (SMTP sending).

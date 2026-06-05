@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Ziel
@@ -112,7 +113,17 @@ Wählen Sie den gewünschten Eintrag in den Tabs aus:
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer <br/><br/>
-    Verbindet einen Domainnamen mit einem E-Mail-Server. Die Adresse *10 mx1.mail.ovh.net* entspricht beispielsweise einem der OVHcloud E-Mail-Server, wenn Sie ein OVHcloud E-Mail-Angebot haben. Ihr E-Mail-Anbieter verfügt wahrscheinlich über mehrere E-Mail-Server. Es müssen daher mehrere MX-Einträge erstellt werden. Lesen Sie dazu die Anleitung zum [Hinzufügen eines MX-Eintrags](/guides/web-cloud/domains/dns-zone-mx).
+    Verbindet einen Domainnamen mit einem E-Mail-Server.
+
+    <Region zones={['eu']}>
+    Die Adresse *10 mx1.mail.ovh.net* entspricht beispielsweise einem der OVHcloud E-Mail-Server, wenn Sie ein OVHcloud E-Mail-Angebot haben.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    Die Adresse *10 mx1.mail.ovh.ca* entspricht beispielsweise einem der OVHcloud E-Mail-Server, wenn Sie ein OVHcloud E-Mail-Angebot haben.
+    </Region>
+
+    Ihr E-Mail-Anbieter verfügt wahrscheinlich über mehrere E-Mail-Server. Es müssen daher mehrere MX-Einträge erstellt werden. Lesen Sie dazu die Anleitung zum [Hinzufügen eines MX-Eintrags](/guides/web-cloud/domains/dns-zone-mx).
     
     :::warning
     Generell wird empfohlen, nur Mail-Server desselben E-Mail-Anbieters in Ihrer DNS-Zone zu verwenden.

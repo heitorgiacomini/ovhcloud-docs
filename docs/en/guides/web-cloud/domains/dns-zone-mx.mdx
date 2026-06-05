@@ -6,6 +6,7 @@ availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 
@@ -19,7 +20,18 @@ With an MX record, you can link a domain name to the server on your email platfo
 ## Requirements
 
 - The domain name concerned uses the OVHcloud configuration (i.e. OVHcloud DNS servers).
+
+<Region zones={['eu']}>
+
 - You have an MX Plan solution (included in the [web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/), a [free 100M hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/), or the MX Plan solution ordered separately), one of our [OVHcloud email offers](https://www.ovhcloud.com/en-gb/emails/), or an external email service.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- You have an MX Plan solution (included in the [web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/), or the MX Plan solution ordered separately), one of our [OVHcloud email offers](https://www.ovhcloud.com/en-gb/emails/), or an external email service.
+
+</Region>
 
 {/* CP-NAV-START:web-dns-zone */}
 ---
@@ -51,7 +63,18 @@ To understand how it works, we will use an example:
 - The address **sender@otherdomain.ovh** sends an email to **contact@mydomain.ovh**.
 - The sending email server (**Outgoing mail server**) queries the DNS zone for the domain name **mydomain.ovh** and reads the **MX** records.
 - The email is forwarded to the URL of the **MX** record that was read.
+
+<Region zones={['eu']}>
+
 - The email is sent to the target **mx0.mail.ovh.net**, which is preceded by the value **0**. This value corresponds to the priority: the lowest value is queried first and the highest last. This means that having multiple MX records helps compensate for a lack of response from the server designated by the record with the lowest priority, by moving on to subsequent servers in order of priority.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- The email is sent to the target **mx0.mail.ovh.ca**, which is preceded by the value **0**. This value corresponds to the priority: the lowest value is queried first and the highest last. This means that having multiple MX records helps compensate for a lack of response from the server designated by the record with the lowest priority, by moving on to subsequent servers in order of priority.
+
+</Region>
 
 <img className="thumbnail" alt="email" src="/images/assets/schemas/emails/mx-dns-resolution.png" loading="lazy" />
 
@@ -66,9 +89,27 @@ If you have any doubts, we advise contacting a [specialist provider](https://par
 
 ### OVHcloud MX configuration values <a name="mxovhcloud"></a>
 
+<Region zones={['eu']}>
+
 Below, you will find the OVHcloud MX configuration to use for our MX Plan solutions (MX Plan standalone or included in an [OVHcloud web hosting](https://www.ovhcloud.com/en-gb/web-hosting/) plan), [Email Pro](https://www.ovhcloud.com/en-gb/emails/email-pro/), [Exchange](https://www.ovhcloud.com/en-gb/emails-exchange/) and [Zimbra](https://www.ovhcloud.com/en-gb/emails/zimbra-emails/). Our email servers have antispam and antivirus integrated.
 
+</Region>
+
+<Region zones={['ca']}>
+
+Below, you will find the OVHcloud MX configuration to use for our MX Plan solutions (MX Plan standalone or included in an [OVHcloud web hosting](https://www.ovhcloud.com/en-gb/web-hosting/) plan) and [Exchange](https://www.ovhcloud.com/en-gb/emails-exchange/). Our email servers have antispam and antivirus integrated.
+
+</Region>
+
+<Region zones={['apac']}>
+
+Below, you will find the OVHcloud MX configuration to use for our MX Plan solutions (MX Plan standalone or included in an [OVHcloud web hosting](https://www.ovhcloud.com/en-gb/web-hosting/) plan). Our email servers have antispam and antivirus integrated.
+
+</Region>
+
 These values are common to all of these solutions, with the exception of [Private Exchange](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-starting-private) and Dedicated Exchange.
+
+<Region zones={['eu']}>
 
 |Domain|TTL|Record type|Priority|Target|
 |---|---|---|---|---|
@@ -77,6 +118,20 @@ These values are common to all of these solutions, with the exception of [Privat
 |*leave blank*|3600|MX|50|mx2.mail.ovh.net.|
 |*leave blank*|3600|MX|100|mx3.mail.ovh.net.|
 |*leave blank*|3600|MX|200|mx4.mail.ovh.net.|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Domain|TTL|Record type|Priority|Target|
+|---|---|---|---|---|
+|*leave blank*|3600|MX|1|mx0.mail.ovh.ca.|
+|*leave blank*|3600|MX|5|mx1.mail.ovh.ca.|
+|*leave blank*|3600|MX|50|mx2.mail.ovh.ca.|
+|*leave blank*|3600|MX|100|mx3.mail.ovh.ca.|
+|*leave blank*|3600|MX|200|mx4.mail.ovh.ca.|
+
+</Region>
 
 These MX records must be configured in your domain name’s DNS zone.
 

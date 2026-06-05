@@ -5,6 +5,8 @@ lastUpdated: 2025-04-28
 availableIn: [eu, ca, apac]
 ---
 
+import { Region } from '@components/Zone';
+
 ## Ziel <a name="objective"></a>
 
 Die Delegation gibt dem Benutzer eines E-Mail-Accounts die Möglichkeit, verschiedene Funktionen (insbesondere die Änderung des Passworts) selbst zu verwalten. Diese Funktionen hängen vom Typ der eingerichteten Übertragung ab:
@@ -17,7 +19,17 @@ Die Delegation gibt dem Benutzer eines E-Mail-Accounts die Möglichkeit, verschi
 
 ## Voraussetzungen
 
+<Region zones={['eu']}>
+
 - Sie verfügen über ein MX Plan Angebot, entweder in einem [OVHcloud Webhosting](https://www.ovhcloud.com/de/web-hosting/) enthalten, separat bestellt, oder enthalten in [Kostenloses Hosting 100M](https://www.ovhcloud.com/de/domains/free-web-hosting/).
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+- Sie verfügen über ein MX Plan Angebot, entweder in einem [OVHcloud Webhosting](https://www.ovhcloud.com/de/web-hosting/) enthalten oder separat bestellt.
+
+</Region>
 
 :::warning
 Die folgende Anleitung ist nur anwendbar auf den Dienst MX Plan *Legacy*. Für unsere aktuelle Version dieses Angebots gibt es keine Delegationsverwaltung. Die Änderung des Passworts, die Eingangsfilter und Auto-Antworten eines E-Mail-Accounts können direkt über das OWA Webmail (**O**utlook **W**eb **A**pp) verwaltet werden. Sie können anhand der nachstehenden Tabelle identifizieren, welche Version des MX Plan Sie verwenden.
