@@ -14,7 +14,7 @@ OVHcloud propose une fonctionnalité de migration de machines virtuelles vers Pu
 
 - Disposer d'une organisation [Public VCF as-a-Service](/links/hosted-private-cloud/vmware-vcd) active.
 - Avoir activé l'option de migration sur votre organisation depuis votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>.
-- Disposer d'une appliance **VCDA On-Premises** déployée, configurée et appairée avec votre organisation Public VCF as-a-Service. Si ce n'est pas encore le cas, consultez le guide « [Migration Public VCF as-a-Service avec VCDA - Premiers pas](/guides/hosted-private-cloud/powered-by-vmware/vcda-getting-started) ».
+- Disposer d'une appliance **VCDA on-premises** déployée, configurée et appairée avec votre organisation Public VCF as-a-Service. Si ce n'est pas encore le cas, consultez le guide « [Migration Public VCF as-a-Service avec VCDA - Premiers pas](/guides/hosted-private-cloud/powered-by-vmware/vcda-getting-started) ».
 - Disposer d'un compte utilisateur sur votre organisation Public VCF as-a-Service avec les droits suffisants pour gérer les réplications.
 
 ## En pratique
@@ -85,7 +85,7 @@ Cette étape vous permet d'ajuster les paramètres de la réplication :
 
 - **Compress replication traffic** : à activer uniquement en cas de bande passante limitée (consommation CPU augmentée) ;
 - **Delay start synchronization** : pour décaler le démarrage de la synchronisation initiale ;
-- **VDC policy settings** : politiques de placement et de sizing à appliquer côté cible (laissez <code className="action">None</code> pour conserver la configuration d'origine).
+- **VDC policy settings** : politiques de placement et de dimensionnement à appliquer côté cible (laissez <code className="action">None</code> pour conserver la configuration d'origine).
 
 <img className="thumbnail" alt="Paramètres de réplication" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/06-settings.png" loading="lazy" />
 
@@ -98,7 +98,7 @@ L'assistant affiche un récapitulatif de la migration à venir. Vérifiez :
 - les VMs sélectionnées ;
 - le site source et le site de destination ;
 - le vDC et la politique de stockage ;
-- les politiques de sizing et de placement.
+- les politiques de dimensionnement et de placement.
 
 <img className="thumbnail" alt="Récapitulatif de la migration" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/07-ready-to-complete.png" loading="lazy" />
 
@@ -140,7 +140,7 @@ Configurez les paramètres de bascule :
 - **Network Settings** :
     - <code className="action">Apply preconfigured network settings on migrate</code> : applique les paramètres réseau définis dans le profil de récupération ;
     - <code className="action">Connect all VMs to network</code> : reconnecte simplement les VMs au réseau choisi ;
-- **VDC policy settings** : politiques de placement, de sizing et de stockage à utiliser côté cible.
+- **VDC policy settings** : politiques de placement, de dimensionnement et de stockage à utiliser côté cible.
 
 <img className="thumbnail" alt="Paramètres de migration" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/11-migrate-settings.png" loading="lazy" />
 
