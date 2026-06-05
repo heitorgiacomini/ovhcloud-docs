@@ -1,21 +1,21 @@
 ---
-title: Trigger your first VCDA migration to Public VCFaaS
-description: Learn how to trigger your first VM migration to your Public VCFaaS organization using VMware Cloud Director Availability
-lastUpdated: 2026-05-22
+title: Trigger your first VCDA migration to Public VCF as-a-Service
+description: Find out how to trigger your first VM migration to your Public VCF as-a-Service organisation using VMware Cloud Director Availability
+lastUpdated: 2026-06-08
 ---
 
 ## Objective
 
-OVHcloud offers a VM migration feature to Public VCFaaS based on **VMware Cloud Director Availability (VCDA)**. This feature allows you to migrate your VMs from a vSphere or VCD on-premise environment to your Public VCFaaS organization.
+OVHcloud offers a VM migration feature to Public VCF as-a-Service based on **VMware Cloud Director Availability (VCDA)**. This feature allows you to migrate your VMs from a vSphere or VCD on-premises environment to your Public VCF as-a-Service organisation.
 
-**This guide walks you through your first migration: data replication, monitoring, and the final cutover (migration) to your Public VCFaaS organization.**
+**This guide walks you through your first migration: data replication, monitoring, and the final cutover (migration) to your Public VCF as-a-Service organisation.**
 
 ## Requirements
 
-- An active [Public VCFaaS](/links/hosted-private-cloud/vmware-vcd-organization) organization.
-- The migration option enabled on your organization from your [OVHcloud Control Panel](/links/manager).
-- A **VCDA On-Premise** appliance deployed, configured and paired with your Public VCFaaS organization. If this is not yet the case, refer to the [Public VCFaaS Migration - Getting Started](/guides/hosted-private-cloud/powered-by-vmware/vcda-getting-started) guide.
-- A user account on your Public VCFaaS organization with enough rights to manage replications.
+- An active [Public VCF as-a-Service](/links/hosted-private-cloud/vmware-vcd) organisation.
+- The migration option enabled on your organisation from your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+- A **VCDA On-Premises** appliance deployed, configured and paired with your Public VCF as-a-Service organisation. If this is not yet the case, refer to the [Public VCF as-a-Service Migration with VCDA - Getting Started](/guides/hosted-private-cloud/powered-by-vmware/vcda-getting-started) guide.
+- A user account on your Public VCF as-a-Service organisation with enough rights to manage replications.
 
 ## Instructions
 
@@ -23,33 +23,26 @@ OVHcloud offers a VM migration feature to Public VCFaaS based on **VMware Cloud 
 
 The migration workflow has three main steps:
 
-```
-┌──────────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
-│   Step 1             │     │   Step 2             │     │   Step 3             │
-│   Start the          │────▶│   Wait for the       │────▶│   Trigger the final  │
-│   replication        │     │   replication to     │     │   migration          │
-│   (source → target)  │     │   reach Healthy      │     │   (cutover)          │
-└──────────────────────┘     └──────────────────────┘     └──────────────────────┘
-```
+<img className="thumbnail" alt="VCDA migration workflow: start the replication, wait for it to reach the Healthy state, then trigger the final migration (cutover)" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/workflow-en.png" loading="lazy" />
 
-The operations can be driven from two interfaces:
+You can drive the operations from two interfaces:
 
-- **Your on-premise VCDA appliance UI**, for source-side operations (recommended for this guide);
-- **The VMware Cloud Director UI** of your Public VCFaaS organization, through the **Availability plugin**.
+- **Your on-premises VCDA appliance UI**, for source-side operations (recommended for this guide);
+- **The VMware Cloud Director UI** of your Public VCF as-a-Service organisation, through the **Availability plugin**.
 
 #### Accessing the Availability plugin in VMware Cloud Director
 
-From your Public VCFaaS organization, open the VCD portal and click <code className="action">More</code> > <code className="action">Availability</code> to access the VCDA plugin:
+From your Public VCF as-a-Service organisation, open the VCD portal and click <code className="action">More</code> > <code className="action">Availability</code> to access the VCDA plugin:
 
 <img className="thumbnail" alt="Availability plugin in VMware Cloud Director" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/01-vcd-availability-plugin.png" loading="lazy" />
 
-The plugin shows the status of inbound and outbound replications for your organization.
+The plugin shows the status of inbound and outbound replications for your organisation.
 
 ### Step 1: Start the replication
 
-In this example, we trigger the migration **from** the on-premise VCDA appliance **to** the Public VCFaaS organization.
+In this example, the migration is triggered **from** the on-premises VCDA appliance **to** the Public VCF as-a-Service organisation.
 
-Log in to your on-premise VCDA appliance interface (`https://<appliance-IP>`) with the `root` account.
+Log in to your on-premises VCDA appliance interface (`https://<appliance-IP>`) with the `root` account.
 
 In the left menu, click <code className="action">Outgoing Replications</code>, then the <code className="action">vApp</code> tab.
 
@@ -57,13 +50,13 @@ Click the <code className="action">New migration</code> button (cloud icon with 
 
 <img className="thumbnail" alt="New migration button" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/02-new-migration-button.png" loading="lazy" />
 
-#### Authentication to the target organization
+#### Authentication to the target organisation
 
-The wizard prompts you to authenticate against the Public VCFaaS organization that will be the migration target.
+The wizard prompts you to authenticate against the Public VCF as-a-Service organisation that will be the migration target.
 
 Enter:
 
-- **Username**: your username on the Public VCFaaS organization (in the `user@organization` format);
+- **Username**: your username on the Public VCF as-a-Service organisation (in the `user@organization` format);
 - **Password**: the associated password.
 
 Click <code className="action">LOGIN</code>.
@@ -80,7 +73,7 @@ Click <code className="action">Next</code>.
 
 #### Step 1.2: Destination vDC and storage policy
 
-Select the target **virtual datacenter (vDC)** in your Public VCFaaS organization and the **storage policy** to use for the migrated VMs.
+Select the target **virtual datacenter (vDC)** in your Public VCF as-a-Service organisation and the **storage policy** to use for the migrated VMs.
 
 <img className="thumbnail" alt="vDC and storage policy selection" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/05-destination-vdc.png" loading="lazy" />
 
@@ -91,7 +84,7 @@ Click <code className="action">Next</code>.
 This step allows you to adjust the replication settings:
 
 - **Compress replication traffic**: enable it only on limited bandwidth links (increased CPU usage);
-- **Delay start synchronization**: to postpone the start of the initial synchronization;
+- **Delay start synchronization**: to postpone the start of the initial synchronisation;
 - **VDC policy settings**: placement and sizing policies to apply on the target (leave <code className="action">None</code> to keep the original configuration).
 
 <img className="thumbnail" alt="Replication settings" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/06-settings.png" loading="lazy" />
@@ -167,10 +160,11 @@ Check the summary:
 :::info
 The migration workflow automatically performs the following steps:
 
-1. Final synchronization (if the source VM is powered on);
+1. Final synchronisation (if the source VM is powered on);
 2. Shutdown of the source VM;
-3. Final synchronization (once the source VM is off);
+3. Final synchronisation (once the source VM is off);
 4. Import of the VM into the target site.
+
 :::
 
 Click <code className="action">Finish</code> to start the migration.
@@ -183,18 +177,18 @@ The cutover appears in the replication list with the **Migrate** state and a pro
 
 #### Migration completed
 
-Once the migration is finalised, the VM appears in your Public VCFaaS organization and the replication state changes to **Failed-Over** in the **Incoming Replications** view of the VCD portal:
+Once the migration is finalised, the VM appears in your Public VCF as-a-Service organisation and the replication state changes to **Failed-Over** in the **Incoming Replications** view of the VCD portal:
 
 <img className="thumbnail" alt="Migration completed" src="/images/hosted-private-cloud/powered-by-vmware/vcda-trigger-migration/14-migration-completed.png" loading="lazy" />
 
-You can now find your migrated VMs directly in your Public VCFaaS vDC, ready to use.
+You can now find your migrated VMs directly in your Public VCF as-a-Service vDC, ready to use.
 
 ## Go further
 
-- [Public VCFaaS Migration - Getting Started](/guides/hosted-private-cloud/powered-by-vmware/vcda-getting-started)
+- [Public VCF as-a-Service Migration with VCDA - Getting Started](/guides/hosted-private-cloud/powered-by-vmware/vcda-getting-started)
 - [How to use the Public VCF as-a-Service user interface](/guides/hosted-private-cloud/powered-by-vmware/vcd-getting-started-dashboard-overview)
 - [Official VMware Cloud Director Availability documentation](https://techdocs.broadcom.com/us/en/vmware-cis/cloud-director/vmware-cloud-director-availability.html)
 
-If you need training or technical assistance to implement our solutions, please contact your sales representative or click [here](/links/professional-services) to get a quote and ask for a custom analysis of your project from our Professional Services experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analysed by our experts.
 
 Join our [community of users](/links/community).
