@@ -27,7 +27,7 @@ Chaque composant du Load Balancer (frontends, fermes de serveurs, serveurs backe
 | Méthode | Idéal pour | Documentation |
 |---|---|---|
 | API OVHcloud | Contrôle programmatique direct, scripting, outillage sur mesure. | [Console API](/links/api) |
-| Terraform | Infrastructure-as-code déclarative, état versionné. | [Registre Terraform](/links/terraform) |
+| Terraform | Infrastructure-as-code déclarative, état versionné. | [Registre Terraform](https://registry.terraform.io/providers/ovh/ovh/latest/docs) |
 | Espace client OVHcloud | Administration interactive et manuelle. | [Gérer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel) |
 
 Le schéma ci-dessous montre comment chaque interface interagit avec la configuration du Load Balancer.
@@ -153,7 +153,7 @@ Le provider Terraform est un client de l'API OVHcloud. Il expose le service lui-
 Il n'existe pas de ressource Terraform pour les frontends ni pour l'opération d'actualisation. Les frontends se gèrent via l'API OVHcloud ou l'espace client, et les changements en attente doivent être appliqués via l'endpoint d'actualisation de l'API ou depuis l'espace client. Une fois les ressources de fermes, de serveurs et de routes réconciliées par Terraform, une actualisation du service reste nécessaire pour que les changements prennent effet sur le Load Balancer en production.
 :::
 
-Pour la liste actuelle des ressources, leurs arguments et des exemples d'utilisation, consultez le [registre Terraform](/links/terraform).
+Pour la liste actuelle des ressources, leurs arguments et des exemples d'utilisation, consultez le [registre Terraform](https://registry.terraform.io/providers/ovh/ovh/latest/docs).
 
 ## Points d'attention et limitations
 
