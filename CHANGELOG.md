@@ -2,8 +2,11 @@
 
 ## 2026.06.08
 
+### Maintenance
+- **telecom:** standardize guides (legacy cleanup, links, structure)
+
 ### Documentation
-- 154 guides updated across de, en, es, fr, it, pl, pt
+- 287 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.06.04.1
 
