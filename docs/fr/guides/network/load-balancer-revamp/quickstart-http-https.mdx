@@ -59,7 +59,7 @@ Cette section vous guide tout au long du déploiement complet, dans l'ordre. Cha
 
 Avant de commencer, comprenez comment une requête atteint votre backend. Le frontend écoute sur une IP et un port publics, transmet la connexion à une route, et la route la dirige vers une ferme de serveurs, qui sélectionne l'un de ses serveurs. Le schéma ci-dessous illustre le flux d'un déploiement HTTP/HTTPS avec une seule ferme partagée.
 
-<img className="thumbnail" alt="Vue d'ensemble <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/quickstart-http-https/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d'ensemble — schéma" src="/images/network/load-balancer-revamp/quickstart-http-https/fig-1.fr.svg" loading="lazy" />
 
 Les deux frontends routent vers une seule ferme HTTP. Le frontend HTTPS termine également le TLS à l'aide du certificat que vous rattachez à l'[étape 5](#certificate).
 

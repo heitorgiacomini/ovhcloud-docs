@@ -28,7 +28,7 @@ La disponibilité dépend donc à la fois de la redondance qu'OVHcloud opère po
 
 Le diagramme suivant montre le modèle de redondance en couches, depuis le point d'entrée Anycast jusqu'aux serveurs backend.
 
-<img className="thumbnail" alt="Vue d'ensemble diagram" src="/images/network/load-balancer-revamp/high-availability/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d'ensemble — schéma" src="/images/network/load-balancer-revamp/high-availability/fig-1.fr.svg" loading="lazy" />
 
 ## Concepts clés
 
@@ -63,7 +63,7 @@ Le Load Balancer est accessible via une adresse IP Anycast. La même adresse IP 
 
 Le diagramme ci-dessous montre comment deux clients situés à des emplacements différents atteignent des zones différentes via la même adresse Anycast, et comment le trafic est réorienté lorsqu'une zone devient indisponible.
 
-<img className="thumbnail" alt="Routage Anycast diagram" src="/images/network/load-balancer-revamp/high-availability/fig-2.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Routage Anycast — schéma" src="/images/network/load-balancer-revamp/high-availability/fig-2.fr.svg" loading="lazy" />
 
 :::info
 En raison de restrictions techniques, lorsqu'un Load Balancer est configuré avec deux zones dont l'une se trouve dans une région APAC et l'autre non, le trafic est acheminé en priorité par la zone non-APAC en premier, même lorsque le service est hors service dans cette zone. Ce comportement est spécifique aux configurations intercontinentales impliquant des zones APAC, et OVHcloud ne recommande pas de configurer un Load Balancer de cette manière.
@@ -80,7 +80,7 @@ Le failover opère à deux niveaux :
 
 Les sondes sont essentielles à ce comportement. Sans sondes, le Load Balancer ne peut pas détecter un backend qui ne répond pas et peut continuer à lui envoyer du trafic. Pour les configurer, consultez le guide [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
 
-<img className="thumbnail" alt="Sondes et failover diagram" src="/images/network/load-balancer-revamp/high-availability/fig-3.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Sondes et failover — schéma" src="/images/network/load-balancer-revamp/high-availability/fig-3.fr.svg" loading="lazy" />
 
 ### Anti-affinité entre zones
 
@@ -92,7 +92,7 @@ Lorsque vous souhaitez appliquer la même configuration à chaque zone souscrite
 
 Le diagramme ci-dessous oppose une configuration sans anti-affinité à une configuration où chaque zone est autonome.
 
-<img className="thumbnail" alt="Anti-affinité entre zones diagram" src="/images/network/load-balancer-revamp/high-availability/fig-4.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Anti-affinité entre zones — schéma" src="/images/network/load-balancer-revamp/high-availability/fig-4.fr.svg" loading="lazy" />
 
 ## Considérations de conception
 

@@ -36,7 +36,7 @@ Il existe deux topologies multizones courantes :
 - **Multirégion.** Les zones se trouvent dans différentes régions OVHcloud (par exemple `GRA` et `BHS`). Cette topologie assure une reprise après sinistre en cas de panne régionale ainsi que des points d'entrée à l'échelle mondiale. Vous déclarez un frontend dans chaque zone, chacun pointant vers une ferme de serveurs située dans la même zone, ce qui vous permet de contrôler quels serveurs back-end sont utilisés dans quelle zone.
 - **Multi-AZ.** Plusieurs zones de disponibilité se trouvent au sein d'une même région (par exemple Paris 3-AZ). Cette topologie assure une haute disponibilité et une tolérance aux pannes en cas de panne locale, en s'appuyant sur des connexions à faible latence entre les zones.
 
-<img className="thumbnail" alt="Introduction diagram" src="/images/network/load-balancer-revamp/configure-zones/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Introduction — schéma" src="/images/network/load-balancer-revamp/configure-zones/fig-1.fr.svg" loading="lazy" />
 
 > [!warning]
 > En raison de restrictions techniques, lorsqu'un Load Balancer utilise deux zones dont l'une se trouve dans une région APAC et l'autre non, le trafic est acheminé en priorité par la zone non APAC, même lorsque le service est hors service dans cette zone. Ce comportement est spécifique aux configurations intercontinentales impliquant des zones APAC. Nous vous déconseillons cette configuration.

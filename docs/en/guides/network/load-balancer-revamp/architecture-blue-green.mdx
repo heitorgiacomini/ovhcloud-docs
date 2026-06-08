@@ -54,7 +54,7 @@ The cutover is a swap of the `defaultFarmId` value on the two frontends, followe
 
 The diagram below shows the initial state, where Farm A is in production (blue) and Farm B is the candidate (green).
 
-<img className="thumbnail" alt="Architecture overview <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/architecture-blue-green/fig-1.svg" loading="lazy" />
+<img className="thumbnail" alt="Architecture overview diagram" src="/images/network/load-balancer-revamp/architecture-blue-green/fig-1.svg" loading="lazy" />
 
 After a successful cutover, the public frontend points at Farm B and the staging frontend points at Farm A. The colours follow the role, not the farm: the farm in production is always "blue".
 

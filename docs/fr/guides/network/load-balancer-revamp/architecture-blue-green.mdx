@@ -54,7 +54,7 @@ Le basculement consiste à échanger la valeur `defaultFarmId` sur les deux fron
 
 Le schéma ci-dessous montre l'état initial, où la Ferme A est en production (blue) et la Ferme B est la candidate (green).
 
-<img className="thumbnail" alt="Vue d'ensemble de l'architecture <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/architecture-blue-green/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d'ensemble de l'architecture — schéma" src="/images/network/load-balancer-revamp/architecture-blue-green/fig-1.fr.svg" loading="lazy" />
 
 Après un basculement réussi, le frontend public pointe vers la Ferme B et le frontend de préproduction pointe vers la Ferme A. Les couleurs suivent le rôle, et non la ferme : la ferme en production est toujours « blue ».
 

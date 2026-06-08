@@ -29,7 +29,7 @@ La sécurité sur le Load Balancer se répartit en trois domaines :
 | Profil de chiffrement | Quelles versions de protocole et quels chiffrements sont acceptés | Configuration SSL |
 | Gestion des certificats | Quel certificat est présenté et comment il est renouvelé | Onglet `Certificats SSL` |
 
-<img className="thumbnail" alt="Vue d'ensemble diagram" src="/images/network/load-balancer-revamp/security-best-practices/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d'ensemble — schéma" src="/images/network/load-balancer-revamp/security-best-practices/fig-1.fr.svg" loading="lazy" />
 
 :::info
 OVHcloud met à votre disposition des services dont vous êtes responsable de la configuration et de la gestion. Les paramètres décrits ici vous appartiennent et c'est à vous de les appliquer et de les maintenir.
@@ -75,7 +75,7 @@ Une fois la terminaison TLS effectuée, la connexion vers le backend provient du
 - Le **protocole PROXY** ajoute en tête de connexion un en-tête transportant les adresses source et destination d'origine. Il fonctionne pour tout trafic TCP, y compris les protocoles non HTTP.
 - Les **en-têtes HTTP** tels que `X-Forwarded-For` et `X-Forwarded-Proto` transportent l'IP cliente et le schéma d'origine pour le trafic HTTP et HTTPS.
 
-<img className="thumbnail" alt="Informations sur le client après la terminaison diagram" src="/images/network/load-balancer-revamp/security-best-practices/fig-2.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Informations sur le client après la terminaison — schéma" src="/images/network/load-balancer-revamp/security-best-practices/fig-2.fr.svg" loading="lazy" />
 
 ## Bonnes pratiques
 
