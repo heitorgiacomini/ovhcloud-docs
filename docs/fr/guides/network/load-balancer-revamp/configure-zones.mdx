@@ -67,13 +67,11 @@ L'ajout d'une zone génère un bon de commande que vous devez régler avant que 
 </Tab>
 <Tab label="API OVHcloud">
 
-La commande d'une zone est une opération de commande : créez un panier, ajoutez l'option de zone correspondant à votre service, puis validez et réglez la commande obtenue.
+La commande d'une zone est une opération de commande : créez un panier, ajoutez l'option Load Balancer correspondant à votre service, puis validez et réglez la commande obtenue.
 
 1. Créez un panier.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart"} />
-
-[UNVERIFIED: /order endpoints are outside the cached ipLoadbalancing scope — confirm method and path against the OVHcloud API]
 
 Notez l'identifiant de panier renvoyé dans la réponse ; les appels suivants en ont besoin.
 
@@ -81,25 +79,17 @@ Notez l'identifiant de panier renvoyé dans la réponse ; les appels suivants en
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/assign"} />
 
-[UNVERIFIED: confirm /order/cart/\{cartId\}/assign against the OVHcloud API]
+3. Ajoutez l'élément Load Balancer au panier.
 
-3. Listez les options de service disponibles pour votre Load Balancer afin de trouver l'entrée correspondant à la zone souhaitée.
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing"} />
 
-<Api version="v1" section="/order" method="GET" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
+4. Ajoutez l'option correspondant à la zone souhaitée au panier.
 
-[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
-
-4. Ajoutez l'option choisie au panier.
-
-<Api version="v1" section="/order" method="POST" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
-
-[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing/options"} />
 
 5. Validez le panier pour générer la commande.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/checkout"} />
-
-[UNVERIFIED: confirm /order/cart/\{cartId\}/checkout against the OVHcloud API]
 
 | Paramètre | Obligatoire | Description | Exemple |
 |---|---|---|---|
@@ -205,14 +195,11 @@ Obtenez le quota d'une seule zone :
 | `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3d4` |
 | `zone` | Oui | Zone dont vous souhaitez consulter le quota. | `gra` |
 
-[TODO: confirm the maximum number of frontends, farms and servers per zone]
-
 </Tab>
 </Tabs>
 
 > [!TIP]
-> Pour gérer cette configuration sous forme de code, utilisez le provider Terraform d'OVHcloud.
-> [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+> Pour gérer cette configuration sous forme de code, utilisez le provider Terraform d'OVHcloud. La ressource `ovh_iploadbalancing` gère le service, et des ressources dédiées comme `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_route` gèrent les fermes et les routes. Les frontends et l'application des modifications en attente se font uniquement via l'API ou l'espace client.
 
 ## Aller plus loin
 

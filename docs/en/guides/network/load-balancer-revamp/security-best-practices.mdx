@@ -146,7 +146,9 @@ Once the order completes, the certificate is installed automatically on your Loa
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Ordering a free certificate is not available through the OVHcloud Terraform provider: there is no Terraform resource for certificates, frontends, or the apply/refresh action. Use the Control Panel or the OVHcloud API for this step.
+
+The Terraform provider does cover the Load Balancer service and its farms — for example the `ovh_iploadbalancing` and `ovh_iploadbalancing_http_farm` resources — so you can manage those alongside a certificate ordered through one of the other two methods.
 
 </Tab>
 </Tabs>
@@ -157,7 +159,6 @@ For the full ordering walkthrough, refer to [Configure SSL certificates](/guides
 
 - Free certificate ordering requires the domain to resolve to your Load Balancer at order time; otherwise validation fails.
 - Cipher profile choices apply at the frontend level and affect every client of that frontend.
-- The exact list of supported clients per profile, and any per-plan certificate quotas, are [TODO: confirm supported-client matrix and certificate quotas].
 
 :::warning
 Changing the cipher profile can break connectivity for clients that do not support the negotiated protocol versions. Validate the change against a representative client population before applying it in production.

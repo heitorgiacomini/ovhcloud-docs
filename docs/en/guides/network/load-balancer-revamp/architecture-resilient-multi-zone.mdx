@@ -173,7 +173,7 @@ You can also inspect the current state of the service and its zones:
 > [!INFO]
 > The `GET /ipLoadbalancing/availableZones` endpoint is deprecated. To discover the zones associated with a service and their quotas, use the `quota` endpoints above and the service properties on `GET /ipLoadbalancing/{serviceName}`.
 
-For an automated, repeatable deployment of this topology, refer to [Automation](/guides/network/load-balancer-revamp/automation). [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+For an automated, repeatable deployment of this topology, refer to [Automation](/guides/network/load-balancer-revamp/automation). The OVHcloud Terraform provider can manage the service and its farms and servers (for example `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server`). Frontends and applying the configuration are handled through the API or the Control Panel, not Terraform.
 
 ### Considerations and limitations <a name="considerations-and-limitations"></a>
 
@@ -185,7 +185,6 @@ Keep the following constraints in mind when designing a resilient multi-zone dep
 | Per-zone quotas | Each zone has its own quota. Verify quotas before scaling backend servers per zone. Refer to the `quota` endpoints above. |
 | Health probes | Without health probes, the farm may forward traffic to unresponsive backend servers. Always configure probes in a resilient design. |
 | Configuration deployment | Changes are not live until the configuration is applied. Apply after each change. |
-| Service-level commitments | [TODO: confirm multi-zone SLA percentages] — refer to [SLAs](/guides/network/load-balancer-revamp/slas). |
 
 ## Go further
 

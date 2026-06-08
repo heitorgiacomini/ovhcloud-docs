@@ -205,9 +205,7 @@ Si un en-tête que vous définissez existe déjà dans la requête, il est écra
 {/* DRAFT: To screenshot - the Edit Frontend editor showing the HTTP header field in the advanced settings */}
 
 5. Saisissez vos en-têtes. Pour configurer plusieurs en-têtes, séparez-les par des virgules sans espace, par exemple : `X-Ip-Header %ci,X-Port-Header %cp`.
-6. Confirmez les modifications, puis appliquez la configuration à la zone concernée.
-
-{/* DRAFT: To verify - exact labels of the HTTP header field, advanced settings section, confirm button, and deploy/apply action in the New Control Panel frontend editor */}
+6. Confirmez les modifications, puis cliquez sur `Appliquer les modifications` pour déployer la configuration sur la zone concernée.
 
 </Tab>
 <Tab label="API OVHcloud">
@@ -245,7 +243,7 @@ Appliquez ensuite les modifications à la zone concernée :
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform OVHcloud ne gère pas les frontends HTTP : les en-têtes personnalisés ne peuvent donc pas être définis avec Terraform. Le provider expose les fermes et leurs serveurs (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`) ainsi que les routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`), mais la configuration des frontends et l'application (le rafraîchissement) de la configuration ne sont disponibles que via l'espace client OVHcloud et l'API OVHcloud.
 
 </Tab>
 </Tabs>

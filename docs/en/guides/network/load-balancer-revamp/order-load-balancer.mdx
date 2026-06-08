@@ -43,7 +43,7 @@ The order funnel guides you through configuring your new service. Select the opt
 For guidance on choosing between a single-zone and a multi-zone deployment, refer to [Availability and zones](/guides/network/load-balancer-revamp/availability-and-zones) and [High availability](/guides/network/load-balancer-revamp/high-availability).
 
 :::info
-The exact sizes, their capacity figures, and pricing are presented in the order funnel. [TODO: confirm the list of available sizes and their published capacity limits]
+The exact sizes and pricing are presented in the order funnel.
 :::
 
 {/* DRAFT: To screenshot - capture the size and availability zone selection step in the order funnel */}
@@ -88,9 +88,19 @@ This call returns the service names of every Load Balancer on your account. Use 
 |---|---|---|---|
 | `serviceName` | Yes | The unique identifier of your Load Balancer service. | `loadbalancer-abcdef1234567890` |
 
-:::info
-The OVHcloud API cannot order a Load Balancer with a single call. Ordering through the API uses the order and cart endpoints. [TODO: confirm the `/order/cart` flow for ipLoadbalancing] To order with infrastructure-as-code instead, see [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources].
-:::
+The OVHcloud API cannot order a Load Balancer with a single call. Ordering through the API uses the order and cart endpoints, in this order:
+
+<Api version="v1" section="/order" method="POST" route="/order/cart" />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/assign"} />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing"} />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing/options"} />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/checkout"} />
+
+To order with infrastructure-as-code instead, use the `ovh_iploadbalancing` resource of the OVHcloud Terraform provider.
 
 ## Go further
 

@@ -98,7 +98,7 @@ Appliquez la configuration pour déployer le certificat :
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform OVHcloud n'expose pas de ressource pour les certificats SSL/TLS. Gérez les certificats depuis l'espace client OVHcloud ou via l'API OVHcloud. Le provider couvre en revanche d'autres objets Load Balancer associés, comme `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`.
 
 </Tab>
 </Tabs>
@@ -145,7 +145,7 @@ Une fois la tâche terminée, le certificat est installé automatiquement. Aucun
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform OVHcloud n'expose pas de ressource pour les certificats gratuits. Commandez et renouvelez les certificats gratuits depuis l'espace client OVHcloud ou via l'API OVHcloud.
 
 </Tab>
 </Tabs>
@@ -193,7 +193,7 @@ Appliquez la configuration pour déployer la modification :
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform OVHcloud n'expose pas de ressource pour les frontends. Les frontends et la terminaison SSL se configurent depuis l'espace client OVHcloud ou via l'API OVHcloud. Une fois un frontend créé, vous pouvez gérer ses fermes de serveurs avec `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`.
 
 </Tab>
 </Tabs>
@@ -212,9 +212,6 @@ Dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, sélectionnez l
 > [!TIP]
 > Utilisez `Intermédiaire (TLS 1.2+)` à moins que vous ne maîtrisiez l'ensemble des clients se connectant à votre service. Passer à `Moderne (TLS 1.3)` peut interrompre la connectivité des navigateurs, des bibliothèques et des clients embarqués plus anciens.
 
-> [!INFO]
-> L'emplacement exact du sélecteur de profil de chiffrement et les suites de chiffrement prises en charge par profil dépendent de l'écran de configuration du certificat. [TODO: confirm the cipher suite list for each profile from the Load Balancer specification.]
-
 ### Limitations <a name="limitations"></a>
 
 Les contraintes suivantes s'appliquent lors de la configuration des certificats.
@@ -223,8 +220,6 @@ Les contraintes suivantes s'appliquent lors de la configuration des certificats.
 |---|---|
 | Portée de la terminaison SSL | La terminaison SSL est configurée sur les frontends HTTP/HTTPS. Les frontends TCP laissent passer le trafic sans terminaison. |
 | Prérequis du certificat gratuit | Un certificat gratuit ne peut être commandé qu'une fois que le domaine choisi résout vers votre service Load Balancer. |
-| Quota de certificats | Le nombre de certificats par Load Balancer est limité. [TODO: confirm the certificate quota.] |
-| Renouvellement du certificat gratuit | Conditions de renouvellement du certificat gratuit et méthodes de validation prises en charge. [TODO: confirm renewal behaviour and validation requirements.] |
 
 ### Résolution des problèmes <a name="troubleshooting"></a>
 

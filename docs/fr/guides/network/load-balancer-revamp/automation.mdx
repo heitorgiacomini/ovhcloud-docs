@@ -147,12 +147,10 @@ Regroupez les changements liés et appelez l'actualisation une seule fois, aprè
 
 Le provider Terraform d'OVHcloud vous permet de décrire la configuration du Load Balancer de manière déclarative et de la gérer comme une infrastructure-as-code versionnée. Terraform suit l'état souhaité dans son fichier d'état et réconcilie la configuration en production pour qu'elle y corresponde, ce qui le rend adapté aux déploiements reproductibles entre environnements.
 
-Le provider Terraform est un client de l'API OVHcloud : les composants qu'il gère correspondent donc aux mêmes ressources `/ipLoadbalancing` décrites ci-dessus : services, fermes, serveurs, frontends, routes et certificats.
-
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform est un client de l'API OVHcloud. Il expose le service lui-même via la ressource `ovh_iploadbalancing`, ainsi que les composants propres à chaque protocole via des ressources dédiées : `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_tcp_farm_server`, `ovh_iploadbalancing_tcp_route`, `ovh_iploadbalancing_udp_farm` et `ovh_iploadbalancing_udp_farm_server`. La ressource `ovh_iploadbalancing_vrack_network` gère le réseau vRack rattaché au service. Des sources de données en lecture seule telles que `ovh_iploadbalancing`, `ovh_iploadbalancing_nat_ips` et `ovh_iploadbalancing_vrack_network` permettent de récupérer une configuration existante.
 
 :::warning
-Le modèle « en attente puis appliquée » s'applique également lors de l'utilisation de Terraform. Une fois la configuration réconciliée par Terraform, une actualisation du service est nécessaire pour que les changements prennent effet sur le Load Balancer en production. [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Il n'existe pas de ressource Terraform pour les frontends ni pour l'opération d'actualisation. Les frontends se gèrent via l'API OVHcloud ou l'espace client, et les changements en attente doivent être appliqués via l'endpoint d'actualisation de l'API ou depuis l'espace client. Une fois les ressources de fermes, de serveurs et de routes réconciliées par Terraform, une actualisation du service reste nécessaire pour que les changements prennent effet sur le Load Balancer en production.
 :::
 
 Pour la liste actuelle des ressources, leurs arguments et des exemples d'utilisation, consultez le [registre Terraform](/links/terraform).
@@ -165,7 +163,6 @@ Gardez à l'esprit les points suivants lorsque vous automatisez le Load Balancer
 - **Les composants sont liés à un protocole.** Les frontends, les fermes et les serveurs ne peuvent pas être combinés entre protocoles. Appelez toujours l'endpoint qui correspond au protocole.
 - **Certains endpoints sont dépréciés.** `GET /ipLoadbalancing/availableZones` est déprécié ; utilisez plutôt les endpoints de zone rattachés au service.
 - **Authentification.** Les appels à l'API nécessitent des identifiants de l'API OVHcloud. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
-- **Limites de débit et quotas.** [TODO: confirm API rate limits and per-service component quotas for the Load Balancer]
 
 ## Aller plus loin
 

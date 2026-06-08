@@ -146,9 +146,7 @@ After modifying frontends or farms, apply the configuration so the change takes 
 |---|---|---|
 | `serviceName` | Yes | Your Load Balancer service ID. |
 
-For infrastructure-as-code workflows, the OVHcloud Terraform provider exposes equivalent resources for services, frontends, and farms.
-
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+For infrastructure-as-code workflows, the OVHcloud Terraform provider exposes resources for the service and its farms, such as `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`, and `ovh_iploadbalancing_tcp_farm`. Frontends and the apply (refresh) operation are not exposed as Terraform resources; manage those through the OVHcloud API or the Control Panel.
 
 For a broader overview of automation surfaces, see the [Automation](/guides/network/load-balancer-revamp/automation) guide.
 
@@ -160,11 +158,6 @@ The availability of the Load Balancer depends on factors that are partly managed
 - Zone-level and region-level redundancy require you to subscribe to more than one zone and to declare frontends and farms accordingly.
 - Failover behaviour depends on correctly configured health probes; misconfigured probes can either fail to detect outages or remove healthy servers prematurely.
 - Cross-continent topologies involving APAC zones do not fail over as expected and are not recommended.
-- The availability commitment for the service is defined by its service level agreement.
-
-[TODO: confirm the published SLA percentage for the OVHcloud Load Balancer]
-
-For the contractual availability terms, see the [SLAs](/guides/network/load-balancer-revamp/slas) guide.
 
 ## Go further
 

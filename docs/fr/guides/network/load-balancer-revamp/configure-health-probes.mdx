@@ -150,7 +150,36 @@ Les modifications effectuées via l'API sont mises en attente jusqu'à ce que vo
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+La sonde se définit à l'intérieur de la ressource de ferme : renseignez le bloc `probe` sur `ovh_iploadbalancing_http_farm` pour les fermes HTTP ou `ovh_iploadbalancing_tcp_farm` pour les fermes TCP. Pour activer la sonde sur un serveur donné, définissez l'argument `probe` sur `true` dans la ressource `ovh_iploadbalancing_http_farm_server` ou `ovh_iploadbalancing_tcp_farm_server` correspondante.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm" "farm" {
+  service_name = "loadbalancer-xxxxxxxxxxxxxxxxxxx"
+  display_name = "web-farm"
+  port         = 80
+  zone         = "all"
+
+  probe {
+    type     = "http"
+    method   = "GET"
+    url      = "/status"
+    match    = "status"
+    pattern  = "200"
+    interval = 30
+  }
+}
+
+resource "ovh_iploadbalancing_http_farm_server" "server" {
+  service_name = "loadbalancer-xxxxxxxxxxxxxxxxxxx"
+  farm_id      = ovh_iploadbalancing_http_farm.farm.id
+  address      = "10.0.0.10"
+  status       = "active"
+  probe        = true
+}
+```
+
+> [!INFO]
+> Il n'existe pas de ressource Terraform pour appliquer la configuration en attente. Après avoir modifié les ressources de ferme ou de serveur, appliquez les modifications mises en attente via l'API OVHcloud ou l'espace client, comme décrit dans le guide [Gérer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel).
 
 </Tab>
 </Tabs>

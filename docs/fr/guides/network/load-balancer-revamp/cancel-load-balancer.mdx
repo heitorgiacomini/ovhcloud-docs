@@ -81,9 +81,7 @@ Pour consulter ou ajuster le moment où le service cesse de se renouveler, exami
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
-
-La résiliation d'un service est généralement gérée en dehors de Terraform. Supprimer la ressource de votre configuration et exécuter `terraform destroy` supprime les ressources gérées, mais n'entraîne pas nécessairement la résiliation de l'abonnement au service sous-jacent. Résiliez le service depuis l'espace client ou via l'API OVHcloud pour interrompre le renouvellement.
+La résiliation d'un service est généralement gérée en dehors de Terraform. Supprimer la ressource `ovh_iploadbalancing` de votre configuration et exécuter `terraform destroy` supprime les ressources gérées, mais n'entraîne pas nécessairement la résiliation de l'abonnement au service sous-jacent. Résiliez le service depuis l'espace client ou via l'API OVHcloud pour interrompre le renouvellement.
 
 </Tab>
 </Tabs>

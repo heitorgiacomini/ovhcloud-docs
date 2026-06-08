@@ -255,9 +255,7 @@ Supprimez l'abonnement avec l'appel suivant :
 | `serviceName` | Oui | Le nom interne de votre Load Balancer. | `loadbalancer-xxxxxxxxxxxxxxxxxxxx` |
 | `subscriptionId` | Oui | L'identifiant de l'abonnement à supprimer. | `19717204-2e10-4000-8c42-d7b11c9ce680` |
 
-Pour une mise en place automatisée et reproductible des abonnements, vous pouvez gérer le transfert des logs avec le provider Terraform OVHcloud.
-
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Les abonnements de transfert des logs se gèrent uniquement via l'API OVHcloud. Le provider Terraform OVHcloud permet de gérer les fermes, les serveurs et les routes du Load Balancer (par exemple `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`), mais il ne propose pas de ressource pour les abonnements aux logs : utilisez donc les appels d'API ci-dessus pour les créer et les supprimer.
 
 ### Limites <a name="limitations"></a>
 
@@ -267,7 +265,7 @@ Cette section liste les contraintes connues du transfert des logs du Load Balanc
 |---|---|
 | Listeners UDP | Les logs des listeners UDP ne sont pas transférés. Seuls les types `tcp` et `http` sont pris en charge. |
 | Même compte | Le compte Logs Data Platform et le Load Balancer doivent appartenir au même compte OVHcloud. |
-| Activation depuis l'espace client | L'activation du transfert (la création d'un abonnement) s'effectue via l'API OVHcloud. [TODO: confirm whether subscription creation is available in the Control Panel for the beta Manager] |
+| Activation depuis l'espace client | L'activation du transfert (la création d'un abonnement) s'effectue via l'API OVHcloud. Cette fonctionnalité n'est pas encore disponible dans l'espace client. |
 | Historique immuable | La résiliation d'un abonnement ne supprime pas les logs déjà stockés dans le flux de données. |
 
 ### Résolution des problèmes <a name="troubleshooting"></a>

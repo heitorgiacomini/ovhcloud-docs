@@ -55,7 +55,7 @@ You can configure a redirection on a new frontend during creation, or on an exis
 
 7. Confirm the frontend by clicking `Create frontend` or `Edit Frontend`, depending on whether you are creating or modifying.
 
-Apply the pending configuration so the redirection becomes active. {/* DRAFT: To verify — confirm the exact label of the apply/deploy action in the new Manager */}
+Apply the pending configuration by clicking `Apply changes` so the redirection becomes active.
 
 {/* DRAFT: To screenshot — capture the banner or action used to apply the pending configuration */}
 
@@ -100,7 +100,9 @@ The redirection becomes active once the configuration is applied.
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider does not expose a resource for HTTP frontends or for applying configuration changes. Redirections, which are set through a frontend's `redirectLocation` property, must therefore be configured via the OVHcloud API or the Control Panel.
+
+The provider does cover related Load Balancer objects such as the service (`ovh_iploadbalancing`), server farms (`ovh_iploadbalancing_http_farm`), and HTTP routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`). For redirections specifically, use the OVHcloud API or Control Panel tabs above.
 
 </Tab>
 </Tabs>

@@ -2511,7 +2511,6 @@
             + [Availability and zones](network/load-balancer-revamp/availability-and-zones)
             + [High availability and redundancy](network/load-balancer-revamp/high-availability)
             + [Automating with the API and Terraform](network/load-balancer-revamp/automation)
-            + [Service Level Agreements](network/load-balancer-revamp/slas)
             + [Prerequisites and limitations](network/load-balancer-revamp/prerequisites-and-limitations)
             + [Troubleshooting](network/load-balancer-revamp/troubleshooting)
             + [Security best practices](network/load-balancer-revamp/security-best-practices)

@@ -126,7 +126,7 @@ To list tasks through the OVHcloud API:
 
 #### Quota
 
-The `Quota` tab shows the resource limits that apply to your service per availability zone, such as the maximum number of farms, frontends, and servers. Review it before scaling a configuration. Exact values depend on your offer [TODO: confirm per-zone quota limits].
+The `Quota` tab shows the resource limits that apply to your service per availability zone, such as the maximum number of farms, frontends, and servers. Review it before scaling a configuration.
 
 To read quota information through the OVHcloud API:
 
@@ -147,7 +147,7 @@ Before applying, review what is staged so you activate only the changes you inte
 <Tabs>
 <Tab label="Control Panel">
 
-A banner or indicator appears on the dashboard when changes are pending. Review the listed edits, then click the apply action to activate them.
+A banner or indicator appears on the dashboard when changes are pending. Review the listed edits, then click <code className="action">Apply changes</code> to activate them.
 
 {/* DRAFT: To screenshot - capture the pending-changes banner / apply prompt on the dashboard */}
 
@@ -172,7 +172,7 @@ Applying pushes every pending change to the active configuration in one operatio
 <Tabs>
 <Tab label="Control Panel">
 
-When changes are pending, the dashboard offers an apply action. Confirm it to activate the staged configuration. The operation runs as a task you can follow in the `Tasks` tab.
+When changes are pending, the dashboard offers an <code className="action">Apply changes</code> action. Confirm it to activate the staged configuration. The operation runs as a task you can follow in the `Tasks` tab.
 
 {/* DRAFT: To screenshot - capture the apply confirmation dialog */}
 
@@ -190,7 +190,7 @@ Apply all pending changes with a single call:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider can declare the staged objects — for example `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route`, and `ovh_iploadbalancing_tcp_farm`. There is no Terraform resource that applies a pending configuration: trigger the apply with the `POST /ipLoadbalancing/\{serviceName\}/refresh` API call (or from the Control Panel) after Terraform has created or updated the resources.
 
 </Tab>
 </Tabs>
@@ -219,7 +219,7 @@ This section lists constraints that apply to the management interface and the ap
 |---|---|
 | Changes are not live until applied | Edits to farms, frontends, routes, and certificates remain pending until you apply the configuration. |
 | Apply is service-wide | An apply operation activates all pending changes at once; you cannot apply a single change in isolation. |
-| Quota varies by offer and zone | Resource limits per availability zone depend on your offer. [TODO: confirm per-zone quota limits] |
+| Quota varies by offer and zone | Resource limits per availability zone depend on your offer. Review the `Quota` tab for the values that apply to your service. |
 
 ### Troubleshooting <a name="troubleshooting"></a>
 

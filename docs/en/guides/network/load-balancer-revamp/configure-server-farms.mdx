@@ -123,7 +123,17 @@ After creating the farm, [apply the configuration](#apply).
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Use the farm resource matching the farm type: `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, or `ovh_iploadbalancing_udp_farm`. Each references the parent service through its `service_name` argument.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm" "web_farm" {
+  service_name = "loadbalancer-xxxx"
+  display_name = "web-farm"
+  zone         = "gra"
+  port         = 80
+  balance      = "roundrobin"
+}
+```
 
 </Tab>
 </Tabs>
@@ -180,7 +190,19 @@ After adding the servers, [apply the configuration](#apply).
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Use the server resource matching the farm type: `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_tcp_farm_server`, or `ovh_iploadbalancing_udp_farm_server`. Each references its farm through the `farm_id` argument.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm_server" "backend_1" {
+  service_name = "loadbalancer-xxxx"
+  farm_id      = ovh_iploadbalancing_http_farm.web_farm.id
+  address      = "10.0.0.10"
+  port         = 8080
+  status       = "active"
+  weight       = 1
+  backup       = false
+}
+```
 
 </Tab>
 </Tabs>
@@ -235,7 +257,17 @@ After updating the farm, [apply the configuration](#apply).
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Set the `balance` argument on the farm resource (`ovh_iploadbalancing_http_farm` or `ovh_iploadbalancing_tcp_farm`) to one of `roundrobin`, `leastconn`, `source`, `uri`, or `first`, then apply the plan.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm" "web_farm" {
+  service_name = "loadbalancer-xxxx"
+  display_name = "web-farm"
+  zone         = "gra"
+  port         = 80
+  balance      = "leastconn"
+}
+```
 
 </Tab>
 </Tabs>
@@ -278,7 +310,7 @@ Changes to farms and servers are staged until you apply them. Applying deploys t
 <Tabs>
 <Tab label="Control Panel">
 
-After saving your changes, apply the configuration from the banner that appears in the service interface.
+After saving your changes, click `Apply changes` in the banner that appears in the service interface.
 
 {/* DRAFT: To screenshot - the apply-configuration banner shown after staging changes */}
 
@@ -305,7 +337,7 @@ To review the staged changes before applying them, use:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The Terraform provider has no resource for the apply/refresh action. After `terraform apply` creates or updates the farm and server resources (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm`, and their `_server` resources), deploy the staged configuration to the zone with the API call above or the `Apply changes` banner in the Control Panel.
 
 </Tab>
 </Tabs>
@@ -333,8 +365,6 @@ This section lists constraints that apply to farms and balancing methods.
 | UDP capabilities | UDP is Layer 4 only. UDP farms and frontends do not support HTTP routes, HTTP header manipulation, redirections, SSL/TLS termination, or cookie stickiness. |
 | Farm type and frontend | A farm can only be attached to a frontend of the same protocol type (HTTP farm to HTTP frontend, TCP farm to TCP frontend, UDP farm to UDP frontend). |
 | Per-zone quotas | The number of farms and servers is subject to per-zone quotas. Review them via `GET /ipLoadbalancing/{serviceName}/quota`. |
-| Maximum servers per farm | [TODO: confirm maximum number of servers per farm] |
-| Maximum farms per service | [TODO: confirm maximum number of farms per service] |
 
 ### Troubleshooting <a name="troubleshooting"></a>
 

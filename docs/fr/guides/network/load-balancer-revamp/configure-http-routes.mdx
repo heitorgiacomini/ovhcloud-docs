@@ -285,16 +285,15 @@ Attachez 2 règles à la même route :
 Les routes et les règles ne deviennent actives qu'une fois la configuration appliquée (redéployée) sur la zone concernée. Créer, modifier ou supprimer une route ou une règle nécessite un redéploiement.
 
 1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
-2. Appliquez la configuration en attente sur la zone concernée.
+2. Cliquez sur **Appliquer les modifications** pour redéployer la configuration en attente sur la zone concernée.
 
-{/* DRAFT: À vérifier — confirmer le bouton/libellé exact utilisé dans manager-beta pour appliquer/redéployer une zone (absent de la cartographie manager en cache) */}
 {/* DRAFT: À capturer — l'écran de l'espace client utilisé pour appliquer la configuration en attente sur une zone */}
 
 Vous pouvez consulter les modifications en attente via l'API avant de les appliquer :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] — les routes et les règles peuvent également être gérées de façon déclarative avec le provider Terraform OVHcloud.
+Les routes et les règles peuvent également être gérées de façon déclarative avec le provider Terraform OVHcloud, à l'aide des ressources `ovh_iploadbalancing_http_route` et `ovh_iploadbalancing_http_route_rule`. Notez que le redéploiement de la configuration sur une zone reste une opération à effectuer via l'API ou l'espace client ; il n'existe pas de ressource Terraform pour cela.
 
 ### Référence de l'API <a name="reference"></a>
 

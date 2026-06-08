@@ -48,7 +48,7 @@ La ferme de serveurs regroupe vos serveurs de messagerie backend et gère la man
 3. Dans le formulaire `Créer une ferme de serveurs`, sélectionnez **TCP** comme protocole.
 4. Définissez le **Port** sur `25` et sélectionnez la **Zone** de votre service. Les deux champs sont obligatoires. Si vous laissez le port vide, la ferme réutilise le port du frontend associé.
 5. Vous pouvez, en option, rattacher une sonde de health check SMTP afin que le Load Balancer surveille la disponibilité de vos serveurs de messagerie.
-6. Cliquez sur `Créer la ferme` pour confirmer.
+6. Cliquez sur `Créer une ferme` pour confirmer.
 
 {/* DRAFT: À capturer - le formulaire Créer une ferme de serveurs avec le protocole TCP et le port 25 */}
 
@@ -92,7 +92,7 @@ Déclarez chaque serveur SMTP backend comme membre de la ferme TCP.
 2. Cliquez sur `Ajouter un serveur`.
 3. Saisissez l'**adresse IPv4** du serveur backend, définissez son **Statut** et sélectionnez la **version ProxyProtocol**. Ces champs sont obligatoires.
 4. Laissez le **Port** du serveur vide pour hériter du port défini sur la ferme. Ne définissez un port que dans des cas avancés, car il remplace le port de la ferme pour ce serveur.
-5. Cliquez sur `Ajouter le serveur` pour confirmer.
+5. Cliquez sur `Ajouter un serveur` pour confirmer.
 
 :::warning
 Définissez la **version ProxyProtocol** sur `v1` afin que votre service SMTP puisse récupérer l'adresse IP source réelle des connexions entrantes. Postfix est compatible avec le protocole PROXY.
@@ -142,7 +142,7 @@ Le frontend expose votre service SMTP à Internet et transfère le trafic entran
 3. Définissez le **Port** sur `25` pour un service SMTP standard et sélectionnez la **Zone**. Pour exposer plusieurs ports, saisissez une liste séparée par des virgules (`25,587`) ou une plage au format `<port_de_début>-<port_de_fin>`.
 4. Sélectionnez la ferme créée à l'étape 1 comme **Ferme par défaut**.
 5. Si vous avez routé des IP additionnelles vers votre Load Balancer, vous pouvez rattacher le frontend à une ou plusieurs IP additionnelles spécifiques.
-6. Cliquez sur `Créer le frontend` pour confirmer.
+6. Cliquez sur `Créer un frontend` pour confirmer.
 
 {/* DRAFT: À capturer - le formulaire Créer un frontend avec le protocole TCP, le port 25 et la ferme par défaut */}
 

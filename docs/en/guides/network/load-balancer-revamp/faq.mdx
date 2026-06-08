@@ -66,8 +66,6 @@ Order it from the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, or t
 
 Pricing depends on the plan and the number of zones you select. For current rates, refer to the OVHcloud Load Balancer [product page](/links/network/load-balancer).
 
-[TODO: confirm pricing model and whether a usage-based tier exists]
-
 ### How do I cancel my OVHcloud Load Balancer?
 
 You can request cancellation from the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>. The service remains active until the end of the current billing period.
@@ -284,7 +282,7 @@ For the full setup, refer to the [Configure logs forwarding](/guides/network/loa
 
 ## Availability and resilience
 
-This section covers zones, high availability, and service-level commitments.
+This section covers zones and high availability.
 
 ### Where is the OVHcloud Load Balancer available?
 
@@ -293,12 +291,6 @@ The Load Balancer is offered in several zones, and you can spread your configura
 ### How does the OVHcloud Load Balancer stay available if a zone fails?
 
 When you deploy across multiple zones, traffic continues to be served from the remaining zones if one zone becomes unavailable. Refer to the [High availability](/guides/network/load-balancer-revamp/high-availability) guide and the [Resilient multi-zone architecture](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone) reference.
-
-### What is the SLA for the OVHcloud Load Balancer?
-
-[TODO: confirm the SLA percentage and the conditions under which it applies]
-
-Refer to the [SLAs](/guides/network/load-balancer-revamp/slas) guide for the current commitment.
 
 ## Automation and API
 
@@ -310,9 +302,7 @@ Yes. Every configuration task is available through the OVHcloud API under the `/
 
 ### Is there a Terraform provider for the OVHcloud Load Balancer?
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
-
-Refer to the [Automation](/guides/network/load-balancer-revamp/automation) guide for supported automation methods.
+Yes. The OVHcloud Terraform provider manages the service and its server farms, servers, and routes, with resources such as `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route`, their `tcp` and `udp` equivalents, and `ovh_iploadbalancing_vrack_network`. There is no Terraform resource for frontends or for applying changes: create frontends and apply your configuration through the OVHcloud API or the OVHcloud Control Panel. Refer to the [Automation](/guides/network/load-balancer-revamp/automation) guide for supported automation methods.
 
 ### How do I find the right API endpoint for a task?
 

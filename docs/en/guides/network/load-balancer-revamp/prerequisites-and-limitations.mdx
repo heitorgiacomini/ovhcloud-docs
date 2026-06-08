@@ -77,15 +77,7 @@ To inspect the quota for a single availability zone, use the zone-scoped endpoin
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
 
-The table below lists the quota-bound object types. The values are plan-dependent and must be confirmed against your service.
-
-| Object | Scope | Maximum |
-|---|---|---|
-| Server farms | Per zone, per farm type | [TODO: confirm maximum farms per plan] |
-| Frontends | Per zone, per frontend type | [TODO: confirm maximum frontends per plan] |
-| Servers per farm | Per farm | [TODO: confirm maximum servers per farm] |
-| HTTP routes | Per service | [TODO: confirm maximum HTTP routes] |
-| SSL certificates | Per service | [TODO: confirm maximum SSL certificates] |
+Quotas apply to server farms, frontends, servers per farm, HTTP routes, and SSL certificates. Because the limits depend on the plan attached to your service, read the live values returned by these calls or shown in the `Quota` tab rather than relying on a fixed figure.
 
 > [!TIP]
 > Quotas are enforced at the moment configuration is applied. A change that would exceed a quota is rejected when you deploy it, not when you draft it.
@@ -122,9 +114,7 @@ A farm without a configured health probe cannot detect unresponsive backends, so
 
 ### Automation
 
-The service can be managed through the [OVHcloud API](/links/api) and the OVHcloud Terraform provider. When automating object creation, your scripts are subject to the same per-zone quotas as the Control Panel.
-
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The service can be managed through the [OVHcloud API](/links/api) and the OVHcloud Terraform provider (for example the `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`, and `ovh_iploadbalancing_http_route` resources). When automating object creation, your scripts are subject to the same per-zone quotas as the Control Panel.
 
 For an overview of the automation surface, see [Automation](/guides/network/load-balancer-revamp/automation).
 

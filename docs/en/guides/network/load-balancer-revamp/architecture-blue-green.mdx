@@ -134,7 +134,7 @@ The examples above use the HTTP farm endpoints. For a TCP or UDP service, substi
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Declare each farm with the `ovh_iploadbalancing_http_farm` resource and attach its backend server with `ovh_iploadbalancing_http_farm_server`. For a TCP or UDP service, use the `ovh_iploadbalancing_tcp_farm` / `ovh_iploadbalancing_tcp_farm_server` or `ovh_iploadbalancing_udp_farm` / `ovh_iploadbalancing_udp_farm_server` resources instead. Repeat the pair of resources for Farm A and Farm B, using each environment's backend address.
 
 </Tab>
 </Tabs>
@@ -175,7 +175,7 @@ Create the staging frontend by repeating the call with `port` set to `8888` and 
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The Terraform provider has no resource for frontends. Create and update frontends through the OVHcloud Control Panel or the OVHcloud API, as shown in the other tabs.
 
 </Tab>
 </Tabs>
@@ -249,7 +249,7 @@ Apply the change to switch production atomically:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The cutover swaps each frontend's default farm, and the Terraform provider has no resource for frontends. Perform the swap and the apply through the OVHcloud Control Panel or the OVHcloud API, as shown in the other tabs.
 
 </Tab>
 </Tabs>

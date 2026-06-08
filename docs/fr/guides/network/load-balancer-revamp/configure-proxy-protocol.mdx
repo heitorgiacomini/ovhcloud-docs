@@ -96,13 +96,10 @@ Activez un mode ProxyProtocol sur le serveur cible. La propriété de serveur co
 1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
 2. Sélectionnez l'onglet `Fermes de serveurs`.
 3. Ouvrez la ferme qui contient le serveur cible, puis modifiez ce serveur.
-4. Définissez le mode ProxyProtocol sur `v1`, `v2`, `v2-ssl` ou `v2-ssl-cn`.
-5. Enregistrez le serveur, puis appliquez la configuration à la zone concernée.
+4. Définissez la `ProxyProtocol version` sur `v1`, `v2`, `v2-ssl` ou `v2-ssl-cn`.
+5. Enregistrez le serveur, puis cliquez sur `Appliquer les modifications` pour déployer la configuration.
 
 {/* DRAFT: À capturer — le panneau d'édition du serveur affichant le sélecteur de mode ProxyProtocol */}
-
-> [!INFO]
-> Le libellé exact du sélecteur ProxyProtocol et des boutons d'enregistrement/application dans le nouvel espace client ne sont pas encore confirmés. [TODO: confirm New Manager labels for the server ProxyProtocol option and the deploy/apply action]
 
 </Tab>
 <Tab label="API OVHcloud">
@@ -129,7 +126,20 @@ Appliquez ensuite la configuration pour rendre la modification effective :
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Définissez le mode ProxyProtocol sur un serveur backend TCP via la ressource `ovh_iploadbalancing_tcp_farm_server`, à l'aide de son argument `proxy_protocol_version` :
+
+```hcl
+resource "ovh_iploadbalancing_tcp_farm_server" "backend" {
+  service_name           = "loadbalancer-a1b2c3d4"
+  farm_id                = 12345
+  address                = "10.0.0.10"
+  status                 = "active"
+  proxy_protocol_version = "v1"
+}
+```
+
+> [!INFO]
+> Il n'existe pas de ressource Terraform permettant d'appliquer (rafraîchir) une configuration en attente. Une fois le serveur mis à jour par Terraform, appliquez la modification via l'API OVHcloud (`POST /ipLoadbalancing/\{serviceName\}/refresh`) ou l'action `Appliquer les modifications` dans l'espace client.
 
 </Tab>
 </Tabs>

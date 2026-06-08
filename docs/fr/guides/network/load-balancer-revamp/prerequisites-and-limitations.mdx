@@ -77,15 +77,7 @@ Pour inspecter le quota d'une seule zone de disponibilité, utilisez l'endpoint 
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
 
-Le tableau ci-dessous répertorie les types d'objets soumis à quota. Les valeurs dépendent du plan et doivent être confirmées auprès de votre service.
-
-| Objet | Portée | Maximum |
-|---|---|---|
-| Fermes de serveurs | Par zone, par type de ferme | [TODO: confirm maximum farms per plan] |
-| Frontends | Par zone, par type de frontend | [TODO: confirm maximum frontends per plan] |
-| Serveurs par ferme | Par ferme | [TODO: confirm maximum servers per farm] |
-| Routes HTTP | Par service | [TODO: confirm maximum HTTP routes] |
-| Certificats SSL | Par service | [TODO: confirm maximum SSL certificates] |
+Les quotas s'appliquent aux fermes de serveurs, aux frontends, aux serveurs par ferme, aux routes HTTP et aux certificats SSL. Comme ces limites dépendent du plan associé à votre service, consultez les valeurs en temps réel renvoyées par ces appels ou affichées dans l'onglet `Quota` plutôt que de vous fier à une valeur figée.
 
 > [!TIP]
 > Les quotas sont contrôlés au moment où la configuration est appliquée. Une modification qui dépasserait un quota est rejetée lors de son déploiement, et non lors de sa rédaction.
@@ -122,9 +114,7 @@ Une ferme dépourvue de sonde configurée ne peut pas détecter les backends qui
 
 ### Automatisation
 
-Le service peut être géré via l'[API OVHcloud](/links/api) et le provider Terraform d'OVHcloud. Lorsque vous automatisez la création d'objets, vos scripts sont soumis aux mêmes quotas par zone que l'espace client.
-
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le service peut être géré via l'[API OVHcloud](/links/api) et le provider Terraform d'OVHcloud (par exemple les ressources `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_route`). Lorsque vous automatisez la création d'objets, vos scripts sont soumis aux mêmes quotas par zone que l'espace client.
 
 Pour une vue d'ensemble du périmètre d'automatisation, consultez le guide [Automatisation](/guides/network/load-balancer-revamp/automation).
 

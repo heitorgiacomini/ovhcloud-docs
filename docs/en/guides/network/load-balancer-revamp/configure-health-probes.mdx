@@ -150,7 +150,36 @@ API changes are staged until you apply the pending configuration. For the steps 
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The probe is defined inside the farm resource: set the `probe` block on `ovh_iploadbalancing_http_farm` for HTTP farms or `ovh_iploadbalancing_tcp_farm` for TCP farms. To enable the probe on a given server, set the `probe` argument to `true` on the matching `ovh_iploadbalancing_http_farm_server` or `ovh_iploadbalancing_tcp_farm_server` resource.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm" "farm" {
+  service_name = "loadbalancer-xxxxxxxxxxxxxxxxxxx"
+  display_name = "web-farm"
+  port         = 80
+  zone         = "all"
+
+  probe {
+    type     = "http"
+    method   = "GET"
+    url      = "/status"
+    match    = "status"
+    pattern  = "200"
+    interval = 30
+  }
+}
+
+resource "ovh_iploadbalancing_http_farm_server" "server" {
+  service_name = "loadbalancer-xxxxxxxxxxxxxxxxxxx"
+  farm_id      = ovh_iploadbalancing_http_farm.farm.id
+  address      = "10.0.0.10"
+  status       = "active"
+  probe        = true
+}
+```
+
+> [!INFO]
+> There is no Terraform resource for applying the pending configuration. After editing the farm or server resources, apply the staged changes through the OVHcloud API or the Control Panel, as described in the [Manage via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel) guide.
 
 </Tab>
 </Tabs>

@@ -393,7 +393,7 @@ The table below lists the most common issues encountered during a first deployme
 | Backend marked down | Health probe misconfigured or backend not listening on the farm port | Confirm the farm `Port`, the backend port, and the probe settings. See [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes). |
 | 503 returned by the frontend | No active server in the farm, or wrong default route | Confirm the farm has at least one active server and the frontend's default route targets it. |
 
-For automation of this deployment with the OVHcloud Terraform provider, see [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] and the [automation guide](/guides/network/load-balancer-revamp/automation).
+For automation of this deployment, the OVHcloud Terraform provider exposes resources such as `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, and `ovh_iploadbalancing_http_route` to build farms, servers, and routes. Frontends and applying (refreshing) the configuration are not managed by Terraform — handle them through the OVHcloud API or the Control Panel. See the [automation guide](/guides/network/load-balancer-revamp/automation).
 
 ## Go further
 

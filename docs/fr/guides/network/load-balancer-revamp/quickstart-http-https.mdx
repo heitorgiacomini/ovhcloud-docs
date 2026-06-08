@@ -104,7 +104,7 @@ La ferme de serveurs reçoit le trafic des frontends et le répartit sur ses ser
 2. Cliquez sur `Créer une ferme`.
 3. Renseignez les champs. Pour une configuration simple, le `Protocole` et le datacentre sont obligatoires. Définissez explicitement un `Port` — généralement le port 80 pour un service web. Si aucun port n'est défini, le Load Balancer réutilise le port du frontend, et les sondes peuvent ne pas se comporter comme prévu.
 4. Si vous prévoyez d'ajouter plusieurs serveurs, sélectionnez un algorithme d'équilibrage (par exemple `Round Robin` ou `Moins de connexions`) et configurez une sonde afin que le Load Balancer puisse retirer automatiquement un serveur qui ne répond pas.
-5. Cliquez sur `Créer la ferme` pour enregistrer la ferme.
+5. Cliquez sur `Créer une ferme` pour enregistrer la ferme.
 
 {/* DRAFT: À illustrer - le formulaire de création de ferme de serveurs avec le protocole et le port renseignés */}
 
@@ -142,7 +142,7 @@ Une ferme a besoin d'au moins un serveur backend pour traiter les requêtes. Ajo
 1. Dans l'onglet `Fermes`, cliquez sur la ferme pour la sélectionner. La liste de ses serveurs apparaît en dessous, accompagnée du bouton `Ajouter un serveur`.
 2. Cliquez sur `Ajouter un serveur`.
 3. Saisissez les informations du serveur. Seul le champ `Adresse` est obligatoire. Si un serveur utilise un port différent de celui par défaut de la ferme, vous pouvez le surcharger ici, même si une configuration uniforme est plus facile à maintenir.
-4. Cliquez sur `Ajouter le serveur` pour ajouter le serveur.
+4. Cliquez sur `Ajouter un serveur` pour ajouter le serveur.
 
 {/* DRAFT: À illustrer - le formulaire d'ajout de serveur avec une adresse IPv4 saisie */}
 
@@ -182,7 +182,7 @@ Le frontend expose votre service sur Internet et transmet le trafic à la ferme.
 3. Renseignez les champs. Pour une configuration simple, le `Protocole`, le `Port` (80 pour le HTTP standard) et le datacentre sont obligatoires. Pour écouter sur plusieurs ports, saisissez une liste séparée par des virgules ou une plage sous la forme `START_PORT-END_PORT`.
 4. Définissez la `Route par défaut` sur la ferme que vous avez créée afin que le trafic y soit acheminé.
 5. Si vous avez routé des IP additionnelles vers le Load Balancer, vous pouvez rattacher le frontend à une ou plusieurs d'entre elles.
-6. Cliquez sur `Créer le frontend` pour enregistrer le frontend.
+6. Cliquez sur `Créer un frontend` pour enregistrer le frontend.
 
 {/* DRAFT: À illustrer - le formulaire de création de frontend avec le port 80 et la route par défaut définie sur la ferme */}
 
@@ -223,7 +223,7 @@ Les certificats configurés sur le service sont automatiquement disponibles pour
 <Tab label="Espace client">
 
 1. Ouvrez l'onglet `SSL`.
-2. Pour importer un certificat existant, cliquez sur `Ajouter un certificat` et fournissez la clé privée et le certificat (les deux sont obligatoires), puis cliquez sur `Ajouter le certificat`.
+2. Pour importer un certificat existant, cliquez sur `Ajouter un certificat` et fournissez la clé privée et le certificat (les deux sont obligatoires), puis cliquez sur `Ajouter un certificat`.
 3. Pour commander un certificat géré, lancez le processus de commande Let's Encrypt, saisissez votre domaine, confirmez qu'il pointe vers le Load Balancer et suivez les e-mails de validation que vous recevez.
 4. Lors de la configuration du frontend à l'étape suivante, vous pouvez choisir un profil de configuration TLS tel que `Moderne (TLS 1.3)` ou `Intermédiaire (TLS 1.2+)`.
 
@@ -269,7 +269,7 @@ Une fois un certificat disponible, créez un second frontend qui écoute sur le 
 3. Sélectionnez le certificat sous `Certificat TLS`.
 4. Définissez la `Route par défaut` sur la même ferme que celle utilisée par le frontend HTTP.
 5. Activez éventuellement le HSTS. Avec le HSTS, les navigateurs utilisent le HTTPS pour chaque visite future, ce qui protège contre les attaques par rétrogradation.
-6. Cliquez sur `Créer le frontend` pour enregistrer le frontend.
+6. Cliquez sur `Créer un frontend` pour enregistrer le frontend.
 
 {/* DRAFT: À illustrer - le formulaire de création de frontend avec le port 443, le SSL activé et un certificat TLS sélectionné */}
 
@@ -393,7 +393,7 @@ Le tableau ci-dessous répertorie les problèmes les plus courants rencontrés l
 | Backend marqué comme indisponible | Sonde mal configurée ou backend n'écoutant pas sur le port de la ferme | Vérifiez le `Port` de la ferme, le port du backend et les paramètres de la sonde. Consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes). |
 | 503 renvoyé par le frontend | Aucun serveur actif dans la ferme, ou mauvaise route par défaut | Vérifiez que la ferme dispose d'au moins un serveur actif et que la route par défaut du frontend la cible bien. |
 
-Pour automatiser ce déploiement avec le provider Terraform OVHcloud, consultez [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] et le [guide d'automatisation](/guides/network/load-balancer-revamp/automation).
+Pour automatiser ce déploiement, le provider Terraform OVHcloud expose des ressources telles que `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server` et `ovh_iploadbalancing_http_route` pour créer les fermes, les serveurs et les routes. Les frontends et l'application (rafraîchissement) de la configuration ne sont pas gérés par Terraform — réalisez ces opérations via l'API OVHcloud ou l'espace client. Consultez le [guide d'automatisation](/guides/network/load-balancer-revamp/automation).
 
 ## Aller plus loin
 

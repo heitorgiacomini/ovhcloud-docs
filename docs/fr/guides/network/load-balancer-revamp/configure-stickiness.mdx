@@ -121,9 +121,9 @@ Déployez les modifications en attente pour rendre le nouveau paramètre de pers
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Définissez l'argument `stickiness` sur la ressource de la ferme — `ovh_iploadbalancing_http_farm` pour une ferme HTTP, ou `ovh_iploadbalancing_tcp_farm` pour une ferme TCP — puis exécutez `terraform apply` pour mettre à jour la ferme.
 
-Après avoir modifié la ressource de la ferme, la configuration doit être déployée à l'aide d'une ressource de rafraîchissement. [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform ne dispose d'aucune ressource permettant de déployer (rafraîchir) la configuration du Load Balancer. Après avoir appliqué la modification de la ferme, déployez-la via l'appel API OVHcloud ci-dessous ou depuis l'espace client.
 
 </Tab>
 </Tabs>

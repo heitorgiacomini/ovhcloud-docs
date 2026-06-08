@@ -6,7 +6,6 @@ lastUpdated: 2026-06-05
 
 import Api from '@components/Api';
 import ManagerLink from '@components/ManagerLink';
-import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objective
 
@@ -54,7 +53,7 @@ First, move the Additional IP to the Load Balancer service:
 | `to` (body) | Yes | The service name of the target Load Balancer. | `loadbalancer-a1b2c3d4` |
 
 > [!INFO]
-> The `/ip/{ip}/move` endpoint is part of the `/ip` API section. Confirm the exact parameters in the [OVHcloud API console](/links/api) before running the call. [UNVERIFIED: /ip/\{ip\}/move - endpoint not present in the SOT cache, confirm path and body]
+> The `/ip/{ip}/move` endpoint is part of the `/ip` API section. The `to` body field accepts the target service name. You can also retrieve the list of services an IP can be moved to with `GET /ip/{ip}/move`.
 
 Then list the Additional IPs already routed to your Load Balancer to confirm the association:
 
@@ -68,28 +67,7 @@ After the association is confirmed, apply the configuration as described in [App
 
 ### Route a dedicated Additional IP to a single frontend
 
-This scope attaches the Additional IP to one frontend only. The IP then grants access exclusively to the service exposed by that frontend, while your other frontends stay reachable through the Load Balancer's primary IP address. Configure a dedicated IP from the Control Panel or the OVHcloud API.
-
-<Tabs>
-<Tab label="Control Panel">
-
-1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
-2. Navigate to **Network** > **Load Balancer**.
-3. Select the Load Balancer you want to modify, then open the `Frontends` tab.
-4. Click `Create frontend` to add a new frontend, or select an existing frontend and edit it.
-5. In the advanced settings of the frontend, select the Additional IPs you want to associate with it.
-
-{/* DRAFT: To screenshot - the Frontends editor advanced settings showing the Additional IP selection */}
-
-6. Save the frontend. The button label is `Create Frontend` for a new frontend or `Edit Frontend` for an existing one.
-
-> [!INFO]
-> The advanced-settings field used to select Additional IPs is not present in the SOT cache. [UNVERIFIED: advanced settings dedicated-IP field label - confirm against the New Manager]
-
-After the frontend is saved, apply the configuration as described in [Apply the configuration](#apply-the-configuration).
-
-</Tab>
-<Tab label="OVHcloud API">
+This scope attaches the Additional IP to one frontend only. The IP then grants access exclusively to the service exposed by that frontend, while your other frontends stay reachable through the Load Balancer's primary IP address. Configure a dedicated IP from the OVHcloud API.
 
 Define one or more dedicated Additional IPs when you create a frontend.
 
@@ -118,12 +96,9 @@ Or update an existing frontend to attach the dedicated Additional IPs.
 | `dedicatedIpfo` (body) | Yes | The list of dedicated Additional IPs to attach to the frontend. | `["203.0.113.42"]` |
 
 > [!INFO]
-> A UDP frontend variant exists in the Control Panel but is not present in the SOT cache. [UNVERIFIED: /ipLoadbalancing/\{serviceName\}/udp/frontend - confirm the UDP frontend endpoints in the API console]
+> For a UDP service, attach the dedicated Additional IP to a UDP frontend instead, using `POST /ipLoadbalancing/{serviceName}/udp/frontend` (or `PUT` to update an existing one).
 
 After the call succeeds, apply the configuration as described in [Apply the configuration](#apply-the-configuration).
-
-</Tab>
-</Tabs>
 
 ### Apply the configuration
 
@@ -131,13 +106,10 @@ After the call succeeds, apply the configuration as described in [Apply the conf
 
 Changes to Additional IPs are staged until you apply the Load Balancer configuration. You can apply it from the Control Panel in two ways:
 
-- From the `General` tab, click the `...` button next to your Load Balancer and select `Apply configuration`.
-- From the reminder banner that notifies you the configuration has not been applied, click `Apply configuration`.
+- From the `General` tab, click the `...` button next to your Load Balancer and select `Apply changes`.
+- From the reminder banner that notifies you the configuration has not been applied, click `Apply changes`.
 
-{/* DRAFT: To screenshot - the Apply configuration action on the General tab */}
-
-> [!INFO]
-> The `Apply configuration` action label and the reminder banner are not present in the SOT cache. [UNVERIFIED: Apply configuration label - confirm against the New Manager]
+{/* DRAFT: To screenshot - the Apply changes action on the General tab */}
 
 > [!WARNING]
 > The configuration is not active until it is applied. If the conditions in the Introduction are not met, the refresh fails and the previous configuration remains in place.

@@ -123,7 +123,17 @@ Après avoir créé la ferme, [appliquez la configuration](#apply).
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Utilisez la ressource de ferme correspondant au type de ferme : `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm` ou `ovh_iploadbalancing_udp_farm`. Chacune référence le service parent via son argument `service_name`.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm" "web_farm" {
+  service_name = "loadbalancer-xxxx"
+  display_name = "web-farm"
+  zone         = "gra"
+  port         = 80
+  balance      = "roundrobin"
+}
+```
 
 </Tab>
 </Tabs>
@@ -180,7 +190,19 @@ Après avoir ajouté les serveurs, [appliquez la configuration](#apply).
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Utilisez la ressource de serveur correspondant au type de ferme : `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_tcp_farm_server` ou `ovh_iploadbalancing_udp_farm_server`. Chacune référence sa ferme via l'argument `farm_id`.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm_server" "backend_1" {
+  service_name = "loadbalancer-xxxx"
+  farm_id      = ovh_iploadbalancing_http_farm.web_farm.id
+  address      = "10.0.0.10"
+  port         = 8080
+  status       = "active"
+  weight       = 1
+  backup       = false
+}
+```
 
 </Tab>
 </Tabs>
@@ -235,7 +257,17 @@ Après avoir mis à jour la ferme, [appliquez la configuration](#apply).
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Définissez l'argument `balance` sur la ressource de ferme (`ovh_iploadbalancing_http_farm` ou `ovh_iploadbalancing_tcp_farm`) avec l'une des valeurs `roundrobin`, `leastconn`, `source`, `uri` ou `first`, puis appliquez le plan.
+
+```hcl
+resource "ovh_iploadbalancing_http_farm" "web_farm" {
+  service_name = "loadbalancer-xxxx"
+  display_name = "web-farm"
+  zone         = "gra"
+  port         = 80
+  balance      = "leastconn"
+}
+```
 
 </Tab>
 </Tabs>
@@ -278,7 +310,7 @@ Les modifications apportées aux fermes et aux serveurs sont mises en attente ju
 <Tabs>
 <Tab label="Espace client">
 
-Après avoir enregistré vos modifications, appliquez la configuration depuis la bannière qui s'affiche dans l'interface du service.
+Après avoir enregistré vos modifications, cliquez sur `Appliquer les modifications` dans la bannière qui s'affiche dans l'interface du service.
 
 {/* DRAFT: À capturer - la bannière d'application de la configuration affichée après la mise en attente des modifications */}
 
@@ -305,7 +337,7 @@ Pour consulter les modifications en attente avant de les appliquer, utilisez :
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform ne dispose d'aucune ressource pour l'action d'application/refresh. Une fois que `terraform apply` a créé ou mis à jour les ressources de ferme et de serveur (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm` et leurs ressources `_server`), déployez la configuration en attente dans la zone à l'aide de l'appel API ci-dessus ou de la bannière `Appliquer les modifications` dans l'espace client.
 
 </Tab>
 </Tabs>
@@ -333,8 +365,6 @@ Cette section liste les contraintes qui s'appliquent aux fermes et aux méthodes
 | Capacités UDP | UDP est uniquement de couche 4. Les fermes et frontends UDP ne prennent pas en charge les routes HTTP, la manipulation des en-têtes HTTP, les redirections, la terminaison SSL/TLS ni la persistance par cookie. |
 | Type de ferme et frontend | Une ferme ne peut être rattachée qu'à un frontend du même type de protocole (ferme HTTP vers frontend HTTP, ferme TCP vers frontend TCP, ferme UDP vers frontend UDP). |
 | Quotas par zone | Le nombre de fermes et de serveurs est soumis à des quotas par zone. Consultez-les via `GET /ipLoadbalancing/{serviceName}/quota`. |
-| Nombre maximal de serveurs par ferme | [TODO: confirm maximum number of servers per farm] |
-| Nombre maximal de fermes par service | [TODO: confirm maximum number of farms per service] |
 
 ### Résolution des problèmes <a name="troubleshooting"></a>
 

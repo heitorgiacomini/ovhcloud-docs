@@ -199,15 +199,13 @@ If a header you define already exists in the request, it is overwritten with you
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
 2. Select the `Frontends` tab.
-3. Select an existing HTTP frontend to edit, or click `Create frontend` to add a new one.
+3. Select an existing HTTP frontend to edit, or click `Create Frontend` to add a new one.
 4. In the editor, open the advanced settings and locate the HTTP header field.
 
 {/* DRAFT: To screenshot - the Edit Frontend editor showing the HTTP header field in the advanced settings */}
 
 5. Enter your headers. To configure several headers, separate them with commas and no spaces, for example: `X-Ip-Header %ci,X-Port-Header %cp`.
-6. Confirm the changes, then apply the configuration to the relevant zone.
-
-{/* DRAFT: To verify - exact labels of the HTTP header field, advanced settings section, confirm button, and deploy/apply action in the New Control Panel frontend editor */}
+6. Confirm the changes, then click `Apply changes` to deploy the configuration to the relevant zone.
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -245,7 +243,7 @@ Then apply the changes to the relevant zone:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider does not manage HTTP frontends, so custom headers cannot be set with Terraform. The provider exposes farms and servers (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`) and routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`), but frontend configuration and applying (refreshing) the configuration are available only through the OVHcloud Control Panel and the OVHcloud API.
 
 </Tab>
 </Tabs>

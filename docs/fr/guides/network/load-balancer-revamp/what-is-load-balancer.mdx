@@ -120,7 +120,7 @@ Chaque famille de protocoles expose ses propres fermes, serveurs et frontends so
 | API OVHcloud | `/ipLoadbalancing/{serviceName}/tcp/frontend` | Gérer les frontends TCP |
 | API OVHcloud | `/ipLoadbalancing/{serviceName}/udp/farm` | Gérer les fermes de serveurs UDP |
 | API OVHcloud | `/ipLoadbalancing/{serviceName}/udp/frontend` | Gérer les frontends UDP |
-| Terraform | [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] | Déclarer les ressources du Load Balancer sous forme de code |
+| Terraform | `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm` | Déclarer les fermes et serveurs du Load Balancer sous forme de code |
 
 Par exemple, lister les fermes HTTP d'un Load Balancer s'effectue avec l'appel suivant :
 
@@ -144,7 +144,6 @@ Gardez les points suivants à l'esprit lorsque vous raisonnez sur le service.
 - L'UDP est un protocole de couche 4 : les frontends et fermes UDP ne prennent pas en charge les routes HTTP, la manipulation des en-têtes, les redirections, la terminaison SSL/TLS ni la persistance par cookie.
 - L'endpoint d'API `/ipLoadbalancing/availableZones` est déprécié ; ne vous appuyez pas dessus dans vos nouvelles automatisations.
 - Les serveurs backend doivent être accessibles depuis le Load Balancer, soit via le réseau public, soit via un réseau privé tel que le vRack.
-- Pour connaître les quotas et limites exacts, reportez-vous à [Prérequis et limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations). [TODO: confirm per-service farm, frontend, and server limits]
 
 ## Aller plus loin
 

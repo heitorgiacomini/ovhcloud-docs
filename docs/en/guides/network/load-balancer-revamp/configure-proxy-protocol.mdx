@@ -96,13 +96,10 @@ Enable a ProxyProtocol mode on the target server. The corresponding server prope
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
 2. Select the `Server Farms` tab.
 3. Open the farm that contains the target server, then edit that server.
-4. Set the ProxyProtocol mode to `v1`, `v2`, `v2-ssl`, or `v2-ssl-cn`.
-5. Save the server, then apply the configuration to the relevant zone.
+4. Set the `ProxyProtocol version` to `v1`, `v2`, `v2-ssl`, or `v2-ssl-cn`.
+5. Save the server, then click `Apply changes` to deploy the configuration.
 
 {/* DRAFT: To screenshot — capture the server edit panel showing the ProxyProtocol mode selector */}
-
-> [!INFO]
-> The exact label of the ProxyProtocol selector and of the save/apply buttons in the New Control Panel are not yet confirmed. [TODO: confirm New Manager labels for the server ProxyProtocol option and the deploy/apply action]
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -129,7 +126,20 @@ Then apply the configuration to make the change effective:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Set the ProxyProtocol mode on a TCP backend server through the `ovh_iploadbalancing_tcp_farm_server` resource, using its `proxy_protocol_version` argument:
+
+```hcl
+resource "ovh_iploadbalancing_tcp_farm_server" "backend" {
+  service_name           = "loadbalancer-a1b2c3d4"
+  farm_id                = 12345
+  address                = "10.0.0.10"
+  status                 = "active"
+  proxy_protocol_version = "v1"
+}
+```
+
+> [!INFO]
+> There is no Terraform resource that applies (refreshes) a pending configuration. After Terraform updates the server, apply the change through the OVHcloud API (`POST /ipLoadbalancing/\{serviceName\}/refresh`) or the `Apply changes` action in the Control Panel.
 
 </Tab>
 </Tabs>

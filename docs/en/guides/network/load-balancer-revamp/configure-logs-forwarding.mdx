@@ -255,9 +255,7 @@ Delete the subscription with the following call:
 | `serviceName` | Yes | Internal name of your Load Balancer. | `loadbalancer-xxxxxxxxxxxxxxxxxxxx` |
 | `subscriptionId` | Yes | Identifier of the subscription to delete. | `19717204-2e10-4000-8c42-d7b11c9ce680` |
 
-For an automated, reproducible setup of subscriptions, you can manage logs forwarding with the OVHcloud Terraform provider.
-
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Logs forwarding subscriptions are managed through the OVHcloud API only. The OVHcloud Terraform provider can manage Load Balancer farms, servers and routes (for example `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`), but it does not provide a resource for log subscriptions, so use the API calls above to create and delete them.
 
 ### Limitations <a name="limitations"></a>
 
@@ -267,7 +265,7 @@ This section lists the known constraints of Load Balancer logs forwarding.
 |---|---|
 | UDP listeners | Logs of UDP listeners are not forwarded. Only `tcp` and `http` kinds are supported. |
 | Same account | The Logs Data Platform account and the Load Balancer must belong to the same OVHcloud account. |
-| Control Panel enablement | Enabling forwarding (creating a subscription) is performed through the OVHcloud API. [TODO: confirm whether subscription creation is available in the Control Panel for the beta Manager] |
+| Control Panel enablement | Enabling forwarding (creating a subscription) is performed through the OVHcloud API. This feature is not yet available in the Control Panel. |
 | Immutable history | Cancelling a subscription does not remove logs already stored in the data stream. |
 
 ### Troubleshooting <a name="troubleshooting"></a>

@@ -134,7 +134,7 @@ Les exemples ci-dessus utilisent les endpoints de ferme HTTP. Pour un service TC
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Déclarez chaque ferme avec la ressource `ovh_iploadbalancing_http_farm` et rattachez son serveur backend avec `ovh_iploadbalancing_http_farm_server`. Pour un service TCP ou UDP, utilisez plutôt les ressources `ovh_iploadbalancing_tcp_farm` / `ovh_iploadbalancing_tcp_farm_server` ou `ovh_iploadbalancing_udp_farm` / `ovh_iploadbalancing_udp_farm_server`. Répétez la paire de ressources pour la Ferme A et la Ferme B, en utilisant l'adresse backend de chaque environnement.
 
 </Tab>
 </Tabs>
@@ -175,7 +175,7 @@ Créez le frontend de préproduction en répétant l'appel avec `port` réglé s
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform ne propose aucune ressource pour les frontends. Créez et modifiez les frontends via l'espace client OVHcloud ou l'API OVHcloud, comme indiqué dans les autres onglets.
 
 </Tab>
 </Tabs>
@@ -249,7 +249,7 @@ Appliquez la modification pour basculer la production de manière atomique :
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le basculement échange la ferme par défaut de chaque frontend, et le provider Terraform ne propose aucune ressource pour les frontends. Effectuez la bascule et l'application via l'espace client OVHcloud ou l'API OVHcloud, comme indiqué dans les autres onglets.
 
 </Tab>
 </Tabs>

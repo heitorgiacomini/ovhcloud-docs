@@ -6,7 +6,6 @@ lastUpdated: 2026-06-05
 
 import Api from '@components/Api';
 import ManagerLink from '@components/ManagerLink';
-import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objectif
 
@@ -54,7 +53,7 @@ Commencez par déplacer l'Additional IP vers le service Load Balancer :
 | `to` (corps) | Oui | Le nom de service du Load Balancer cible. | `loadbalancer-a1b2c3d4` |
 
 > [!INFO]
-> L'endpoint `/ip/{ip}/move` fait partie de la section d'API `/ip`. Confirmez les paramètres exacts dans la [console API OVHcloud](/links/api) avant d'exécuter l'appel. [UNVERIFIED: /ip/\{ip\}/move - endpoint not present in the SOT cache, confirm path and body]
+> L'endpoint `/ip/{ip}/move` fait partie de la section d'API `/ip`. Le champ `to` du corps accepte le nom de service cible. Vous pouvez également récupérer la liste des services vers lesquels une IP peut être déplacée avec `GET /ip/{ip}/move`.
 
 Listez ensuite les Additional IPs déjà routées vers votre Load Balancer afin de confirmer l'association :
 
@@ -68,28 +67,7 @@ Une fois l'association confirmée, appliquez la configuration comme décrit dans
 
 ### Router une Additional IP dédiée vers un seul frontend
 
-Cette portée rattache l'Additional IP à un seul frontend. L'IP donne alors accès exclusivement au service exposé par ce frontend, tandis que vos autres frontends restent accessibles via l'adresse IP principale du Load Balancer. Configurez une IP dédiée depuis l'espace client ou l'API OVHcloud.
-
-<Tabs>
-<Tab label="Espace client">
-
-1. Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>.
-2. Accédez à **Réseau** > **Load Balancer**.
-3. Sélectionnez le Load Balancer que vous souhaitez modifier, puis ouvrez l'onglet `Frontends & routage`.
-4. Cliquez sur `Créer un frontend` pour ajouter un nouveau frontend, ou sélectionnez un frontend existant et modifiez-le.
-5. Dans les paramètres avancés du frontend, sélectionnez les Additional IPs que vous souhaitez lui associer.
-
-{/* DRAFT: À capturer - les paramètres avancés de l'éditeur de frontends affichant la sélection de l'Additional IP */}
-
-6. Enregistrez le frontend. Le libellé du bouton est `Créer le frontend` pour un nouveau frontend ou `Modifier le frontend` pour un frontend existant.
-
-> [!INFO]
-> Le champ des paramètres avancés utilisé pour sélectionner les Additional IPs n'est pas présent dans le cache SOT. [UNVERIFIED: advanced settings dedicated-IP field label - confirm against the New Manager]
-
-Une fois le frontend enregistré, appliquez la configuration comme décrit dans [Appliquer la configuration](#apply-the-configuration).
-
-</Tab>
-<Tab label="API OVHcloud">
+Cette portée rattache l'Additional IP à un seul frontend. L'IP donne alors accès exclusivement au service exposé par ce frontend, tandis que vos autres frontends restent accessibles via l'adresse IP principale du Load Balancer. Configurez une IP dédiée depuis l'API OVHcloud.
 
 Définissez une ou plusieurs Additional IPs dédiées lorsque vous créez un frontend.
 
@@ -118,12 +96,9 @@ Ou mettez à jour un frontend existant pour y rattacher les Additional IPs dédi
 | `dedicatedIpfo` (corps) | Oui | La liste des Additional IPs dédiées à rattacher au frontend. | `["203.0.113.42"]` |
 
 > [!INFO]
-> Une variante de frontend UDP existe dans l'espace client mais n'est pas présente dans le cache SOT. [UNVERIFIED: /ipLoadbalancing/\{serviceName\}/udp/frontend - confirm the UDP frontend endpoints in the API console]
+> Pour un service UDP, attachez l'Additional IP dédiée à un frontend UDP en utilisant `POST /ipLoadbalancing/{serviceName}/udp/frontend` (ou `PUT` pour en modifier un existant).
 
 Une fois l'appel réussi, appliquez la configuration comme décrit dans [Appliquer la configuration](#apply-the-configuration).
-
-</Tab>
-</Tabs>
 
 ### Appliquer la configuration
 
@@ -135,9 +110,6 @@ Les modifications apportées aux Additional IPs restent en attente jusqu'à ce q
 - Depuis le bandeau de rappel qui vous signale que la configuration n'a pas été appliquée, cliquez sur `Appliquer les modifications`.
 
 {/* DRAFT: À capturer - l'action Appliquer les modifications dans l'onglet Général */}
-
-> [!INFO]
-> Le libellé de l'action `Appliquer les modifications` et le bandeau de rappel ne sont pas présents dans le cache SOT. [UNVERIFIED: Apply configuration label - confirm against the New Manager]
 
 > [!WARNING]
 > La configuration n'est pas active tant qu'elle n'est pas appliquée. Si les conditions de l'introduction ne sont pas réunies, l'actualisation échoue et la configuration précédente reste en place.

@@ -121,9 +121,9 @@ Deploy the staged changes to make the new stickiness setting active.
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Set the `stickiness` argument on the farm resource — `ovh_iploadbalancing_http_farm` for an HTTP farm, or `ovh_iploadbalancing_tcp_farm` for a TCP farm — then run `terraform apply` to update the farm.
 
-After changing the farm resource, the configuration must be deployed with a refresh resource. [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The Terraform provider has no resource for deploying (refreshing) the Load Balancer configuration. After applying the farm change, deploy it via the OVHcloud API call below or from the Control Panel.
 
 </Tab>
 </Tabs>

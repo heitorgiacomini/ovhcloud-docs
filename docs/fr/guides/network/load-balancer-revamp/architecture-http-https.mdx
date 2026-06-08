@@ -139,7 +139,7 @@ Les mêmes éléments correspondent à l'API OVHcloud. Les appels ci-dessous lis
 |---|---|---|---|
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3d4...` |
 
-Pour gérer cette architecture sous forme de code, utilisez le provider Terraform OVHcloud [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources].
+Pour gérer cette architecture sous forme de code, utilisez le provider Terraform OVHcloud. Il expose le service `ovh_iploadbalancing` ainsi que les ressources `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server` pour la ferme et ses backends. Les frontends et l'application de la configuration ne sont pas disponibles en tant que ressources Terraform ; gérez-les via l'API ou l'espace client.
 
 ## Considérations et limites
 
@@ -152,7 +152,6 @@ Cette architecture de référence cible une application web unique servie en HTT
 | Zone unique | Cette architecture suppose une seule zone. La résilience multizone constitue une architecture distincte. Consultez [architecture résiliente multizone](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone). |
 | Application de la configuration | Aucune modification n'est active tant qu'elle n'a pas été appliquée à chaque zone configurée. |
 | HSTS | Si vous activez HSTS sur le frontend HTTPS, ce choix n'est pas réversible pour les clients qui l'ont déjà enregistré. Ne l'activez qu'une fois le HTTPS entièrement testé. |
-| Capacité et quotas | Le nombre de frontends, de fermes et de serveurs dépend de votre gamme commerciale. [TODO: confirm per-range limits for frontends, farms, and servers] |
 
 ## Aller plus loin
 

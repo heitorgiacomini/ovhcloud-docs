@@ -123,16 +123,16 @@ Pour consulter ou modifier le quota d'une zone en particulier :
 Le endpoint `GET /ipLoadbalancing/availableZones` est déprécié. Déterminez plutôt les zones commandables via le parcours de commande. Consultez le guide [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones) pour la procédure de commande.
 :::
 
-Vous pouvez également gérer les zones et le quota de manière programmatique avec le provider Terraform OVHcloud : [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]. Consultez le guide [Automatisation](/guides/network/load-balancer-revamp/automation) pour un aperçu des méthodes disponibles.
+Vous pouvez également gérer le service Load Balancer de manière programmatique avec le provider Terraform OVHcloud, à l'aide de la ressource `ovh_iploadbalancing`. Les zones et le quota eux-mêmes se consultent et s'ajustent via l'API ou l'espace client. Consultez le guide [Automatisation](/guides/network/load-balancer-revamp/automation) pour un aperçu des méthodes disponibles.
 
 ## Points à prendre en compte et limitations
 
 Gardez à l'esprit les points suivants lorsque vous planifiez un déploiement multizone.
 
 - La plupart des régions n'exposent qu'une seule zone : s'étendre sur plusieurs zones revient donc généralement à s'étendre sur plusieurs régions.
-- Les régions multi-AZ ne sont disponibles que là où OVHcloud les a déployées (Paris et Milan au moment de la rédaction). [TODO: confirm the current list of multi-AZ regions and their launch dates]
+- Les régions multi-AZ ne sont disponibles que là où OVHcloud les a déployées (Paris et Milan au moment de la rédaction).
 - Les configurations intercontinentales associant une zone APAC à une zone non APAC sont soumises à la restriction de routage décrite ci-dessus et ne sont pas recommandées.
-- Le quota est appliqué par zone ; vérifiez les limites par zone avant de faire évoluer votre déploiement. [TODO: confirm exact per-zone resource limits]
+- Le quota est appliqué par zone ; vérifiez les limites par zone avant de faire évoluer votre déploiement.
 - Un frontend associé à une zone nommée ne peut pas acheminer le trafic vers un cluster situé dans une zone différente.
 
 ## Aller plus loin

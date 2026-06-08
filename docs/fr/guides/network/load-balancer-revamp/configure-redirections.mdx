@@ -53,9 +53,9 @@ Vous pouvez configurer une redirection sur un nouveau frontend lors de sa créat
 
 {/* DRAFT: À capturer en capture d'écran — les paramètres avancés de l'éditeur de frontend avec le champ d'emplacement de redirection renseigné */}
 
-7. Validez le frontend en cliquant sur `Créer le frontend` ou `Enregistrer les modifications`, selon que vous créez ou modifiez le frontend.
+7. Validez le frontend en cliquant sur `Créer un frontend` ou `Enregistrer les modifications`, selon que vous créez ou modifiez le frontend.
 
-Appliquez la configuration en attente afin que la redirection devienne active. {/* DRAFT: À vérifier — confirmer le libellé exact de l'action d'application/de déploiement dans le nouveau Manager */}
+Appliquez la configuration en attente en cliquant sur `Appliquer les modifications` afin que la redirection devienne active.
 
 {/* DRAFT: À capturer en capture d'écran — le bandeau ou l'action utilisé pour appliquer la configuration en attente */}
 
@@ -100,7 +100,9 @@ La redirection devient active une fois la configuration appliquée.
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform OVHcloud n'expose pas de ressource pour les frontends HTTP ni pour l'application des modifications de configuration. Les redirections, définies via la propriété `redirectLocation` d'un frontend, doivent donc être configurées via l'API OVHcloud ou l'espace client.
+
+Le provider couvre en revanche les objets Load Balancer associés, tels que le service (`ovh_iploadbalancing`), les fermes de serveurs (`ovh_iploadbalancing_http_farm`) et les routes HTTP (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`). Pour les redirections en particulier, utilisez les onglets API OVHcloud ou Espace client ci-dessus.
 
 </Tab>
 </Tabs>

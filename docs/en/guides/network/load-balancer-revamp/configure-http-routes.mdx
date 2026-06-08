@@ -285,16 +285,15 @@ Attach 2 rules to the same route:
 Routes and rules become active only after the configuration is applied (redeployed) to the relevant zone. Creating, modifying, or deleting a route or rule requires a redeployment.
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
-2. Apply the pending configuration to the relevant zone.
+2. Click **Apply changes** to redeploy the pending configuration to the relevant zone.
 
-{/* DRAFT: To verify — confirm the exact button/label used in manager-beta to apply/redeploy a zone (not present in the cached manager map) */}
 {/* DRAFT: To screenshot — capture the Control Panel screen used to apply the pending configuration to a zone */}
 
 You can review the pending changes via the API before applying them:
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] — routes and rules can also be managed declaratively with the OVHcloud Terraform provider.
+Routes and rules can also be managed declaratively with the OVHcloud Terraform provider, using the `ovh_iploadbalancing_http_route` and `ovh_iploadbalancing_http_route_rule` resources. Note that redeploying the configuration to a zone remains an API or Control Panel operation; there is no Terraform resource for it.
 
 ### API reference <a name="reference"></a>
 

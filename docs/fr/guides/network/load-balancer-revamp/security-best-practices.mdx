@@ -146,7 +146,9 @@ Une fois la commande terminée, le certificat est installé automatiquement sur 
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+La commande d'un certificat gratuit n'est pas disponible via le provider Terraform OVHcloud : il n'existe pas de ressource Terraform pour les certificats, les frontends ou l'action d'application/rafraîchissement. Utilisez l'espace client ou l'API OVHcloud pour cette étape.
+
+Le provider Terraform couvre en revanche le service Load Balancer et ses fermes — par exemple les ressources `ovh_iploadbalancing` et `ovh_iploadbalancing_http_farm` — vous pouvez donc les gérer en parallèle d'un certificat commandé par l'une des deux autres méthodes.
 
 </Tab>
 </Tabs>
@@ -157,7 +159,6 @@ Pour le déroulé complet de la commande, consultez [Configurer les certificats 
 
 - La commande d'un certificat gratuit nécessite que le domaine pointe vers votre Load Balancer au moment de la commande ; sinon, la validation échoue.
 - Les choix de profil de chiffrement s'appliquent au niveau du frontend et affectent chaque client de ce frontend.
-- La liste exacte des clients pris en charge par profil, ainsi que les éventuels quotas de certificats par offre, sont [TODO: confirm supported-client matrix and certificate quotas].
 
 :::warning
 Changer le profil de chiffrement peut rompre la connectivité des clients qui ne prennent pas en charge les versions de protocole négociées. Validez la modification auprès d'une population de clients représentative avant de l'appliquer en production.

@@ -173,7 +173,7 @@ Vous pouvez également inspecter l'état actuel du service et de ses zones :
 > [!INFO]
 > L'endpoint `GET /ipLoadbalancing/availableZones` est déprécié. Pour découvrir les zones associées à un service et leurs quotas, utilisez les endpoints `quota` ci-dessus ainsi que les propriétés du service sur `GET /ipLoadbalancing/{serviceName}`.
 
-Pour un déploiement automatisé et reproductible de cette topologie, consultez [Automatisation](/guides/network/load-balancer-revamp/automation). [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Pour un déploiement automatisé et reproductible de cette topologie, consultez [Automatisation](/guides/network/load-balancer-revamp/automation). Le provider Terraform OVHcloud permet de gérer le service ainsi que ses fermes et ses serveurs (par exemple `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`). Les frontends et l'application de la configuration s'effectuent via l'API ou l'espace client, et non via Terraform.
 
 ### Points d'attention et limites <a name="considerations-and-limitations"></a>
 
@@ -185,7 +185,6 @@ Gardez à l'esprit les contraintes suivantes lors de la conception d'un déploie
 | Quotas par zone | Chaque zone dispose de son propre quota. Vérifiez les quotas avant de faire évoluer le nombre de serveurs backend par zone. Consultez les endpoints `quota` ci-dessus. |
 | Sondes | Sans sondes, la ferme peut transmettre le trafic à des serveurs backend qui ne répondent pas. Configurez toujours des sondes dans une architecture résiliente. |
 | Déploiement de la configuration | Les modifications ne sont actives qu'une fois la configuration appliquée. Appliquez-la après chaque modification. |
-| Engagements de niveau de service | [TODO: confirm multi-zone SLA percentages] — consultez [SLA](/guides/network/load-balancer-revamp/slas). |
 
 ## Aller plus loin
 

@@ -126,7 +126,7 @@ Pour lister les tâches via l'API OVHcloud :
 
 #### Quota
 
-L'onglet `Quota` affiche les limites de ressources qui s'appliquent à votre service par zone de disponibilité, telles que le nombre maximal de fermes, de frontends et de serveurs. Consultez-le avant de mettre à l'échelle une configuration. Les valeurs exactes dépendent de votre offre [TODO: confirm per-zone quota limits].
+L'onglet `Quota` affiche les limites de ressources qui s'appliquent à votre service par zone de disponibilité, telles que le nombre maximal de fermes, de frontends et de serveurs. Consultez-le avant de mettre à l'échelle une configuration.
 
 Pour lire les informations de quota via l'API OVHcloud :
 
@@ -147,7 +147,7 @@ Avant d'appliquer, vérifiez ce qui est en attente afin de n'activer que les mod
 <Tabs>
 <Tab label="Espace client">
 
-Une bannière ou un indicateur apparaît sur le tableau de bord lorsque des modifications sont en attente. Vérifiez les modifications listées, puis cliquez sur l'action d'application pour les activer.
+Une bannière ou un indicateur apparaît sur le tableau de bord lorsque des modifications sont en attente. Vérifiez les modifications listées, puis cliquez sur <code className="action">Appliquer les modifications</code> pour les activer.
 
 {/* DRAFT: À capturer en capture d'écran - la bannière de modifications en attente / l'invite d'application sur le tableau de bord */}
 
@@ -172,7 +172,7 @@ L'application pousse chaque modification en attente vers la configuration active
 <Tabs>
 <Tab label="Espace client">
 
-Lorsque des modifications sont en attente, le tableau de bord propose une action d'application. Confirmez-la pour activer la configuration en attente. L'opération s'exécute comme une tâche que vous pouvez suivre dans l'onglet `Tâches`.
+Lorsque des modifications sont en attente, le tableau de bord propose une action <code className="action">Appliquer les modifications</code>. Confirmez-la pour activer la configuration en attente. L'opération s'exécute comme une tâche que vous pouvez suivre dans l'onglet `Tâches`.
 
 {/* DRAFT: À capturer en capture d'écran - la boîte de dialogue de confirmation d'application */}
 
@@ -190,7 +190,7 @@ Appliquez toutes les modifications en attente en un seul appel :
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Le provider Terraform OVHcloud permet de déclarer les objets en attente — par exemple `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route` et `ovh_iploadbalancing_tcp_farm`. Aucune ressource Terraform n'applique une configuration en attente : déclenchez l'application avec l'appel API `POST /ipLoadbalancing/\{serviceName\}/refresh` (ou depuis l'espace client) une fois que Terraform a créé ou mis à jour les ressources.
 
 </Tab>
 </Tabs>
@@ -219,7 +219,7 @@ Cette section liste les contraintes qui s'appliquent à l'interface de gestion e
 |---|---|
 | Les modifications ne sont pas actives tant qu'elles ne sont pas appliquées | Les modifications apportées aux fermes, frontends, routes et certificats restent en attente jusqu'à ce que vous appliquiez la configuration. |
 | L'application concerne l'ensemble du service | Une opération d'application active toutes les modifications en attente d'un coup ; vous ne pouvez pas appliquer une modification isolément. |
-| Le quota varie selon l'offre et la zone | Les limites de ressources par zone de disponibilité dépendent de votre offre. [TODO: confirm per-zone quota limits] |
+| Le quota varie selon l'offre et la zone | Les limites de ressources par zone de disponibilité dépendent de votre offre. Consultez l'onglet `Quota` pour les valeurs qui s'appliquent à votre service. |
 
 ### Résolution des problèmes <a name="troubleshooting"></a>
 

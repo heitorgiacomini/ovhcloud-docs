@@ -43,7 +43,7 @@ Le tunnel de commande vous guide dans la configuration de votre nouveau service.
 Pour vous aider à choisir entre un déploiement mono-zone et un déploiement multi-zone, consultez [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones) et [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability).
 
 :::info
-Les tailles exactes, leurs chiffres de capacité et leurs tarifs sont présentés dans le tunnel de commande. [TODO: confirm the list of available sizes and their published capacity limits]
+Les tailles exactes et leurs tarifs sont présentés dans le tunnel de commande.
 :::
 
 {/* DRAFT: To screenshot - capture the size and availability zone selection step in the order funnel */}
@@ -88,9 +88,19 @@ Cet appel renvoie le nom de service de chaque Load Balancer de votre compte. Uti
 |---|---|---|---|
 | `serviceName` | Oui | L'identifiant unique de votre service Load Balancer. | `loadbalancer-abcdef1234567890` |
 
-:::info
-L'API OVHcloud ne permet pas de commander un Load Balancer en un seul appel. La commande via l'API utilise les endpoints de commande et de panier. [TODO: confirm the `/order/cart` flow for ipLoadbalancing] Pour commander avec une approche infrastructure-as-code, consultez [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources].
-:::
+L'API OVHcloud ne permet pas de commander un Load Balancer en un seul appel. La commande via l'API utilise les endpoints de commande et de panier, dans cet ordre :
+
+<Api version="v1" section="/order" method="POST" route="/order/cart" />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/assign"} />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing"} />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing/options"} />
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/checkout"} />
+
+Pour commander avec une approche infrastructure-as-code, utilisez la ressource `ovh_iploadbalancing` du provider Terraform OVHcloud.
 
 ## Aller plus loin
 

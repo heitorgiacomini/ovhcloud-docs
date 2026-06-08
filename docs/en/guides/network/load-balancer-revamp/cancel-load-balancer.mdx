@@ -81,9 +81,7 @@ To review or adjust when the service stops renewing, inspect the service informa
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
-
-Service cancellation is generally handled outside Terraform. Removing the resource from your configuration and running `terraform destroy` deletes the managed resources but does not necessarily cancel the underlying service subscription. Cancel the service from the Control Panel or with the OVHcloud API to stop renewal.
+Service cancellation is generally handled outside Terraform. Removing the `ovh_iploadbalancing` resource from your configuration and running `terraform destroy` deletes the managed resources but does not necessarily cancel the underlying service subscription. Cancel the service from the Control Panel or with the OVHcloud API to stop renewal.
 
 </Tab>
 </Tabs>

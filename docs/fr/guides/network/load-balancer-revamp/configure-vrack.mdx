@@ -19,7 +19,7 @@ Ce guide vous accompagne tout au long du processus : attacher le Load Balancer �
 **Dans ce guide, vous apprendrez à :**
 
 - Attacher un service Load Balancer à un vRack.
-- Configurer un réseau privé (sous-réseau, plage d'IP NAT et VLAN) sur le Load Balancer.
+- Configurer un réseau privé (sous-réseau et plage d'IP NAT) sur le Load Balancer.
 - Créer une ferme de serveurs qui joint les backends via leurs adresses IP privées.
 
 :::warning
@@ -39,7 +39,7 @@ Une fois qu'un service Load Balancer est relié à un vRack, ses fermes de serve
 
 Le vRack est un réseau privé de niveau 2 qui interconnecte les services OVHcloud compatibles sans transiter par l'internet public. Lorsque le Load Balancer est attaché à un vRack, vous lui attribuez une plage dédiée d'adresses IP privées (la plage d'IP NAT) à l'intérieur de l'un de vos sous-réseaux vRack. Le Load Balancer utilise cette plage comme source de tout le trafic envoyé à vos serveurs backend ; ainsi, les serveurs ne voient que des adresses sources privées et n'ont pas besoin d'une exposition publique.
 
-Vous pilotez l'attachement du vRack, la définition du réseau privé et la liaison des fermes à ce réseau via l'API OVHcloud. L'onglet `Réseau` de l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> vous permet de consulter et de gérer les sous-réseaux privés une fois qu'ils existent.
+Vous attachez le vRack via l'API OVHcloud et vous configurez les réseaux privés depuis l'onglet <code className="action">vRack</code> de l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>. Ce même onglet vous permet de consulter et de gérer les sous-réseaux privés une fois qu'ils existent.
 
 ## En pratique
 
@@ -55,7 +55,7 @@ Vous pilotez l'attachement du vRack, la définition du réseau privé et la liai
 
 ### Vue d'ensemble <a name="overview"></a>
 
-Trois éléments de configuration relient le Load Balancer à vos backends privés. Premièrement, attachez le service Load Balancer au vRack. Deuxièmement, déclarez un réseau privé sur le Load Balancer : cela lui indique dans quel sous-réseau résident vos serveurs, quel VLAN utiliser et quelle plage d'IP NAT il peut utiliser comme source du trafic vers les backends. Troisièmement, liez chaque ferme de serveurs à ce réseau privé afin que ses serveurs soient adressés par leurs IP privées.
+Trois éléments de configuration relient le Load Balancer à vos backends privés. Premièrement, attachez le service Load Balancer au vRack. Deuxièmement, déclarez un réseau privé sur le Load Balancer depuis l'onglet <code className="action">vRack</code> : cela lui indique dans quel sous-réseau résident vos serveurs et quelle plage d'IP NAT il peut utiliser comme source du trafic vers les backends. Troisièmement, liez chaque ferme de serveurs à ce réseau privé afin que ses serveurs soient adressés par leurs IP privées.
 
 Le schéma ci-dessous illustre le flux de trafic résultant.
 
@@ -65,13 +65,12 @@ Les principaux paramètres d'un réseau privé sont résumés ci-dessous.
 
 | Paramètre | Description | Exemple |
 |---|---|---|
-| `subnet` | La plage CIDR du sous-réseau vRack où résident vos serveurs. | `192.168.0.0/16` |
-| `natIp` | La plage CIDR que le Load Balancer utilise comme source du trafic vers les backends. Elle doit être contenue dans `subnet` et dédiée au Load Balancer. | `192.168.100.0/24` |
-| `vlan` | L'identifiant du VLAN utilisé pour ce réseau à l'intérieur du vRack. | `42` |
-| `vrackNetworkId` | L'identifiant renvoyé lors de la création du réseau privé. Requis pour lier une ferme au réseau. | `2001` |
+| Sous-réseau (CIDR) | La plage CIDR du sous-réseau vRack où résident vos serveurs. | `192.168.0.0/16` |
+| NAT IP | La plage CIDR que le Load Balancer utilise comme source du trafic vers les backends. Elle doit être contenue dans le sous-réseau et dédiée au Load Balancer. | `192.168.100.0/24` |
+| `vrackNetworkId` | L'identifiant du réseau privé une fois créé. Requis pour lier une ferme au réseau. | `2001` |
 
 :::info
-La plage `natIp` doit être contenue dans la plage `subnet`, et elle ne doit pas chevaucher des adresses déjà attribuées à vos serveurs ou à d'autres services dans le vRack.
+La plage d'IP NAT doit être contenue dans la plage du sous-réseau, et elle ne doit pas chevaucher des adresses déjà attribuées à vos serveurs ou à d'autres services dans le vRack.
 :::
 
 ### Étape 1 — Attacher le Load Balancer à un vRack <a name="step-1"></a>
@@ -82,8 +81,6 @@ Vérifiez d'abord que votre service Load Balancer est éligible pour rejoindre l
 
 <Api version="v1" section="/vrack" method="GET" route={"/vrack/\{serviceName\}/eligibleServices"} />
 
-[UNVERIFIED: confirm GET /vrack/\{serviceName\}/eligibleServices — endpoint not present in the cached API map]
-
 Les services Load Balancer éligibles sont listés sous l'index `ipLoadbalancing` de la réponse. Vous pouvez également consulter l'éligibilité d'un service Load Balancer précis via l'attribut `vrackEligibility` renvoyé par l'appel suivant (ici, `serviceName` est le nom du service Load Balancer) :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}"} />
@@ -92,7 +89,7 @@ Une fois l'éligibilité confirmée, attachez le Load Balancer au vRack :
 
 <Api version="v1" section="/vrack" method="POST" route={"/vrack/\{serviceName\}/ipLoadbalancing"} />
 
-[UNVERIFIED: confirm POST /vrack/\{serviceName\}/ipLoadbalancing — endpoint not present in the cached API map]
+Vous pouvez également attacher un vRack depuis l'onglet <code className="action">vRack</code> de l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> à l'aide du bouton <code className="action">Attacher un vRack</code>, puis le retirer ultérieurement avec <code className="action">Détacher</code>.
 
 | Paramètre | Requis | Description | Exemple |
 |---|---|---|---|
@@ -103,48 +100,19 @@ Une fois l'éligibilité confirmée, attachez le Load Balancer au vRack :
 
 Pour que le Load Balancer puisse communiquer avec vos backends, il doit connaître la topologie réseau à l'intérieur de votre vRack et posséder une plage dédiée d'adresses IP privées au sein de celle-ci. Cette plage est la seule source de trafic que le Load Balancer utilise pour contacter vos serveurs.
 
-<Tabs>
-<Tab label="Espace client">
+Rendez-vous dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer. Sélectionnez l'onglet <code className="action">vRack</code>, puis cliquez sur <code className="action">Ajouter un réseau privé</code> et renseignez les champs suivants :
 
-Rendez-vous dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer. Sélectionnez l'onglet <code className="action">Réseau</code>, puis créez le réseau privé pour votre vRack.
+- <code className="action">Sous-réseau (CIDR)</code> : la plage CIDR du sous-réseau vRack où résident vos serveurs (par exemple, `192.168.0.0/16`).
+- <code className="action">NAT IP</code> : la plage CIDR dédiée au Load Balancer, contenue dans le sous-réseau (par exemple, `192.168.100.0/24`).
 
-{/* DRAFT: À capturer — l'onglet Réseau du Load Balancer avec le formulaire de création de réseau privé ouvert */}
+{/* DRAFT: À capturer — l'onglet vRack du Load Balancer avec le formulaire Ajouter un réseau privé ouvert */}
 
-:::info
-L'onglet `Réseau` liste les réseaux privés déclarés sur votre Load Balancer et permet de créer ou de modifier un sous-réseau. Les libellés exacts des boutons pour créer un sous-réseau ne sont pas encore confirmés pour le nouvel espace client. [TODO: confirm the create-subnet button label on the `Subnet` tab]
-:::
-
-</Tab>
-<Tab label="API OVHcloud">
-
-Créez le réseau privé avec l'appel suivant. Ici, le `serviceName` est le nom du service Load Balancer.
-
-<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/vrack/network"} />
-
-[UNVERIFIED: confirm POST /ipLoadbalancing/\{serviceName\}/vrack/network — endpoint not present in the cached API map]
-
-| Paramètre | Requis | Description | Exemple |
-|---|---|---|---|
-| `serviceName` (path) | Oui | Le nom du service Load Balancer. | `loadbalancer-a1b2c3...` |
-| `subnet` (body) | Oui | CIDR du sous-réseau vRack où résident vos serveurs. | `192.168.0.0/16` |
-| `natIp` (body) | Oui | Plage CIDR dédiée au Load Balancer, contenue dans `subnet`. | `192.168.100.0/24` |
-| `vlan` (body) | Non | Identifiant du VLAN utilisé pour ce réseau à l'intérieur du vRack. | `42` |
-
-Pour déterminer la taille minimale requise pour la plage `natIp`, utilisez l'appel suivant avant de créer le réseau :
-
-<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/vrack/networkCreationRules"} />
-
-[UNVERIFIED: confirm GET /ipLoadbalancing/\{serviceName\}/vrack/networkCreationRules — endpoint not present in the cached API map]
-
-Vous pouvez consulter les sous-réseaux d'IP NAT déjà déclarés sur le service avec :
+Vous pouvez consulter les sous-réseaux d'IP NAT déjà déclarés sur le service via l'API OVHcloud :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/natIp"} />
 
-</Tab>
-</Tabs>
-
 :::warning
-La plage `natIp` doit être contenue dans la plage `subnet`. Choisissez une plage qui est dédiée au Load Balancer et qui n'est utilisée par aucun serveur ni autre service dans le vRack.
+La plage d'IP NAT doit être contenue dans la plage du sous-réseau. Choisissez une plage qui est dédiée au Load Balancer et qui n'est utilisée par aucun serveur ni autre service dans le vRack.
 :::
 
 Une fois le réseau privé créé, notez son `vrackNetworkId`. Vous aurez besoin de cet identifiant pour lier une ferme de serveurs au réseau à l'étape suivante.
@@ -161,10 +129,6 @@ Rendez-vous dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, ouv
 {/* DRAFT: À capturer — le formulaire de création de ferme de serveurs montrant la sélection du réseau privé / sous-réseau */}
 
 Lorsque vous ajoutez des serveurs à la ferme, saisissez leurs adresses IP privées à l'intérieur du vRack. Cliquez sur <code className="action">Ajouter un serveur</code> pour chaque backend.
-
-:::info
-Le champ utilisé pour rattacher une ferme à un réseau privé dans le nouvel espace client n'est pas encore confirmé. [TODO: confirm the private-network selection field label in the Create Server Farm form]
-:::
 
 </Tab>
 <Tab label="API OVHcloud">
@@ -189,12 +153,16 @@ Après avoir créé la ferme, ajoutez vos serveurs backend à l'aide de leurs ad
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Avec le provider Terraform OVHcloud, le réseau privé est déclaré avec la ressource `ovh_iploadbalancing_vrack_network`, et la ferme y est liée avec `ovh_iploadbalancing_http_farm` (ou `ovh_iploadbalancing_tcp_farm`), en référençant l'identifiant de réseau exporté par la ressource `ovh_iploadbalancing_vrack_network`. Les serveurs backend sont ajoutés avec `ovh_iploadbalancing_http_farm_server` (ou `ovh_iploadbalancing_tcp_farm_server`) en utilisant leurs adresses IP privées.
+
+:::info
+Il n'existe pas de ressource Terraform pour appliquer la configuration. Après vos modifications Terraform, appliquez la configuration en attente via l'API OVHcloud ou l'espace client, comme décrit ci-dessous.
+:::
 
 </Tab>
 </Tabs>
 
-Appliquez la configuration pour que les changements prennent effet :
+Appliquez la configuration pour que les changements prennent effet, soit via l'API OVHcloud, soit à l'aide du bouton <code className="action">Appliquer les modifications</code> dans l'espace client :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
@@ -209,7 +177,7 @@ Après avoir appliqué la configuration, vérifiez que chaque partie de l'instal
 | Vérification | Comment | Résultat attendu |
 |---|---|---|
 | Le Load Balancer est attaché au vRack | `GET /ipLoadbalancing/{serviceName}` et lecture du statut d'attachement au vRack / `vrackEligibility` | Le service est signalé comme attaché au vRack |
-| Le réseau privé existe | Listez les sous-réseaux d'IP NAT déclarés avec `GET /ipLoadbalancing/{serviceName}/natIp` | Les valeurs `subnet`, `natIp` et `vlan` que vous avez définies sont renvoyées |
+| Le réseau privé existe | Listez les sous-réseaux d'IP NAT déclarés avec `GET /ipLoadbalancing/{serviceName}/natIp` | Le sous-réseau et la plage d'IP NAT que vous avez définis sont renvoyés |
 | La ferme est liée au réseau privé | `GET /ipLoadbalancing/{serviceName}/http/farm` (ou `/tcp/farm`) et examen de la ferme | La ferme affiche le `vrackNetworkId` attendu |
 | Les backends sont joignables via des IP privées | Listez les serveurs de la ferme et vérifiez leur état | Les serveurs sont signalés comme joignables via leurs adresses IP privées |
 
@@ -218,8 +186,7 @@ Après avoir appliqué la configuration, vérifiez que chaque partie de l'instal
 | Limitation | Détails |
 |---|---|
 | Aucun accès public aux backends après l'attachement | Une fois le Load Balancer attaché à un vRack, ses fermes ne peuvent joindre les serveurs que via la plage d'IP NAT privée. Les IP publiques des backends ne sont plus utilisées. |
-| Contenance de la plage d'IP NAT | La plage `natIp` doit être contenue dans le `subnet` déclaré et ne doit pas chevaucher des adresses vRack existantes. |
-| Taille minimale de l'IP NAT | La taille minimale de la plage `natIp` dépend du service. [TODO: confirm minimum natIp range size] |
+| Contenance de la plage d'IP NAT | La plage d'IP NAT doit être contenue dans le sous-réseau déclaré et ne doit pas chevaucher des adresses vRack existantes. |
 
 ### Résolution des problèmes <a name="troubleshooting"></a>
 
@@ -228,7 +195,7 @@ Cette section liste les problèmes les plus fréquents lors de la configuration 
 | Problème | Cause possible | Solution |
 |---|---|---|
 | Backends injoignables après l'attachement au vRack | Les fermes référencent encore des adresses IP publiques | Mettez à jour chaque serveur de ferme pour utiliser son adresse IP privée à l'intérieur du vRack, puis appliquez la configuration. |
-| Création du réseau privé refusée | `natIp` non contenue dans `subnet`, ou plage trop petite | Utilisez `GET /ipLoadbalancing/{serviceName}/vrack/networkCreationRules` pour déterminer la plage minimale, puis choisissez une `natIp` contenue dans le `subnet`. |
+| Création du réseau privé refusée | Plage d'IP NAT non contenue dans le sous-réseau, ou plage trop petite | Choisissez une plage d'IP NAT contenue dans le sous-réseau et dédiée au Load Balancer. |
 | Les modifications de configuration ne sont pas actives | Les modifications en attente n'ont pas été appliquées | Appliquez la configuration avec `POST /ipLoadbalancing/{serviceName}/refresh`. |
 | Impossible de lier la ferme au réseau privé | `vrackNetworkId` manquant ou incorrect | Récupérez le bon `vrackNetworkId` du réseau privé créé et fournissez-le lors de la création ou de la modification de la ferme. |
 

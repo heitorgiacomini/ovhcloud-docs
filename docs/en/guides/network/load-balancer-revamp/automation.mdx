@@ -147,12 +147,10 @@ Group related changes and call refresh once, after the full set of changes has b
 
 The OVHcloud Terraform provider lets you describe the Load Balancer configuration declaratively and manage it as version-controlled infrastructure-as-code. Terraform tracks the desired state in its state file and reconciles the live configuration to match, making it suited to reproducible deployments across environments.
 
-The Terraform provider is a client of the OVHcloud API, so the components it manages map onto the same `/ipLoadbalancing` resources described above: services, farms, servers, frontends, routes, and certificates.
-
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The Terraform provider is a client of the OVHcloud API. It exposes the service itself through the `ovh_iploadbalancing` resource, and the protocol-specific components through dedicated resources: `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_tcp_farm_server`, `ovh_iploadbalancing_tcp_route`, `ovh_iploadbalancing_udp_farm`, and `ovh_iploadbalancing_udp_farm_server`. The `ovh_iploadbalancing_vrack_network` resource manages the vRack network attached to the service. Read-only data sources such as `ovh_iploadbalancing`, `ovh_iploadbalancing_nat_ips`, and `ovh_iploadbalancing_vrack_network` let you look up existing configuration.
 
 :::warning
-The refresh-and-apply model also applies when using Terraform. After Terraform reconciles the configuration, a refresh of the service is required for the changes to take effect on the running Load Balancer. [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+There is no Terraform resource for frontends or for the refresh operation. Frontends are managed through the OVHcloud API or the Control Panel, and pending changes must be applied with the API refresh endpoint or from the Control Panel. After Terraform reconciles the farm, server, and route resources, a refresh of the service is still required for the changes to take effect on the running Load Balancer.
 :::
 
 For the current list of resources, their arguments, and usage examples, consult the [Terraform registry](/links/terraform).
@@ -165,7 +163,6 @@ Keep the following points in mind when automating the Load Balancer.
 - **Components are protocol-bound.** Frontends, farms, and servers cannot be combined across protocols. Always call the endpoint that matches the protocol.
 - **Some endpoints are deprecated.** `GET /ipLoadbalancing/availableZones` is deprecated; use the service-scoped zone endpoints instead.
 - **Authentication.** API calls require OVHcloud API credentials. Refer to the [First steps with the OVHcloud API](/guides/manage-and-operate/api/first-steps) guide.
-- **Rate and quota limits.** [TODO: confirm API rate limits and per-service component quotas for the Load Balancer]
 
 ## Go further
 

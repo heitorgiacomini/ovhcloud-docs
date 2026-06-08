@@ -123,16 +123,16 @@ To inspect or change the quota of a single zone:
 The `GET /ipLoadbalancing/availableZones` endpoint is deprecated. Determine orderable zones through the ordering flow instead. See [Configure zones](/guides/network/load-balancer-revamp/configure-zones) for the ordering procedure.
 :::
 
-You can also manage zones and quota programmatically with the OVHcloud Terraform provider: [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]. See [Automation](/guides/network/load-balancer-revamp/automation) for an overview of the available methods.
+You can also manage the Load Balancer service programmatically with the OVHcloud Terraform provider, using the `ovh_iploadbalancing` resource. Zones and quota themselves are read and adjusted through the API or the Control Panel. See [Automation](/guides/network/load-balancer-revamp/automation) for an overview of the available methods.
 
 ## Considerations and limitations
 
 Keep the following points in mind when planning a multi-zone deployment.
 
 - Most regions expose a single zone, so spanning several zones generally means spanning several regions.
-- Multi-AZ regions are available only where OVHcloud has rolled them out (Paris and Milan at the time of writing). [TODO: confirm the current list of multi-AZ regions and their launch dates]
+- Multi-AZ regions are available only where OVHcloud has rolled them out (Paris and Milan at the time of writing).
 - Cross-continent setups mixing an APAC zone with a non-APAC zone are subject to the routing restriction described above and are not recommended.
-- Quota is enforced per zone; review the per-zone limits before scaling. [TODO: confirm exact per-zone resource limits]
+- Quota is enforced per zone; review the per-zone limits before scaling.
 - A frontend bound to a named zone cannot route to a cluster in a different zone.
 
 ## Go further

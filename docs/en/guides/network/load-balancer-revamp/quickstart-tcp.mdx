@@ -116,7 +116,16 @@ To list existing TCP farms:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Use the `ovh_iploadbalancing_tcp_farm` resource to declare a TCP server farm:
+
+```hcl
+resource "ovh_iploadbalancing_tcp_farm" "farm" {
+  service_name = "loadbalancer-xxxxx"
+  zone         = "gra"
+  port         = 25
+  balance      = "roundrobin"
+}
+```
 
 </Tab>
 </Tabs>
@@ -163,7 +172,16 @@ To list the servers in a farm:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+Use the `ovh_iploadbalancing_tcp_farm_server` resource to attach a backend server to the farm:
+
+```hcl
+resource "ovh_iploadbalancing_tcp_farm_server" "server" {
+  service_name = "loadbalancer-xxxxx"
+  farm_id      = ovh_iploadbalancing_tcp_farm.farm.id
+  address      = "203.0.113.10"
+  status       = "active"
+}
+```
 
 </Tab>
 </Tabs>
@@ -199,7 +217,20 @@ The probe is part of the farm configuration. Update the farm to set the probe:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The probe is defined as part of the `ovh_iploadbalancing_tcp_farm` resource, through its `probe` block:
+
+```hcl
+resource "ovh_iploadbalancing_tcp_farm" "farm" {
+  service_name = "loadbalancer-xxxxx"
+  zone         = "gra"
+  port         = 25
+
+  probe {
+    type = "tcp"
+    port = 25
+  }
+}
+```
 
 </Tab>
 </Tabs>
@@ -246,7 +277,7 @@ To list existing TCP frontends:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+There is no Terraform resource for Load Balancer frontends. Create the TCP frontend through the OVHcloud API or the Control Panel, as described in the other tabs.
 
 </Tab>
 </Tabs>
@@ -281,7 +312,7 @@ Apply (refresh) the pending configuration:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+There is no Terraform resource for the apply/refresh action. Apply the pending configuration through the OVHcloud API or the Control Panel, as described in the other tabs.
 
 </Tab>
 </Tabs>
@@ -312,7 +343,6 @@ This section lists constraints to keep in mind for a TCP deployment.
 | Layer 4 only | A TCP frontend forwards raw connections and does not inspect or route on application content. For content-based routing, use HTTP frontends. |
 | Per-zone activation | A component is active only after the configuration has been applied to its zone. |
 | Component order | A server cannot be attached before its farm exists; a frontend cannot reference a farm that does not yet exist. |
-| Service capacity | The number of farms, servers, and frontends depends on your service plan. [TODO: confirm farm/server/frontend limits per plan] |
 
 ### Troubleshooting <a name="troubleshooting"></a>
 

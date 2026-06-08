@@ -128,7 +128,7 @@ To list existing HTTP frontends:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider does not expose a resource for frontends. The provider manages the service (`ovh_iploadbalancing`), farms (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm`), farm servers, and routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`, `ovh_iploadbalancing_tcp_route`). Create HTTP frontends through the OVHcloud API or the Control Panel, as shown in the other tabs.
 
 </Tab>
 </Tabs>
@@ -180,7 +180,7 @@ To list existing TCP frontends:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider does not expose a resource for frontends. It manages the TCP farm (`ovh_iploadbalancing_tcp_farm`), its servers (`ovh_iploadbalancing_tcp_farm_server`), and TCP routes (`ovh_iploadbalancing_tcp_route`), but TCP frontends must be created through the OVHcloud API or the Control Panel, as shown in the other tabs.
 
 </Tab>
 </Tabs>
@@ -231,7 +231,7 @@ To list existing UDP frontends:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider does not expose a resource for frontends. It manages the UDP farm (`ovh_iploadbalancing_udp_farm`) and its servers (`ovh_iploadbalancing_udp_farm_server`), but UDP frontends must be created through the OVHcloud API or the Control Panel, as shown in the other tabs.
 
 </Tab>
 </Tabs>
@@ -283,7 +283,7 @@ To delete a frontend, use the `DELETE` method on the same path:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider does not expose a resource for frontends, so frontends cannot be edited with Terraform. Use the OVHcloud API or the Control Panel for frontend changes. The provider does manage related elements such as farms (`ovh_iploadbalancing_http_farm`) and routes (`ovh_iploadbalancing_http_route`).
 
 </Tab>
 </Tabs>
@@ -331,7 +331,7 @@ Enable TLS on the frontend by setting `ssl` to `true` when modifying it:
 </Tab>
 <Tab label="Terraform">
 
-[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+The OVHcloud Terraform provider does not expose a resource for frontends or for TLS termination on a frontend. Enable TLS and select the certificate through the OVHcloud API or the Control Panel.
 
 </Tab>
 </Tabs>
@@ -344,7 +344,7 @@ Frontend changes are not live until you apply the configuration in each zone whe
 <Tab label="Control Panel">
 
 1. Return to the home page of your Load Balancer service.
-2. Open the actions menu next to the service name and select the option to apply the configuration.
+2. Open the actions menu next to the service name and click `Apply changes`.
 3. Select the zones to deploy, then confirm.
 
 {/* DRAFT: To screenshot - the apply-configuration action and the zone selection dialog */}
@@ -370,7 +370,6 @@ For more detail on applying changes across zones, refer to [Configure zones](/gu
 | Farm must exist first | The default route must point at an existing farm of the matching protocol family. |
 | Changes are not immediate | Frontend changes take effect only after the configuration is applied in each zone. |
 | TLS requires a certificate | Enabling `HTTPS` or `SSL` without a valid certificate on the service results in a non-functional frontend. |
-| Maximum frontends per service | [TODO: confirm maximum number of frontends per Load Balancer service] |
 
 ### Troubleshooting <a name="troubleshooting"></a>
 

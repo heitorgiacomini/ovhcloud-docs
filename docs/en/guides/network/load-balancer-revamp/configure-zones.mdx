@@ -67,13 +67,11 @@ Adding a zone generates a purchase order that you must pay before the zone becom
 </Tab>
 <Tab label="OVHcloud API">
 
-Ordering a zone is an order operation: build a cart, add the zone option that matches your service, then check out and pay the resulting order.
+Ordering a zone is an order operation: build a cart, add the Load Balancer option that matches your service, then check out and pay the resulting order.
 
 1. Create a cart.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart"} />
-
-[UNVERIFIED: /order endpoints are outside the cached ipLoadbalancing scope — confirm method and path against the OVHcloud API]
 
 Note the cart ID returned in the response; the following calls require it.
 
@@ -81,25 +79,17 @@ Note the cart ID returned in the response; the following calls require it.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/assign"} />
 
-[UNVERIFIED: confirm /order/cart/\{cartId\}/assign against the OVHcloud API]
+3. Add the Load Balancer item to the cart.
 
-3. List the service options available for your Load Balancer to find the entry that matches the desired zone.
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing"} />
 
-<Api version="v1" section="/order" method="GET" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
+4. Add the option that matches the desired zone to the cart.
 
-[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
-
-4. Add the chosen option to the cart.
-
-<Api version="v1" section="/order" method="POST" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
-
-[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/ipLoadbalancing/options"} />
 
 5. Check out the cart to generate the order.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/checkout"} />
-
-[UNVERIFIED: confirm /order/cart/\{cartId\}/checkout against the OVHcloud API]
 
 | Parameter | Required | Description | Example |
 |---|---|---|---|
@@ -122,7 +112,7 @@ Once the zone order is finalised, associate it with a frontend so traffic can be
 <Tab label="Control Panel">
 
 1. In your Load Balancer service, open the `Frontends` tab.
-2. Click `Create frontend` to add a new frontend, or open an existing frontend for editing.
+2. Click `Create Frontend` to add a new frontend, or open an existing frontend for editing.
 3. Select the newly added zone for the frontend. To deploy the same configuration across every subscribed zone instead of one specific zone, select the special `ALL` zone, which avoids duplicating the configuration per zone.
 4. Save the frontend by confirming the create or edit dialog.
 
@@ -156,9 +146,9 @@ Frontend and farm changes are staged until you apply them, and the new zone does
 <Tabs>
 <Tab label="Control Panel">
 
-After saving the frontend, a banner indicates that the configuration is not yet applied. Click `Apply configuration` in the banner to deploy the pending changes.
+After saving the frontend, a banner indicates that the configuration is not yet applied. Click `Apply changes` in the banner to deploy the pending changes.
 
-{/* DRAFT: To screenshot — capture the pending-configuration banner with the Apply configuration action */}
+{/* DRAFT: To screenshot — capture the pending-configuration banner with the Apply changes action */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -205,14 +195,11 @@ Get the quota of a single zone:
 | `serviceName` | Yes | Identifier of your Load Balancer service. | `loadbalancer-a1b2c3d4` |
 | `zone` | Yes | Zone whose quota you want to read. | `gra` |
 
-[TODO: confirm the maximum number of frontends, farms and servers per zone]
-
 </Tab>
 </Tabs>
 
 > [!TIP]
-> To manage this configuration as code, use the OVHcloud Terraform provider.
-> [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+> To manage this configuration as code, use the OVHcloud Terraform provider. The `ovh_iploadbalancing` resource manages the service, and dedicated resources such as `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_route` manage farms and routes. Frontends and applying pending changes are handled through the API or the Control Panel only.
 
 ## Go further
 
