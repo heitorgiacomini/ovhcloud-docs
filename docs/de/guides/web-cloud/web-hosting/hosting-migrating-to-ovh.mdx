@@ -1,7 +1,7 @@
 ---
 title: Migration Ihrer Website und zugehörigen Dienste zu OVHcloud
 description: Erfahren Sie hier, wie Sie Ihre Website, Ihren Domainnamen, Ihre Datenbank und E-Mails ohne Dienstunterbrechung zu OVHcloud migrieren
-lastUpdated: 2026-06-03
+lastUpdated: 2026-06-08
 availableIn: [eu, ca, apac]
 ---
 
@@ -69,14 +69,22 @@ Diese Anleitung ist derart gestaltet, die Dauer einer möglichen Unterbrechung z
 
 ### Schritt 1: Webhosting und E-Mail-Accounts bei OVHcloud bestellen <a name="step1"></a>
 
-Mehrere [OVHcloud Shared Hosting Angebote](https://www.ovhcloud.com/de/web-hosting/) enthalten "[MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities)" E-Mail-Dienste. Mit diesem E-Mail-Angebot können E-Mail-Accounts mit jeweils maximal 5 GB Speicherplatz erstellt werden. Wählen Sie aus den unten stehenden Hosting-Angeboten eines aus, das den Anforderungen Ihrer Website an PHP-Version, SQL-Version, Anzahl der benötigten E-Mail-Accounts, sowie der Größe der zu migrierenden Website entspricht:
+Mehrere [OVHcloud Webhosting-Angebote](https://www.ovhcloud.com/de/web-hosting/) enthalten "[MX Plan](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-generalities)" E-Mail-Dienste. Mit diesem E-Mail-Angebot können E-Mail-Accounts mit jeweils maximal 5 GB Speicherplatz erstellt werden. Wählen Sie aus den unten stehenden Hosting-Angeboten eines aus, das den Anforderungen Ihrer Website an PHP-Version, SQL-Version, Anzahl der benötigten E-Mail-Accounts, sowie der Größe der zu migrierenden Website entspricht:
 
-- Hosting [Basic](https://www.ovhcloud.com/de/web-hosting/personal-offer/) mit **10 "MX Plan E-Mail-Accounts**
-- Hosting [Pro](https://www.ovhcloud.com/de/web-hosting/professional-offer/) mit **100 "MX Plan E-Mail-Accounts** (für gewerbliche Webseiten)
-- Hosting [Performance](https://www.ovhcloud.com/de/web-hosting/performance-offer/) mit **1000 "MX Plan E-Mail-Accounts** (skalierbare dedizierte Ressourcen)
-<Region zones={['eu']}>
-- Hosting [Cloud Web](https://www.ovhcloud.com/de/web-hosting/cloud-web-offer/) mit **200 E-Mail-Accounts** (für Anwendungsentwickler)
-</Region>
+**Eco**-Reihe:
+
+- **Starter** — 2 MX Plan E-Mail-Accounts
+- **Basic** — 10 MX Plan E-Mail-Accounts
+
+**Business**-Reihe:
+
+- **Startup** — 10 MX Plan E-Mail-Accounts
+- **Pro** — 100 MX Plan E-Mail-Accounts
+- **Performance** — 1.000 MX Plan E-Mail-Accounts
+
+**Agencies**-Reihe:
+
+- **Agency**, **Agency Plus** und **Agency Max** — jeweils 1.000 MX Plan E-Mail-Accounts
 
 Wenn Sie sich für ein passendes Webhosting-Angebot entschieden haben, klicken Sie auf den Button <code className="action">Bestellen</code> auf unserer Webseite. Folgen Sie den Bestellschritten, aber **leiten Sie dabei noch nicht den Transfer Ihres Domainnamens ein**. (Diese Aktion wird in Schritt 10 dieser Anleitung ausgeführt.)
 
