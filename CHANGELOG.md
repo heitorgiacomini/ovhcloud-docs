@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.08.1
+
+### Fixes
+- **domains/dns-dnssec:** remove .it unavailability notice
+
+### Documentation
+- 153 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.08
 
 ### Maintenance
