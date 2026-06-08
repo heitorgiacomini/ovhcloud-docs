@@ -494,6 +494,42 @@
     "pl": "Poprzednia strona",
     "pt": "Página anterior"
   },
+  "promptCollapseText": {
+    "en": "Collapse",
+    "fr": "Réduire",
+    "de": "Einklappen",
+    "es": "Contraer",
+    "it": "Comprimi",
+    "pl": "Zwiń",
+    "pt": "Recolher"
+  },
+  "promptCopiedText": {
+    "en": "Copied!",
+    "fr": "Copié !",
+    "de": "Kopiert!",
+    "es": "¡Copiado!",
+    "it": "Copiato!",
+    "pl": "Skopiowano!",
+    "pt": "Copiado!"
+  },
+  "promptCopyText": {
+    "en": "Copy Prompt",
+    "fr": "Copier le Prompt",
+    "de": "Prompt kopieren",
+    "es": "Copiar Prompt",
+    "it": "Copia Prompt",
+    "pl": "Skopiuj Prompt",
+    "pt": "Copiar Prompt"
+  },
+  "promptExpandText": {
+    "en": "Expand",
+    "fr": "Développer",
+    "de": "Ausklappen",
+    "es": "Expandir",
+    "it": "Espandi",
+    "pl": "Rozwiń",
+    "pt": "Expandir"
+  },
   "scrollToTopText": {
     "en": "Scroll to top",
     "fr": "Retour en haut",
