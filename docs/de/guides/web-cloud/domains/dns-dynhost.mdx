@@ -1,7 +1,7 @@
 ---
 title: Konfiguration von dynamischen DNS-Aktualisierungen (DynHost/DynDNS) für Ihren Domainnamen
 description: Erfahren Sie hier, wie Sie einen dynamischen DNS-Eintrag (DynHost) für Ihren Domainnamen einrichten
-lastUpdated: 2025-04-28
+lastUpdated: 2026-06-08
 availableIn: [eu]
 ---
 
@@ -210,6 +210,15 @@ https://dns.eu.ovhapis.com/nic/update?system=dyndns&hostname=$HOSTNAME&myip=$IP
 |---|---|
 |$HOSTNAME|Subdomain, die von der Aktualisierung betroffen ist|
 |$IP|Die neue IPv4- oder IPv6-Zieladresse.|
+
+:::warning
+
+Das Verhalten des Parameters `myip` hängt von der verwendeten IP-Protokollversion ab:
+
+- **IPv4**: Der Parameter `myip` ist optional. Wird er weggelassen, wird automatisch die IP-Adresse verwendet, von der der API-Aufruf ausgeht.
+- **IPv6**: Da `dns.eu.ovhapis.com` über IPv6 nicht erreichbar ist, ist der Parameter `myip` zwingend erforderlich, um die Zieladresse zu übermitteln.
+
+:::
 
 Sie können überprüfen, ob die Ziel-IP aktualisiert wurde. Klicken Sie auf die Tabs, um die **3** Schritte anzuzeigen.
 
