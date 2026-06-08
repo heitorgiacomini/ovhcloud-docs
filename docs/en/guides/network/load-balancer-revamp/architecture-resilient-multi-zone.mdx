@@ -67,35 +67,7 @@ In a resilient multi-zone design, each zone hosts a frontend that points to a se
 
 The diagram below shows a two-zone reference design spanning the Gravelines (`GRA`) and Beauharnois (`BHS`) regions.
 
-```mermaid
-flowchart TD
-    Client([Client requests])
-    Anycast{{OVHcloud Anycast network}}
-    Client --> Anycast
-
-    subgraph GRA[Zone GRA]
-        FE_GRA[Frontend GRA]
-        FARM_GRA[Server farm GRA]
-        S1_GRA[Backend server 1]
-        S2_GRA[Backend server 2]
-        FE_GRA --> FARM_GRA
-        FARM_GRA --> S1_GRA
-        FARM_GRA --> S2_GRA
-    end
-
-    subgraph BHS[Zone BHS]
-        FE_BHS[Frontend BHS]
-        FARM_BHS[Server farm BHS]
-        S1_BHS[Backend server 1]
-        S2_BHS[Backend server 2]
-        FE_BHS --> FARM_BHS
-        FARM_BHS --> S1_BHS
-        FARM_BHS --> S2_BHS
-    end
-
-    Anycast -->|Nearest healthy zone| FE_GRA
-    Anycast -->|Nearest healthy zone| FE_BHS
-```
+<img className="thumbnail" alt="Reference topology <a name=reference-topology></a> diagram" src="/images/network/load-balancer-revamp/architecture-resilient-multi-zone/fig-1.svg" loading="lazy" />
 
 {/* DRAFT: To screenshot - capture the Frontends tab in the Control Panel showing one frontend per zone */}
 

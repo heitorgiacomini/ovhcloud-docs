@@ -16,15 +16,7 @@ L'OVHcloud Load Balancer est un service entièrement managé qui répartit le tr
 
 La plupart des termes du Load Balancer décrivent l'une de trois choses : un objet que vous configurez (frontend, ferme, serveur), un comportement que vous appliquez au trafic (méthode d'équilibrage, persistance, route, sonde) ou une propriété de la plateforme sous-jacente (zone, anycast, vRack, terminaison SSL). Le schéma ci-dessous montre comment ces objets de configuration s'enchaînent à mesure que le trafic circule d'un client vers un serveur backend.
 
-```mermaid
-flowchart LR
-    Client[Client] --> FE[Frontend<br/>protocole + port d'écoute]
-    FE --> RT{Route<br/>conditions}
-    RT --> FARM[Ferme de serveurs<br/>méthode d'équilibrage + sonde]
-    FARM --> S1[Serveur 1]
-    FARM --> S2[Serveur 2]
-    FARM --> S3[Serveur 3]
-```
+<img className="thumbnail" alt="Comment les termes s'articulent entre eux diagram" src="/images/network/load-balancer-revamp/glossary/fig-1.fr.svg" loading="lazy" />
 
 {/* DRAFT: To screenshot - capture the Load Balancer dashboard in the Control Panel showing the Server Farms and Frontends tabs to anchor the glossary visually */}
 
@@ -35,7 +27,7 @@ Le tableau ci-dessous définit chaque terme clé. La colonne « Espace client »
 | Terme | Définition | Référence dans l'espace client |
 |---|---|---|
 | Frontend | Le point d'entrée du Load Balancer. Un frontend définit le protocole sur lequel il écoute (HTTP, HTTPS, TCP ou UDP) ainsi que le port d'écoute auquel les clients se connectent. Chaque frontend transmet le trafic à une ou plusieurs fermes de serveurs. | Onglet `Frontends` |
-| Ferme de serveurs | Un groupe logique de serveurs backend qui reçoivent le trafic d'un frontend. La ferme porte la méthode d'équilibrage, la sonde de santé et le paramètre de persistance qui s'appliquent à ses membres. Également appelée ferme. | Onglet `Fermes de serveurs` |
+| Ferme de serveurs | Un groupe logique de serveurs backend qui reçoivent le trafic d'un frontend. La ferme porte la méthode d'équilibrage, la sonde et le paramètre de persistance qui s'appliquent à ses membres. Également appelée ferme. | Onglet `Fermes de serveurs` |
 | Serveur | Une instance backend unique enregistrée au sein d'une ferme. Elle traite le trafic applicatif entrant et sortant. Un serveur peut être un serveur dédié, un Virtual Private Server (VPS), une instance Public Cloud ou toute adresse IP joignable. | `Ajouter un serveur` |
 | Sonde | Le contrôle de santé que le Load Balancer exécute sur chaque serveur d'une ferme. Il vérifie périodiquement qu'un serveur répond ; les serveurs qui échouent à la sonde sont retirés de la rotation jusqu'à leur rétablissement. | Configurée par ferme |
 | Méthode d'équilibrage | L'algorithme qui détermine quel serveur d'une ferme reçoit la requête suivante. Les méthodes disponibles sont Round Robin (par défaut), Moins de connexions, Hash Source, Hash URI et Premier disponible. | `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI`, `Premier disponible` |
@@ -70,4 +62,4 @@ Quelques termes complémentaires apparaissent régulièrement dans les guides du
 - [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
 - [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -1,0 +1,263 @@
+---
+title: Configurer les en-têtes HTTP
+description: Configurez et personnalisez les en-têtes HTTP sur les frontends de votre OVHcloud Load Balancer pour transmettre la véritable IP, le port et le protocole du client à vos serveurs backend.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+L'OVHcloud Load Balancer agit comme un proxy entre vos visiteurs et vos serveurs backend. Comme le trafic atteint vos serveurs depuis le Load Balancer et non depuis le visiteur, vos serveurs voient l'adresse IP interne du Load Balancer au lieu de la véritable adresse du client. Pour préserver les informations de connexion d'origine, le Load Balancer ajoute des en-têtes HTTP standards et vous permet de définir des en-têtes personnalisés sur chaque frontend HTTP.
+
+**Ce guide explique comment utiliser les en-têtes par défaut ajoutés par le Load Balancer, comment leur faire confiance en toute sécurité sur vos serveurs backend, et comment ajouter des en-têtes personnalisés sur un frontend HTTP.**
+
+Ce guide est fait pour vous si vos journaux d'accès (`access_log`) n'affichent que des adresses IP privées telles que `10.108.x.y`.
+
+## Prérequis
+
+- Avoir accès à l'[espace client OVHcloud](/links/manager)
+- Disposer d'un service OVHcloud Load Balancer dans votre compte — consultez [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- Avoir configuré au moins un frontend HTTP — consultez [Configurer des frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- Disposer d'un service web (par exemple Apache ou Nginx) installé et configuré sur vos serveurs backend
+
+## Introduction
+
+Lorsque le Load Balancer transmet une requête, votre serveur backend enregistre l'adresse source du proxy, et non celle du visiteur. Une entrée de journal d'accès typique ressemble alors à ceci :
+
+```bash
+10.108.0.15 - - [02/Feb/2022:10:56:47 +0100] "GET / HTTP/1.1" 200 706 "-" "Mozilla/5.0 (Linux[...]"
+10.108.0.24 - - [02/Feb/2022:10:56:47 +0100] "GET / HTTP/1.1" 200 706 "-" "Mozilla/5.0 (Linux[...]"
+```
+
+Pour des raisons légales et statistiques, vos serveurs backend doivent pouvoir identifier le véritable client. Pour les connexions HTTP, le Load Balancer ajoute par défaut des en-têtes standards qui transportent cette information. Pour les connexions TCP, utilisez plutôt le protocole PROXY — consultez [Configurer le protocole PROXY](/guides/network/load-balancer-revamp/configure-proxy-protocol).
+
+:::info
+Vous pouvez être tenu de conserver les journaux de connexion et les données de trafic conformément aux lois et réglementations qui vous sont applicables. Il vous appartient de respecter ces obligations. OVHcloud met à votre disposition des services dont vous êtes responsable de la configuration et de la gestion.
+:::
+
+## En pratique
+
+### En-têtes par défaut
+
+Pour chaque requête HTTP, le Load Balancer ajoute cinq en-têtes standards qui identifient l'adresse IP du visiteur, le port source et le protocole d'origine.
+
+| En-tête | Description |
+|---|---|
+| `X-Forwarded-For` et `X-Remote-Ip` | Adresse IP du client, telle que vue par le Load Balancer. |
+| `X-Forwarded-Port` et `X-Remote-Port` | Port source du client, tel que vu par le Load Balancer. |
+| `X-Forwarded-Proto` | Protocole d'origine du client (`http` ou `https`), tel que vu par le Load Balancer. |
+
+Les en-têtes `X-Forwarded-For` et `X-Remote-Ip` transportent la même valeur. Leurs noms ne diffèrent que pour assurer la compatibilité avec différents serveurs.
+
+:::warning
+Un client malveillant peut falsifier les en-têtes `X-Forwarded-*`. Ne faites confiance à ces en-têtes que lorsqu'ils proviennent d'une source de confiance — les adresses IP de sortie de votre Load Balancer. Restreignez leur utilisation à ces adresses à l'aide du module dédié de votre serveur web (Apache ou Nginx), comme décrit ci-dessous.
+:::
+
+### Récupérer les adresses IP de sortie du Load Balancer
+
+Pour configurer vos serveurs backend afin qu'ils fassent confiance aux en-têtes transmis, vous avez d'abord besoin de la liste des adresses IP de sortie utilisées par votre Load Balancer.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
+2. Sur le tableau de bord du service, repérez la section qui liste les adresses de sortie IPv4 de votre Load Balancer.
+
+{/* DRAFT: To screenshot - the Load Balancer dashboard showing the IPv4 output addresses section */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Récupérez la liste des sous-réseaux IP NAT utilisés par votre Load Balancer :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/natIp"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Nom du service Load Balancer. | `loadbalancer-xxxxxxxx` |
+
+</Tab>
+</Tabs>
+
+### Corriger l'IP source dans vos journaux <a name="ip-source-logs"></a>
+
+Cette section configure votre serveur web backend pour qu'il lise l'IP du visiteur depuis `X-Forwarded-For` au lieu de l'adresse interne du Load Balancer — mais uniquement lorsque la requête provient de votre Load Balancer.
+
+Modifier uniquement la directive de format des journaux ne suffit pas, car n'importe qui peut définir l'en-tête `X-Forwarded-For` sans passer par votre Load Balancer. Le module dédié de chaque serveur web contrôle le niveau de confiance en fonction de :
+
+- L'adresse IP source, qui doit être celle de votre Load Balancer.
+- La profondeur de l'adresse IP dans l'en-tête, puisque chaque proxy ajoute l'IP du client au champ.
+
+:::tip
+Remplacez `10.108.0.0/14` dans les exemples ci-dessous par les sous-réseaux renvoyés dans la section précédente. Les valeurs présentées ici ne sont que des exemples — confirmez d'abord vos sous-réseaux de sortie réels.
+:::
+
+#### Apache
+
+1. Créez le fichier `/etc/apache2/conf-available/remoteip.conf`.
+2. Insérez la configuration suivante :
+
+```apache
+# Trust X-Forwarded-For headers from the OVHcloud Load Balancer
+RemoteIPHeader X-Forwarded-For
+RemoteIPInternalProxy 10.108.0.0/14
+```
+
+3. Remplacez `%h` par `%a` dans les directives `LogFormat` de votre configuration Apache.
+4. Activez le module et la configuration, puis redémarrez Apache :
+
+```bash
+a2enmod remoteip
+a2enconf remoteip
+service apache2 restart
+```
+
+#### Nginx
+
+Pour Nginx, appliquez la configuration au bloc `http {}` (tous les sites), à un bloc `server {}` (un site) ou à un bloc `location {}` (une URL).
+
+1. Insérez la configuration suivante dans le bloc choisi :
+
+```nginx
+# Trust X-Forwarded-For headers from the OVHcloud Load Balancer
+set_real_ip_from 10.108.0.0/16;
+real_ip_header X-Forwarded-For;
+```
+
+2. Rechargez Nginx :
+
+```bash
+service nginx reload
+```
+
+### Rediriger les visiteurs HTTP vers HTTPS
+
+Le Load Balancer reçoit le trafic HTTP, déchiffre le trafic HTTPS et transmet les deux à vos serveurs sans distinction du protocole entrant. Ce processus est appelé terminaison SSL. Comme votre serveur ne peut plus faire la différence entre les deux, le Load Balancer ajoute l'en-tête `X-Forwarded-Proto` pour indiquer le protocole d'origine (`http` ou `https`).
+
+:::warning
+Comme `X-Forwarded-For`, l'en-tête `X-Forwarded-Proto` peut être falsifié. Ne lui faites confiance que lorsqu'il est prouvé qu'il provient de votre Load Balancer, à l'aide de la configuration de confiance décrite dans la section précédente.
+:::
+
+#### Apache
+
+1. Insérez la configuration suivante dans le fichier `.htaccess` de votre site :
+
+```apache
+RewriteEngine on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+```
+
+2. Rechargez Apache :
+
+```bash
+service apache2 reload
+```
+
+#### Nginx
+
+1. Insérez la configuration suivante dans le bloc `server {}` de votre site :
+
+```nginx
+if ($http_x_forwarded_proto = "http") {
+    return 301 https://$host$request_uri;
+}
+```
+
+2. Rechargez Nginx :
+
+```bash
+service nginx reload
+```
+
+### Transmettre les en-têtes à PHP
+
+PHP utilise la variable `REMOTE_ADDR` pour déterminer l'adresse du visiteur. Cette variable est définie automatiquement une fois que vous appliquez la configuration décrite dans [Corriger l'IP source dans vos journaux](#ip-source-logs). Aucune configuration PHP supplémentaire n'est requise.
+
+### Ajouter des en-têtes personnalisés
+
+Lorsque votre application nécessite un format d'en-tête spécifique, ou que vous souhaitez identifier le frontend par lequel une requête est arrivée, vous pouvez ajouter des en-têtes personnalisés sur un frontend HTTP.
+
+Chaque en-tête personnalisé respecte le format `X-Header-Name value` : le nom de l'en-tête et sa valeur sont séparés par un espace. Par convention, préfixez les noms d'en-têtes non standards par `X-`. Vous pouvez définir plusieurs en-têtes sur le même frontend.
+
+Les variables suivantes sont prises en charge dans les valeurs d'en-tête :
+
+| Variable | Remplacée par |
+|---|---|
+| `%ci` | L'adresse IP du visiteur. |
+| `%cp` | Le port source du visiteur. |
+
+:::warning
+Si un en-tête que vous définissez existe déjà dans la requête, il est écrasé par votre valeur, ce qui empêche un visiteur de le falsifier via ce frontend. Vous ne pouvez pas redéfinir les en-têtes proxy décrits ci-dessus (`X-Forwarded-*`, `X-Remote-*`), car le Load Balancer les gère automatiquement.
+:::
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
+2. Sélectionnez l'onglet `Frontends`.
+3. Sélectionnez un frontend HTTP existant à modifier, ou cliquez sur `Créer un frontend` pour en ajouter un nouveau.
+4. Dans l'éditeur, ouvrez les paramètres avancés et repérez le champ `En-tête HTTP`.
+
+{/* DRAFT: To screenshot - the Edit Frontend editor showing the HTTP header field in the advanced settings */}
+
+5. Saisissez vos en-têtes. Pour configurer plusieurs en-têtes, séparez-les par des virgules sans espace, par exemple : `X-Ip-Header %ci,X-Port-Header %cp`.
+6. Confirmez les modifications, puis appliquez la configuration à la zone concernée.
+
+{/* DRAFT: To verify - exact labels of the HTTP header field, advanced settings section, confirm button, and deploy/apply action in the New Control Panel frontend editor */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Dans l'API, les en-têtes sont spécifiés sous la forme d'une liste `httpHeader`, avec un en-tête par entrée de liste. Dans la console API, un bouton `+` apparaît dès que vous commencez à saisir une valeur, ce qui vous permet d'ajouter d'autres entrées. La charge utile JSON équivalente est :
+
+```json
+{
+  "httpHeader": [
+    "X-Ip-Header %ci",
+    "X-Port-Header %cp"
+  ]
+}
+```
+
+Modifiez un frontend HTTP existant pour définir ses en-têtes :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Nom du service Load Balancer. | `loadbalancer-xxxxxxxx` |
+| `frontendId` | Oui | Identifiant du frontend HTTP à configurer. | `12345` |
+| `httpHeader` (body) | Non | Liste des en-têtes à configurer. | `["X-Ip-Header %ci"]` |
+
+Appliquez ensuite les modifications à la zone concernée :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Nom du service Load Balancer. | `loadbalancer-xxxxxxxx` |
+| `zone` (body) | Oui | Nom de la zone dans laquelle déployer la configuration. | `gra` |
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+:::info
+Les modifications de configuration ne prennent effet qu'une fois appliquées (déployées) à la zone concernée. Jusque-là, vos en-têtes sont enregistrés mais ne sont pas encore servis.
+:::
+
+## Aller plus loin
+
+- [Configurer des frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Configurer le protocole PROXY](/guides/network/load-balancer-revamp/configure-proxy-protocol)
+- [Configurer des routes HTTP](/guides/network/load-balancer-revamp/configure-http-routes)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

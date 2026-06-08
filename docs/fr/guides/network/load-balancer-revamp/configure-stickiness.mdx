@@ -1,0 +1,137 @@
+---
+title: Configurer la persistance de session sur le Load Balancer
+description: Configurez la persistance de session sur une ferme de serveurs OVHcloud Load Balancer via cookie ou IP source, depuis l'espace client ou l'API.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+La persistance de session (également appelée stickiness) achemine les requêtes d'un même client vers le même serveur backend au sein d'une ferme. Elle est utile aux applications qui stockent localement l'état de la session, comme les paniers d'achat ou les sessions authentifiées.
+
+**Ce guide explique comment configurer la persistance de session sur une ferme de serveurs OVHcloud Load Balancer.**
+
+## Prérequis
+
+- Un [compte OVHcloud](/links/manager) actif
+- Un service OVHcloud Load Balancer disposant d'au moins une ferme de serveurs — voir [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- Un accès à l'[espace client OVHcloud](/links/manager) ou à l'[API OVHcloud](/links/api)
+
+## Introduction
+
+L'OVHcloud Load Balancer répartit le trafic entrant entre les serveurs backend d'une ferme selon un algorithme d'équilibrage. Par défaut, une requête peut être dirigée vers n'importe quel serveur de la ferme. La persistance de session modifie ce comportement en associant un client à un serveur unique pendant toute la durée de sa session.
+
+La persistance de session se configure par ferme, au niveau de la couche applicative. Trois modes sont disponibles :
+
+| Mode | Libellé dans l'espace client | Comportement |
+|---|---|---|
+| Aucune | `Aucune` | Aucune persistance. Chaque requête est équilibrée indépendamment selon l'algorithme de la ferme. |
+| Cookie | `Cookie` | Le Load Balancer insère un cookie de session qui rattache la session HTTP à un serveur unique. Disponible uniquement sur les fermes HTTP. |
+| IP source | `IP Source` | Un hachage de l'adresse IP source du client est utilisé pour acheminer systématiquement chaque client vers le même serveur. Disponible sur les fermes HTTP et TCP. |
+
+Les événements suivants entraînent un rééquilibrage du trafic, susceptible de rompre les associations de persistance existantes :
+
+- Le poids configuré d'un serveur change.
+- Un serveur de la ferme est réactivé.
+- Un serveur de la ferme cesse de répondre.
+
+:::warning
+Lorsque vous appliquez une nouvelle configuration, les connexions existantes sont rééquilibrées et les sessions associées sont perdues. Appliquez les modifications pendant une fenêtre de maintenance lorsque cela est possible.
+:::
+
+## En pratique
+
+Vous pouvez configurer la persistance de session depuis l'espace client OVHcloud ou via l'API OVHcloud. Dans les deux cas, la modification ne prend effet qu'après l'application (déploiement) de la configuration.
+
+<Tabs>
+<Tab label="Espace client">
+
+### Modifier la ferme de serveurs
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et sélectionnez votre service Load Balancer.
+2. Ouvrez l'onglet <code className="action">Fermes</code>.
+3. Repérez la ferme à configurer, cliquez sur le bouton d'options <code className="action">...</code> situé à sa droite, puis sélectionnez <code className="action">Modifier</code>.
+
+{/* DRAFT: À capturer - l'onglet Fermes de serveurs avec le menu d'options ouvert sur une ferme, affichant l'entrée Modifier */}
+
+### Définir le mode de persistance
+
+1. Dans l'éditeur de ferme, ouvrez la section <code className="action">Paramètres avancés</code>.
+2. Dans le champ de persistance de session, sélectionnez `Aucune`, `Cookie` ou `IP Source`.
+
+:::info
+Le mode `Cookie` n'est disponible que sur les fermes HTTP. Pour les fermes TCP, utilisez `IP Source`.
+:::
+
+{/* DRAFT: À capturer - la section Paramètres avancés de l'éditeur de ferme affichant le sélecteur de persistance */}
+
+3. Confirmez la modification pour enregistrer les paramètres de la ferme.
+
+### Appliquer la configuration
+
+Le nouveau paramètre de persistance reste en attente jusqu'à son déploiement sur le Load Balancer. Appliquez la configuration de l'une des manières suivantes :
+
+- Depuis la bannière de rappel indiquant que la configuration n'a pas été appliquée, cliquez sur <code className="action">Appliquer les modifications</code>.
+- Depuis la vue d'ensemble du service, cliquez sur le bouton d'options <code className="action">...</code> de votre Load Balancer, puis sélectionnez <code className="action">Appliquer les modifications</code>.
+
+{/* DRAFT: À capturer - la bannière de rappel Appliquer les modifications */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+### Récupérer les détails de la ferme
+
+Utilisez l'appel suivant pour consulter les propriétés actuelles d'une ferme, notamment sa valeur `stickiness`. L'exemple utilise une ferme HTTP ; pour une ferme TCP, remplacez `http` par `tcp` dans la route.
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3` |
+| `farmId` | Oui | L'identifiant de la ferme à inspecter. | `12345` |
+
+La réponse inclut le champ `stickiness`, qui contient la méthode de suivi des connexions actuellement définie pour la ferme.
+
+### Modifier le mode de persistance
+
+Mettez à jour le champ `stickiness` de la ferme avec l'une des valeurs disponibles : `none`, `cookie` ou `sourceIp`.
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3` |
+| `farmId` | Oui | L'identifiant de la ferme à modifier. | `12345` |
+| `stickiness` (corps) | Non | La méthode de suivi des connexions à appliquer. | `cookie` |
+
+### Appliquer la configuration
+
+Déployez les modifications en attente pour rendre le nouveau paramètre de persistance actif.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3` |
+| `zone` (corps) | Non | La zone dans laquelle déployer la configuration. | `all` |
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+Après avoir modifié la ressource de la ferme, la configuration doit être déployée à l'aide d'une ressource de rafraîchissement. [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+## Aller plus loin
+
+- [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Gérer votre Load Balancer depuis l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

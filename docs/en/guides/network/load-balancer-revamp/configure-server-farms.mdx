@@ -55,14 +55,7 @@ Frontends, farms, and servers are specific to the protocol (HTTP, TCP, or UDP) i
 
 The balancing method is applied at the farm level. It defines the algorithm by which the Load Balancer selects a backend server for each new client request. The following diagram shows where the farm sits in the traffic path.
 
-```mermaid
-flowchart LR
-    C[Client] --> F[Frontend]
-    F --> FARM{{Server farm<br/>balancing method}}
-    FARM --> S1[Server 1<br/>weight 1]
-    FARM --> S2[Server 2<br/>weight 1]
-    FARM --> S3[Server 3<br/>backup]
-```
+<img className="thumbnail" alt="Overview and balancing methods <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/configure-server-farms/fig-1.svg" loading="lazy" />
 
 The following balancing methods are available. The Control Panel labels are listed alongside the corresponding API value used in the `balance` field of the farm configuration.
 

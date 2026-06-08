@@ -26,14 +26,7 @@ Le déploiement sur plusieurs zones répond à deux objectifs :
 
 Lorsque vous commandez un Load Balancer OVHcloud, vous choisissez une ou plusieurs zones. Vous pouvez également commander des zones supplémentaires pour un service existant ultérieurement. Pour une vision plus large de la résilience, consultez le guide [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability).
 
-```mermaid
-flowchart TD
-    U[Requête client] --> A[Point d'entrée Anycast]
-    A -->|Acheminé vers la zone la plus proche| Z1[Zone GRA]
-    A -->|Acheminé vers la zone la plus proche| Z2[Zone BHS]
-    Z1 --> F1[Frontend GRA] --> C1[Serveurs backend du cluster GRA]
-    Z2 --> F2[Frontend BHS] --> C2[Serveurs backend du cluster BHS]
-```
+<img className="thumbnail" alt="Vue d'ensemble diagram" src="/images/network/load-balancer-revamp/availability-and-zones/fig-1.fr.svg" loading="lazy" />
 
 ## Concepts clés
 
@@ -148,4 +141,4 @@ Gardez à l'esprit les points suivants lorsque vous planifiez un déploiement mu
 - [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability)
 - [Architecture multizone résiliente](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

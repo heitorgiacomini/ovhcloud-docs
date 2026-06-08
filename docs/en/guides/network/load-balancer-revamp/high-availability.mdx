@@ -28,18 +28,7 @@ Availability therefore depends both on the redundancy that OVHcloud operates for
 
 The following diagram shows the layered redundancy model, from the Anycast entry point down to the backend servers.
 
-```mermaid
-flowchart TD
-  Client[Client] --> Anycast[Anycast IP address]
-  Anycast --> ZA[Zone A entry point]
-  Anycast --> ZB[Zone B entry point]
-  ZA --> FA[Frontend zone A] --> FarmA[Server farm zone A]
-  ZB --> FB[Frontend zone B] --> FarmB[Server farm zone B]
-  FarmA --> S1[Backend server 1]
-  FarmA --> S2[Backend server 2]
-  FarmB --> S3[Backend server 3]
-  FarmB --> S4[Backend server 4]
-```
+<img className="thumbnail" alt="Overview diagram" src="/images/network/load-balancer-revamp/high-availability/fig-1.svg" loading="lazy" />
 
 ## Key concepts
 
@@ -74,14 +63,7 @@ The Load Balancer is reachable through an Anycast IP address. The same IP addres
 
 The diagram below shows how two clients in different locations reach different zones through the same Anycast address, and how traffic shifts when one zone becomes unavailable.
 
-```mermaid
-flowchart LR
-  C1[Client - Europe] --> AnycastIP[Anycast IP]
-  C2[Client - North America] --> AnycastIP
-  AnycastIP -->|nearest healthy| ZEU[Zone GRA]
-  AnycastIP -->|nearest healthy| ZNA[Zone BHS]
-  ZEU -.->|GRA fails: reroute| ZNA
-```
+<img className="thumbnail" alt="Anycast routing diagram" src="/images/network/load-balancer-revamp/high-availability/fig-2.svg" loading="lazy" />
 
 :::info
 Due to technical restrictions, when a Load Balancer is configured with two zones where one is in an APAC region and the other is not, traffic is preferentially routed through the non-APAC zone first, even when the service is out of order in that zone. This behaviour is specific to cross-continent setups involving APAC zones, and OVHcloud does not recommend configuring a Load Balancer in this manner.
@@ -98,17 +80,7 @@ Failover operates at two levels:
 
 Health probes are essential to this behaviour. Without probes, the Load Balancer cannot detect an unresponsive backend and may continue to send traffic to it. To configure them, see the [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes) guide.
 
-```mermaid
-sequenceDiagram
-  participant P as Health probe
-  participant LB as Load Balancer
-  participant S as Backend server
-  P->>S: Periodic check
-  S-->>P: No response (unhealthy)
-  P->>LB: Mark server down
-  LB->>LB: Remove server from farm rotation
-  Note over LB: Traffic served by remaining healthy servers
-```
+<img className="thumbnail" alt="Health probes and failover diagram" src="/images/network/load-balancer-revamp/high-availability/fig-3.svg" loading="lazy" />
 
 ### Anti-affinity across zones
 
@@ -120,19 +92,7 @@ When you want the same configuration applied to every subscribed zone without du
 
 The diagram below contrasts a configuration with no anti-affinity against one where each zone is self-contained.
 
-```mermaid
-flowchart TB
-  subgraph Good[Anti-affinity respected]
-    direction TB
-    FZA[Frontend zone A] --> FarmZA[Farm in zone A]
-    FZB[Frontend zone B] --> FarmZB[Farm in zone B]
-  end
-  subgraph Risk[No anti-affinity]
-    direction TB
-    F1[Frontend zone A] --> SharedFarm[Single farm in zone A]
-    F2[Frontend zone B] --> SharedFarm
-  end
-```
+<img className="thumbnail" alt="Anti-affinity across zones diagram" src="/images/network/load-balancer-revamp/high-availability/fig-4.svg" loading="lazy" />
 
 ## Design considerations
 

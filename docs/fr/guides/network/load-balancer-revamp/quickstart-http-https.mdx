@@ -59,15 +59,7 @@ Cette section vous guide tout au long du déploiement complet, dans l'ordre. Cha
 
 Avant de commencer, comprenez comment une requête atteint votre backend. Le frontend écoute sur une IP et un port publics, transmet la connexion à une route, et la route la dirige vers une ferme de serveurs, qui sélectionne l'un de ses serveurs. Le schéma ci-dessous illustre le flux d'un déploiement HTTP/HTTPS avec une seule ferme partagée.
 
-```mermaid
-flowchart LR
-  client([Client]) -->|HTTP :80| feHttp[Frontend :80]
-  client -->|HTTPS :443| feHttps[Frontend :443 + SSL]
-  feHttp --> farm{{Ferme de serveurs HTTP}}
-  feHttps --> farm
-  farm --> s1[Serveur 1]
-  farm --> s2[Serveur 2]
-```
+<img className="thumbnail" alt="Vue d'ensemble <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/quickstart-http-https/fig-1.fr.svg" loading="lazy" />
 
 Les deux frontends routent vers une seule ferme HTTP. Le frontend HTTPS termine également le TLS à l'aide du certificat que vous rattachez à l'[étape 5](#certificate).
 
@@ -110,8 +102,8 @@ La ferme de serveurs reçoit le trafic des frontends et le répartit sur ses ser
 
 1. Ouvrez l'onglet `Fermes`.
 2. Cliquez sur `Créer une ferme`.
-3. Renseignez les champs. Pour une configuration simple, le `Protocole` et le datacentre sont obligatoires. Définissez explicitement un `Port` — généralement le port 80 pour un service web. Si aucun port n'est défini, le Load Balancer réutilise le port du frontend, et les sondes de santé peuvent ne pas se comporter comme prévu.
-4. Si vous prévoyez d'ajouter plusieurs serveurs, sélectionnez un algorithme d'équilibrage (par exemple `Round Robin` ou `Moins de connexions`) et configurez une sonde de santé afin que le Load Balancer puisse retirer automatiquement un serveur qui ne répond pas.
+3. Renseignez les champs. Pour une configuration simple, le `Protocole` et le datacentre sont obligatoires. Définissez explicitement un `Port` — généralement le port 80 pour un service web. Si aucun port n'est défini, le Load Balancer réutilise le port du frontend, et les sondes peuvent ne pas se comporter comme prévu.
+4. Si vous prévoyez d'ajouter plusieurs serveurs, sélectionnez un algorithme d'équilibrage (par exemple `Round Robin` ou `Moins de connexions`) et configurez une sonde afin que le Load Balancer puisse retirer automatiquement un serveur qui ne répond pas.
 5. Cliquez sur `Créer la ferme` pour enregistrer la ferme.
 
 {/* DRAFT: À illustrer - le formulaire de création de ferme de serveurs avec le protocole et le port renseignés */}
@@ -398,7 +390,7 @@ Le tableau ci-dessous répertorie les problèmes les plus courants rencontrés l
 | Les changements n'apparaissent pas pour les visiteurs | Configuration non appliquée | Appliquez (rafraîchissez) la configuration dans chaque zone — voir l'[étape 7](#apply). |
 | Site inaccessible après le changement DNS | DNS pas encore propagé, ou enregistrements pointant ailleurs | Vérifiez avec `dig +short` ; abaissez le TTL et attendez la propagation. |
 | La commande de certificat géré échoue | Le domaine ne résout pas vers le Load Balancer | Faites d'abord pointer les enregistrements `A` et `AAAA` vers le Load Balancer, puis commandez à nouveau. |
-| Backend marqué comme indisponible | Sonde de santé mal configurée ou backend n'écoutant pas sur le port de la ferme | Vérifiez le `Port` de la ferme, le port du backend et les paramètres de la sonde. Consultez [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes). |
+| Backend marqué comme indisponible | Sonde mal configurée ou backend n'écoutant pas sur le port de la ferme | Vérifiez le `Port` de la ferme, le port du backend et les paramètres de la sonde. Consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes). |
 | 503 renvoyé par le frontend | Aucun serveur actif dans la ferme, ou mauvaise route par défaut | Vérifiez que la ferme dispose d'au moins un serveur actif et que la route par défaut du frontend la cible bien. |
 
 Pour automatiser ce déploiement avec le provider Terraform OVHcloud, consultez [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] et le [guide d'automatisation](/guides/network/load-balancer-revamp/automation).
@@ -409,4 +401,4 @@ Pour automatiser ce déploiement avec le provider Terraform OVHcloud, consultez 
 - [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates)
 - [Gérer le Load Balancer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

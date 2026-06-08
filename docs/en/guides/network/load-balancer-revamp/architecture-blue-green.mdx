@@ -54,17 +54,7 @@ The cutover is a swap of the `defaultFarmId` value on the two frontends, followe
 
 The diagram below shows the initial state, where Farm A is in production (blue) and Farm B is the candidate (green).
 
-```mermaid
-flowchart LR
-    Users["End users"] -->|"port 80"| FE_PUB["Public frontend"]
-    Team["Operators / developers"] -->|"port 8888"| FE_STG["Staging frontend"]
-
-    FE_PUB -->|"defaultFarmId = Farm A"| FARM_A["Farm A (BLUE - production)"]
-    FE_STG -->|"defaultFarmId = Farm B"| FARM_B["Farm B (GREEN - candidate)"]
-
-    FARM_A --> SRV_A["Backend environment A"]
-    FARM_B --> SRV_B["Backend environment B"]
-```
+<img className="thumbnail" alt="Architecture overview <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/architecture-blue-green/fig-1.svg" loading="lazy" />
 
 After a successful cutover, the public frontend points at Farm B and the staging frontend points at Farm A. The colours follow the role, not the farm: the farm in production is always "blue".
 

@@ -71,10 +71,10 @@ Le SLA s'applique uniquement aux composants du Load Balancer gérés par OVHclou
 | Votre connectivité réseau en dehors du réseau OVHcloud | Non |
 | La configuration que vous appliquez (fermes, frontends, sondes, certificats) | Non |
 
-OVHcloud fournit le service, mais vous êtes responsable de sa configuration et de sa gestion. Une configuration correcte, incluant des sondes de santé et un nombre suffisant de serveurs de backend sains, est nécessaire pour que le service se comporte comme prévu.
+OVHcloud fournit le service, mais vous êtes responsable de sa configuration et de sa gestion. Une configuration correcte, incluant des sondes et un nombre suffisant de serveurs de backend sains, est nécessaire pour que le service se comporte comme prévu.
 
 > [!TIP]
-> Configurez des sondes de santé et répartissez vos backends sur plusieurs [zones de disponibilité](/guides/network/load-balancer-revamp/availability-and-zones). Le SLA couvre le service, mais ce sont vos propres choix de résilience qui déterminent dans quelle mesure la disponibilité garantie se traduit en temps de fonctionnement pour vos utilisateurs.
+> Configurez des sondes et répartissez vos backends sur plusieurs [zones de disponibilité](/guides/network/load-balancer-revamp/availability-and-zones). Le SLA couvre le service, mais ce sont vos propres choix de résilience qui déterminent dans quelle mesure la disponibilité garantie se traduit en temps de fonctionnement pour vos utilisateurs.
 
 ## Exclusions
 
@@ -92,16 +92,9 @@ Certains événements sont exclus du calcul de la disponibilité et ne sont pas 
 
 Le Load Balancer est conçu avec de la redondance afin que le service puisse continuer à répartir le trafic en cas de défaillance d'un composant unique. Le SLA est l'expression contractuelle de cette conception.
 
-```mermaid
-flowchart LR
-    A[Objectif de disponibilité garanti] --> B[Mesuré sur une période]
-    B --> C{Objectif atteint ?}
-    C -- Oui --> D[Aucun avoir]
-    C -- Non --> E[Avoir de service appliqué]
-    F[Exclusions] -.retirées de.-> B
-```
+<img className="thumbnail" alt="Lien entre la disponibilité et l'architecture diagram" src="/images/network/load-balancer-revamp/slas/fig-1.fr.svg" loading="lazy" />
 
-Pour concevoir une architecture à haute disponibilité, combinez le SLA avec les fonctionnalités de résilience du service : déployez sur plusieurs zones de disponibilité, configurez des sondes de santé et conservez suffisamment de backends sains pour absorber la perte de l'un d'entre eux. Pour les détails d'architecture, consultez les guides indiqués ci-dessous.
+Pour concevoir une architecture à haute disponibilité, combinez le SLA avec les fonctionnalités de résilience du service : déployez sur plusieurs zones de disponibilité, configurez des sondes et conservez suffisamment de backends sains pour absorber la perte de l'un d'entre eux. Pour les détails d'architecture, consultez les guides indiqués ci-dessous.
 
 ## Points à prendre en compte et limitations
 
@@ -120,4 +113,4 @@ Gardez à l'esprit les points suivants lors de l'interprétation du SLA du Load 
 - [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability)
 - [Qu'est-ce que l'OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

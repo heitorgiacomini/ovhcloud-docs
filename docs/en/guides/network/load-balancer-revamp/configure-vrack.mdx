@@ -59,15 +59,7 @@ Three pieces of configuration connect the Load Balancer to your private backends
 
 The diagram below shows the resulting traffic flow.
 
-```mermaid
-flowchart LR
-    Client[Client] -->|Public traffic| LB[OVHcloud Load Balancer]
-    subgraph vRack [vRack private network]
-        direction LR
-        LB -->|Private NAT IP range| S1[Backend server 1<br/>private IP]
-        LB -->|Private NAT IP range| S2[Backend server 2<br/>private IP]
-    end
-```
+<img className="thumbnail" alt="Overview <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/configure-vrack/fig-1.svg" loading="lazy" />
 
 The key parameters of a private network are summarised below.
 

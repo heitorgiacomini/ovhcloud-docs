@@ -47,19 +47,12 @@ Pour la configuration propre à chaque protocole, consultez les guides [Configur
 
 Une configuration de Load Balancer repose sur trois types d'objets. Comprendre comment ils s'articulent permet de situer les limites techniques décrites ci-dessous.
 
-```mermaid
-flowchart LR
-    Client([Trafic client]) --> FE[Frontend\nprotocole + port d'écoute]
-    FE --> FARM[Ferme de serveurs\néquilibrage + sonde de santé]
-    FARM --> S1[Serveur 1]
-    FARM --> S2[Serveur 2]
-    FARM --> S3[Serveur n]
-```
+<img className="thumbnail" alt="Composants principaux et leurs relations diagram" src="/images/network/load-balancer-revamp/prerequisites-and-limitations/fig-1.fr.svg" loading="lazy" />
 
 | Composant | Rôle | Onglet du Manager |
 |---|---|---|
 | Frontend | Définit le protocole d'entrée et le port d'écoute qui reçoit le trafic client. | `Frontends` |
-| Ferme de serveurs | Reçoit le trafic d'un frontend et le répartit entre ses serveurs à l'aide d'un algorithme d'équilibrage et d'une sonde de santé. | `Fermes de serveurs` |
+| Ferme de serveurs | Reçoit le trafic d'un frontend et le répartit entre ses serveurs à l'aide d'un algorithme d'équilibrage et d'une sonde. | `Fermes de serveurs` |
 | Serveur | Un backend unique qui traite les requêtes, identifié par son adresse IP et son port. | `Fermes de serveurs` |
 
 Pour les définitions complètes de chaque objet et de chaque paramètre, reportez-vous au [Glossaire](/guides/network/load-balancer-revamp/glossary).
@@ -123,9 +116,9 @@ Les modifications que vous effectuez dans l'espace client ou via l'API sont mise
 - Les backends doivent être accessibles depuis le Load Balancer. Les backends publics nécessitent une IP additionnelle ; les backends privés nécessitent une connectivité [vRack](/guides/network/load-balancer-revamp/configure-vrack).
 - Les objets sont créés au sein d'une zone de disponibilité, et les quotas sont comptabilisés par zone. Consultez le guide [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones).
 
-### Sondes de santé
+### Sondes
 
-Une ferme dépourvue de sonde de santé configurée ne peut pas détecter les backends qui ne répondent pas ; le trafic risque donc d'être envoyé vers un serveur hors service. Configurez une sonde sur chaque ferme de production. Consultez le guide [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes).
+Une ferme dépourvue de sonde configurée ne peut pas détecter les backends qui ne répondent pas ; le trafic risque donc d'être envoyé vers un serveur hors service. Configurez une sonde sur chaque ferme de production. Consultez le guide [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
 
 ### Automatisation
 

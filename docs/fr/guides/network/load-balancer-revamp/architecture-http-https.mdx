@@ -1,0 +1,163 @@
+---
+title: "Load Balancer : architecture HTTP/HTTPS de base"
+description: "Découvrez l'architecture de référence pour exposer une application web HTTP/HTTPS standard derrière un service OVHcloud Load Balancer, du flux des requêtes à l'ordre de création."
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+
+## Objectif
+
+Ce guide décrit une architecture de référence pour servir une application web HTTP/HTTPS standard derrière un service OVHcloud Load Balancer. Il explique comment les briques de base s'articulent entre elles, comment une requête circule d'un visiteur vers un serveur backend, et quelles décisions de conception comptent pour un déploiement à application unique.
+
+Il s'agit d'une référence conceptuelle, et non d'une procédure pas à pas. Chaque étape de configuration renvoie vers un guide de tâche dédié.
+
+**Ce guide explique l'architecture de référence d'une application web HTTP/HTTPS derrière un service OVHcloud Load Balancer.**
+
+**Dans ce guide, vous apprendrez :**
+
+- Les composants d'une architecture de référence HTTP/HTTPS.
+- Comment une requête circule du visiteur vers un serveur backend.
+- L'ordre de création recommandé et les décisions de conception clés.
+- Les limites de cette architecture à application unique.
+
+## Prérequis
+
+- Un service [OVHcloud Load Balancer](/links/network/load-balancer) dans votre compte OVHcloud.
+- Accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
+- Un ou plusieurs serveurs web backend accessibles depuis le Load Balancer.
+- Un nom de domaine que vous pouvez faire pointer vers le Load Balancer (requis pour la partie HTTPS de l'architecture).
+
+## Introduction
+
+Le service OVHcloud Load Balancer répartit le trafic entrant entre plusieurs serveurs backend à l'aide d'un algorithme d'équilibrage configurable. Un service Load Balancer comporte quatre éléments :
+
+- **Frontends** — les points d'entrée qui écoutent sur une adresse IP publique et un port, et exposent le service sur Internet.
+- **Fermes de serveurs** — des groupes de serveurs backend, avec l'algorithme d'équilibrage et les sondes qui déterminent où le trafic est envoyé.
+- **Serveurs** — les backends individuels au sein d'une ferme.
+- **Certificats SSL/TLS** — les certificats qui authentifient le service et chiffrent les connexions HTTPS.
+
+Pour une présentation conceptuelle du produit, consultez [Qu'est-ce que OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer). Pour la définition des termes utilisés ci-dessous, reportez-vous au [glossaire](/guides/network/load-balancer-revamp/glossary).
+
+## Architecture de référence
+
+Cette section présente la topologie de l'architecture de référence, le flux des requêtes et les décisions que vous prenez lors de sa mise en place.
+
+### Topologie
+
+L'architecture expose une application web unique au travers de deux frontends qui partagent une même ferme de serveurs HTTP :
+
+- Un **frontend HTTP** écoutant sur le port 80.
+- Un **frontend HTTPS** écoutant sur le port 443, avec l'option `SSL` activée et un certificat SSL/TLS rattaché.
+
+Les deux frontends acheminent le trafic vers la même ferme de serveurs HTTP, qui répartit le trafic sur un ou plusieurs serveurs web backend. Cela conserve un pool de backends unique derrière les deux points d'entrée, de sorte que l'application est servie de manière identique en HTTP et en HTTPS.
+
+<img className="thumbnail" alt="Topologie diagram" src="/images/network/load-balancer-revamp/architecture-http-https/fig-1.fr.svg" loading="lazy" />
+
+{/* DRAFT: To screenshot - the Load Balancer service dashboard in the OVHcloud Control Panel showing the Server Farms and Frontends tabs */}
+
+### Flux des requêtes
+
+Le chemin emprunté par une requête dépend de la connexion du visiteur en HTTP ou en HTTPS :
+
+| Étape | HTTP (port 80) | HTTPS (port 443) |
+|---|---|---|
+| 1. Connexion | Le visiteur se connecte à l'adresse IP publique sur le port 80. | Le visiteur se connecte à l'adresse IP publique sur le port 443. |
+| 2. TLS | Non applicable. | Le frontend HTTPS termine la session TLS à l'aide du certificat SSL/TLS rattaché. |
+| 3. Frontend | Le frontend HTTP accepte la requête. | Le frontend HTTPS accepte la requête déchiffrée. |
+| 4. Routage | Le frontend transmet la requête à la ferme de serveurs HTTP par défaut. | Le frontend transmet la requête à la ferme de serveurs HTTP par défaut. |
+| 5. Équilibrage | La ferme sélectionne un serveur backend à l'aide de l'algorithme configuré, en ignorant tout serveur marqué comme indisponible par la sonde. | Identique à HTTP. |
+| 6. Réponse | Le serveur sélectionné répond ; le Load Balancer relaie la réponse au visiteur. | Le Load Balancer rechiffre la réponse et la relaie au visiteur. |
+
+La session TLS est terminée au niveau du Load Balancer ; la connexion entre le Load Balancer et les serveurs backend se fait donc en HTTP non chiffré dans cette architecture. Conservez le réseau des backends privé ou de confiance.
+
+### Décisions de conception
+
+Les décisions suivantes façonnent l'architecture de référence. Chacune est documentée dans un guide dédié.
+
+| Décision | Options | Remarques |
+|---|---|---|
+| Algorithme d'équilibrage | `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI`, `Premier disponible` | `Round Robin` est le choix par défaut courant pour le trafic web sans état. Consultez [configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms). |
+| Sonde | Sonde HTTP recommandée lorsque la ferme comporte plusieurs serveurs | Sans sonde, le trafic peut être acheminé vers un backend qui ne répond pas. Consultez [configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes). |
+| Persistance de session | `Aucune`, `Cookie`, `IP Source` | N'activez la persistance que si l'application conserve un état de session côté serveur. Consultez [configurer la persistance](/guides/network/load-balancer-revamp/configure-stickiness). |
+| Stratégie de certificat | Certificat importé ou certificat géré automatiquement par le Load Balancer | Un certificat géré est renouvelé automatiquement. Consultez [configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates). |
+| Profil TLS | `Moderne (TLS 1.3)`, `Intermédiaire (TLS 1.2+)` | Choisissez `Moderne (TLS 1.3)` sauf si des clients plus anciens doivent être pris en charge. |
+
+## Ordre de création
+
+L'ordre dans lequel vous créez les éléments a son importance, car certains objets dépendent d'autres.
+
+:::warning
+Les fermes de serveurs doivent exister avant que vous puissiez y rattacher des serveurs ou définir la ferme par défaut d'un frontend. Créez d'abord la ferme, puis ses serveurs, puis les frontends, et rattachez le certificat SSL/TLS en dernier.
+:::
+
+Séquence recommandée :
+
+1. **Créez la ferme de serveurs HTTP.** Définissez le protocole, le datacentre et un port explicite (généralement le 80). Pour plus d'un serveur, configurez une sonde HTTP. Consultez [configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms).
+2. **Ajoutez les serveurs backend.** Ajoutez chaque backend par son adresse IPv4. Consultez [configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms).
+3. **Créez le frontend HTTP (port 80).** Définissez sa route par défaut vers la ferme de serveurs HTTP. Consultez [configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends).
+4. **Ajoutez le certificat SSL/TLS.** Importez un certificat existant ou commandez-en un géré par le Load Balancer. Consultez [configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates).
+5. **Créez le frontend HTTPS (port 443).** Activez l'option `SSL` et acheminez-le vers la même ferme de serveurs HTTP. Consultez [configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends).
+6. **Appliquez la configuration.** Les modifications ne prennent effet qu'après avoir été explicitement appliquées à chaque zone du service. Consultez [gérer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel).
+
+:::tip
+Pour éviter toute interruption de service lorsque vous faites pointer votre domaine vers le Load Balancer en vue de la validation du certificat, configurez et testez d'abord le frontend HTTP sur le port 80. Le site reste accessible pendant que vous validez et activez le HTTPS.
+:::
+
+### Emplacement de chaque élément dans l'espace client
+
+Dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, chaque élément de l'architecture correspond à un onglet de la page du service Load Balancer :
+
+| Élément | Onglet | Action principale |
+|---|---|---|
+| Ferme de serveurs | `Fermes de serveurs` | `Créer une ferme` |
+| Serveur backend | `Fermes de serveurs` | `Ajouter un serveur` |
+| Frontend | `Frontends` | `Créer un frontend` |
+| Certificat SSL/TLS | `Certificats SSL` | `Ajouter un certificat` |
+
+### Objets de l'API derrière l'architecture
+
+Les mêmes éléments correspondent à l'API OVHcloud. Les appels ci-dessous listent les objets de l'architecture de référence. Pour le workflow de configuration complet, suivez les guides de tâche liés dans l'ordre de création ci-dessus.
+
+- Lister les fermes de serveurs HTTP du service :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
+
+- Lister les frontends HTTP du service :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+- Lister les certificats SSL/TLS du service :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
+
+- Appliquer la configuration à une zone (requis après toute modification) :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3d4...` |
+
+Pour gérer cette architecture sous forme de code, utilisez le provider Terraform OVHcloud [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources].
+
+## Considérations et limites
+
+Cette architecture de référence cible une application web unique servie en HTTP et HTTPS. Tenez compte des contraintes suivantes.
+
+| Limite | Détails |
+|---|---|
+| Application unique | Les deux frontends acheminent le trafic vers une seule ferme de serveurs par défaut. Servir plusieurs applications distinctes nécessite des routes HTTP. Consultez [configurer les routes HTTP](/guides/network/load-balancer-revamp/configure-http-routes). |
+| Terminaison TLS | La session TLS est terminée au niveau du Load Balancer ; le trafic vers les backends se fait en HTTP non chiffré. Conservez le réseau des backends privé ou de confiance. |
+| Zone unique | Cette architecture suppose une seule zone. La résilience multizone constitue une architecture distincte. Consultez [architecture résiliente multizone](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone). |
+| Application de la configuration | Aucune modification n'est active tant qu'elle n'a pas été appliquée à chaque zone configurée. |
+| HSTS | Si vous activez HSTS sur le frontend HTTPS, ce choix n'est pas réversible pour les clients qui l'ont déjà enregistré. Ne l'activez qu'une fois le HTTPS entièrement testé. |
+| Capacité et quotas | Le nombre de frontends, de fermes et de serveurs dépend de votre gamme commerciale. [TODO: confirm per-range limits for frontends, farms, and servers] |
+
+## Aller plus loin
+
+- [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates)
+- [Architecture résiliente multizone](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

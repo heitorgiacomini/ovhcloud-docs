@@ -59,15 +59,7 @@ This section takes you through the full deployment in order. Each step provides 
 
 Before you start, understand how a request reaches your backend. The frontend listens on a public IP and port, hands the connection to a route, and the route directs it to a server farm, which selects one of its servers. The diagram below shows the flow for an HTTP/HTTPS deployment with a single shared farm.
 
-```mermaid
-flowchart LR
-  client([Client]) -->|HTTP :80| feHttp[Frontend :80]
-  client -->|HTTPS :443| feHttps[Frontend :443 + SSL]
-  feHttp --> farm{{HTTP server farm}}
-  feHttps --> farm
-  farm --> s1[Server 1]
-  farm --> s2[Server 2]
-```
+<img className="thumbnail" alt="Overview <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/quickstart-http-https/fig-1.svg" loading="lazy" />
 
 Both frontends route to a single HTTP farm. The HTTPS frontend also terminates TLS using the certificate you attach in [Step 5](#certificate).
 

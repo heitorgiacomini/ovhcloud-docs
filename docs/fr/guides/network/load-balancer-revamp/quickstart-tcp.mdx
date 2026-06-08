@@ -9,12 +9,12 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objectif
 
-Ce guide vous accompagne dans le déploiement complet d'un Load Balancer TCP. Vous allez créer une ferme de serveurs TCP, attacher vos serveurs backend, ajouter une sonde de santé TCP, exposer le service via un frontend TCP, appliquer la configuration et vérifier que le trafic atteint vos backends. L'exemple cible un service TCP classique tel que SMTP (port 25) ou une base de données, mais le même déroulé s'applique à tout protocole basé sur TCP.
+Ce guide vous accompagne dans le déploiement complet d'un Load Balancer TCP. Vous allez créer une ferme de serveurs TCP, attacher vos serveurs backend, ajouter une sonde TCP, exposer le service via un frontend TCP, appliquer la configuration et vérifier que le trafic atteint vos backends. L'exemple cible un service TCP classique tel que SMTP (port 25) ou une base de données, mais le même déroulé s'applique à tout protocole basé sur TCP.
 
 **Dans ce guide, vous allez apprendre à :**
 
 - Créer une ferme de serveurs TCP et attacher des serveurs backend.
-- Ajouter une sonde de santé TCP afin que le trafic n'atteigne que les backends sains.
+- Ajouter une sonde TCP afin que le trafic n'atteigne que les backends sains.
 - Créer un frontend TCP qui expose le service à Internet.
 - Appliquer la configuration à chaque zone et vérifier le résultat.
 
@@ -39,7 +39,7 @@ Le OVHcloud Load Balancer répartit le trafic réseau entrant sur plusieurs serv
 Dans une configuration TCP, trois composants fonctionnent ensemble :
 
 - Une **ferme de serveurs** regroupe vos serveurs backend et applique un algorithme d'équilibrage.
-- Une **sonde de santé** vérifie que chaque backend répond avant que le trafic ne l'atteigne.
+- Une **sonde** vérifie que chaque backend répond avant que le trafic ne l'atteigne.
 - Un **frontend** écoute sur un port public et transmet les connexions à la ferme par défaut.
 
 ## En pratique
@@ -49,7 +49,7 @@ Dans une configuration TCP, trois composants fonctionnent ensemble :
 - [Vue d'ensemble](#overview)
 - [Étape 1 — Créer une ferme de serveurs TCP](#step-1)
 - [Étape 2 — Attacher vos serveurs backend](#step-2)
-- [Étape 3 — Ajouter une sonde de santé TCP](#step-3)
+- [Étape 3 — Ajouter une sonde TCP](#step-3)
 - [Étape 4 — Créer un frontend TCP](#step-4)
 - [Étape 5 — Appliquer la configuration](#step-5)
 - [Étape 6 — Vérifier le déploiement](#step-6)
@@ -60,15 +60,7 @@ Dans une configuration TCP, trois composants fonctionnent ensemble :
 
 Le schéma ci-dessous montre comment une connexion TCP circule d'un client vers un serveur backend en passant par le Load Balancer. Le frontend accepte la connexion sur un port public et la transmet à la ferme par défaut, qui sélectionne un backend sain à l'aide de l'algorithme d'équilibrage.
 
-```mermaid
-flowchart LR
-    Client([Client]) -->|Connexion TCP| FE[Frontend TCP\nport public]
-    FE --> Farm[Ferme de serveurs TCP\nalgorithme d'équilibrage]
-    Probe[Sonde de santé] -. vérifie .-> S1
-    Probe -. vérifie .-> S2
-    Farm --> S1[Serveur backend 1]
-    Farm --> S2[Serveur backend 2]
-```
+<img className="thumbnail" alt="Vue d'ensemble <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/quickstart-tcp/fig-1.fr.svg" loading="lazy" />
 
 Le tableau suivant répertorie les principaux paramètres que vous allez définir dans ce guide.
 
@@ -178,9 +170,9 @@ Pour lister les serveurs d'une ferme :
 
 Répétez cette étape pour chaque serveur backend que vous souhaitez ajouter à la ferme.
 
-### Étape 3 — Ajouter une sonde de santé TCP <a name="step-3"></a>
+### Étape 3 — Ajouter une sonde TCP <a name="step-3"></a>
 
-Une sonde de santé permet au Load Balancer de détecter les backends qui ne répondent pas et de cesser de leur envoyer du trafic. Sans sonde, le Load Balancer risque de transmettre des connexions à un serveur hors service. Vous configurez la sonde au niveau de la ferme.
+Une sonde permet au Load Balancer de détecter les backends qui ne répondent pas et de cesser de leur envoyer du trafic. Sans sonde, le Load Balancer risque de transmettre des connexions à un serveur hors service. Vous configurez la sonde au niveau de la ferme.
 
 <Tabs>
 <Tab label="Espace client">
@@ -212,7 +204,7 @@ La sonde fait partie de la configuration de la ferme. Mettez à jour la ferme po
 </Tab>
 </Tabs>
 
-Pour plus de détails sur les types de sonde et leur réglage, consultez le guide [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes).
+Pour plus de détails sur les types de sonde et leur réglage, consultez le guide [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
 
 ### Étape 4 — Créer un frontend TCP <a name="step-4"></a>
 
@@ -339,8 +331,8 @@ Si le problème persiste après ces vérifications, rassemblez les journaux de c
 
 - [Démarrage rapide : déployer un Load Balancer HTTP/HTTPS](/guides/network/load-balancer-revamp/quickstart-http-https)
 - [Configurer SMTP sur un Load Balancer](/guides/network/load-balancer-revamp/configure-smtp)
-- [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).
 </content>
 </invoke>

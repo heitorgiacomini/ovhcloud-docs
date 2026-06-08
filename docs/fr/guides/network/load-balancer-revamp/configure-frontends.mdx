@@ -1,0 +1,391 @@
+---
+title: Configurer les frontends OVHcloud Load Balancer
+description: Créez et modifiez des frontends HTTP, TCP et UDP sur OVHcloud Load Balancer, définissez protocole, ports, zones, routage par défaut et certificat TLS.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+Un frontend constitue le point d'entrée d'écoute de votre OVHcloud Load Balancer. Il définit le protocole et le port sur lesquels le trafic client est accepté, les zones où il est exposé, ainsi que la ferme par défaut qui reçoit le trafic. Ce guide vous accompagne dans la création et la modification de frontends HTTP, TCP et UDP, à la fois depuis l'espace client OVHcloud et l'API OVHcloud.
+
+**Dans ce guide, vous apprendrez à :**
+
+- Créer un frontend HTTP et le router vers une ferme de serveurs.
+- Créer un frontend TCP pour des charges de travail non HTTP.
+- Créer un frontend UDP pour des charges de travail basées sur les datagrammes.
+- Configurer le protocole, les ports d'écoute et les zones d'exposition.
+- Définir l'action par défaut et router le trafic vers une ferme.
+- Associer un certificat TLS pour exposer le service en HTTPS ou SSL.
+
+> [!warning]
+> L'ordre de création des éléments est important. Une ferme de serveurs doit exister avant que vous ne créiez le frontend qui la cible, car la route par défaut du frontend pointe vers une ferme existante. Les modifications de configuration ne prennent effet qu'une fois appliquées dans chaque zone.
+
+## Prérequis
+
+- Un [OVHcloud Load Balancer](/links/network/load-balancer) dans votre compte OVHcloud
+- Accès à l'[espace client OVHcloud](/links/manager)
+- Au moins une ferme de serveurs déjà configurée, à utiliser comme route par défaut. Consultez le guide [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms).
+- Pour les frontends HTTPS ou SSL : un certificat TLS déjà ajouté au service. Consultez le guide [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates).
+- Vos identifiants d'API OVHcloud, pour le canal API. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
+
+## Introduction
+
+L'OVHcloud Load Balancer répartit le trafic entrant sur plusieurs serveurs backend. Il s'articule autour de quatre éléments : les frontends (les points d'entrée d'écoute), les fermes de serveurs (des groupes de serveurs backend), les routes (des règles qui dirigent le trafic d'un frontend vers une ferme) et les certificats TLS (qui chiffrent les connexions). Un frontend appartient à une famille de protocoles — HTTP (couche 7), TCP (couche 4) ou UDP (couche 4) — et ce choix détermine les fonctionnalités disponibles ainsi que la section de l'API utilisée. Les frontends, les fermes et les serveurs sont spécifiques à un protocole : un frontend ne peut être associé qu'à une ferme de la même famille de protocoles. Par exemple, un frontend UDP ne s'associe qu'à une ferme UDP.
+
+Pour une présentation conceptuelle, consultez le guide [Présentation d'OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer).
+
+## En pratique
+
+**Sommaire :**
+
+- [Vue d'ensemble](#overview)
+- [Créer un frontend HTTP](#http-frontend)
+- [Créer un frontend TCP](#tcp-frontend)
+- [Créer un frontend UDP](#udp-frontend)
+- [Modifier un frontend](#edit-frontend)
+- [Associer un certificat TLS](#tls-certificate)
+- [Appliquer la configuration](#apply)
+- [Limitations](#limitations)
+- [Résolution des problèmes](#troubleshooting)
+
+### Vue d'ensemble <a name="overview"></a>
+
+Un frontend accepte les connexions clientes et les transmet, via une route, à une ferme de serveurs. Le schéma ci-dessous montre où se situe le frontend dans le chemin de la requête.
+
+<img className="thumbnail" alt="Vue d'ensemble <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/configure-frontends/fig-1.fr.svg" loading="lazy" />
+
+Les paramètres suivants s'appliquent lors de la création ou de la modification d'un frontend. Les protocoles disponibles dépendent du type de frontend créé — HTTP, TCP ou UDP.
+
+| Paramètre | Description |
+|---|---|
+| Nom | Libellé facultatif qui vous aide à distinguer les frontends lorsque plusieurs sont configurés. |
+| Protocole | Le protocole d'écoute. Les frontends HTTP acceptent `HTTP` ou `HTTPS`. Les frontends TCP acceptent `TCP` ou `SSL` (TLS sur TCP). Les frontends UDP acceptent `UDP`. |
+| Port | Le port d'écoute. Utilisez `80` pour HTTP et `443` pour HTTPS. Vous pouvez saisir une liste séparée par des virgules (`80,8080`) ou une plage (`8000-8100`). |
+| Zone | La zone de disponibilité, ou toutes les zones, où le frontend est exposé. |
+| Route par défaut / Router vers une ferme | La ferme qui reçoit le trafic lorsqu'aucune autre route ne correspond. Il s'agit de l'action par défaut du frontend. |
+| Certificat TLS | Le certificat présenté aux clients sur les frontends `HTTPS` et `SSL`. |
+| IP additionnelle dédiée | Restreint le frontend à une ou plusieurs IPs additionnelles routées vers le service, au lieu de l'IP principale. |
+| IPs autorisées | Une liste d'autorisation d'adresses IPv4 sources autorisées à atteindre le frontend. |
+
+> [!TIP]
+> Choisissez un frontend HTTP pour les sites web et les API qui tirent parti des fonctionnalités de couche 7 telles que les routes HTTP, les en-têtes et les redirections. Choisissez un frontend TCP pour les protocoles orientés connexion qui ne sont pas HTTP, tels que le SMTP ou le trafic de bases de données, où le Load Balancer opère en couche 4. Choisissez un frontend UDP pour les services basés sur les datagrammes tels que le DNS, la VoIP, le jeu vidéo ou syslog, où le Load Balancer opère également en couche 4.
+
+La famille de protocoles détermine les fonctionnalités disponibles :
+
+| Protocole | Couche | Terminaison TLS | Routes / en-têtes / redirections HTTP | Persistance par cookie | Cas d'usage typiques |
+|---|---|---|---|---|---|
+| HTTP / HTTPS | Couche 7 | Oui (`HTTPS`) | Oui | Oui | Sites web, API REST |
+| TCP / SSL | Couche 4 | Oui (`SSL`) | Non | Non | SMTP, trafic de bases de données, TCP générique |
+| UDP | Couche 4 | Non | Non | Non | DNS, VoIP, jeu vidéo, syslog, services de datagrammes personnalisés |
+
+### Créer un frontend HTTP <a name="http-frontend"></a>
+
+Cette section crée un frontend HTTP qui écoute sur le port 80 et route l'ensemble du trafic vers une ferme de serveurs existante. Pour ajouter le HTTPS ultérieurement, basculez le protocole sur `HTTPS`, définissez le port sur `443` et associez un certificat TLS (voir [Associer un certificat TLS](#tls-certificate)).
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez **Network** > **Load Balancer**, puis sélectionnez votre service.
+2. Ouvrez l'onglet `Frontends` et cliquez sur `Créer un frontend`.
+3. Dans le formulaire `Créer un frontend`, sélectionnez `HTTP` comme protocole et saisissez `80` comme port.
+4. Sélectionnez la zone, ou toutes les zones, où le frontend doit être exposé.
+5. Sous `Route par défaut`, sélectionnez `Router vers une ferme` et choisissez la ferme de serveurs HTTP qui doit recevoir le trafic.
+6. Saisissez éventuellement un nom et configurez les options avancées (IP additionnelle, restriction des IP sources).
+7. Validez pour créer le frontend.
+
+{/* DRAFT: À capturer - le formulaire Créer un frontend avec le protocole HTTP, le port 80 et le sélecteur Route par défaut / Router vers une ferme */}
+
+Le nouveau frontend apparaît dans la liste sous l'onglet `Frontends`.
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Créez le frontend HTTP à l'aide de l'appel suivant :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `port` (corps) | Oui | Port d'écoute, liste ou plage. | `80` |
+| `zone` (corps) | Oui | Zone où le frontend est exposé, ou `all`. | `all` |
+| `defaultFarmId` (corps) | Non | ID de la ferme qui reçoit le trafic par défaut. | `12345` |
+| `ssl` (corps) | Non | Active la terminaison TLS sur ce frontend. | `false` |
+| `displayName` (corps) | Non | Nom lisible. | `web-http` |
+
+Pour lister les types de frontends disponibles avant d'en créer un :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableFrontendType"} />
+
+Pour lister les frontends HTTP existants :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+#### Vérifier le frontend HTTP
+
+| Vérification | Méthode | Résultat attendu |
+|---|---|---|
+| Le frontend existe | Onglet `Frontends`, ou `GET /ipLoadbalancing/{serviceName}/http/frontend` | Le frontend est listé avec le protocole HTTP et le port 80. |
+| Route par défaut définie | Ouvrez le frontend, vérifiez `Route par défaut` | `Router vers une ferme` pointe vers la ferme de serveurs visée. |
+| Joignable | Accédez à l'IP du service après avoir appliqué la configuration | Le backend répond. |
+
+### Créer un frontend TCP <a name="tcp-frontend"></a>
+
+Cette section crée un frontend TCP pour des charges de travail non HTTP. Les frontends TCP opèrent en couche 4 et transmettent les connexions brutes à une ferme de serveurs TCP. Utilisez le protocole `SSL` pour terminer le TLS sur TCP.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Dans votre service Load Balancer, ouvrez l'onglet `Frontends` et cliquez sur `Créer un frontend`.
+2. Dans le formulaire `Créer un frontend`, sélectionnez `TCP` comme protocole (ou `SSL` pour le TLS sur TCP) et saisissez le port d'écoute.
+3. Sélectionnez la zone, ou toutes les zones, où le frontend doit être exposé.
+4. Sous `Route par défaut`, sélectionnez `Router vers une ferme` et choisissez la ferme de serveurs TCP.
+5. Saisissez éventuellement un nom et configurez les options avancées.
+6. Validez pour créer le frontend.
+
+{/* DRAFT: À capturer - le formulaire Créer un frontend avec le protocole TCP et une ferme TCP sélectionnée comme route par défaut */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Créez le frontend TCP à l'aide de l'appel suivant :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `port` (corps) | Oui | Port d'écoute, liste ou plage. | `25` |
+| `zone` (corps) | Oui | Zone où le frontend est exposé, ou `all`. | `all` |
+| `defaultFarmId` (corps) | Non | ID de la ferme TCP qui reçoit le trafic par défaut. | `67890` |
+| `ssl` (corps) | Non | Active la terminaison TLS sur ce frontend. | `true` |
+| `displayName` (corps) | Non | Nom lisible. | `smtp-tcp` |
+
+Pour lister les frontends TCP existants :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+#### Vérifier le frontend TCP
+
+| Vérification | Méthode | Résultat attendu |
+|---|---|---|
+| Le frontend existe | Onglet `Frontends`, ou `GET /ipLoadbalancing/{serviceName}/tcp/frontend` | Le frontend est listé avec le protocole TCP et le port choisi. |
+| Route par défaut définie | Ouvrez le frontend, vérifiez `Route par défaut` | `Router vers une ferme` pointe vers la ferme TCP visée. |
+| Joignable | Connectez-vous à l'IP et au port du service après avoir appliqué la configuration | La connexion est transmise à la ferme. |
+
+### Créer un frontend UDP <a name="udp-frontend"></a>
+
+Cette section crée un frontend UDP pour des charges de travail basées sur les datagrammes telles que le DNS, la VoIP, le jeu vidéo ou syslog. Les frontends UDP opèrent en couche 4 et, comme les frontends TCP, transmettent le trafic à leur ferme par défaut — ici, une ferme de serveurs UDP. Ils ne prennent pas en charge la terminaison TLS, les routes HTTP, la manipulation d'en-têtes, les redirections ni la persistance par cookie.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Dans votre service Load Balancer, ouvrez l'onglet `Frontends` et cliquez sur `Créer un frontend`.
+2. Dans le formulaire `Créer un frontend`, sélectionnez `UDP` comme protocole et saisissez le port d'écoute.
+3. Sélectionnez la zone, ou toutes les zones, où le frontend doit être exposé.
+4. Sous `Route par défaut`, sélectionnez `Router vers une ferme` et choisissez la ferme de serveurs UDP.
+5. Saisissez éventuellement un nom et configurez les options avancées.
+6. Validez pour créer le frontend.
+
+{/* DRAFT: À capturer - le formulaire Créer un frontend avec le protocole UDP et une ferme UDP sélectionnée comme route par défaut */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Créez le frontend UDP à l'aide de l'appel suivant :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/udp/frontend"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `port` (corps) | Oui | Port d'écoute, liste ou plage. | `53` |
+| `zone` (corps) | Oui | Zone où le frontend est exposé, ou `all`. | `all` |
+| `defaultFarmId` (corps) | Non | ID de la ferme UDP qui reçoit le trafic par défaut. | `54321` |
+| `displayName` (corps) | Non | Nom lisible. | `dns-udp` |
+
+Pour lister les frontends UDP existants :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/frontend"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+#### Vérifier le frontend UDP
+
+| Vérification | Méthode | Résultat attendu |
+|---|---|---|
+| Le frontend existe | Onglet `Frontends`, ou `GET /ipLoadbalancing/{serviceName}/udp/frontend` | Le frontend est listé avec le protocole UDP et le port choisi. |
+| Route par défaut définie | Ouvrez le frontend, vérifiez `Route par défaut` | `Router vers une ferme` pointe vers la ferme UDP visée. |
+| Joignable | Envoyez un datagramme à l'IP et au port du service après avoir appliqué la configuration | Le datagramme est transmis à la ferme. |
+
+### Modifier un frontend <a name="edit-frontend"></a>
+
+La modification d'un frontend vous permet de changer son protocole, son port, sa zone d'exposition, sa ferme par défaut ou son certificat associé. Les modifications ne prennent effet qu'après que vous avez appliqué la configuration dans chaque zone.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Dans l'onglet `Frontends`, sélectionnez le frontend et ouvrez le formulaire `Modifier le frontend`.
+2. Mettez à jour le protocole, le port, la zone, la `Route par défaut` ou le `Certificat TLS` selon vos besoins.
+3. Validez pour enregistrer les modifications.
+
+{/* DRAFT: À capturer - le formulaire Modifier le frontend mettant en évidence les champs modifiables */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Récupérez les propriétés actuelles :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+Modifiez un frontend HTTP :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+Modifiez un frontend TCP :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend/\{frontendId\}"} />
+
+Modifiez un frontend UDP :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/udp/frontend/\{frontendId\}"} />
+
+Pour supprimer un frontend, utilisez la méthode `DELETE` sur le même chemin :
+
+<Api version="v1" section="/ipLoadbalancing" method="DELETE" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Associer un certificat TLS <a name="tls-certificate"></a>
+
+Pour exposer un service en HTTPS (frontend HTTP) ou en SSL (frontend TCP), activez le TLS sur le frontend et associez-y un certificat. Le certificat doit déjà exister sur le service.
+
+La procédure est la suivante :
+
+1. Ajoutez un certificat au service. Consultez le guide [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates).
+2. Modifiez le frontend, basculez le protocole sur `HTTPS` (famille HTTP) ou `SSL` (famille TCP) et définissez le port sur `443` pour le HTTPS.
+3. Activez le TLS sur le frontend et sélectionnez le certificat dans le champ `Certificat TLS`.
+
+> [!INFO]
+> Les certificats ajoutés au service sont disponibles pour chaque frontend sur lequel le TLS est activé. Vous n'associez pas un certificat par frontend dans une étape distincte au-delà de l'activation du TLS et de sa sélection.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Dans l'onglet `Frontends`, ouvrez le formulaire `Modifier le frontend` pour le frontend concerné.
+2. Définissez le protocole sur `HTTPS` et le port sur `443` (ou `SSL` pour un frontend TCP).
+3. Dans le champ `Certificat TLS`, sélectionnez le certificat à présenter aux clients.
+4. Validez pour enregistrer les modifications.
+
+{/* DRAFT: À capturer - le formulaire Modifier le frontend avec HTTPS sélectionné et le champ Certificat TLS */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Activez le TLS sur le frontend en définissant `ssl` sur `true` lors de sa modification :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-xxxx` |
+| `frontendId` | Oui | ID du frontend à modifier. | `98765` |
+| `ssl` (corps) | Oui | Définissez sur `true` pour activer la terminaison TLS. | `true` |
+| `port` (corps) | Non | Port d'écoute, généralement `443` pour le HTTPS. | `443` |
+
+> [!INFO]
+> Le certificat lui-même est géré via les endpoints `/ipLoadbalancing/{serviceName}/ssl`. Consultez le guide [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates) pour ajouter et sélectionner des certificats.
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+### Appliquer la configuration <a name="apply"></a>
+
+Les modifications de frontend ne sont actives qu'une fois que vous avez appliqué la configuration dans chaque zone où le service est déployé. Cela vous permet de préparer plusieurs modifications et de les publier en une seule étape.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Revenez à la page d'accueil de votre service Load Balancer.
+2. Ouvrez le menu d'actions à côté du nom du service et sélectionnez l'option permettant d'appliquer la configuration.
+3. Sélectionnez les zones à déployer, puis validez.
+
+{/* DRAFT: À capturer - l'action d'application de la configuration et la fenêtre de sélection des zones */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Rafraîchissez le service pour appliquer la configuration en attente :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+</Tab>
+</Tabs>
+
+Pour plus de détails sur l'application des modifications dans les différentes zones, consultez le guide [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones).
+
+### Limitations <a name="limitations"></a>
+
+| Limitation | Détails |
+|---|---|
+| La famille de protocoles est fixe | Un frontend HTTP utilise la section d'API `http`, un frontend TCP utilise la section `tcp` et un frontend UDP utilise la section `udp`. Vous ne pouvez pas convertir une famille en une autre — recréez plutôt le frontend. |
+| L'UDP est uniquement en couche 4 | Les frontends UDP ne prennent pas en charge la terminaison TLS, les routes HTTP, la manipulation d'en-têtes, les redirections ni la persistance par cookie. Utilisez un frontend HTTP pour ces fonctionnalités de couche 7. |
+| La ferme doit exister au préalable | La route par défaut doit pointer vers une ferme existante de la famille de protocoles correspondante. |
+| Les modifications ne sont pas immédiates | Les modifications de frontend ne prennent effet qu'après l'application de la configuration dans chaque zone. |
+| Le TLS nécessite un certificat | Activer `HTTPS` ou `SSL` sans certificat valide sur le service aboutit à un frontend non fonctionnel. |
+| Nombre maximal de frontends par service | [TODO: confirm maximum number of frontends per Load Balancer service] |
+
+### Résolution des problèmes <a name="troubleshooting"></a>
+
+| Problème | Cause possible | Solution |
+|---|---|---|
+| Frontend injoignable | Configuration non appliquée | Appliquez la configuration dans chaque zone, puis réessayez. |
+| Le frontend HTTPS renvoie une erreur | Aucun certificat sélectionné, ou certificat non ajouté au service | Ajoutez le certificat au service et sélectionnez-le dans le champ `Certificat TLS`. |
+| Impossible de sélectionner une ferme par défaut | Aucune ferme de la famille de protocoles correspondante n'existe | Créez d'abord une ferme HTTP, TCP ou UDP, puis modifiez le frontend. |
+| Connexions refusées depuis certaines sources | Une restriction d'IP source est active | Vérifiez la liste d'autorisation `IPs autorisées` sur le frontend. |
+| La sonde ou le routage se comporte de manière inattendue | Incohérence de port entre le frontend et la ferme | Vérifiez que la ferme et ses serveurs utilisent les ports attendus. Consultez le guide [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms). |
+
+## Aller plus loin
+
+- [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates)
+- [Configurer les routes HTTP](/guides/network/load-balancer-revamp/configure-http-routes)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -24,14 +24,14 @@ Utilisez la liste de contrôle de diagnostic ci-dessous pour identifier votre sy
 
 ## Introduction
 
-L'OVHcloud Load Balancer joue le rôle de reverse proxy. Il reçoit les requêtes des clients sur un frontend et les répartit entre les serveurs d'une ferme, en fonction de l'algorithme de répartition et des résultats des sondes de santé. Les clients se connectent au Load Balancer, jamais directement à vos serveurs backend.
+L'OVHcloud Load Balancer joue le rôle de reverse proxy. Il reçoit les requêtes des clients sur un frontend et les répartit entre les serveurs d'une ferme, en fonction de l'algorithme de répartition et des résultats des sondes. Les clients se connectent au Load Balancer, jamais directement à vos serveurs backend.
 
 Deux caractéristiques de cette architecture expliquent la plupart des problèmes :
 
-- Un serveur est retiré de la rotation lorsque sa sonde de santé échoue. Le trafic continue d'être acheminé vers les serveurs sains restants.
+- Un serveur est retiré de la rotation lorsque sa sonde échoue. Le trafic continue d'être acheminé vers les serveurs sains restants.
 - Les modifications de configuration ne sont pas actives tant que vous ne les avez pas appliquées. Tant que la modification n'est pas déployée, le Load Balancer continue de servir la configuration précédente.
 
-Pour en savoir plus sur ces mécanismes, consultez [Fonctionnement des sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes) et [Gérer votre Load Balancer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel).
+Pour en savoir plus sur ces mécanismes, consultez [Fonctionnement des sondes](/guides/network/load-balancer-revamp/configure-health-probes) et [Gérer votre Load Balancer via l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel).
 
 ## En pratique
 
@@ -41,7 +41,7 @@ Faites correspondre votre symptôme à la section concernée.
 
 | Symptôme | Cause probable | Section |
 |---|---|---|
-| Un serveur apparaît comme DOWN ou est retiré de la ferme | Échec de la sonde de santé | [Serveur signalé DOWN](#server-down) |
+| Un serveur apparaît comme DOWN ou est retiré de la ferme | Échec de la sonde | [Serveur signalé DOWN](#server-down) |
 | Les clients reçoivent une erreur `503 Service Unavailable` | Aucun serveur sain dans la ferme, ou aucune route ne correspond | [503 Service Unavailable](#error-503) |
 | L'établissement de la liaison TLS échoue, des avertissements de certificat apparaissent ou le HTTPS ne se charge pas | État du certificat, SNI ou incompatibilité de protocole | [Erreurs TLS et de certificat](#tls-errors) |
 | Une modification de configuration reste sans effet | Modification non appliquée (déployée) | [Configuration non appliquée](#config-not-applied) |
@@ -51,7 +51,7 @@ Faites correspondre votre symptôme à la section concernée.
 
 ### Serveur signalé DOWN
 
-Un serveur est marqué DOWN lorsque sa sonde de santé échoue. Le Load Balancer cesse alors de lui envoyer du trafic et redistribue la charge entre les serveurs restants de la ferme.
+Un serveur est marqué DOWN lorsque sa sonde échoue. Le Load Balancer cesse alors de lui envoyer du trafic et redistribue la charge entre les serveurs restants de la ferme.
 
 **Symptômes :**
 
@@ -93,7 +93,7 @@ Procédez à ces vérifications, de la plus courante à la moins courante :
 4. Si le serveur a été retiré intentionnellement pour maintenance, réactivez-le et vérifiez que la sonde réussit avant de lui acheminer du trafic.
 
 > [!TIP]
-> Une sonde doit être configurée sur la ferme pour que les vérifications de statut aient un sens. Sans sonde, le Load Balancer ne peut pas détecter un backend qui ne répond pas. Consultez [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes).
+> Une sonde doit être configurée sur la ferme pour que les vérifications de statut aient un sens. Sans sonde, le Load Balancer ne peut pas détecter un backend qui ne répond pas. Consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
 
 <a name="error-503"></a>
 
@@ -248,8 +248,8 @@ Si les étapes ci-dessus ne résolvent pas le problème :
 
 ## Aller plus loin
 
-- [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes)
 - [Surveiller la santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health)
 - [Foire aux questions](/guides/network/load-balancer-revamp/faq)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -29,13 +29,7 @@ La sécurité sur le Load Balancer se répartit en trois domaines :
 | Profil de chiffrement | Quelles versions de protocole et quels chiffrements sont acceptés | Configuration SSL |
 | Gestion des certificats | Quel certificat est présenté et comment il est renouvelé | Onglet `Certificats SSL` |
 
-```mermaid
-flowchart LR
-  Client[Client] -- "HTTPS / TLS" --> FE[Frontend du Load Balancer]
-  FE -- "Terminaison TLS" --> LB[Load Balancer]
-  LB -- "HTTP ou TLS rechiffré" --> F1[Serveur backend]
-  LB --> F2[Serveur backend]
-```
+<img className="thumbnail" alt="Vue d'ensemble diagram" src="/images/network/load-balancer-revamp/security-best-practices/fig-1.fr.svg" loading="lazy" />
 
 :::info
 OVHcloud met à votre disposition des services dont vous êtes responsable de la configuration et de la gestion. Les paramètres décrits ici vous appartiennent et c'est à vous de les appliquer et de les maintenir.
@@ -81,16 +75,7 @@ Une fois la terminaison TLS effectuée, la connexion vers le backend provient du
 - Le **protocole PROXY** ajoute en tête de connexion un en-tête transportant les adresses source et destination d'origine. Il fonctionne pour tout trafic TCP, y compris les protocoles non HTTP.
 - Les **en-têtes HTTP** tels que `X-Forwarded-For` et `X-Forwarded-Proto` transportent l'IP cliente et le schéma d'origine pour le trafic HTTP et HTTPS.
 
-```mermaid
-sequenceDiagram
-  participant C as Client (203.0.113.10)
-  participant LB as Load Balancer
-  participant B as Backend
-  C->>LB: Requête HTTPS
-  Note over LB: Terminaison TLS ici
-  LB->>B: Requête HTTP + X-Forwarded-For: 203.0.113.10
-  Note over B: Les journaux et ACL voient l'IP cliente réelle
-```
+<img className="thumbnail" alt="Informations sur le client après la terminaison diagram" src="/images/network/load-balancer-revamp/security-best-practices/fig-2.fr.svg" loading="lazy" />
 
 ## Bonnes pratiques
 
@@ -184,4 +169,4 @@ Changer le profil de chiffrement peut rompre la connectivité des clients qui ne
 - [Configurer le protocole PROXY](/guides/network/load-balancer-revamp/configure-proxy-protocol)
 - [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

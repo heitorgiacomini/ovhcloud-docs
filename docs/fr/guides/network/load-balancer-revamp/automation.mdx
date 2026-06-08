@@ -32,21 +32,7 @@ Chaque composant du Load Balancer (frontends, fermes de serveurs, serveurs backe
 
 Le schéma ci-dessous montre comment chaque interface interagit avec la configuration du Load Balancer.
 
-```mermaid
-flowchart LR
-    CP[Espace client OVHcloud]
-    TF[Provider Terraform]
-    SCRIPT[Scripts personnalisés]
-    API[API OVHcloud<br/>/ipLoadbalancing]
-    CONF[Configuration en attente]
-    LIVE[Load Balancer en production]
-
-    CP --> API
-    TF --> API
-    SCRIPT --> API
-    API --> CONF
-    CONF -->|actualisation| LIVE
-```
+<img className="thumbnail" alt="Vue d'ensemble diagram" src="/images/network/load-balancer-revamp/automation/fig-1.fr.svg" loading="lazy" />
 
 ## La surface de l'API OVHcloud
 
@@ -151,19 +137,7 @@ Les changements de configuration qui affectent le service en production sont tra
 
 Le schéma ci-dessous illustre la boucle d'automatisation typique : mettre en attente un ou plusieurs changements, déclencher une actualisation, puis interroger la tâche résultante jusqu'à ce qu'elle signale son achèvement.
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant API as /ipLoadbalancing
-    Client->>API: POST/PUT/DELETE composant
-    Note over API: Changement mis en attente
-    Client->>API: POST /{serviceName}/refresh
-    API-->>Client: Tâche créée
-    loop Jusqu'à l'achèvement de la tâche
-        Client->>API: GET /{serviceName}/task/{id}
-        API-->>Client: Statut de la tâche
-    end
-```
+<img className="thumbnail" alt="Suivre les tâches diagram" src="/images/network/load-balancer-revamp/automation/fig-2.fr.svg" loading="lazy" />
 
 :::tip
 Regroupez les changements liés et appelez l'actualisation une seule fois, après avoir mis en attente l'ensemble complet des changements. Une seule actualisation applique toute la configuration en attente, ce qui maintient le service en production cohérent et évite les états intermédiaires.

@@ -79,20 +79,7 @@ L'interface de gestion est organisée en huit onglets, chacun correspondant à u
 
 Le schéma ci-dessous montre comment les onglets sont liés au service et entre eux.
 
-```mermaid
-flowchart TD
-    LB[Service Load Balancer] --> F[Frontends]
-    LB --> SF[Fermes de serveurs]
-    LB --> SSL[Certificats SSL]
-    LB --> SUB[vRack]
-    F -->|route par défaut ou route vers une ferme| SF
-    SSL -->|terminaison TLS| F
-    SUB -->|accès privé| SF
-    LB --> STAT[Statistiques]
-    LB --> LOG[Logs]
-    LB --> TASK[Tâches]
-    LB --> QUOTA[Quota]
-```
+<img className="thumbnail" alt="Tour d'horizon des onglets <a name=tabs></a> diagram" src="/images/network/load-balancer-revamp/manage-via-control-panel/fig-1.fr.svg" loading="lazy" />
 
 #### Fermes de serveurs
 
@@ -151,18 +138,7 @@ Cette section explique comment le Load Balancer active vos modifications. Ce mod
 
 Lorsque vous créez ou modifiez une ferme, un frontend, une route ou un certificat, la modification est stockée comme une **modification en attente** plutôt qu'appliquée immédiatement. Cela vous permet de mettre en attente plusieurs modifications et de les activer ensemble en une seule opération atomique. La configuration active continue de traiter le trafic avec les paramètres précédents jusqu'à ce que vous appliquiez.
 
-```mermaid
-sequenceDiagram
-    participant Vous
-    participant CP as Espace client / API
-    participant LB as Load Balancer
-    Vous->>CP: Créer ou modifier une ferme, un frontend, une route ou un certificat
-    CP->>CP: Stocker comme une modification en attente
-    Vous->>CP: Appliquer la configuration
-    CP->>LB: Pousser les modifications en attente (rafraîchissement)
-    LB-->>CP: La tâche se termine
-    Note over LB: La nouvelle configuration traite désormais le trafic
-```
+<img className="thumbnail" alt="Le modèle d'application de configuration <a name=apply></a> diagram" src="/images/network/load-balancer-revamp/manage-via-control-panel/fig-2.fr.svg" loading="lazy" />
 
 #### Consulter les modifications en attente
 
@@ -264,4 +240,4 @@ Pour un éventail plus large de problèmes, consultez [Résolution des problème
 - [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
 - [Automatisation](/guides/network/load-balancer-revamp/automation)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

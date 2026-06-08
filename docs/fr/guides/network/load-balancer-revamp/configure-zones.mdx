@@ -1,0 +1,225 @@
+---
+title: Configurer plusieurs zones
+description: Déployez l'OVHcloud Load Balancer sur plusieurs zones de disponibilité afin d'améliorer la fiabilité et de réduire la latence pour vos utilisateurs.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+L'OVHcloud Load Balancer peut fonctionner dans une ou plusieurs zones de disponibilité. Lorsque vous commandez le service, vous sélectionnez une zone initiale et vous pouvez ajouter d'autres zones par la suite. Chaque zone dispose de son propre quota de frontends, de fermes de serveurs et de serveurs.
+
+**Ce guide explique comment ajouter une zone à votre Load Balancer, y rattacher un frontend et appliquer la configuration.**
+
+> [!INFO]
+> Travailler avec plusieurs zones revient généralement à travailler avec plusieurs régions OVHcloud, car la plupart des régions n'exposent qu'une seule zone de disponibilité. Certaines régions, comme Paris 3-AZ, exposent plusieurs zones de disponibilité.
+
+## Prérequis
+
+- Un <ManagerLink to="/">compte OVHcloud</ManagerLink> actif
+- Un accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>
+- Un service OVHcloud Load Balancer existant — consultez [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- Une bonne connaissance des zones de disponibilité — consultez [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones)
+
+## Introduction
+
+Une zone correspond à l'emplacement physique où s'exécute une instance de votre OVHcloud Load Balancer. Répartir le service sur plusieurs zones vous apporte deux bénéfices :
+
+- **Fiabilité** — si une zone devient indisponible, les zones restantes continuent de traiter le trafic.
+- **Latence** — grâce à un réseau Anycast, le Load Balancer achemine chaque requête vers les serveurs back-end les plus proches.
+
+Il existe deux topologies multizones courantes :
+
+- **Multirégion.** Les zones se trouvent dans différentes régions OVHcloud (par exemple `GRA` et `BHS`). Cette topologie assure une reprise après sinistre en cas de panne régionale ainsi que des points d'entrée à l'échelle mondiale. Vous déclarez un frontend dans chaque zone, chacun pointant vers une ferme de serveurs située dans la même zone, ce qui vous permet de contrôler quels serveurs back-end sont utilisés dans quelle zone.
+- **Multi-AZ.** Plusieurs zones de disponibilité se trouvent au sein d'une même région (par exemple Paris 3-AZ). Cette topologie assure une haute disponibilité et une tolérance aux pannes en cas de panne locale, en s'appuyant sur des connexions à faible latence entre les zones.
+
+<img className="thumbnail" alt="Introduction diagram" src="/images/network/load-balancer-revamp/configure-zones/fig-1.fr.svg" loading="lazy" />
+
+> [!warning]
+> En raison de restrictions techniques, lorsqu'un Load Balancer utilise deux zones dont l'une se trouve dans une région APAC et l'autre non, le trafic est acheminé en priorité par la zone non APAC, même lorsque le service est hors service dans cette zone. Ce comportement est spécifique aux configurations intercontinentales impliquant des zones APAC. Nous vous déconseillons cette configuration.
+
+Pour consulter la liste complète des régions OVHcloud, reportez-vous à la page [régions de l'infrastructure mondiale](https://www.ovhcloud.com/en-gb/about-us/global-infrastructure/regions/).
+
+## En pratique
+
+La configuration d'une zone supplémentaire se déroule en deux étapes : commander la zone, puis y rattacher un frontend et appliquer la configuration.
+
+### Étape 1 — Ajouter une zone
+
+L'ajout d'une zone génère un bon de commande que vous devez régler avant que la zone ne devienne disponible.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
+2. Ouvrez la section de gestion des zones du service et lancez l'ajout d'une zone de disponibilité.
+3. Sélectionnez la ou les zones que vous souhaitez commander, puis confirmez.
+4. Réglez le bon de commande généré. La zone devient disponible une fois la commande payée.
+
+{/* DRAFT: À capturer — le panneau d'ajout de zone de disponibilité dans le nouvel espace client (sélection de la zone + confirmation de commande) */}
+
+> [!INFO]
+> Vous pouvez consulter le quota par zone de votre service dans l'onglet `Quota`.
+
+</Tab>
+<Tab label="API OVHcloud">
+
+La commande d'une zone est une opération de commande : créez un panier, ajoutez l'option de zone correspondant à votre service, puis validez et réglez la commande obtenue.
+
+1. Créez un panier.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart"} />
+
+[UNVERIFIED: /order endpoints are outside the cached ipLoadbalancing scope — confirm method and path against the OVHcloud API]
+
+Notez l'identifiant de panier renvoyé dans la réponse ; les appels suivants en ont besoin.
+
+2. Associez le panier à votre compte OVHcloud.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/assign"} />
+
+[UNVERIFIED: confirm /order/cart/\{cartId\}/assign against the OVHcloud API]
+
+3. Listez les options de service disponibles pour votre Load Balancer afin de trouver l'entrée correspondant à la zone souhaitée.
+
+<Api version="v1" section="/order" method="GET" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
+
+[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
+
+4. Ajoutez l'option choisie au panier.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
+
+[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
+
+5. Validez le panier pour générer la commande.
+
+<Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/checkout"} />
+
+[UNVERIFIED: confirm /order/cart/\{cartId\}/checkout against the OVHcloud API]
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `cartId` | Oui | Identifiant du panier de commande renvoyé par l'appel de création du panier. | `abcd1234-5678` |
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3d4` |
+
+Réglez le bon de commande une fois qu'il est généré. La zone devient disponible après confirmation du paiement.
+
+> [!INFO]
+> Le endpoint `GET /ipLoadbalancing/{serviceName}/availableZones` est déprécié et ne doit pas être utilisé pour découvrir les zones commandables.
+
+</Tab>
+</Tabs>
+
+### Étape 2 — Rattacher un frontend à la zone
+
+Une fois la commande de la zone finalisée, associez-la à un frontend afin que le trafic puisse être traité depuis cette zone.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Dans votre service Load Balancer, ouvrez l'onglet `Frontends`.
+2. Cliquez sur `Créer un frontend` pour ajouter un nouveau frontend, ou ouvrez un frontend existant pour le modifier.
+3. Sélectionnez la zone nouvellement ajoutée pour le frontend. Pour déployer la même configuration sur toutes les zones souscrites plutôt que sur une zone spécifique, sélectionnez la zone spéciale `all`, ce qui évite de dupliquer la configuration pour chaque zone.
+4. Enregistrez le frontend en confirmant la fenêtre de création ou de modification.
+
+{/* DRAFT: À capturer — la fenêtre Créer un frontend montrant le sélecteur de zone et l'option all */}
+
+> [!TIP]
+> Utilisez la zone `all` lorsque toutes les zones partagent la même logique de routage. Utilisez une zone spécifique lorsque vous avez besoin de serveurs back-end différents par zone, comme dans une topologie multirégion.
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Créez un frontend rattaché à la zone cible. La zone est transmise via la propriété `zone` du frontend.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3d4` |
+| `zone` (corps) | Oui | Zone dans laquelle le frontend est déployé. Utilisez `all` pour déployer sur toutes les zones souscrites. | `gra` |
+| `port` (corps) | Oui | Port sur lequel le frontend écoute. | `80` |
+
+Pour un frontend TCP, utilisez le endpoint équivalent `POST /ipLoadbalancing/{serviceName}/tcp/frontend`.
+
+</Tab>
+</Tabs>
+
+### Étape 3 — Appliquer la configuration
+
+Les modifications apportées aux frontends et aux fermes restent en attente jusqu'à ce que vous les appliquiez, et la nouvelle zone ne traite pas de trafic avant cela.
+
+<Tabs>
+<Tab label="Espace client">
+
+Après l'enregistrement du frontend, une bannière indique que la configuration n'est pas encore appliquée. Cliquez sur `Appliquer les modifications` dans la bannière pour déployer les modifications en attente.
+
+{/* DRAFT: À capturer — la bannière de configuration en attente avec l'action Appliquer les modifications */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Appliquez toutes les modifications de configuration en attente avec l'appel suivant.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3d4` |
+
+Pour vérifier ce qui sera déployé avant d'appliquer, listez d'abord les modifications en attente :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+</Tab>
+</Tabs>
+
+### Consulter le quota par zone
+
+Chaque zone dispose de son propre quota de frontends, de fermes et de serveurs. Consultez le quota d'une zone avant d'y ajouter davantage de ressources.
+
+<Tabs>
+<Tab label="Espace client">
+
+Ouvrez l'onglet `Quota` de votre service Load Balancer pour voir l'utilisation des ressources et les limites de chaque zone souscrite.
+
+{/* DRAFT: À capturer — l'onglet Quota listant l'utilisation par zone */}
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Listez le quota de toutes les zones :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota"} />
+
+Obtenez le quota d'une seule zone :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3d4` |
+| `zone` | Oui | Zone dont vous souhaitez consulter le quota. | `gra` |
+
+[TODO: confirm the maximum number of frontends, farms and servers per zone]
+
+</Tab>
+</Tabs>
+
+> [!TIP]
+> Pour gérer cette configuration sous forme de code, utilisez le provider Terraform d'OVHcloud.
+> [UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+## Aller plus loin
+
+- [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones)
+- [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Architecture multizone résiliente](/guides/network/load-balancer-revamp/architecture-resilient-multi-zone)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).
+</content>
+</invoke>

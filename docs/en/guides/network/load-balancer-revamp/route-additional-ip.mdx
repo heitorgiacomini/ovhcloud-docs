@@ -54,7 +54,7 @@ First, move the Additional IP to the Load Balancer service:
 | `to` (body) | Yes | The service name of the target Load Balancer. | `loadbalancer-a1b2c3d4` |
 
 > [!INFO]
-> The `/ip/{ip}/move` endpoint is part of the `/ip` API section. Confirm the exact parameters in the [OVHcloud API console](/links/api) before running the call. [UNVERIFIED: /ip/{ip}/move - endpoint not present in the SOT cache, confirm path and body]
+> The `/ip/{ip}/move` endpoint is part of the `/ip` API section. Confirm the exact parameters in the [OVHcloud API console](/links/api) before running the call. [UNVERIFIED: /ip/\{ip\}/move - endpoint not present in the SOT cache, confirm path and body]
 
 Then list the Additional IPs already routed to your Load Balancer to confirm the association:
 
@@ -118,7 +118,7 @@ Or update an existing frontend to attach the dedicated Additional IPs.
 | `dedicatedIpfo` (body) | Yes | The list of dedicated Additional IPs to attach to the frontend. | `["203.0.113.42"]` |
 
 > [!INFO]
-> A UDP frontend variant exists in the Control Panel but is not present in the SOT cache. [UNVERIFIED: /ipLoadbalancing/{serviceName}/udp/frontend - confirm the UDP frontend endpoints in the API console]
+> A UDP frontend variant exists in the Control Panel but is not present in the SOT cache. [UNVERIFIED: /ipLoadbalancing/\{serviceName\}/udp/frontend - confirm the UDP frontend endpoints in the API console]
 
 After the call succeeds, apply the configuration as described in [Apply the configuration](#apply-the-configuration).
 

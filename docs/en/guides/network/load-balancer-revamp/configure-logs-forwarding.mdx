@@ -64,14 +64,7 @@ This section explains how logs forwarding works, the structure of the forwarded 
 
 Forwarding is enabled per Load Balancer and per log kind (`tcp` or `http`). Each enablement creates a subscription that links your Load Balancer to a single Logs Data Platform data stream. The following diagram shows the end-to-end flow.
 
-```mermaid
-flowchart LR
-    Client[Client] --> LB[OVHcloud Load Balancer]
-    LB --> Backend[Backend servers]
-    LB -- access logs --> Sub[Log subscription]
-    Sub --> Stream[LDP data stream]
-    Stream --> Graylog[Graylog web UI / OpenSearch]
-```
+<img className="thumbnail" alt="How forwarding works <a name=how-it-works></a> diagram" src="/images/network/load-balancer-revamp/configure-logs-forwarding/fig-1.svg" loading="lazy" />
 
 | Term | Meaning |
 |---|---|

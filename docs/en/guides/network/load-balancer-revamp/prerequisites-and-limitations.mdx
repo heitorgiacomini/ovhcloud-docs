@@ -47,14 +47,7 @@ For protocol-specific configuration, see [Configure frontends](/guides/network/l
 
 A Load Balancer configuration is built from three object types. Understanding how they relate shows where the technical limits below apply.
 
-```mermaid
-flowchart LR
-    Client([Client traffic]) --> FE[Frontend\nprotocol + listening port]
-    FE --> FARM[Server farm\nbalancing + health probe]
-    FARM --> S1[Server 1]
-    FARM --> S2[Server 2]
-    FARM --> S3[Server n]
-```
+<img className="thumbnail" alt="Core components and their relationships diagram" src="/images/network/load-balancer-revamp/prerequisites-and-limitations/fig-1.svg" loading="lazy" />
 
 | Component | Role | Manager tab |
 |---|---|---|

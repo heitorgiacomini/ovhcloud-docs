@@ -1,0 +1,373 @@
+---
+title: Configurer des routes HTTP
+description: Créez des routes HTTP avec des règles de correspondance et des actions pour diriger, rediriger ou rejeter dynamiquement le trafic sur votre OVHcloud Load Balancer.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+
+## Objectif
+
+Par défaut, un frontend OVHcloud Load Balancer transmet tout le trafic entrant à sa ferme de serveurs par défaut. Les routes HTTP vous permettent de diriger, rediriger ou rejeter les requêtes de façon dynamique, en fonction de critères tels que le chemin de la requête, l'hôte, une méthode HTTP, un en-tête ou un cookie.
+
+Ce guide présente le modèle de routes, l'API qui l'expose et plusieurs scénarios de configuration concrets.
+
+**Dans ce guide, vous apprendrez à :**
+
+- Comprendre comment les routes, les règles et les actions sont évaluées.
+- Créer une route HTTP et y attacher des règles de correspondance.
+- Appliquer des schémas courants : forcer le HTTPS, le routage par hôte virtuel, la réservation par IP et le routage par méthode.
+
+:::warning
+La gestion des routes est disponible **uniquement via l'API OVHcloud**. L'<ManagerLink to="/">espace client OVHcloud</ManagerLink> ne permet pas de créer des routes. L'espace client sert à appliquer (redéployer) la configuration sur la zone concernée une fois les routes créées.
+:::
+
+## Prérequis
+
+- Un OVHcloud Load Balancer sur une offre autorisant la création de routes. Consultez le guide [Prérequis et limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations).
+- Avoir accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> pour appliquer la configuration.
+- Des identifiants API OVHcloud (Application Key, Application Secret, Consumer Key). Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
+- Au moins un frontend HTTP et les fermes de serveurs vers lesquelles vous comptez router le trafic. Consultez les guides [Configurer des frontends](/guides/network/load-balancer-revamp/configure-frontends) et [Configurer des fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms).
+
+## Introduction
+
+L'OVHcloud Load Balancer répartit le trafic entrant entre des serveurs backend regroupés en fermes, derrière des frontends qui écoutent sur un protocole et un port donnés. Une **route** ajoute une logique conditionnelle par-dessus ce mécanisme : une action exécutée lorsqu'une ou plusieurs conditions sont remplies. Les routes sont évaluées pour les protocoles **http** et **tcp** ; ce guide se concentre sur les routes HTTP, qui sont les plus expressives.
+
+## En pratique
+
+**Sommaire :**
+
+- [Vue d'ensemble : routes, règles et actions](#overview)
+- [Règles et actions disponibles](#available)
+- [Créer une route et y attacher une règle](#create)
+- [Scénario A : forcer le HTTPS pour les pages de connexion](#scenario-a)
+- [Scénario B : router par domaine (hôte virtuel)](#scenario-b)
+- [Scénario C : réserver un frontend à un seul domaine](#scenario-c)
+- [Scénario D : router par URL et méthode HTTP](#scenario-d)
+- [Appliquer la configuration](#apply)
+- [Référence de l'API](#reference)
+- [Limitations](#limitations)
+- [Résolution des problèmes](#troubleshooting)
+
+### Vue d'ensemble : routes, règles et actions <a name="overview"></a>
+
+Assimilez ce modèle avant de créer la moindre route.
+
+Une route se compose de deux parties :
+
+- **Des règles** — les conditions à évaluer (par exemple, *l'URL commence par `/wp-login`*).
+- **Une action** — ce qu'il faut faire lorsque toutes les règles sont remplies (par exemple, *rediriger vers la version HTTPS*).
+
+Un exemple concret : *SI l'URL commence par `/wp-login` ET que la connexion arrive sur un frontend HTTP, ALORS rediriger vers la version HTTPS de la page.* Les deux conditions sont des règles ; la redirection est l'action.
+
+Toutes les actions sont **finales** : une fois les règles d'une route validées et son action exécutée, l'évaluation s'arrête.
+
+Gardez ces relations à l'esprit :
+
+- Une route peut comporter plusieurs règles. **Toutes** les règles d'une route doivent correspondre pour que son action s'exécute.
+- Une route ne peut être attachée qu'à un seul frontend.
+- Un frontend peut comporter plusieurs routes ; leur ordre d'évaluation dépend du type et du poids.
+
+Lorsqu'une requête arrive, les routes sont évaluées dans cet ordre :
+
+1. D'abord les routes **reject** et **redirect**, puis les routes **farm**.
+2. Au sein de chaque catégorie, les routes sont évaluées par **ordre de poids croissant**.
+3. Si deux routes ont le même poids, la **route créée en premier** est évaluée en premier.
+4. Seule la **première action correspondante** est exécutée.
+
+<img className="thumbnail" alt="Vue d'ensemble : routes, règles et actions <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/configure-http-routes/fig-1.fr.svg" loading="lazy" />
+
+Les trois types d'actions sont :
+
+| Action | Description |
+|---|---|
+| `redirect` | Redirige la requête vers `action.target` avec le statut HTTP indiqué dans `action.status` (301, 302, 303, 307, 308). Aucune ferme ne reçoit la requête. |
+| `reject` | Rejette la requête avec le statut HTTP indiqué dans `action.status` (200, 400, 403, 405, 408, 429, 500, 502, 503, 504). Aucune ferme ne reçoit la requête. |
+| `farm` | Route la requête vers la ferme dont l'identifiant figure dans `action.target`. La ferme doit être du même type que le frontend. |
+
+### Règles et actions disponibles <a name="available"></a>
+
+Avant toute configuration, interrogez la liste à jour des actions et règles prises en charge pour votre service. Ces appels renvoient les noms de champs valides, les comparateurs et les types de valeurs attendus. Si un champ est `null`, aucune valeur n'est attendue ; une valeur invalide renvoie une erreur de validation.
+
+
+Lister les actions disponibles :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableRouteActions"} />
+
+Lister les règles de correspondance disponibles :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableRouteRules"} />
+
+Les valeurs du champ `field` d'une règle sur lesquelles vous pouvez établir une correspondance sont :
+
+| `field` | Signification | `hasSubField` |
+|---|---|---|
+| `source` | Adresse IP source ou liste d'adresses (`a.b.c.d/z`). | Non |
+| `protocol` | Protocole de la requête (`http` ou `https`). | Non |
+| `method` | Méthode HTTP (`GET`, `HEAD`, `POST`, `PUT`, `DELETE`, `OPTIONS`, `CONNECT`, `TRACE`). | Non |
+| `host` | Nom de domaine (vhost), sans le port. | Non |
+| `uri` | Chemin de la requête, entre le premier `/` et le premier `?`. | Non |
+| `param` | Paramètre de requête HTTP (après le premier `?`). | Oui |
+| `header` | Un en-tête HTTP. `subField` correspond au nom de l'en-tête. | Oui |
+| `cookie` | Un cookie HTTP. `subField` correspond au nom du cookie. | Oui |
+
+Les comparateurs `match` sont :
+
+| `match` | Signification |
+|---|---|
+| `exists` | La propriété doit exister (en-tête ou cookie). |
+| `is` | La propriété doit être exactement égale à `pattern`. |
+| `in` | La propriété doit figurer dans la liste séparée par des virgules de `pattern`. |
+| `contains` | La propriété doit contenir `pattern`. |
+| `startswith` | La propriété doit commencer par `pattern`. |
+| `endswith` | La propriété doit se terminer par `pattern`. |
+| `matches` | La propriété doit correspondre à l'expression régulière contenue dans `pattern`. |
+
+> [!TIP]
+> Définissez `negate` sur `true` dans une règle pour inverser le résultat du comparateur. Par exemple, `host is www.example.com` avec `negate: true` correspond à tous les hôtes **sauf** `www.example.com`.
+
+### Créer une route et y attacher une règle <a name="create"></a>
+
+Cette section couvre les deux appels sur lesquels reposent tous les scénarios : créer la route, puis attacher une règle. L'ensemble des opérations sur les routes et les règles est détaillé dans la [Référence de l'API](#reference).
+
+Commencez par créer la route. Seul `action.type` est obligatoire.
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/route"} />
+
+| Paramètre | Obligatoire | Description |
+|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. |
+| `action.type` | Oui | `redirect`, `reject` ou `farm`. |
+| `action.status` | Non | Code de statut HTTP pour les actions `redirect` et `reject`. |
+| `action.target` | Non | Identifiant de la ferme cible pour les actions `farm`, ou le motif d'URL pour les actions `redirect`. |
+| `displayName` | Non | Nom d'affichage de la route (255 caractères maximum). |
+| `frontendId` | Non | Identifiant numérique du frontend HTTP auquel attacher la route. |
+| `weight` | Non | Priorité de la route, de 1 (évaluée en premier) à 255 (évaluée en dernier). |
+
+L'appel renvoie la route créée. Notez son `routeId` — vous en avez besoin pour attacher des règles.
+
+Attachez ensuite une règle à la route :
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule"} />
+
+| Paramètre | Obligatoire | Description |
+|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. |
+| `routeId` | Oui | Identifiant numérique de la route créée ci-dessus. |
+| `field` | Oui | Propriété HTTP sur laquelle établir la correspondance (voir le tableau dans [Règles et actions disponibles](#available)). |
+| `match` | Oui | Comparateur à appliquer. |
+| `subField` | Non | Nom de l'en-tête pour les règles `header`, ou nom du cookie pour les règles `cookie`. |
+| `negate` | Non | Inverse le résultat du comparateur. |
+| `pattern` | Non | Argument du comparateur. |
+
+{/* DRAFT: À capturer — la console API OVHcloud montrant un appel POST /http/route et sa réponse contenant le routeId */}
+
+> [!INFO]
+> Vous pouvez créer jusqu'à 50 routes par service et attacher jusqu'à 5 règles par route.
+
+### Scénario A : forcer le HTTPS pour les pages de connexion <a name="scenario-a"></a>
+
+Utilisez ce scénario pour migrer un site vers le HTTPS section par section, en commençant par les pages qui transmettent des identifiants. Par défaut, les URL de connexion WordPress commencent par `/wp-login`.
+
+Vous avez besoin d'une route avec une action `redirect` et d'une règle qui correspond aux URL commençant par `/wp-login`.
+
+Créez la route :
+
+| Champ | Valeur |
+|---|---|
+| `serviceName` | Identifiant de votre service Load Balancer. |
+| `frontendId` | Identifiant de votre frontend HTTP. |
+| `displayName` | `Redirect WordPress login to HTTPS` |
+| `action.type` | `redirect` |
+| `action.status` | `302` pour une redirection temporaire, `301` pour une redirection permanente. |
+| `action.target` | `https://\${host}\${path}\${arguments}` pour conserver le même hôte, le même chemin et les mêmes arguments. |
+
+Attachez la règle :
+
+| Champ | Valeur |
+|---|---|
+| `routeId` | Identifiant de la route créée ci-dessus. |
+| `field` | `uri` |
+| `match` | `startswith` |
+| `negate` | `false` |
+| `pattern` | `/wp-login` |
+
+:::warning
+Pour ajouter une autre redirection, créez une route et une règle distinctes. Si vous ajoutez une seconde règle à la même route, **les deux** règles doivent correspondre. Par exemple, `startswith /wp-login` et `startswith /wp-admin` sur la même route ne peuvent jamais être vraies en même temps, si bien que la redirection ne se déclencherait jamais.
+:::
+
+La cible de la `redirect` peut contenir des variables : `protocol`, `domain`, `host`, `port`, `path` et `arguments`. Par exemple, `${protocol}://new.example.com\${path}\${arguments}` redirige vers un nouveau domaine tout en conservant le chemin et la chaîne de requête.
+
+### Scénario B : router par domaine (hôte virtuel) <a name="scenario-b"></a>
+
+Utilisez ce scénario pour héberger plusieurs sites derrière un seul frontend et choisir la ferme de serveurs en fonction de l'en-tête `Host`, à la manière des hôtes virtuels Apache.
+
+Vous avez besoin d'une route par hôte virtuel, chacune avec une action `farm` et une règle correspondant au domaine. Pour router `www.example.com` :
+
+Créez la route :
+
+| Champ | Valeur |
+|---|---|
+| `serviceName` | Identifiant de votre service Load Balancer. |
+| `frontendId` | Identifiant de votre frontend. |
+| `displayName` | `VHost - www.example.com` |
+| `action.type` | `farm` |
+| `action.target` | Identifiant de la ferme vers laquelle diriger ce domaine. |
+
+Attachez la règle :
+
+| Champ | Valeur |
+|---|---|
+| `routeId` | Identifiant de la route créée ci-dessus. |
+| `field` | `host` |
+| `match` | `is` |
+| `negate` | `false` |
+| `pattern` | `www.example.com` |
+
+### Scénario C : réserver un frontend à un seul domaine <a name="scenario-c"></a>
+
+Utilisez ce scénario pour dédier une IP additionnelle et un frontend à un seul domaine et empêcher d'autres domaines d'atteindre son backend. Comme chaque certificat est disponible sur chaque frontend, un tiers qui pointerait son domaine vers votre IP atteindrait autrement votre ferme.
+
+Utilisez une route `reject` avec une règle qui correspond à tout hôte **autre que** le domaine autorisé (notez `negate: true`). Pour réserver un frontend à `www.example.com` :
+
+Créez la route :
+
+| Champ | Valeur |
+|---|---|
+| `serviceName` | Identifiant de votre service Load Balancer. |
+| `frontendId` | Identifiant de votre frontend. |
+| `displayName` | `Restrict to www.example.com` |
+| `action.type` | `reject` |
+| `action.status` | `403` |
+
+Attachez la règle :
+
+| Champ | Valeur |
+|---|---|
+| `routeId` | Identifiant de la route créée ci-dessus. |
+| `field` | `host` |
+| `match` | `is` |
+| `negate` | `true` |
+| `pattern` | `www.example.com` |
+
+### Scénario D : router par URL et méthode HTTP <a name="scenario-d"></a>
+
+Utilisez ce scénario pour envoyer des requêtes spécifiques vers une ferme dédiée, par exemple pour tenir à l'écart de votre ferme de production des requêtes analytiques `POST` gourmandes en données.
+
+Vous avez besoin d'une route avec une action `farm` et de **2** règles : une qui correspond à la méthode, une qui correspond au chemin. Les deux règles doivent correspondre.
+
+Créez la route :
+
+| Champ | Valeur |
+|---|---|
+| `serviceName` | Identifiant de votre service Load Balancer. |
+| `frontendId` | Identifiant de votre frontend. |
+| `displayName` | `Route batch analytics to a dedicated farm` |
+| `action.type` | `farm` |
+| `action.target` | Identifiant de la ferme dédiée. |
+
+Attachez 2 règles à la même route :
+
+| Champ | Règle 1 (méthode) | Règle 2 (chemin) |
+|---|---|---|
+| `routeId` | Identifiant de la route ci-dessus. | Identique à la règle 1. |
+| `field` | `method` | `uri` |
+| `match` | `is` | `matches` |
+| `negate` | `false` | `false` |
+| `pattern` | `POST` | `^/.*/batch-analytics$` |
+
+> [!TIP]
+> Les expressions régulières (`matches`) sont puissantes mais plus lentes à évaluer. Lorsqu'un comparateur simple tel que `startswith` ou `is` produit le même résultat, privilégiez-le pour de meilleures performances.
+
+### Appliquer la configuration <a name="apply"></a>
+
+Les routes et les règles ne deviennent actives qu'une fois la configuration appliquée (redéployée) sur la zone concernée. Créer, modifier ou supprimer une route ou une règle nécessite un redéploiement.
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
+2. Appliquez la configuration en attente sur la zone concernée.
+
+{/* DRAFT: À vérifier — confirmer le bouton/libellé exact utilisé dans manager-beta pour appliquer/redéployer une zone (absent de la cartographie manager en cache) */}
+{/* DRAFT: À capturer — l'écran de l'espace client utilisé pour appliquer la configuration en attente sur une zone */}
+
+Vous pouvez consulter les modifications en attente via l'API avant de les appliquer :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources] — les routes et les règles peuvent également être gérées de façon déclarative avec le provider Terraform OVHcloud.
+
+### Référence de l'API <a name="reference"></a>
+
+Les routes TCP et HTTP se configurent de la même manière ; remplacez `http` par `tcp` dans les chemins pour le TCP. Certains champs sont spécifiques au HTTP.
+
+#### Opérations sur les routes
+
+Lister les routes définies pour un service. La liste est renvoyée dans l'ordre d'évaluation et peut être filtrée par `frontendId` :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route"} />
+
+Consulter les détails d'une route :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}"} />
+
+Modifier une route :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}"} />
+
+Supprimer une route. La suppression d'une route supprime également toutes ses règles, vous n'avez donc pas besoin de les retirer individuellement :
+
+<Api version="v1" section="/ipLoadbalancing" method="DELETE" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}"} />
+
+#### Opérations sur les règles
+
+Lister les règles attachées à une route :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule"} />
+
+Consulter les détails d'une règle :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule/\{ruleId\}"} />
+
+Modifier une règle :
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule/\{ruleId\}"} />
+
+Supprimer une règle :
+
+<Api version="v1" section="/ipLoadbalancing" method="DELETE" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule/\{ruleId\}"} />
+
+#### Appels de découverte
+
+Lister toutes les routes (HTTP et TCP) avec leur identifiant, leur nom d'affichage et leur type. Cet appel est conçu pour simplifier l'auto-complétion :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedRoutes"} />
+
+### Limitations <a name="limitations"></a>
+
+| Limitation | Détails |
+|---|---|
+| Canal | La gestion des routes et des règles est disponible uniquement via l'API OVHcloud. |
+| Routes par service | Jusqu'à 50 routes par service Load Balancer. |
+| Règles par route | Jusqu'à 5 règles par route. |
+| Finalité des actions | Toutes les actions sont finales ; la première action correspondante arrête l'évaluation. |
+| Longueur du `pattern` `source` | Le `pattern` de la règle `source` est limité à 255 caractères. |
+| Redéploiement requis | Les modifications ne prennent effet qu'après application de la configuration sur la zone. |
+| Dépendance à l'offre | La création de routes nécessite une offre Load Balancer compatible. Consultez le guide [Prérequis et limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations). |
+
+### Résolution des problèmes <a name="troubleshooting"></a>
+
+| Problème | Cause possible | Solution |
+|---|---|---|
+| Une route ne se déclenche jamais | Deux règles sur la même route ne peuvent pas être vraies en même temps (par exemple, `startswith /wp-login` et `startswith /wp-admin`). | Séparez les conditions mutuellement exclusives dans des routes distinctes, avec une seule règle chacune. |
+| Les modifications ne prennent pas effet | La configuration n'a pas été appliquée sur la zone. | Appliquez (redéployez) la configuration, puis vérifiez avec `GET /pendingChanges`. |
+| Erreur de validation sur une règle | Une valeur `field`, `match` ou `pattern` non prise en charge a été envoyée. | Interrogez `GET /availableRouteRules` pour connaître les valeurs valides et renvoyez la requête. |
+| Action `farm` rejetée | Le type de la ferme cible ne correspond pas au type du frontend. | Utilisez une ferme du même protocole (`http` pour un frontend HTTP). |
+| Le trafic atteint la ferme par défaut | Une route de priorité supérieure a correspondu en premier, ou aucune route n'a correspondu. | Vérifiez les poids et l'ordre d'évaluation avec `GET /http/route` (renvoyé dans l'ordre d'évaluation). |
+
+## Aller plus loin
+
+- [Configurer des fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Configurer des frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Configurer des redirections](/guides/network/load-balancer-revamp/configure-redirections)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

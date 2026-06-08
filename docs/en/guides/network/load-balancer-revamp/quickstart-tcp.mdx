@@ -60,15 +60,7 @@ In a TCP setup, three components work together:
 
 The diagram below shows how a TCP connection flows from a client through the Load Balancer to a backend server. The frontend accepts the connection on a public port and hands it to the default farm, which selects a healthy backend using the balancing algorithm.
 
-```mermaid
-flowchart LR
-    Client([Client]) -->|TCP connection| FE[TCP frontend\npublic port]
-    FE --> Farm[TCP server farm\nbalancing algorithm]
-    Probe[Health probe] -. checks .-> S1
-    Probe -. checks .-> S2
-    Farm --> S1[Backend server 1]
-    Farm --> S2[Backend server 2]
-```
+<img className="thumbnail" alt="Overview <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/quickstart-tcp/fig-1.svg" loading="lazy" />
 
 The following table lists the key parameters you will set in this guide.
 

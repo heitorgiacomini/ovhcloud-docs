@@ -36,14 +36,7 @@ There are two common multi-zone topologies:
 - **Multi-region.** Zones sit in different OVHcloud regions (for example `GRA` and `BHS`). This provides disaster recovery against a regional outage and worldwide entry points. You declare a frontend in each zone, each pointing to a server farm in the same zone, so you control which backend servers are used in which zone.
 - **Multi-AZ.** Several availability zones sit within the same region (for example Paris 3-AZ). This provides high availability and fault tolerance against a local outage, using low-latency connections between zones.
 
-```mermaid
-flowchart TB
-    Client([Client traffic]) --> Anycast{{Anycast network}}
-    Anycast --> ZA[Zone GRA<br/>frontend + farm]
-    Anycast --> ZB[Zone BHS<br/>frontend + farm]
-    ZA --> SA[(Backend servers<br/>Gravelines)]
-    ZB --> SB[(Backend servers<br/>Beauharnois)]
-```
+<img className="thumbnail" alt="Introduction diagram" src="/images/network/load-balancer-revamp/configure-zones/fig-1.svg" loading="lazy" />
 
 > [!warning]
 > Due to technical restrictions, when a Load Balancer uses two zones where one is in an APAC region and the other is not, traffic is preferentially routed through the non-APAC zone first, even when the service is out of order in that zone. This behaviour is specific to cross-continent setups involving APAC zones. We do not recommend this configuration.
@@ -88,25 +81,25 @@ Note the cart ID returned in the response; the following calls require it.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/assign"} />
 
-[UNVERIFIED: confirm /order/cart/{cartId}/assign against the OVHcloud API]
+[UNVERIFIED: confirm /order/cart/\{cartId\}/assign against the OVHcloud API]
 
 3. List the service options available for your Load Balancer to find the entry that matches the desired zone.
 
 <Api version="v1" section="/order" method="GET" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
 
-[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/{serviceName} against the OVHcloud API]
+[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
 
 4. Add the chosen option to the cart.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cartServiceOption/ipLoadbalancing/\{serviceName\}"} />
 
-[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/{serviceName} against the OVHcloud API]
+[UNVERIFIED: confirm /order/cartServiceOption/ipLoadbalancing/\{serviceName\} against the OVHcloud API]
 
 5. Check out the cart to generate the order.
 
 <Api version="v1" section="/order" method="POST" route={"/order/cart/\{cartId\}/checkout"} />
 
-[UNVERIFIED: confirm /order/cart/{cartId}/checkout against the OVHcloud API]
+[UNVERIFIED: confirm /order/cart/\{cartId\}/checkout against the OVHcloud API]
 
 | Parameter | Required | Description | Example |
 |---|---|---|---|

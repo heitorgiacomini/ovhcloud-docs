@@ -92,14 +92,7 @@ Certain events are excluded from the availability calculation and do not count a
 
 The Load Balancer is designed with redundancy so that the service can continue to distribute traffic when a single component fails. The SLA is the contractual expression of that design.
 
-```mermaid
-flowchart LR
-    A[Committed availability target] --> B[Measured over a period]
-    B --> C{Target met?}
-    C -- Yes --> D[No credit]
-    C -- No --> E[Service credit applied]
-    F[Exclusions] -.removed from.-> B
-```
+<img className="thumbnail" alt="How availability relates to the architecture diagram" src="/images/network/load-balancer-revamp/slas/fig-1.svg" loading="lazy" />
 
 To design for high availability, combine the SLA with the resilience features of the service: deploy across availability zones, configure health probes, and keep enough healthy backends to absorb the loss of one. For the architecture details, see the guides linked below.
 

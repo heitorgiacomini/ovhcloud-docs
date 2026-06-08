@@ -32,21 +32,7 @@ Every component of the Load Balancer — frontends, server farms, backend server
 
 The diagram below shows how each interface interacts with the Load Balancer configuration.
 
-```mermaid
-flowchart LR
-    CP[OVHcloud Control Panel]
-    TF[Terraform provider]
-    SCRIPT[Custom scripts]
-    API[OVHcloud API<br/>/ipLoadbalancing]
-    CONF[Pending configuration]
-    LIVE[Running Load Balancer]
-
-    CP --> API
-    TF --> API
-    SCRIPT --> API
-    API --> CONF
-    CONF -->|refresh| LIVE
-```
+<img className="thumbnail" alt="Overview diagram" src="/images/network/load-balancer-revamp/automation/fig-1.svg" loading="lazy" />
 
 ## The OVHcloud API surface
 
@@ -151,19 +137,7 @@ Configuration changes that affect the running service are processed as tasks. Us
 
 The diagram below shows the typical automation loop: stage one or more changes, trigger a refresh, then poll the resulting task until it reports completion.
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant API as /ipLoadbalancing
-    Client->>API: POST/PUT/DELETE component
-    Note over API: Change staged as pending
-    Client->>API: POST /{serviceName}/refresh
-    API-->>Client: Task created
-    loop Until task completes
-        Client->>API: GET /{serviceName}/task/{id}
-        API-->>Client: Task status
-    end
-```
+<img className="thumbnail" alt="Tracking tasks diagram" src="/images/network/load-balancer-revamp/automation/fig-2.svg" loading="lazy" />
 
 :::tip
 Group related changes and call refresh once, after the full set of changes has been staged. A single refresh applies the entire pending configuration, which keeps the running service consistent and avoids intermediate states.

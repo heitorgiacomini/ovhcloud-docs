@@ -1,0 +1,118 @@
+---
+title: Surveiller l'état de santé des serveurs
+description: Surveillez l'état de santé des serveurs backend de vos fermes OVHcloud Load Balancer depuis l'espace client et l'API OVHcloud.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+L'OVHcloud Load Balancer vérifie en permanence l'état de chaque serveur backend rattaché à une ferme de serveurs. Lorsqu'un serveur est détecté comme indisponible, le Load Balancer cesse de lui envoyer du trafic et répartit la charge sur les serveurs restants en bon état.
+
+**Ce guide explique comment consulter l'état de santé de chaque serveur backend, à la fois dans l'espace client OVHcloud et via l'API OVHcloud.**
+
+L'état de santé est utile lorsqu'un serveur quitte une ferme sans votre intervention : vous pouvez identifier le serveur concerné ainsi que la raison signalée par la sonde.
+
+## Prérequis
+
+- Disposer d'un [compte OVHcloud](/links/manager) actif
+- Avoir accès à l'[espace client OVHcloud](/links/manager)
+- Disposer d'un service [OVHcloud Load Balancer](/links/network/load-balancer)
+- Avoir une ferme de serveurs configurée avec au moins un serveur backend
+- Avoir un frontend configuré
+- Avoir une sonde configurée sur la ferme — consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes)
+- Avoir accès à l'[API OVHcloud](/links/api) (pour la méthode via l'API)
+
+## Introduction
+
+L'état de santé reflète le résultat de la sonde définie sur la ferme. Sans sonde, le Load Balancer ne peut pas évaluer l'état des serveurs : le statut rapporté n'est donc pas pertinent.
+
+> [!INFO]
+> Pour obtenir des vérifications d'état de serveur valides, vous devez disposer d'une sonde configurée sur votre ferme ainsi que de serveurs backend autorisant l'accès à cette sonde. Pour plus de détails, consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
+
+## En pratique
+
+Vous pouvez consulter l'état de santé des serveurs soit visuellement dans l'espace client, soit par programmation via l'API. Les deux méthodes rapportent le même état sous-jacent.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>.
+2. Accédez à **Network** > **Load Balancer** et sélectionnez votre service.
+3. Ouvrez l'onglet `Fermes de serveurs` et sélectionnez une ferme.
+4. Consultez le statut affiché sur la ligne de chaque serveur.
+
+{/* DRAFT: Capture d'écran à réaliser — onglet Fermes de serveurs avec une ferme sélectionnée, montrant la colonne de statut sur la ligne de chaque serveur */}
+
+Pour afficher le détail de l'état de santé d'un serveur, cliquez sur le statut dans la colonne `Statut`.
+
+{/* DRAFT: Capture d'écran à réaliser — panneau de détail de l'état de santé du serveur */}
+
+> [!TIP]
+> Si la ligne d'un serveur affiche un état non opérationnel, ouvrez sa vue détaillée pour consulter le code de retour de la sonde ainsi que le contenu de la dernière vérification avant d'investiguer le backend.
+
+</Tab>
+<Tab label="API OVHcloud">
+
+L'état de santé du serveur est renvoyé dans le champ `serverState` de l'objet serveur. Utilisez le point de terminaison correspondant au type de ferme (HTTP, TCP ou UDP).
+
+Pour une ferme HTTP :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
+
+Pour une ferme TCP :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
+
+Pour une ferme UDP :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server/\{serverId\}"} />
+
+| Paramètre | Obligatoire | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxxxxxxxxxxxxxx` |
+| `farmId` | Oui | L'identifiant de la ferme à laquelle appartient le serveur. | `12345` |
+| `serverId` | Oui | L'identifiant du serveur backend à inspecter. | `67890` |
+
+Pour lister au préalable les serveurs d'une ferme et récupérer chaque `serverId`, appelez le point de terminaison de liste correspondant au type de ferme. Pour une ferme HTTP :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
+
+Pour une ferme TCP :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
+
+Pour une ferme UDP :
+
+<Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server"} />
+
+{/* DRAFT: Capture d'écran à réaliser — réponse de la console API affichant le champ serverState */}
+
+</Tab>
+</Tabs>
+
+### Comprendre le détail de l'état de santé
+
+La vue détaillée (espace client) et l'objet serveur (API) exposent les mêmes informations. Le tableau suivant décrit chaque champ.
+
+| Champ | Description |
+|---|---|
+| Statut | État actuel du serveur backend tel qu'évalué par le Load Balancer. |
+| Code de vérification | Code de retour de la sonde. |
+| Statut de vérification | Statut de l'exécution de la sonde. |
+| Contenu de la dernière vérification | Contenu renvoyé par la sonde lors de sa dernière exécution. |
+| Heure de vérification | Date et heure de la dernière exécution de la sonde. |
+
+> [!INFO]
+> Les mêmes valeurs de statut s'appliquent aux fermes HTTP, TCP et UDP. Seul le segment de chemin de l'API (`http`, `tcp` ou `udp`) diffère.
+
+## Aller plus loin
+
+- [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
+- [Résolution des problèmes](/guides/network/load-balancer-revamp/troubleshooting)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

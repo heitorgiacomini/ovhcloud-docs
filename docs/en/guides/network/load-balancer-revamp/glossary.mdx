@@ -16,15 +16,7 @@ The OVHcloud Load Balancer is a fully managed service that distributes incoming 
 
 Most Load Balancer terms describe one of three things: an object you configure (frontend, farm, server), a behaviour you apply to traffic (balancing method, stickiness, route, probe), or a property of the underlying platform (zone, anycast, vRack, SSL termination). The diagram below shows how these configuration objects relate as traffic flows from a client to a backend server.
 
-```mermaid
-flowchart LR
-    Client[Client] --> FE[Frontend<br/>protocol + listening port]
-    FE --> RT{Route<br/>conditions}
-    RT --> FARM[Server farm<br/>balancing method + probe]
-    FARM --> S1[Server 1]
-    FARM --> S2[Server 2]
-    FARM --> S3[Server 3]
-```
+<img className="thumbnail" alt="How the terms fit together diagram" src="/images/network/load-balancer-revamp/glossary/fig-1.svg" loading="lazy" />
 
 {/* DRAFT: To screenshot - capture the Load Balancer dashboard in the Control Panel showing the Server Farms and Frontends tabs to anchor the glossary visually */}
 

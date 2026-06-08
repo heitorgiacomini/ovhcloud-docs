@@ -56,14 +56,7 @@ For a conceptual overview, refer to [What is OVHcloud Load Balancer](/guides/net
 
 A frontend accepts client connections and forwards them, through a route, to a server farm. The diagram below shows where the frontend sits in the request path.
 
-```mermaid
-flowchart LR
-    Client([Client]) -->|"HTTP :80 / HTTPS :443 / TCP :port / UDP :port"| Frontend[Frontend]
-    Frontend -->|Default route| Route{Route}
-    Route -->|Route to farm| Farm[Server farm]
-    Farm --> S1[Server 1]
-    Farm --> S2[Server 2]
-```
+<img className="thumbnail" alt="Overview <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/configure-frontends/fig-1.svg" loading="lazy" />
 
 The following parameters apply when creating or editing a frontend. The available protocols depend on whether you create an HTTP, a TCP, or a UDP frontend.
 

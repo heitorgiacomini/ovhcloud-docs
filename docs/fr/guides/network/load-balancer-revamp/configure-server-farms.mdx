@@ -55,14 +55,7 @@ Les frontends, les fermes et les serveurs sont spécifiques au protocole (HTTP, 
 
 La méthode d'équilibrage s'applique au niveau de la ferme. Elle définit l'algorithme selon lequel le Load Balancer sélectionne un serveur backend pour chaque nouvelle requête cliente. Le schéma suivant montre où se situe la ferme dans le chemin du trafic.
 
-```mermaid
-flowchart LR
-    C[Client] --> F[Frontend]
-    F --> FARM{{Ferme de serveurs<br/>méthode d'équilibrage}}
-    FARM --> S1[Serveur 1<br/>poids 1]
-    FARM --> S2[Serveur 2<br/>poids 1]
-    FARM --> S3[Serveur 3<br/>backup]
-```
+<img className="thumbnail" alt="Présentation et méthodes d'équilibrage <a name=overview></a> diagram" src="/images/network/load-balancer-revamp/configure-server-farms/fig-1.fr.svg" loading="lazy" />
 
 Les méthodes d'équilibrage suivantes sont disponibles. Les libellés de l'espace client sont indiqués à côté de la valeur API correspondante utilisée dans le champ `balance` de la configuration de la ferme.
 
@@ -357,8 +350,8 @@ Cette section couvre les problèmes les plus courants lors de la configuration d
 
 ## Aller plus loin
 
-- [Configurer les sondes de santé](/guides/network/load-balancer-revamp/configure-health-probes)
+- [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes)
 - [Configurer la persistance](/guides/network/load-balancer-revamp/configure-stickiness)
 - [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

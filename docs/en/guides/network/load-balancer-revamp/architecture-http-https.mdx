@@ -52,32 +52,7 @@ The design exposes a single web application through two frontends that share one
 
 Both frontends route to the same HTTP server farm, which balances traffic across one or more backend web servers. This keeps a single backend pool behind both entry points, so the application is served identically over HTTP and HTTPS.
 
-```mermaid
-flowchart LR
-    visitor[Visitor]
-
-    subgraph lb[OVHcloud Load Balancer]
-        fe80["HTTP frontend\nport 80"]
-        fe443["HTTPS frontend\nport 443 + SSL"]
-        cert{{SSL/TLS certificate}}
-        farm["HTTP server farm\nbalancing + health probe"]
-    end
-
-    subgraph backend[Backend web servers]
-        s1[Server 1]
-        s2[Server 2]
-        s3[Server 3]
-    end
-
-    visitor -->|HTTP| fe80
-    visitor -->|HTTPS| fe443
-    cert -.terminates TLS.-> fe443
-    fe80 --> farm
-    fe443 --> farm
-    farm --> s1
-    farm --> s2
-    farm --> s3
-```
+<img className="thumbnail" alt="Topology diagram" src="/images/network/load-balancer-revamp/architecture-http-https/fig-1.svg" loading="lazy" />
 
 {/* DRAFT: To screenshot - the Load Balancer service dashboard in the OVHcloud Control Panel showing the Server Farms and Frontends tabs */}
 

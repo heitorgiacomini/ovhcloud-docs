@@ -1,6 +1,6 @@
 ---
-title: Configurer les sondes de santé du Load Balancer
-description: Configurez les sondes de santé sur les fermes de votre OVHcloud Load Balancer pour détecter les serveurs défaillants et n'acheminer le trafic que vers les backends sains.
+title: Configurer les sondes du Load Balancer
+description: Configurez les sondes sur les fermes de votre OVHcloud Load Balancer pour détecter les serveurs défaillants et n'acheminer le trafic que vers les backends sains.
 lastUpdated: 2026-06-05
 ---
 
@@ -9,7 +9,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objectif
 
-Les sondes de santé interrogent périodiquement chaque serveur d'une ferme afin de confirmer qu'il est opérationnel. Lorsqu'une sonde détecte une erreur, le serveur concerné est automatiquement retiré de la rotation jusqu'à ce qu'il se rétablisse, de sorte que le trafic n'est jamais acheminé vers un backend qui ne répond pas.
+Les sondes interrogent périodiquement chaque serveur d'une ferme afin de confirmer qu'il est opérationnel. Lorsqu'une sonde détecte une erreur, le serveur concerné est automatiquement retiré de la rotation jusqu'à ce qu'il se rétablisse, de sorte que le trafic n'est jamais acheminé vers un backend qui ne répond pas.
 
 **Ce guide explique comment configurer les sondes sur vos fermes de serveurs, définir leur intervalle et leur comportement, puis interpréter l'état de santé des serveurs qui en résulte.**
 
@@ -214,4 +214,4 @@ Choisissez un `probe.interval` qui équilibre une détection rapide des pannes e
 - [Surveiller l'état de santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health)
 - [Dépannage](/guides/network/load-balancer-revamp/troubleshooting)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

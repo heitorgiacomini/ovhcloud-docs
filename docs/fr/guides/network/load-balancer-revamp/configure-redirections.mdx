@@ -1,0 +1,114 @@
+---
+title: Configurer des redirections sur le Load Balancer
+description: Configurez des redirections HTTP, comme une redirection de HTTP vers HTTPS, sur un frontend de votre OVHcloud Load Balancer via l'espace client ou l'API OVHcloud.
+lastUpdated: 2026-06-05
+---
+
+import Api from '@components/Api';
+import ManagerLink from '@components/ManagerLink';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+## Objectif
+
+Par défaut, l'OVHcloud Load Balancer agit comme un proxy qui transmet le trafic des clients vers une ferme de serveurs. Il peut, à la place, renvoyer une redirection HTTP qui dirige le client vers une autre URL. Cela s'avère utile pour forcer la version HTTPS d'un site ou pour migrer un nom de domaine.
+
+**Ce guide explique comment configurer une redirection HTTP sur un frontend de Load Balancer, à l'aide de l'espace client OVHcloud ou de l'API OVHcloud.**
+
+## Prérequis
+
+- Un [compte OVHcloud](/links/manager) actif
+- Accéder à l'[espace client OVHcloud](/links/manager)
+- Un service OVHcloud Load Balancer sur votre compte — voir [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer)
+- Un frontend HTTP ou HTTPS existant — voir [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
+
+## Introduction
+
+Une redirection HTTP est une réponse dans laquelle le Load Balancer renvoie un code de statut `3xx` ainsi qu'un en-tête `Location` qui dirige le client vers une nouvelle URL, au lieu de transmettre la requête à un backend. Une réponse typique ressemble à ceci :
+
+```http
+HTTP/1.1 301 Moved Permanently
+Location: https://www.example.org/
+Content-Type: text/html
+Content-Length: 174
+```
+
+Vous configurez la redirection sur un frontend par l'intermédiaire de son emplacement de redirection. La valeur doit respecter le format `<scheme>://<net_loc>/<path>;<params>?<query>#<fragment>`. Vous ne pouvez définir qu'une seule redirection par frontend.
+
+> [!INFO]
+> Lorsqu'un frontend est configuré avec une redirection, il ne transmet pas le trafic à une ferme de serveurs. Une ferme par défaut n'est donc pas requise sur ce frontend.
+
+## En pratique
+
+Vous pouvez configurer une redirection sur un nouveau frontend lors de sa création, ou sur un frontend existant. L'espace client comme l'API OVHcloud prennent en charge les deux cas.
+
+<Tabs>
+<Tab label="Espace client">
+
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez la section `Réseau`, puis `Load Balancer`.
+2. Sélectionnez votre service Load Balancer, puis ouvrez l'onglet `Frontends`.
+3. Pour créer un nouveau frontend, cliquez sur `Créer un frontend`. Pour modifier un frontend existant, ouvrez le menu d'actions situé à droite du frontend et sélectionnez `Modifier`.
+4. Sélectionnez le protocole `HTTP` ou `HTTPS` pour le frontend. Une redirection ne peut être définie que sur des frontends HTTP ou HTTPS.
+5. Renseignez les paramètres standard du frontend. Vous n'avez pas besoin de définir une ferme par défaut, car le trafic est redirigé plutôt que transmis.
+6. Dans les paramètres avancés, saisissez l'URL de destination dans le champ d'emplacement de redirection. {/* DRAFT: À vérifier — confirmer le libellé exact du champ d'emplacement de redirection dans l'éditeur de frontend du nouveau Manager */}
+
+{/* DRAFT: À capturer en capture d'écran — les paramètres avancés de l'éditeur de frontend avec le champ d'emplacement de redirection renseigné */}
+
+7. Validez le frontend en cliquant sur `Créer le frontend` ou `Enregistrer les modifications`, selon que vous créez ou modifiez le frontend.
+
+Appliquez la configuration en attente afin que la redirection devienne active. {/* DRAFT: À vérifier — confirmer le libellé exact de l'action d'application/de déploiement dans le nouveau Manager */}
+
+{/* DRAFT: À capturer en capture d'écran — le bandeau ou l'action utilisé pour appliquer la configuration en attente */}
+
+Pour en savoir plus sur l'application des modifications, consultez le guide [Gérer votre Load Balancer depuis l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel).
+
+</Tab>
+<Tab label="API OVHcloud">
+
+Dans l'API OVHcloud, vous définissez la redirection via la propriété `redirectLocation` d'un frontend HTTP. Configurez-la sur un frontend nouveau ou existant, puis appliquez les modifications.
+
+**Créer un frontend avec une redirection**
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-xxxxxxxx` |
+| `port` (body) | Oui | Port d'écoute du frontend. | `80` |
+| `zone` (body) | Oui | Zone de déploiement du frontend. | `all` |
+| `redirectLocation` (body) | Non | URL de destination de la redirection HTTP. | `https://www.example.org/` |
+
+**Modifier un frontend existant**
+
+<Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-xxxxxxxx` |
+| `frontendId` | Oui | Identifiant du frontend à modifier. | `12345` |
+| `redirectLocation` (body) | Non | URL de destination de la redirection HTTP. | `https://www.example.org/` |
+
+**Appliquer la configuration**
+
+<Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
+
+| Paramètre | Requis | Description | Exemple |
+|---|---|---|---|
+| `serviceName` | Oui | Identifiant de votre service Load Balancer. | `loadbalancer-xxxxxxxx` |
+
+La redirection devient active une fois la configuration appliquée.
+
+</Tab>
+<Tab label="Terraform">
+
+[UNVERIFIED: terraform - confirm ovh_iploadbalancing* resources]
+
+</Tab>
+</Tabs>
+
+## Aller plus loin
+
+- [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends)
+- [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates)
+- [Gérer votre Load Balancer depuis l'espace client](/guides/network/load-balancer-revamp/manage-via-control-panel)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -21,13 +21,7 @@ This solves two common problems. It removes the single point of failure represen
 
 The service is built on established open-source technologies and exposes a public endpoint (an IP address) that you point your DNS records to. From there, frontends, server farms, and routes determine how traffic is received, balanced, and forwarded.
 
-```mermaid
-flowchart LR
-    C[Clients] --> LB[OVHcloud Load Balancer]
-    LB --> S1[Server 1]
-    LB --> S2[Server 2]
-    LB --> S3[Server 3]
-```
+<img className="thumbnail" alt="Overview diagram" src="/images/network/load-balancer-revamp/what-is-load-balancer/fig-1.svg" loading="lazy" />
 
 {/* DRAFT: To screenshot - capture the Load Balancer dashboard in the Control Panel showing the General view */}
 
@@ -59,16 +53,7 @@ A route is a rule that directs HTTP traffic to a specific farm based on conditio
 
 A zone is the geographic location where a Load Balancer instance is deployed. The Load Balancer can operate across multiple zones, and its public IP is announced on the OVHcloud Anycast network so that clients reach the nearest healthy instance. Zones are managed from the `Subnet` tab.
 
-```mermaid
-flowchart TD
-    F[Frontend: protocol + port] --> R{HTTP route match?}
-    R -->|Yes| FA[Farm A]
-    R -->|No / default| FB[Default farm]
-    FA --> SA1[Server]
-    FA --> SA2[Server]
-    FB --> SB1[Server]
-    FB --> SB2[Server]
-```
+<img className="thumbnail" alt="Zone diagram" src="/images/network/load-balancer-revamp/what-is-load-balancer/fig-2.svg" loading="lazy" />
 
 ## HTTP balancing compared with TCP and UDP balancing
 
