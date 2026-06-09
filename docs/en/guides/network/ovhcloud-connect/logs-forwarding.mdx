@@ -1,20 +1,20 @@
 ---
 title: 'Set up logs forwarding for OVHcloud Connect'
 description: 'Forward your OVHcloud Connect event logs to Logs Data Platform for storage, querying, and visualisation'
-lastUpdated: 2026-04-22
+lastUpdated: 2026-06-09
 ---
 
 import Api from '@components/Api';
 
 ## Objective
 
-The purpose of this guide is to show you how to enable the forwarding of logs from your OVHcloud Connect to Logs Data Platform (LDP), a platform that helps you store, archive, query and visualise your logs.
+This guide explains how to enable forwarding logs from your OVHcloud Connect to Logs Data Platform (LDP), a platform that helps you store, archive, query and visualise your logs.
 
 If you would like to find out more about Logs Data Platform before reading this guide, refer to the [Logs Data Platform introduction guide](/guides/manage-and-operate/observability/logs-data-platform/introduction).
 
 ## Glossary
 
-- **Logs Data Platform:** a fully managed and secured log management platform by OVHcloud. For more information, consult the [Logs Data Platform](https://www.ovhcloud.com/en/logs-data-platform/) service page.
+- **Logs Data Platform:** a fully managed and secured log management platform by OVHcloud. For more information, consult the [Logs Data Platform](/links/manage-operate/ldp) service page.
 - **Data Stream:** a logical partition of logs which you create in an LDP account and which you will use when ingesting, viewing or querying your logs. Multiple sources can be stored in the same data stream, and it is the unit that can be used to define a log pipeline (retention policy, archiving, live streaming, etc.), access rights and alert policies.
 - **Logs forwarding:** a feature integrated into an OVHcloud product to ingest the logs of its services into a *Data Stream* of an LDP account in the same OVHcloud account. This feature must be activated by the customer and per service.
 - **Logs forwarding Subscription:** when enabling the logs forwarding for a given OVHcloud service to a given LDP *Data Stream*, a *Subscription* is created and attached to the *Data Stream* for further management by the customer.
@@ -23,7 +23,7 @@ If you would like to find out more about Logs Data Platform before reading this 
 
 - A Logs Data Platform (LDP) account with at least one active *Stream* configured. This guide will walk you through all the necessary steps: [Quick start for Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/getting-started-quick-start).
     - If you are not familiar with all the LDP *Stream* configuration possibilities, create a new one with the default options (indexing and websocket enabled, long-term storage disabled) for the purpose of this guide.
-- An up-and-running [OVHcloud Connect service](/guides/network/ovhcloud-connect/ovhcloud-connect-overview).
+- An up-and-running [OVHcloud Connect service](/guides/network/ovhcloud-connect/introduction).
 - Both the LDP account and the OVHcloud Connect account must belong to the same OVHcloud account.
 
 Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
@@ -53,7 +53,7 @@ There are four different kinds of logs which can be forwarded:
 
 ## Enabling OVHcloud Connect log forwarding using APIs
 
-Note that the forwarding activation is free of charge, but you will be charged for the usage of the Logs Data Platform service as per the standard price plan. For LDP pricing, refer to this [page](https://www.ovhcloud.com/en/logs-data-platform/).
+Note that the forwarding activation is free of charge, but you will be charged for the usage of the Logs Data Platform service as per the standard price plan. For LDP pricing, refer to this [page](/links/manage-operate/ldp).
 
 You will have to define the targeted *Stream* of one of your LDP accounts to which you want your logs forwarded. The enablement of the forwarding will create a subscription for this stream id.
 
@@ -151,7 +151,7 @@ Now that your logs are ingested and stored in your Logs Data Platform data strea
 - Log into Graylog using your Logs Data Platform Username and Password.
 - Search through your logs across the data stream of your Logs Data Platform account. You can refer to [Graylog writing search queries](https://go2docs.graylog.org/current/making_sense_of_your_log_data/writing_search_queries.html) documentation for details on search syntax.
 
-Refer to the following documentation: [Logs Data Platform - Visualising, querying and exploiting your logs](https://www.ovhcloud.com/en/logs-data-platform/) for more details about how to use your logs with Logs Data Platform, including how to:
+Refer to the following documentation: [Logs Data Platform - Visualising, querying and exploiting your logs](/links/manage-operate/ldp) for more details about how to use your logs with Logs Data Platform, including how to:
 
 - set up alerts
 - view the logs in real time through a WebSocket
@@ -171,12 +171,12 @@ To delete your subscription you can use the following API call:
 
 ## What's next?
 
-- [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/diagnostics)
+- [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor)
 - [Troubleshooting OVHcloud Connect](/guides/network/ovhcloud-connect/troubleshooting)
 - [Declare and follow up on an incident](/guides/network/ovhcloud-connect/incident-followup)
 
 ## Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

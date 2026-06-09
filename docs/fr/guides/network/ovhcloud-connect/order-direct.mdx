@@ -1,7 +1,7 @@
 ---
 title: 'Commander OVHcloud Connect Direct'
 description: "Découvrez comment commander une connexion physique directe vers OVHcloud depuis l'espace client ou via l'API"
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -15,7 +15,7 @@ Avant de passer commande, préparez les informations suivantes :
 | Information | Description |
 |---|---|
 | **Localisation du PoP** | Le datacenter dans lequel vous souhaitez vous connecter (consultez [Localisations des PoP](/guides/network/ovhcloud-connect/pop-locations-regions)) |
-| **Bande passante** | Le débit de la connexion (par exemple 1 Gbps ou 10 Gbps) |
+| **Bande passante** | Le débit de la connexion (par exemple 1, 10 ou 100 Gbps) |
 | **Votre ASN** | Votre numéro de système autonome (public ou privé) pour le peering BGP |
 | **Plan d'adressage IP** | Les préfixes que vous comptez annoncer ainsi que le sous-réseau de peering |
 | **Coordonnées** | Contacts techniques et de facturation pour la commande |
@@ -25,17 +25,17 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ## Commander depuis l'espace client OVHcloud
 
-1. Cliquez sur **Commander une nouvelle connexion**.
-2. Sélectionnez **Connexion directe**.
+1. Cliquez sur <code className="action">Commander</code>.
+2. Sélectionnez <code className="action">OVHcloud Connect Direct</code>.
 3. Choisissez la **localisation du PoP** dans la liste des sites disponibles.
-4. Sélectionnez la **bande passante** souhaitée (1 Gbps ou 10 Gbps).
+4. Sélectionnez la **bande passante** souhaitée (1, 10 ou 100 Gbps).
 5. Renseignez les **détails techniques** :
    - Votre ASN
    - VLAN ID préféré (le cas échéant)
    - Coordonnées pour la livraison de la LOA
    - Toute instruction particulière pour le cross-connect en datacenter
 6. Vérifiez les **conditions tarifaires et contractuelles** (durée d'engagement minimale, redevance mensuelle).
-7. **Confirmez** la commande.
+7. Cliquez sur <code className="action">Confirmer</code> pour valider la commande.
 
 Vous recevrez un e-mail de confirmation contenant la référence de votre commande ainsi que le délai de livraison estimé.
 
@@ -56,13 +56,13 @@ print(result)
 
 Reportez-vous au [guide d'automatisation](/guides/network/ovhcloud-connect/automation) pour les instructions de configuration de l'API.
 
-## Et ensuite ?
+## Que se passe-t-il après la commande ?
 
-<img className="thumbnail" alt="Et ensuite ?" src="/images/network/ovhcloud-connect/order-direct/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Étapes après la commande : commande confirmée, LOA livrée, cross-connect installé, port activé" src="/images/network/ovhcloud-connect/order-direct/fig-1.fr.svg" loading="lazy" />
 
 1. **Commande confirmée** — Vous recevez un e-mail contenant la référence de votre commande.
 2. **LOA livrée** — OVHcloud émet la Lettre d'autorisation (LOA) **en quelques minutes** après la commande. La LOA contient les informations relatives au datacenter nécessaires à l'installation du cross-connect.
-3. **Cross-connect installé** — Transmettez la LOA à l'opérateur de votre datacenter. Il procède à l'installation du jarretière en fibre. Le délai dépend du site (de quelques jours à 2 semaines).
+3. **Cross-connect installé** — Transmettez la LOA à l'opérateur de votre datacenter. Il procède à l'installation de la jarretière en fibre. Le délai dépend du site (de quelques jours à 2 semaines).
 4. **Activation du port** — Une fois le cross-connect en place et la lumière détectée par OVHcloud, le port devient actif et le service est livré. Vous pouvez alors configurer BGP et associer le service à votre vRack.
 
 :::warning
@@ -78,7 +78,7 @@ Après la commande, vous disposez de **60 jours** pour finaliser l'interconnexio
 - Une **durée d'engagement minimale** peut s'appliquer (à vérifier lors de la commande).
 - Les frais de cross-connect facturés par l'opérateur du datacenter sont distincts et facturés par cet opérateur.
 
-## Et ensuite ?
+## Et ensuite ?
 
 - [Recevoir et utiliser votre LOA](/guides/network/ovhcloud-connect/cross-connect-loa)
 - [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp)
@@ -86,6 +86,6 @@ Après la commande, vous disposez de **60 jours** pour finaliser l'interconnexio
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

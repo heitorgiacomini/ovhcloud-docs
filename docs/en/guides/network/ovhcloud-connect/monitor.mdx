@@ -1,7 +1,7 @@
 ---
 title: 'Monitor Your OVHcloud Connect'
 description: 'Discover the tools and metrics available to monitor your OVHcloud Connect service'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objective
@@ -103,7 +103,7 @@ Diagnostics are also available programmatically through the OVHcloud API under t
 
 ## Key metrics to watch
 
-<img className="thumbnail" alt="Key metrics to watch" src="/images/network/ovhcloud-connect/diagnostics/fig-1.svg" loading="lazy" />
+<img className="thumbnail" alt="Key metrics to watch" src="/images/network/ovhcloud-connect/monitor/fig-1.svg" loading="lazy" />
 
 ### Critical alerts (set these up immediately)
 
@@ -119,7 +119,7 @@ Diagnostics are also available programmatically through the OVHcloud API under t
 
 ### Cisco IOS
 
-```
+```bash
 show interfaces GigabitEthernet0/0
 show ip bgp summary
 show ip bgp neighbors 192.0.2.1 received-routes
@@ -129,7 +129,7 @@ show ip route bgp
 
 ### Juniper JunOS
 
-```
+```bash
 show interfaces terse
 show bgp summary
 show route receive-protocol bgp 192.0.2.1
@@ -147,12 +147,12 @@ show route protocol bgp
 
 ## What's next?
 
-- [Forward your OVHcloud Connect logs](/guides/network/ovhcloud-connect/logs-to-customers) to Logs Data Platform for long-term storage and analysis
+- [Forward your OVHcloud Connect logs](/guides/network/ovhcloud-connect/logs-forwarding) to Logs Data Platform for long-term storage and analysis
 - [Declare and follow up on an incident](/guides/network/ovhcloud-connect/incident-followup) if you detect a problem
 - Review [SLAs](/guides/network/ovhcloud-connect/slas) to understand uptime guarantees
 
 ## Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

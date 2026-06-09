@@ -1,7 +1,7 @@
 ---
-title: 'Quick Start : connexion Direct vers OVHcloud'
+title: 'Quick Start : OVHcloud Connect Direct'
 description: 'Suivez les étapes essentielles pour établir une connexion privée et directe vers OVHcloud'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -10,7 +10,7 @@ Ce guide vous accompagne dans les étapes essentielles pour établir une **conne
 
 ## Avant de commencer
 
-Assurez-vous de disposer de :
+Assurez-vous de disposer de :
 
 - Un **compte OVHcloud** avec une facturation configurée
 - D'un équipement (ou d'un circuit) dans un **datacenter où OVHcloud dispose d'un PoP** (consultez [Emplacements des PoPs](/guides/network/ovhcloud-connect/pop-locations-regions))
@@ -26,16 +26,16 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ### Étape 1 — Commander OVHcloud Connect Direct
 
-1. Sélectionnez **Connexion Direct**.
-2. Choisissez votre **emplacement de PoP** et la **bande passante** (par exemple 1 Gbps ou 10 Gbps).
-3. Renseignez les détails techniques : votre ASN, vos coordonnées et toute instruction particulière pour le datacenter.
+1. Sélectionnez <code className="action">OVHcloud Connect Direct</code>.
+2. Choisissez votre **emplacement de PoP** et la **bande passante** (par exemple 1, 10 ou 100 Gbps).
+3. Renseignez les détails techniques : votre ASN, vos coordonnées et toute instruction particulière pour le datacenter.
 4. Vérifiez la tarification et confirmez la commande.
 
 Pour les étapes de commande détaillées, consultez [Commander OVHcloud Connect Direct](/guides/network/ovhcloud-connect/order-direct).
 
 ### Étape 2 — Recevoir la LOA
 
-Une fois votre commande validée, OVHcloud vous envoie une **Lettre d'autorisation (LOA)** par e-mail. Ce document contient :
+Une fois votre commande validée, OVHcloud vous envoie une **Lettre d'autorisation (LOA)** par e-mail. Ce document contient :
 
 - La référence du datacenter et du rack/cage de l'équipement OVHcloud
 - La désignation du port côté OVHcloud
@@ -55,7 +55,7 @@ Consultez [Associer un OVHcloud Connect à votre vRack](/guides/network/ovhcloud
 
 ### Étape 5 — Configurer BGP
 
-Une fois le lien physique opérationnel :
+Une fois le lien physique opérationnel :
 
 1. Dans l'espace client OVHcloud, accédez à votre service OVHcloud Connect et **créez une configuration de PoP** avec les paramètres de session BGP.
 2. Sur **votre routeur**, configurez un voisin BGP en utilisant l'IP de peering et l'ASN d'OVHcloud fournis dans les détails de configuration.
@@ -65,15 +65,15 @@ Pour la configuration BGP détaillée, consultez [Configurer OCC L3 avec BGP](/g
 
 ### Étape 6 — Tester et vérifier
 
-Effectuez ces vérifications pour confirmer que tout fonctionne :
+Effectuez ces vérifications pour confirmer que tout fonctionne :
 
 | Vérification | Comment |
 |---|---|
 | **Lien physique** | Vérifiez que le port apparaît comme « up » dans l'espace client OVHcloud et sur votre routeur (`show interfaces`). |
-| **Session BGP** | Vérifiez que la session est **Established** : `show ip bgp summary` (Cisco) ou `show bgp summary` (Juniper). |
+| **Session BGP** | Vérifiez que la session est **Established** : `show ip bgp summary` (Cisco) ou `show bgp summary` (Juniper). |
 | **Échange de routes** | Vérifiez que les routes d'OVHcloud apparaissent dans votre table de routage et inversement. |
 | **Connectivité** | Effectuez un ping vers une ressource OVHcloud connue (par exemple une VM dans votre vRack) depuis votre réseau on-premises. |
-| **Traceroute** | Exécutez un `traceroute` pour vérifier que le trafic emprunte bien le chemin privé (et non internet). |
+| **Traceroute** | Exécutez un `traceroute` pour vérifier que le trafic emprunte bien le chemin privé (et non Internet). |
 
 ## Dépannage
 
@@ -86,14 +86,14 @@ Effectuez ces vérifications pour confirmer que tout fonctionne :
 
 Si vous ne parvenez pas à résoudre le problème, [ouvrez un ticket de support](/guides/network/ovhcloud-connect/incident-followup) en joignant la sortie BGP, le statut des interfaces et les résultats du traceroute.
 
-## Et ensuite ?
+## Et ensuite ?
 
-- Pour une connexion managée, consultez [Quick Start : connexion via Provider](/guides/network/ovhcloud-connect/provider-control-panel-setup)
+- Pour une connexion managée, consultez [Quick Start : connexion via Provider](/guides/network/ovhcloud-connect/occ-provider-control-panel-setup)
 - Pour des montages résilients, consultez le [tutoriel On-Prem résilient](/guides/network/ovhcloud-connect/resilient-architecture)
-- Mettez en place la [supervision](/guides/network/ovhcloud-connect/diagnostics) de votre connexion
+- Mettez en place la [supervision](/guides/network/ovhcloud-connect/monitor) de votre connexion
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -1,8 +1,10 @@
 ---
 title: Mettre en place une architecture OVHcloud Connect simple
 description: Connectez un site on-premises unique, un WAN d'agences ou un environnement de cloud public (AWS, Azure, GCP) à OVHcloud via un seul lien OVHcloud Connect.
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objectif
 
@@ -37,19 +39,19 @@ Vous trouverez ci-dessous les prérequis et les instructions pour cinq cas d'usa
 
 #### 1. Commander OVHcloud Connect
 
-Choisissez **Direct** ou **Provider** selon votre situation :
+Choisissez **Direct** ou **Provider** selon votre situation :
 
 - **Direct** — Vous disposez d'équipements dans le même datacenter qu'un PoP OVHcloud. Consultez [Commander Direct](/guides/network/ovhcloud-connect/order-direct).
 - **Provider** — Vous préférez une connexion managée. Consultez [Commander Provider](/guides/network/ovhcloud-connect/order-provider).
 
 #### 2. Installer la connexion physique
 
-- **Direct :** fournissez la LOA à l'opérateur du datacenter pour installer un cross-connect. Consultez [LOA Cross-Connect](/guides/network/ovhcloud-connect/cross-connect-loa).
-- **Provider :** partagez la clé de service avec votre fournisseur et attendez l'activation.
+- **Direct :** fournissez la LOA à l'opérateur du datacenter pour installer un cross-connect. Consultez [LOA Cross-Connect](/guides/network/ovhcloud-connect/cross-connect-loa).
+- **Provider :** partagez la clé de service avec votre fournisseur et attendez l'activation.
 
 #### 3. Configurer BGP
 
-Mettez en place une session BGP unique entre votre routeur on-premises et OVHcloud :
+Mettez en place une session BGP unique entre votre routeur on-premises et OVHcloud :
 
 - Annoncez vos préfixes on-premises (par exemple `10.0.0.0/16`) à OVHcloud.
 - Acceptez les préfixes OVHcloud (par exemple `172.16.0.0/16`) provenant d'OVHcloud.
@@ -75,7 +77,7 @@ Définissez les sous-réseaux privés dans OVHcloud que votre réseau on-premise
 
 #### 7. Mettre en place la supervision
 
-Configurez des alertes de supervision pour le statut du lien, la session BGP et la bande passante. Consultez [Superviser](/guides/network/ovhcloud-connect/diagnostics).
+Configurez des alertes de supervision pour le statut du lien, la session BGP et la bande passante. Consultez [Superviser](/guides/network/ovhcloud-connect/monitor).
 
 ### Limites d'une connexion simple
 
@@ -83,7 +85,7 @@ Configurez des alertes de supervision pour le statut du lien, la session BGP et 
 - **Pas de bascule automatique** — Vous devez intervenir manuellement ou compter sur un secours via Internet.
 - **SLA plus faible** — Une connexion unique prend généralement en charge un SLA jusqu'à 99,9 % (consultez [SLA](/guides/network/ovhcloud-connect/slas)).
 
-**Recommandation :** pour les charges de production, envisagez de passer à une [architecture résiliente](/guides/network/ovhcloud-connect/resilient-architecture).
+**Recommandation :** pour les charges de production, envisagez de passer à une [architecture résiliente](/guides/network/ovhcloud-connect/resilient-architecture).
 
 </Tab>
 <Tab label="WAN">
@@ -115,7 +117,7 @@ Dans un scénario WAN, votre trafic provient généralement de **plusieurs agenc
 
 #### 1. Coordonner avec votre fournisseur WAN
 
-Contactez votre fournisseur WAN/MPLS/SD-WAN et demandez :
+Contactez votre fournisseur WAN/MPLS/SD-WAN et demandez :
 
 - Un **circuit** ou une **connexion virtuelle** depuis votre backbone WAN vers le PoP OVHcloud.
 - Le circuit doit se terminer dans un site où OVHcloud dispose d'un PoP (consultez [Emplacements des PoP](/guides/network/ovhcloud-connect/pop-locations-regions)).
@@ -124,12 +126,12 @@ Si votre fournisseur WAN est également un fournisseur OVHcloud Connect (par exe
 
 #### 2. Commander OVHcloud Connect
 
-- **Direct :** si votre routeur de bordure WAN est colocalisé avec le PoP OVHcloud. Consultez [Commander Direct](/guides/network/ovhcloud-connect/order-direct).
-- **Provider :** si la connexion est gérée par un fournisseur. Consultez [Commander Provider](/guides/network/ovhcloud-connect/order-provider).
+- **Direct :** si votre routeur de bordure WAN est colocalisé avec le PoP OVHcloud. Consultez [Commander Direct](/guides/network/ovhcloud-connect/order-direct).
+- **Provider :** si la connexion est gérée par un fournisseur. Consultez [Commander Provider](/guides/network/ovhcloud-connect/order-provider).
 
 #### 3. Configurer BGP sur la bordure WAN
 
-Mettez en place une session BGP entre votre **équipement de bordure WAN** et OVHcloud :
+Mettez en place une session BGP entre votre **équipement de bordure WAN** et OVHcloud :
 
 - Annoncez les préfixes agrégés des agences (par exemple `10.0.0.0/8` ou des sous-réseaux plus spécifiques par agence).
 - Acceptez les routes OVHcloud.
@@ -143,14 +145,14 @@ Reliez la connexion à votre vRack et configurez les sous-réseaux requis. Consu
 
 #### 5. Tester la connectivité de bout en bout
 
-Depuis une agence, vérifiez que vous pouvez atteindre les ressources OVHcloud :
+Depuis une agence, vérifiez que vous pouvez atteindre les ressources OVHcloud :
 
-```
+```bash
 ping 172.16.1.10           ## Ping d'une VM OVHcloud
 traceroute 172.16.1.10     ## Doit passer : agence → WAN → PoP → OVHcloud (privé)
 ```
 
-Vérifiez depuis OVHcloud vers une agence :
+Vérifiez depuis OVHcloud vers une agence :
 
 ```bash
 ping 10.1.0.1              ## Ping d'une IP d'agence depuis une VM OVHcloud
@@ -158,7 +160,7 @@ ping 10.1.0.1              ## Ping d'une IP d'agence depuis une VM OVHcloud
 
 #### 6. Mettre en place la supervision
 
-Supervisez la session BGP de bordure WAN et le lien OVHcloud Connect. Consultez [Superviser](/guides/network/ovhcloud-connect/diagnostics).
+Supervisez la session BGP de bordure WAN et le lien OVHcloud Connect. Consultez [Superviser](/guides/network/ovhcloud-connect/monitor).
 
 </Tab>
 <Tab label="AWS">
@@ -205,9 +207,9 @@ Consultez [Commander OVHcloud Connect Provider](/guides/network/ovhcloud-connect
 
 #### 3. Créer le pont chez le fournisseur
 
-Dans le portail de votre fournisseur, créez les connexions qui pontent AWS et OVHcloud :
+Dans le portail de votre fournisseur, créez les connexions qui pontent AWS et OVHcloud :
 
-**Exemple avec Megaport :**
+**Exemple avec Megaport :**
 
 1. Créez un **port Megaport** ou utilisez-en un existant.
 2. Créez une **VXC vers AWS** en utilisant les détails de la connexion hébergée AWS Direct Connect.
@@ -216,7 +218,7 @@ Dans le portail de votre fournisseur, créez les connexions qui pontent AWS et O
 
 #### 4. Configurer BGP
 
-Vous avez besoin de sessions BGP sur trois segments :
+Vous avez besoin de sessions BGP sur trois segments :
 
 | Segment | Votre côté | Côté distant |
 |---|---|---|
@@ -224,12 +226,14 @@ Vous avez besoin de sessions BGP sur trois segments :
 | **Pont fournisseur** | Géré par le fournisseur (avec MCR) | — |
 | **OVHcloud Connect** | Routeur OVHcloud | Votre routeur ou MCR du fournisseur |
 
-Avec un MCR du fournisseur :
+Avec un MCR du fournisseur :
+
 - Le MCR établit le peering avec AWS via la VIF.
 - Le MCR établit le peering avec OVHcloud via OVHcloud Connect.
 - Les routes sont échangées automatiquement entre les deux peers.
 
-**Sans** MCR du fournisseur :
+**Sans** MCR du fournisseur :
+
 - Vous avez besoin de votre propre routeur (physique ou virtuel) colocalisé avec le fournisseur pour gérer le routage BGP entre AWS et OVHcloud.
 
 #### 5. Associer OVHcloud Connect au vRack
@@ -247,9 +251,9 @@ Consultez [Associer au vRack](/guides/network/ovhcloud-connect/associate-vrack).
 
 ### Considérations importantes
 
-- **Domaines de routage :** assurez-vous qu'il n'y a pas de chevauchement de plages IP entre les VPC AWS et les sous-réseaux OVHcloud.
-- **Coûts :** vous serez facturé par AWS (Direct Connect), par le fournisseur (VXC/MCR) et par OVHcloud (Connect). Consultez les trois modèles tarifaires.
-- **Latence :** la latence totale dépend de la distance entre la région AWS et la région OVHcloud, ainsi que des sauts intermédiaires éventuels chez le fournisseur.
+- **Domaines de routage :** assurez-vous qu'il n'y a pas de chevauchement de plages IP entre les VPC AWS et les sous-réseaux OVHcloud.
+- **Coûts :** vous serez facturé par AWS (Direct Connect), par le fournisseur (VXC/MCR) et par OVHcloud (Connect). Consultez les trois modèles tarifaires.
+- **Latence :** la latence totale dépend de la distance entre la région AWS et la région OVHcloud, ainsi que des sauts intermédiaires éventuels chez le fournisseur.
 
 </Tab>
 <Tab label="Azure">
@@ -279,10 +283,10 @@ Consultez [Associer au vRack](/guides/network/ovhcloud-connect/associate-vrack).
 #### 1. Créer un circuit Azure ExpressRoute
 
 1. Dans le **portail Azure** → **Créer une ressource** → **ExpressRoute**.
-2. Sélectionnez :
-   - **Provider** : Megaport ou Equinix
-   - **Peering location** : choisissez un emplacement partagé avec votre PoP OVHcloud
-   - **Bandwidth** : faites correspondre la bande passante de votre OVHcloud Connect (1 Gbps / 10 Gbps)
+2. Sélectionnez :
+   - **Provider** : Megaport ou Equinix
+   - **Peering location** : choisissez un emplacement partagé avec votre PoP OVHcloud
+   - **Bandwidth** : faites correspondre la bande passante de votre OVHcloud Connect (1 Gbps / 10 Gbps)
 3. Finalisez la création. Notez la **clé de service** (un GUID).
 
 #### 2. Commander votre OVHcloud Connect Provider
@@ -293,7 +297,7 @@ Récupérez votre **clé de service** depuis l'espace client OVHcloud ou via l'A
 
 #### 3. Créer le pont chez le fournisseur
 
-Sur la plateforme du fournisseur, créez **deux VXC** (ou connexions équivalentes) :
+Sur la plateforme du fournisseur, créez **deux VXC** (ou connexions équivalentes) :
 
 | VXC | Source | Destination |
 |---|---|---|
@@ -302,27 +306,27 @@ Sur la plateforme du fournisseur, créez **deux VXC** (ou connexions équivalent
 
 Si le fournisseur le prend en charge, un MCR (Cloud Router) joue le rôle de point de transit entre Azure et OVHcloud.
 
-**Exemple Megaport :**
+**Exemple Megaport :**
 
 1. Créez un **Megaport Cloud Router (MCR)** dans la même métropole.
 2. Ajoutez une VXC depuis le MCR → Azure ExpressRoute en utilisant la clé de service Azure.
 3. Ajoutez une VXC depuis le MCR → OVHcloud Connect en utilisant la clé de service OVHcloud.
 
-**Exemple Equinix Fabric :**
+**Exemple Equinix Fabric :**
 
 1. Créez une connexion depuis votre port Fabric → Azure ExpressRoute en utilisant la clé de service.
 2. Créez une connexion depuis votre port Fabric → OVHcloud Connect en utilisant la clé de service.
 
 #### 4. Configurer Azure Private Peering
 
-Sur le circuit Azure ExpressRoute :
+Sur le circuit Azure ExpressRoute :
 
 1. Allez dans **Peerings** → **Azure private**.
-2. Configurez :
-   - **Peer ASN** : l'ASN de votre MCR ou de votre fournisseur
-   - **Primary subnet** : un /30 pour BGP (par exemple `169.254.100.0/30`)
-   - **Secondary subnet** : un /30 pour BGP (par exemple `169.254.100.4/30`)
-   - **VLAN ID** : fourni par le fournisseur
+2. Configurez :
+   - **Peer ASN** : l'ASN de votre MCR ou de votre fournisseur
+   - **Primary subnet** : un /30 pour BGP (par exemple `169.254.100.0/30`)
+   - **Secondary subnet** : un /30 pour BGP (par exemple `169.254.100.4/30`)
+   - **VLAN ID** : fourni par le fournisseur
 
 #### 5. Configurer le peering BGP OVHcloud
 
@@ -340,13 +344,13 @@ Assurez-vous que le MCR ou le routeur du fournisseur annonce les préfixes Azure
 |---|---|
 | Statut du circuit Azure | Portail Azure → ExpressRoute → Overview → **Provider status: Provisioned** |
 | Peering BGP Azure | Portail Azure → ExpressRoute → Peerings → **State: Enabled** |
-| Statut BGP OVHcloud | API OVHcloud : `GET /ovhCloudConnect/{serviceName}` → `status: active` |
+| Statut BGP OVHcloud | API OVHcloud : `GET /ovhCloudConnect/{serviceName}` → `status: active` |
 | Statut VXC fournisseur | Portail fournisseur → VXC → **Active / Up** |
 | Ping de bout en bout | Depuis une VM Azure → IP privée d'un serveur OVHcloud |
 
 ### Flux de routage BGP
 
-Cette architecture comporte **trois segments BGP** :
+Cette architecture comporte **trois segments BGP** :
 
 | Segment | Extrémités | ASN |
 |---|---|---|
@@ -362,11 +366,11 @@ Azure utilise l'ASN **12076** pour le Private Peering ExpressRoute.
 
 | Symptôme | Cause probable | Action |
 |---|---|---|
-| Circuit ExpressRoute bloqué dans « Enabling » | Le fournisseur n'a pas finalisé le provisionnement | Consultez le portail du fournisseur ; contactez son support |
+| Circuit ExpressRoute bloqué dans « Enabling » | Le fournisseur n'a pas finalisé le provisionnement | Consultez le portail du fournisseur ; contactez son support |
 | Le peering privé Azure n'est pas établi | Discordance de sous-réseau ou d'ASN | Vérifiez que les sous-réseaux /30 et l'ASN du peer correspondent aux paramètres du fournisseur |
 | Session BGP OVHcloud en panne | Clé de service non activée ou discordance de VLAN | Vérifiez l'API OVHcloud et la configuration VXC du fournisseur |
 | Pas de route vers le VNet Azure | Annonce de route manquante | Vérifiez que le MCR transmet les préfixes Azure vers OVHcloud |
-| Routage asymétrique | Chemins différents pour le sortant/entrant | Assurez-vous que les deux côtés préfèrent le même chemin ; vérifiez les attributs BGP |
+| Routage asymétrique | Chemins différents pour le sortant/entrant | Assurez-vous que les deux côtés préfèrent le même chemin ; vérifiez les attributs BGP |
 
 </Tab>
 <Tab label="GCP">
@@ -394,7 +398,7 @@ Azure utilise l'ASN **12076** pour le Private Peering ExpressRoute.
 
 ### Types d'Interconnect GCP
 
-GCP propose deux principales options d'interconnect :
+GCP propose deux principales options d'interconnect :
 
 | Type | Description | À utiliser quand |
 |---|---|---|
@@ -407,16 +411,16 @@ GCP propose deux principales options d'interconnect :
 
 #### 1. Créer un GCP Cloud Router
 
-Dans la **console GCP** → **Hybrid Connectivity** → **Cloud Routers** → **Create** :
+Dans la **console GCP** → **Hybrid Connectivity** → **Cloud Routers** → **Create** :
 
-- **Name** : `router-ovhcloud`
-- **Network** : votre VPC
-- **Region** : la région la plus proche du PoP du fournisseur (par exemple `europe-west1` pour Paris)
-- **ASN** : utilisez un ASN privé (par exemple `65001`) ou la valeur par défaut de Google (`16550`)
+- **Name** : `router-ovhcloud`
+- **Network** : votre VPC
+- **Region** : la région la plus proche du PoP du fournisseur (par exemple `europe-west1` pour Paris)
+- **ASN** : utilisez un ASN privé (par exemple `65001`) ou la valeur par défaut de Google (`16550`)
 
 #### 2. Créer une VLAN attachment Partner Interconnect
 
-Allez dans **Hybrid Connectivity** → **Interconnect** → **VLAN attachments** → **Create** :
+Allez dans **Hybrid Connectivity** → **Interconnect** → **VLAN attachments** → **Create** :
 
 1. Sélectionnez **Partner Interconnect connection**.
 2. Choisissez votre Cloud Router.
@@ -424,26 +428,26 @@ Allez dans **Hybrid Connectivity** → **Interconnect** → **VLAN attachments**
 4. Définissez la **MTU** à 1500 (standard) ou à 1440 pour l'interopérabilité VPN.
 5. Notez la **pairing key** générée par GCP.
 
-**Format de la pairing key GCP** : une chaîne de la forme `<random>/<region>/<edge-availability-domain>`
+**Format de la pairing key GCP** : une chaîne de la forme `<random>/<region>/<edge-availability-domain>`
 
 #### 3. Créer le pont chez le fournisseur
 
-Sur la plateforme du fournisseur, créez les connexions qui pontent GCP et OVHcloud :
+Sur la plateforme du fournisseur, créez les connexions qui pontent GCP et OVHcloud :
 
-**Exemple Megaport :**
+**Exemple Megaport :**
 
 1. Créez un **MCR** (Megaport Cloud Router) dans une métropole avec présence GCP et OVHcloud.
-2. **VXC 1** : MCR → Google Cloud Partner Interconnect (utilisez la pairing key GCP).
-3. **VXC 2** : MCR → OVHcloud Connect (utilisez la clé de service OVHcloud).
+2. **VXC 1** : MCR → Google Cloud Partner Interconnect (utilisez la pairing key GCP).
+3. **VXC 2** : MCR → OVHcloud Connect (utilisez la clé de service OVHcloud).
 
-**Exemple Equinix Fabric :**
+**Exemple Equinix Fabric :**
 
 1. Créez une connexion depuis votre port Fabric → GCP Partner Interconnect (utilisez la pairing key GCP).
 2. Créez une connexion depuis votre port Fabric → OVHcloud Connect (utilisez la clé de service OVHcloud).
 
 #### 4. Activer la VLAN attachment GCP
 
-Une fois que le fournisseur a provisionné la connexion :
+Une fois que le fournisseur a provisionné la connexion :
 
 1. Retournez dans la **console GCP** → **VLAN attachments**.
 2. L'attachement doit afficher **« Waiting for provider »** puis **« Pending customer »**.
@@ -454,7 +458,8 @@ Une fois que le fournisseur a provisionné la connexion :
 
 [Configurez OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp).
 
-Assurez-vous que le MCR du fournisseur :
+Assurez-vous que le MCR du fournisseur :
+
 - Annonce les préfixes du VPC GCP (`10.3.0.0/16`) vers OVHcloud (AS BGP [TODO: par PoP — 65501 EU / 65502 CA / 65519 Asia]).
 - Annonce les préfixes OVHcloud (`172.16.0.0/16`) vers le GCP Cloud Router.
 
@@ -488,7 +493,7 @@ Le GCP Cloud Router utilise l'ASN **16550** par défaut. Vous pouvez configurer 
 
 | Symptôme | Cause probable | Action |
 |---|---|---|
-| VLAN attachment bloqué dans « Waiting for provider » | VXC du fournisseur pas encore provisionnée | Consultez le portail du fournisseur ; vérifiez que la pairing key GCP est correcte |
+| VLAN attachment bloqué dans « Waiting for provider » | VXC du fournisseur pas encore provisionnée | Consultez le portail du fournisseur ; vérifiez que la pairing key GCP est correcte |
 | VLAN attachment dans « Pending customer » | Pas encore activé dans la console GCP | Cliquez sur **Activate** sur la VLAN attachment |
 | BGP du Cloud Router non établi | Discordance d'ASN ou d'IP de peering | Vérifiez que l'ASN du Cloud Router correspond à ce que le fournisseur attend |
 | Pas de routes vers le VPC GCP | Annonce de route manquante | Assurez-vous que le Cloud Router annonce les sous-réseaux du VPC et que le MCR les transmet |
@@ -497,13 +502,13 @@ Le GCP Cloud Router utilise l'ASN **16550** par défaut. Vous pouvez configurer 
 </Tab>
 </Tabs>
 
-### Et ensuite ?
+### Et ensuite ?
 
 - [Architecture On-Prem résiliente](/guides/network/ovhcloud-connect/resilient-architecture) pour la haute disponibilité
-- [Superviser votre connexion](/guides/network/ovhcloud-connect/diagnostics)
+- [Superviser votre connexion](/guides/network/ovhcloud-connect/monitor)
 
 ### Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -1,7 +1,7 @@
 ---
-title: 'Quick Start: Connection to OVHcloud with a Provider'
+title: 'Quick Start: OVHcloud Connect Provider'
 description: 'Walk through the steps to connect to OVHcloud using a third-party network provider'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objective
@@ -21,11 +21,11 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go t
 
 ## Steps overview
 
-<img className="thumbnail" alt="Steps overview" src="/images/network/ovhcloud-connect/provider-control-panel-setup/fig-1.svg" loading="lazy" />
+<img className="thumbnail" alt="Overview of the steps to set up OVHcloud Connect Provider from the Control Panel" src="/images/network/ovhcloud-connect/occ-provider-control-panel-setup/fig-1.svg" loading="lazy" />
 
 ### Step 1 — Order OVHcloud Connect Provider
 
-1. Select **Provider Connection**.
+1. Select <code className="action">OVHcloud Connect Provider</code>.
 2. Choose your **provider**, **PoP location**, and **bandwidth**.
 3. Review pricing and submit the order.
 4. OVHcloud generates a **pairing key** (also called a service key) for your provider.
@@ -50,7 +50,7 @@ You can track the connection status in both the **OVHcloud Control Panel** and y
 
 Link the OVHcloud Connect service to your **vRack**:
 
-1. In the OVHcloud Control Panel, go to **vRack**.
+1. In the OVHcloud Control Panel, go to <code className="action">vRack</code>.
 2. Add your OVHcloud Connect service.
 3. Configure the required VLANs and subnets.
 
@@ -70,7 +70,7 @@ See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) for det
 | **BGP session** | Established — check on your router and in the OVHcloud Control Panel |
 | **Routes** | Your prefixes visible on OVHcloud side; OVHcloud routes visible on your side |
 | **Ping** | Ping an OVHcloud resource from your network |
-| **Traceroute** | Verify traffic goes through the private link, not the internet |
+| **Traceroute** | Verify traffic goes through the private link, not the Internet |
 
 ## Troubleshooting
 
@@ -84,11 +84,11 @@ See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) for det
 ## What's next?
 
 - For a self-managed connection, see [Quick Start: Direct Connection](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
-- Set up [monitoring](/guides/network/ovhcloud-connect/diagnostics)
+- Set up [monitoring](/guides/network/ovhcloud-connect/monitor)
 - Explore [resilient architectures](/guides/network/ovhcloud-connect/resilient-architecture)
 
 ## Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

@@ -7940,11 +7940,11 @@
   "sidebar.gen.networkOvhcloudConnectArchitectures": {
     "fr": "Architectures",
     "en": "Architectures",
-    "de": "Architectures",
-    "es": "Architectures",
-    "it": "Architectures",
-    "pl": "Architectures",
-    "pt": "Architectures"
+    "de": "Architekturen",
+    "es": "Arquitecturas",
+    "it": "Architetture",
+    "pl": "Architektury",
+    "pt": "Arquiteturas"
   },
   "sidebar.gen.networkOvhcloudConnectConcepts": {
     "fr": "Concepts clés",

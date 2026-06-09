@@ -1,7 +1,7 @@
 ---
-title: 'Déclarer et suivre un incident'
+title: 'Déclarer et suivre un incident OVHcloud Connect'
 description: 'Découvrez comment signaler un incident OVHcloud Connect, fournir les informations de diagnostic et suivre la résolution'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -10,7 +10,7 @@ Si vous constatez une dégradation de service ou une interruption sur votre lien
 
 ## Étape 1 — Recueillir les informations de diagnostic
 
-Avant de contacter le support, collectez les informations suivantes pour accélérer le diagnostic :
+Avant de contacter le support, collectez les informations suivantes pour accélérer le diagnostic :
 
 ### Liste de contrôle pour le tri d'incident
 
@@ -27,23 +27,26 @@ Avant de contacter le support, collectez les informations suivantes pour accél�
 
 ### Exemples de commandes de diagnostic
 
-**Cisco IOS :**
-```
+**Cisco IOS :**
+
+```bash
 show ip bgp summary
 show interfaces GigabitEthernet0/0
 show ip route
 traceroute 172.16.1.10
 ```
 
-**Juniper JunOS :**
-```
+**Juniper JunOS :**
+
+```bash
 show bgp summary
 show interfaces terse
 show route
 traceroute 172.16.1.10
 ```
 
-**Depuis un hôte Linux dans OVHcloud :**
+**Depuis un hôte Linux dans OVHcloud :**
+
 ```bash
 ping -c 10 10.0.0.1
 traceroute 10.0.0.1
@@ -52,7 +55,7 @@ mtr -r -c 50 10.0.0.1
 
 ## Étape 2 — Vérifier les incidents connus
 
-Avant d'ouvrir un ticket, vérifiez si le problème est déjà connu :
+Avant d'ouvrir un ticket, vérifiez si le problème est déjà connu :
 
 - **Page de statut OVHcloud** — Consultez les pages de statut OVHcloud et de maintenances planifiées (accessibles depuis l'espace client).
 - **Page de statut du fournisseur** — Si vous utilisez un fournisseur (Megaport, Equinix, Console Connect), consultez ses pages de statut/maintenance.
@@ -62,10 +65,10 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ## Étape 3 — Ouvrir un ticket de support
 
-1. Allez dans **Support** puis **Créer un ticket** (ou rendez-vous dans la section support).
-2. Sélectionnez la catégorie liée à **Réseau** / **OVHcloud Connect**.
-3. Indiquez un **objet** clair (par exemple : « OVHcloud Connect — session BGP down depuis 14h30 UTC »).
-4. Dans la description, incluez :
+1. Allez dans <code className="action">Support</code> > <code className="action">Créer un ticket</code> (ou rendez-vous dans la section support).
+2. Sélectionnez la catégorie liée à <code className="action">Network</code> / <code className="action">OVHcloud Connect</code>.
+3. Indiquez un **objet** clair (par exemple : « OVHcloud Connect — session BGP down depuis 14h30 UTC »).
+4. Dans la description, incluez :
    - Le **nom/ID du service** OVHcloud Connect
    - L'**horodatage** du problème (UTC)
    - Les **symptômes** observés
@@ -75,7 +78,7 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 6. Soumettez le ticket et notez le **numéro de ticket**.
 
 :::tip
-**Astuce :** plus votre rapport initial est détaillé, plus l'équipe de support pourra diagnostiquer le problème rapidement.
+**Astuce :** plus votre rapport initial est détaillé, plus l'équipe de support pourra diagnostiquer le problème rapidement.
 :::
 
 ## Étape 4 — Suivre
@@ -89,7 +92,7 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ### Escalade
 
-Si le problème est **critique pour votre activité** et que vous n'obtenez pas de réponse dans les délais :
+Si le problème est **critique pour votre activité** et que vous n'obtenez pas de réponse dans les délais :
 
 1. Référez-vous aux conditions de SLA de votre contrat (voir [SLA](/guides/network/ovhcloud-connect/slas)).
 2. Demandez une escalade via le portail de support.
@@ -97,24 +100,24 @@ Si le problème est **critique pour votre activité** et que vous n'obtenez pas 
 
 ## Étape 5 — Post-incident
 
-Une fois l'incident résolu :
+Une fois l'incident résolu :
 
 1. **Demandez une analyse de cause racine (RCA)** — Demandez au support OVHcloud un rapport post-incident expliquant ce qu'il s'est passé et les mesures prises pour éviter une récidive.
 2. **Mettez à jour vos runbooks** — Documentez l'incident, les étapes de résolution et les enseignements tirés.
 3. **Mettez en place des mesures correctives** — Si l'incident a révélé une faiblesse (par exemple un manque de redondance, une supervision insuffisante), planifiez les améliorations.
 4. **Vérifiez la conformité au SLA** — Si l'incident a entraîné une indisponibilité supérieure à l'engagement SLA, vous pouvez être éligible à des avoirs (voir [SLA](/guides/network/ovhcloud-connect/slas)).
 
-## Synthèse : flux de réponse à incident
+## Synthèse : flux de réponse à incident
 
-<img className="thumbnail" alt="Synthèse : flux de réponse à incident" src="/images/network/ovhcloud-connect/incident-followup/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Synthèse : flux de réponse à incident" src="/images/network/ovhcloud-connect/incident-followup/fig-1.fr.svg" loading="lazy" />
 
-## Et ensuite ?
+## Et ensuite ?
 
-- Mettez en place une [supervision](/guides/network/ovhcloud-connect/diagnostics) proactive afin de détecter les problèmes avant qu'ils n'impactent vos utilisateurs
+- Mettez en place une [supervision](/guides/network/ovhcloud-connect/monitor) proactive afin de détecter les problèmes avant qu'ils n'impactent vos utilisateurs
 - Passez en revue vos engagements [SLA](/guides/network/ovhcloud-connect/slas)
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

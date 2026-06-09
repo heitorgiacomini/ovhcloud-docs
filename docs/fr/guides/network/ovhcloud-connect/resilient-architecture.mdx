@@ -1,8 +1,10 @@
 ---
 title: Mettre en place une architecture OVHcloud Connect résiliente
 description: Connectez votre infrastructure à OVHcloud via deux liens OVHcloud Connect redondants pour assurer la haute disponibilité et la bascule automatique.
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objectif
 
@@ -14,6 +16,8 @@ Vous trouverez ci-dessous les prérequis et les instructions pour cinq cas d'usa
 
 <Tabs>
 <Tab label="On-Premises">
+
+<a id="on-premises"></a>
 
 ### Prérequis
 
@@ -47,6 +51,7 @@ Commandez deux services OVHcloud Connect distincts sur **des PoPs différents** 
 #### 2. Installer les deux connexions physiques
 
 Pour chaque lien :
+
 - **Direct :** installez les cross-connects sur chaque PoP. Voir [LOA Cross Connect](/guides/network/ovhcloud-connect/cross-connect-loa).
 - **Provider :** partagez les clés d'appairage respectives avec votre ou vos opérateurs.
 
@@ -56,7 +61,7 @@ Mettez en place **deux sessions BGP** — une par lien — avec des politiques d
 
 ##### Exemple actif/passif (Cisco IOS)
 
-```
+```text
 router bgp 65001
  ! Primary link via PoP A
  neighbor 192.0.2.1 remote-as 35540
@@ -123,11 +128,12 @@ Configurez des sous-réseaux privés dans les deux Availability Zones. Voir [Con
 #### 7. Mettre en place la supervision
 
 Supervisez les **deux liens** indépendamment. Configurez des alertes pour :
+
 - Les chutes de session BGP sur l'un ou l'autre lien
 - Le déséquilibre de trafic (tout le trafic sur un seul lien peut indiquer une défaillance de l'autre)
 - La bande passante approchant la capacité maximale sur l'un ou l'autre lien
 
-Voir [Superviser](/guides/network/ovhcloud-connect/diagnostics).
+Voir [Superviser](/guides/network/ovhcloud-connect/monitor).
 
 ### Avancé : configuration actif/actif
 
@@ -142,6 +148,8 @@ Pour un débit maximal et une bascule plus rapide, vous pouvez exploiter les deu
 
 </Tab>
 <Tab label="WAN">
+
+<a id="wan"></a>
 
 ### Prérequis
 
@@ -196,7 +204,7 @@ Répartissez les sous-réseaux entre les deux AZ pour une redondance complète. 
 
 #### 7. Superviser les deux chemins
 
-Mettez en place une supervision indépendante pour chaque lien, chaque session BGP et chaque circuit WAN. Voir [Superviser](/guides/network/ovhcloud-connect/diagnostics).
+Mettez en place une supervision indépendante pour chaque lien, chaque session BGP et chaque circuit WAN. Voir [Superviser](/guides/network/ovhcloud-connect/monitor).
 
 ### Considérations SD-WAN
 
@@ -208,6 +216,8 @@ Si vous utilisez un overlay SD-WAN :
 
 </Tab>
 <Tab label="AWS">
+
+<a id="aws"></a>
 
 ### Prérequis
 
@@ -281,16 +291,19 @@ Associez les deux services OVHcloud Connect au même vRack. Voir [Associer à un
 ### Considérations de coût
 
 Une connectivité résiliente entre AWS et OVHcloud nécessite :
+
 - 2× connexions AWS Direct Connect (facturation AWS)
 - 2× VXC opérateur ou sessions MCR (facturation opérateur)
 - 2× services OVHcloud Connect (facturation OVHcloud)
 
 Planifiez votre budget en conséquence. Le coût de la redondance est généralement justifié par la réduction du risque pour les workloads de production.
 
-> Pour plus d'informations, veuillez consulter la [documentation AWS Direct Connect](https://docs.aws.amazon.com/directconnect/)
+> Pour plus d'informations, veuillez consulter la [documentation AWS Direct Connect](https://docs.aws.amazon.com/directconnect/).
 
 </Tab>
 <Tab label="Azure">
+
+<a id="azure"></a>
 
 ### Prérequis
 
@@ -404,14 +417,16 @@ Côté OVHcloud, utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-
 
 ### Considérations spécifiques à Azure
 
-- **ExpressRoute Global Reach :** si les deux PoPs OVHcloud sont dans des régions Azure différentes, envisagez d'activer [Global Reach](https://learn.microsoft.com/en-us/azure/expressroute/expressroute-global-reach) pour permettre la communication directe entre circuits.
-- **FastPath :** pour les passerelles Ultra Performance ou ErGw3AZ, activez [FastPath](https://learn.microsoft.com/en-us/azure/expressroute/about-fastpath) afin d'améliorer les performances réseau.
+- **ExpressRoute Global Reach :** si les deux PoPs OVHcloud sont dans des régions Azure différentes, envisagez d'activer [Global Reach](https://learn.microsoft.com/fr-fr/azure/expressroute/expressroute-global-reach) pour permettre la communication directe entre circuits.
+- **FastPath :** pour les passerelles Ultra Performance ou ErGw3AZ, activez [FastPath](https://learn.microsoft.com/fr-fr/azure/expressroute/about-fastpath) afin d'améliorer les performances réseau.
 - **Limites de routes :** Azure Private Peering prend en charge jusqu'à **4 000 routes** par circuit. Agrégez les préfixes OVHcloud pour rester dans la limite.
 
-> Pour plus d'informations, veuillez consulter la [documentation Azure ExpressRoute](https://learn.microsoft.com/en-us/azure/expressroute/)
+> Pour plus d'informations, veuillez consulter la [documentation Azure ExpressRoute](https://learn.microsoft.com/fr-fr/azure/expressroute/).
 
 </Tab>
 <Tab label="GCP">
+
+<a id="gcp"></a>
 
 ### Prérequis
 
@@ -541,7 +556,7 @@ Utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) :
 - **Shared VPC :** si vous utilisez un Shared VPC, créez l'Interconnect dans le projet hôte et partagez-le avec les projets de service.
 - **MTU :** GCP Interconnect prend en charge un **MTU de 1440** pour Partner Interconnect. Assurez-vous qu'OVHcloud Connect et les VXC opérateur utilisent des paramètres MTU correspondants.
 
-> Pour plus d'informations, veuillez consulter la [documentation GCP Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect) et la [documentation GCP Cloud Router](https://cloud.google.com/network-connectivity/docs/router)
+> Pour plus d'informations, veuillez consulter la [documentation GCP Interconnect](https://docs.cloud.google.com/network-connectivity/docs/interconnect) et la [documentation GCP Cloud Router](https://docs.cloud.google.com/network-connectivity/docs/router).
 
 </Tab>
 </Tabs>
@@ -549,11 +564,11 @@ Utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) :
 ### Et ensuite ?
 
 - [Architecture simple](/guides/network/ovhcloud-connect/simple-architecture) pour les cas d'usage non critiques
-- [Superviser vos connexions](/guides/network/ovhcloud-connect/diagnostics)
+- [Superviser vos connexions](/guides/network/ovhcloud-connect/monitor)
 - [Configuration Multi-AZ](/guides/network/ovhcloud-connect/multi-az) pour la résilience côté OVHcloud
 
 ### Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -1,7 +1,7 @@
 ---
-title: 'Quick Start : connexion à OVHcloud avec un Provider'
+title: 'Quick Start : OVHcloud Connect Provider'
 description: 'Suivez les étapes pour vous connecter à OVHcloud via un opérateur réseau tiers'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -10,7 +10,7 @@ Ce guide vous accompagne dans la connexion à OVHcloud via un **opérateur rése
 
 ## Avant de commencer
 
-Assurez-vous de disposer de :
+Assurez-vous de disposer de :
 
 - Un **compte OVHcloud** avec une facturation configurée
 - D'un contrat ou d'un compte chez un **provider pris en charge** (consultez [Providers](/guides/network/ovhcloud-connect/providers))
@@ -21,11 +21,11 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ## Vue d'ensemble des étapes
 
-<img className="thumbnail" alt="Vue d'ensemble des étapes" src="/images/network/ovhcloud-connect/provider-control-panel-setup/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d'ensemble des étapes" src="/images/network/ovhcloud-connect/occ-provider-control-panel-setup/fig-1.fr.svg" loading="lazy" />
 
 ### Étape 1 — Commander OVHcloud Connect Provider
 
-1. Sélectionnez **Connexion via Provider**.
+1. Sélectionnez <code className="action">OVHcloud Connect Provider</code>.
 2. Choisissez votre **provider**, votre **emplacement de PoP** et la **bande passante**.
 3. Vérifiez la tarification et soumettez la commande.
 4. OVHcloud génère une **clé d'appairage** (également appelée clé de service) destinée à votre provider.
@@ -36,9 +36,9 @@ Pour les étapes détaillées, consultez [Commander OVHcloud Connect Provider](/
 
 Communiquez la **clé d'appairage** à votre provider. Cette clé permet au provider d'identifier et d'activer la connexion vers OVHcloud pour votre compte.
 
-- Sur **Megaport** : créez un VXC (Virtual Cross Connect) vers OVHcloud et saisissez la clé d'appairage.
-- Sur **Equinix Fabric** : créez une connexion vers OVHcloud et fournissez la clé de service.
-- Sur **Console Connect** : initiez une connexion vers OVHcloud et utilisez la clé d'appairage.
+- Sur **Megaport** : créez un VXC (Virtual Cross Connect) vers OVHcloud et saisissez la clé d'appairage.
+- Sur **Equinix Fabric** : créez une connexion vers OVHcloud et fournissez la clé de service.
+- Sur **Console Connect** : initiez une connexion vers OVHcloud et utilisez la clé d'appairage.
 
 ### Étape 3 — Le provider provisionne la connexion
 
@@ -48,9 +48,9 @@ Vous pouvez suivre le statut de la connexion à la fois dans l'**espace client O
 
 ### Étape 4 — Associer à votre vRack
 
-Reliez le service OVHcloud Connect à votre **vRack** :
+Reliez le service OVHcloud Connect à votre **vRack** :
 
-1. Dans l'espace client OVHcloud, rendez-vous sur **vRack**.
+1. Dans l'espace client OVHcloud, rendez-vous sur <code className="action">vRack</code>.
 2. Ajoutez votre service OVHcloud Connect.
 3. Configurez les VLANs et sous-réseaux requis.
 
@@ -66,29 +66,29 @@ Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) 
 
 | Vérification | Comment |
 |---|---|
-| **Statut de la connexion** | Affiche « Active » dans l'espace client OVHcloud et dans le portail du provider |
+| **Statut de la connexion** | Affiche « Active » dans l'espace client OVHcloud et dans le portail du provider |
 | **Session BGP** | Établie — vérifiez sur votre routeur et dans l'espace client OVHcloud |
-| **Routes** | Vos préfixes sont visibles côté OVHcloud ; les routes OVHcloud sont visibles de votre côté |
+| **Routes** | Vos préfixes sont visibles côté OVHcloud ; les routes OVHcloud sont visibles de votre côté |
 | **Ping** | Effectuez un ping vers une ressource OVHcloud depuis votre réseau |
-| **Traceroute** | Vérifiez que le trafic emprunte le lien privé et non internet |
+| **Traceroute** | Vérifiez que le trafic emprunte le lien privé et non Internet |
 
 ## Dépannage
 
 | Problème | Que vérifier |
 |---|---|
-| Connexion bloquée en « Pending » | Vérifiez que la clé d'appairage a été correctement saisie côté provider |
-| Le provider affiche « Active » mais OVHcloud affiche « Down » | Contactez le support OVHcloud — il peut s'agir d'un délai de provisionnement |
+| Connexion bloquée en « Pending » | Vérifiez que la clé d'appairage a été correctement saisie côté provider |
+| Le provider affiche « Active » mais OVHcloud affiche « Down » | Contactez le support OVHcloud — il peut s'agir d'un délai de provisionnement |
 | La session BGP ne s'établit pas | Vérifiez les IPs de peering, l'ASN et l'ID VLAN à la fois sur votre routeur et dans la configuration de PoP OVHcloud |
-| Latence élevée ou perte de paquets | Consultez la page de statut réseau du provider ; exécutez un traceroute pour identifier où se produisent les délais |
+| Latence élevée ou perte de paquets | Consultez la page de statut réseau du provider ; exécutez un traceroute pour identifier où se produisent les délais |
 
-## Et ensuite ?
+## Et ensuite ?
 
-- Pour une connexion auto-gérée, consultez [Quick Start : connexion Direct](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
-- Mettez en place la [supervision](/guides/network/ovhcloud-connect/diagnostics)
+- Pour une connexion auto-gérée, consultez [Quick Start : connexion Direct](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
+- Mettez en place la [supervision](/guides/network/ovhcloud-connect/monitor)
 - Explorez les [architectures résilientes](/guides/network/ovhcloud-connect/resilient-architecture)
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

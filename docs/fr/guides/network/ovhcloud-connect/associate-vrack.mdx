@@ -1,7 +1,7 @@
 ---
 title: 'Associer un OVHcloud Connect à votre vRack'
 description: "Découvrez comment associer votre service OVHcloud Connect à un vRack pour bénéficier d'une connectivité privée"
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 import Api from '@components/Api';
@@ -14,7 +14,7 @@ Le **vRack** est le service de réseau privé d'OVHcloud. Pour permettre à vos 
 
 <img className="thumbnail" alt="Rôle de l'association" src="/images/network/ovhcloud-connect/associate-vrack/fig-1.fr.svg" loading="lazy" />
 
-Lorsque vous associez OVHcloud Connect à un vRack :
+Lorsque vous associez OVHcloud Connect à un vRack :
 
 - Le trafic provenant de votre réseau externe (on-premises, cloud, WAN) peut atteindre les services OVHcloud rattachés au même vRack.
 - Les services OVHcloud présents dans le vRack peuvent renvoyer du trafic via OVHcloud Connect vers votre réseau.
@@ -32,11 +32,11 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ### Depuis l'espace client OVHcloud
 
-1. Rendez-vous dans **Network** → **vRack**.
+1. Rendez-vous dans <code className="action">Network</code> > <code className="action">vRack</code>.
 2. Sélectionnez votre vRack.
-3. Cliquez sur **Ajouter un service**.
+3. Cliquez sur <code className="action">Ajouter un service</code>.
 4. Dans la liste des services éligibles, sélectionnez votre service **OVHcloud Connect**.
-5. Cliquez sur **Ajouter** pour confirmer.
+5. Cliquez sur <code className="action">Ajouter</code> pour confirmer.
 
 L'association est généralement effective en quelques minutes.
 
@@ -72,30 +72,30 @@ resource "ovh_vrack_ovhcloudconnect" "association" {
 
 ## Vérifier l'association
 
-Après avoir effectué l'association :
+Après avoir effectué l'association :
 
 1. Dans la rubrique **vRack** de l'espace client, vérifiez que le service OVHcloud Connect apparaît bien dans la liste des services associés.
-2. Vérifiez la cohérence de la **configuration VLAN** : le VLAN ID utilisé dans la configuration de votre PoP OVHcloud Connect doit correspondre au VLAN utilisé par vos ressources OVHcloud dans le vRack.
-3. **Testez la connectivité** : envoyez un ping vers une ressource OVHcloud depuis votre réseau externe afin de confirmer la communication privée de bout en bout.
+2. Vérifiez la cohérence de la **configuration VLAN** : le VLAN ID utilisé dans la configuration de votre PoP OVHcloud Connect doit correspondre au VLAN utilisé par vos ressources OVHcloud dans le vRack.
+3. **Testez la connectivité** : envoyez un ping vers une ressource OVHcloud depuis votre réseau externe afin de confirmer la communication privée de bout en bout.
 
 ## Supprimer l'association
 
-Si vous devez dissocier OVHcloud Connect d'un vRack :
+Si vous devez dissocier OVHcloud Connect d'un vRack :
 
-1. Rendez-vous dans **Network** → **vRack** dans l'espace client.
+1. Rendez-vous dans <code className="action">Network</code> > <code className="action">vRack</code> dans l'espace client.
 2. Sélectionnez votre vRack.
-3. Repérez le service OVHcloud Connect et cliquez sur **Supprimer**.
+3. Repérez le service OVHcloud Connect et cliquez sur <code className="action">Supprimer</code>.
 4. Confirmez la suppression.
 
-> **Avertissement :** la suppression de l'association interrompt immédiatement le trafic privé entre votre réseau externe et les ressources OVHcloud présentes dans ce vRack.
+> **Avertissement :** la suppression de l'association interrompt immédiatement le trafic privé entre votre réseau externe et les ressources OVHcloud présentes dans ce vRack.
 
-## Et ensuite ?
+## Et ensuite ?
 
-- [Superviser votre OVHcloud Connect](/guides/network/ovhcloud-connect/diagnostics)
+- [Superviser votre OVHcloud Connect](/guides/network/ovhcloud-connect/monitor)
 - [Configurer le réseau de votre vRack](/guides/network/ovhcloud-connect/vrack-network-setup) pour mettre en place correctement les sous-réseaux
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

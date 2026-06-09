@@ -1,7 +1,7 @@
 ---
 title: "Automatiser OVHcloud Connect avec l'API, la CLI et Terraform"
 description: "Découvrez comment administrer OVHcloud Connect de manière programmatique via l'API, la CLI et Terraform"
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -10,9 +10,9 @@ OVHcloud Connect peut être administré de manière programmatique via l'API OVH
 
 ## API OVHcloud
 
-L'API OVHcloud fournit des endpoints RESTful pour toutes les opérations OVHcloud Connect : commande, configuration, supervision et résiliation des connexions.
+L'API OVHcloud fournit des endpoints RESTful pour toutes les opérations OVHcloud Connect : commande, configuration, supervision et résiliation des connexions.
 
-**Console API :** [https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1)
+**Console API :** [https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1)
 
 ### Principaux endpoints API
 
@@ -27,13 +27,13 @@ L'API OVHcloud fournit des endpoints RESTful pour toutes les opérations OVHclou
 ### Premiers pas avec l'API
 
 1. **Créez des identifiants API** — Rendez-vous sur [https://eu.api.ovh.com/createToken/](https://eu.api.ovh.com/createToken/) et générez une Application Key, une Application Secret et une Consumer Key.
-2. **Choisissez un SDK** — OVHcloud propose des wrappers d'API officiels dans plusieurs langages :
-   - **Python :** [github.com/ovh/python-ovh](https://github.com/ovh/python-ovh)
-   - **Node.js :** [github.com/ovh/node-ovh](https://github.com/ovh/node-ovh)
-   - **Go :** [github.com/ovh/go-ovh](https://github.com/ovh/go-ovh)
-   - **PHP :** [github.com/ovh/php-ovh](https://github.com/ovh/php-ovh)
-   - **C# :** [github.com/ovh/csharp-ovh](https://github.com/ovh/csharp-ovh)
-3. **Effectuez votre premier appel** — Exemple en Python :
+2. **Choisissez un SDK** — OVHcloud propose des wrappers d'API officiels dans plusieurs langages :
+   - **Python :** [github.com/ovh/python-ovh](https://github.com/ovh/python-ovh)
+   - **Node.js :** [github.com/ovh/node-ovh](https://github.com/ovh/node-ovh)
+   - **Go :** [github.com/ovh/go-ovh](https://github.com/ovh/go-ovh)
+   - **PHP :** [github.com/ovh/php-ovh](https://github.com/ovh/php-ovh)
+   - **C# :** [github.com/ovh/csharp-ovh](https://github.com/ovh/csharp-ovh)
+3. **Effectuez votre premier appel** — Exemple en Python :
 
 ```python
 import ovh
@@ -50,14 +50,14 @@ print(services)
 ```
 
 :::tip
-**Conseil de sécurité :** ne codez jamais en dur vos identifiants API. Utilisez des variables d'environnement, un fichier de configuration (`ovh.conf`) ou un gestionnaire de secrets (par exemple HashiCorp Vault, secrets CI/CD).
+**Conseil de sécurité :** ne codez jamais en dur vos identifiants API. Utilisez des variables d'environnement, un fichier de configuration (`ovh.conf`) ou un gestionnaire de secrets (par exemple HashiCorp Vault, secrets CI/CD).
 :::
 
 ## Interface en ligne de commande (CLI)
 
 Bien qu'il n'existe pas de binaire CLI OVHcloud dédié à OVHcloud Connect, vous pouvez utiliser les wrappers d'API dans un contexte de scripting ou créer des scripts CLI légers à l'aide des SDKs ci-dessus.
 
-Exemple : un rapide script bash utilisant `curl` et le mécanisme de signature de l'API OVHcloud :
+Exemple : un rapide script bash utilisant `curl` et le mécanisme de signature de l'API OVHcloud :
 
 ```bash
 # Simplified example — use an SDK for proper signature handling
@@ -77,8 +77,8 @@ Terraform vous permet de définir votre infrastructure OVHcloud Connect en tant 
 
 ### Provider Terraform OVH
 
-- **Terraform Registry :** [registry.terraform.io/providers/ovh/ovh](https://registry.terraform.io/providers/ovh/ovh/latest)
-- **GitHub :** [github.com/ovh/terraform-provider-ovh](https://github.com/ovh/terraform-provider-ovh)
+- **Terraform Registry :** [registry.terraform.io/providers/ovh/ovh](https://registry.terraform.io/providers/ovh/ovh/latest)
+- **GitHub :** [github.com/ovh/terraform-provider-ovh](https://github.com/ovh/terraform-provider-ovh)
 
 ### Exemple de configuration Terraform
 
@@ -107,11 +107,11 @@ resource "ovh_vrack_ovhcloudconnect" "my_connect" {
 ```
 
 :::info
-**Remarque :** les noms de ressources et attributs peuvent évoluer entre les versions du provider. Référez-vous toujours à la [documentation du Terraform Registry](https://registry.terraform.io/providers/ovh/ovh/latest/docs) pour les définitions de ressources les plus récentes.
+**Remarque :** les noms de ressources et attributs peuvent évoluer entre les versions du provider. Référez-vous toujours à la [documentation du Terraform Registry](https://registry.terraform.io/providers/ovh/ovh/latest/docs) pour les définitions de ressources les plus récentes.
 :::
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

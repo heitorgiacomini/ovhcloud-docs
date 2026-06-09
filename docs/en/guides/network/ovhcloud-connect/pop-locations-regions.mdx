@@ -1,8 +1,10 @@
 ---
 title: 'OVHcloud Connect - PoPs and Regions'
 description: 'Understand how OCC works with PoPs and Regions, and find out which ones are the most suitable for your infrastructure'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Introduction
 
@@ -23,12 +25,12 @@ OVHcloud PoPs are located inside major carrier-neutral datacenters managed by ou
 If you are using a **Provider**, the provider handles the physical connectivity and may reach the PoP from a different facility.
 
 :::info
-OVHcloud regularly adds new locations. Always check the [OVHcloud Connect webpage](https://www.ovhcloud.com/en-gb/network/ovhcloud-connect/) for the most up-to-date list.
+OVHcloud regularly adds new locations. Always check the [OVHcloud Connect webpage](/links/network/ovhcloud-connect) for the most up-to-date list.
 :::
 
 ## How to choose a PoP
 
-When selecting a PoP for your OVHcloud Connect service, please consider the following:
+When selecting a PoP for your OVHcloud Connect service, consider the following:
 
 ### 1. Proximity (latency)
 
@@ -41,11 +43,12 @@ If you are using OVHcloud Connect Provider, verify that your chosen provider has
 ### 3. Redundancy
 
 For high-availability architectures, select **two PoPs in different locations** so that a single site failure does not take down your connection. Follow one of the resilient architecture tutorials for details:
-- [On-prem](/guides/network/ovhcloud-connect/resilient-architecture)
-- [WAN](/guides/network/ovhcloud-connect/resilient-architecture)
-- [AWS](/guides/network/ovhcloud-connect/resilient-architecture)
-- [Azure](/guides/network/ovhcloud-connect/resilient-architecture)
-- [GCP](/guides/network/ovhcloud-connect/resilient-architecture)
+
+- [On-prem](/guides/network/ovhcloud-connect/resilient-architecture#on-premises)
+- [WAN](/guides/network/ovhcloud-connect/resilient-architecture#wan)
+- [AWS](/guides/network/ovhcloud-connect/resilient-architecture#aws)
+- [Azure](/guides/network/ovhcloud-connect/resilient-architecture#azure)
+- [GCP](/guides/network/ovhcloud-connect/resilient-architecture#gcp)
 
 ### 4. Regulatory / data residency requirements
 
@@ -126,6 +129,6 @@ PoP / Low-latency Region Mapping Table
 
 ## Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

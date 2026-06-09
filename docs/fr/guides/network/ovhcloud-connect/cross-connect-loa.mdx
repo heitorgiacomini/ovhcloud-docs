@@ -1,16 +1,16 @@
 ---
-title: 'Commander ou résilier un cross-connect avec une LOA'
+title: 'Commander ou résilier un cross-connect pour OVHcloud Connect (LOA)'
 description: "Découvrez comment commander ou résilier un cross-connect physique à l'aide d'une lettre d'autorisation"
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
 
 Un **cross-connect** est un câble fibre optique physique qui relie votre équipement (ou celui de votre fournisseur) à l'équipement OVHcloud à l'intérieur d'un datacenter. Une **lettre d'autorisation (LOA)** est le document qui autorise l'opérateur du datacenter à installer ou retirer ce câble.
 
-## Qu'est-ce qu'une LOA ?
+## Qu'est-ce qu'une LOA ?
 
-Une LOA est un document formel qui contient :
+Une LOA est un document formel qui contient :
 
 - **Nom et adresse du datacenter** — Le site où le cross-connect sera installé ou retiré.
 - **Référence de la baie/cage OVHcloud** — L'emplacement exact de l'équipement OVHcloud.
@@ -18,23 +18,23 @@ Une LOA est un document formel qui contient :
 - **Partie autorisée** — Qui est autorisé à effectuer l'intervention (vous, votre fournisseur ou l'opérateur du site).
 - **Spécifications du câble** — Type de fibre (monomode), type de connecteur (LC/SC) et longueur.
 
-<img className="thumbnail" alt="Qu'est-ce qu'une LOA ?" src="/images/network/ovhcloud-connect/cross-connect-loa/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Qu'est-ce qu'une LOA ?" src="/images/network/ovhcloud-connect/cross-connect-loa/fig-1.fr.svg" loading="lazy" />
 
 ## Commander un cross-connect
 
 ### Étape 1 — Obtenir la LOA auprès d'OVHcloud
 
-Après avoir commandé **OVHcloud Connect Direct**, OVHcloud vous fournit la LOA :
+Après avoir commandé **OVHcloud Connect Direct**, OVHcloud vous fournit la LOA :
 
 - **Automatiquement par e-mail** après la confirmation de votre commande.
-- **Via l'espace client OVHcloud** — dans les détails de votre service OVHcloud Connect, recherchez l'option « Télécharger la LOA ».
+- **Via l'espace client OVHcloud** — dans les détails de votre service OVHcloud Connect, recherchez l'option « Télécharger la LOA ».
 - **Via le support** — Si vous ne l'avez pas reçue, contactez le support OVHcloud avec la référence de votre service.
 
 ### Étape 2 — Soumettre la LOA à l'opérateur du datacenter
 
 1. Contactez l'**opérateur du datacenter** (par exemple Equinix, Interxion/Digital Realty, Telehouse) et soumettez une commande de cross-connect.
 2. Joignez la **LOA fournie par OVHcloud**.
-3. Précisez :
+3. Précisez :
    - La **référence de votre cage/baie** (côté A)
    - La **référence de la cage/baie OVHcloud** (côté Z, indiquée dans la LOA)
    - Le **type de câble** — Typiquement de la fibre monomode avec connecteurs LC
@@ -44,7 +44,7 @@ Après avoir commandé **OVHcloud Connect Direct**, OVHcloud vous fournit la LOA
 ### Étape 3 — Confirmer l'installation
 
 1. L'opérateur du datacenter installe le câble physique (généralement sous quelques jours ouvrés).
-2. Vérifiez dans l'**espace client OVHcloud** que le statut du port passe à « Up ».
+2. Vérifiez dans l'**espace client OVHcloud** que le statut du port passe à « Up ».
 3. Procédez à la [configuration BGP](/guides/network/ovhcloud-connect/l3-bgp).
 
 ## Résilier un cross-connect
@@ -75,13 +75,13 @@ Avant de retirer le câble physique, résiliez le service OVHcloud Connect (voir
 | **Faites correspondre les types de câbles** | Veillez à utiliser de votre côté le même type de fibre (monomode) et le même connecteur (LC) que ceux indiqués dans la LOA. |
 | **Testez après installation** | Une fois le câble brassé, vérifiez les niveaux optiques et le statut du port avant de configurer BGP. |
 
-## Et ensuite ?
+## Et ensuite ?
 
 - [Configurez OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) une fois le cross-connect installé
 - [Commandez OVHcloud Connect Direct](/guides/network/ovhcloud-connect/order-direct) si vous n'avez pas encore débuté la procédure
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

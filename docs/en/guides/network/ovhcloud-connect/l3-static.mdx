@@ -1,7 +1,7 @@
 ---
 title: 'Configure OVHcloud Connect L3 with static routes'
 description: 'Configure OVHcloud Connect L3 using static IP routes for predictable routing between your network and OVHcloud'
-lastUpdated: 2026-04-14
+lastUpdated: 2026-06-09
 ---
 
 import Api from '@components/Api';
@@ -43,7 +43,7 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go t
 
 ### Overview
 
-```
+```text
 Your Router ── [ L3 at PoP ] ── OVHcloud PoP Router ── [ Static routes at DC ] ── vRack Router ── Services
                  /30 peering                                next-hop + subnet       (172.16.x.x)
 ```
@@ -155,7 +155,7 @@ Configure your physical router with static routes pointing OVHcloud AZ subnets t
 
 #### Cisco IOS / IOS-XE
 
-```
+```text
 ! Interface facing OVHcloud
 interface GigabitEthernet0/0
  description OVHcloud Connect
@@ -170,7 +170,7 @@ ip route 172.16.10.0 255.255.255.0 192.0.2.1 name OVH-DC1-Management
 
 #### Juniper JunOS
 
-```
+```text
 interfaces {
     ge-0/0/0 {
         description "OVHcloud Connect";
@@ -197,7 +197,7 @@ routing-options {
 
 **Cisco:**
 
-```
+```bash
 show ip route static
 ping 172.16.1.1 source 192.0.2.2
 traceroute 172.16.1.1 source 192.0.2.2
@@ -205,7 +205,7 @@ traceroute 172.16.1.1 source 192.0.2.2
 
 **Juniper:**
 
-```
+```bash
 show route protocol static
 ping 172.16.1.1 source 192.0.2.2
 traceroute 172.16.1.1 source 192.0.2.2
@@ -245,6 +245,7 @@ Static routing has significant limitations compared to BGP:
 - **Manual updates required.** When you add or change subnets, you must update both the OVHcloud extra configuration and your router configuration.
 - **No load balancing.** Static routes do not support ECMP or traffic engineering. Traffic follows a single path.
 - **Not recommended for multi-AZ.** For resilient multi-AZ setups, BGP is strongly recommended — see [Multi-AZ](/guides/network/ovhcloud-connect/multi-az).
+
 :::
 
 ### Delete configurations
@@ -260,6 +261,8 @@ Delete in reverse order:
 
 - [Set up vRack networking](/guides/network/ovhcloud-connect/vrack-network-setup) — If you have not configured AZ subnets yet
 - [Associate OVHcloud Connect with your vRack](/guides/network/ovhcloud-connect/associate-vrack)
-- [Monitor your connection](/guides/network/ovhcloud-connect/diagnostics)
+- [Monitor your connection](/guides/network/ovhcloud-connect/monitor)
 
-Join our [community of users](https://community.ovh.com/).
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
+
+Join our [community of users](/links/community).

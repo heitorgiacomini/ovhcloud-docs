@@ -1,8 +1,10 @@
 ---
 title: Set up a resilient OVHcloud Connect architecture
 description: Connect your infrastructure to OVHcloud through two redundant OVHcloud Connect links for high availability and automatic failover.
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objective
 
@@ -10,10 +12,12 @@ This tutorial guides you through connecting your infrastructure to OVHcloud usin
 
 ## Instructions
 
-Below, you will find prerequisites and instructions for five separate use-cases, which you may choose depending on desired architecture.
+Below are prerequisites and instructions for five use cases; choose the one matching your desired architecture.
 
 <Tabs>
 <Tab label="On-Premises">
+
+<a id="on-premises"></a>
 
 ### Prerequisites
 
@@ -47,6 +51,7 @@ Order two separate OVHcloud Connect services at **different PoPs** for physical 
 #### 2. Install both physical connections
 
 For each link:
+
 - **Direct:** Install cross-connects at each PoP. See [Cross Connect LOA](/guides/network/ovhcloud-connect/cross-connect-loa).
 - **Provider:** Share the respective pairing keys with your provider(s).
 
@@ -56,7 +61,7 @@ Set up **two BGP sessions** — one per link — with routing policies that defi
 
 ##### Active/Standby example (Cisco IOS)
 
-```
+```text
 router bgp 65001
  ! Primary link via PoP A
  neighbor 192.0.2.1 remote-as 35540
@@ -123,11 +128,12 @@ Set up private subnets in both Availability Zones. See [Set up your vRack networ
 #### 7. Set up monitoring
 
 Monitor **both links** independently. Set alerts for:
+
 - BGP session drops on either link
 - Traffic imbalance (all traffic on one link may indicate a failure on the other)
 - Bandwidth approaching capacity on either link
 
-See [Monitor](/guides/network/ovhcloud-connect/diagnostics).
+See [Monitor](/guides/network/ovhcloud-connect/monitor).
 
 ### Advanced: Active/Active configuration
 
@@ -142,6 +148,8 @@ For maximum throughput and faster failover, you can run both links in **Active/A
 
 </Tab>
 <Tab label="WAN">
+
+<a id="wan"></a>
 
 ### Prerequisites
 
@@ -196,7 +204,7 @@ Distribute subnets across both AZs for full redundancy. See [Set up your vRack n
 
 #### 7. Monitor both paths
 
-Set up independent monitoring for each link, each BGP session, and each WAN circuit. See [Monitor](/guides/network/ovhcloud-connect/diagnostics).
+Set up independent monitoring for each link, each BGP session, and each WAN circuit. See [Monitor](/guides/network/ovhcloud-connect/monitor).
 
 ### SD-WAN considerations
 
@@ -208,6 +216,8 @@ If you use an SD-WAN overlay:
 
 </Tab>
 <Tab label="AWS">
+
+<a id="aws"></a>
 
 ### Prerequisites
 
@@ -281,16 +291,19 @@ Associate both OVHcloud Connect services with the same vRack. See [Associate wit
 ### Cost considerations
 
 Resilient AWS-to-OVHcloud requires:
+
 - 2× AWS Direct Connect connections (AWS billing)
 - 2× Provider VXCs or MCR sessions (provider billing)
 - 2× OVHcloud Connect services (OVHcloud billing)
 
 Plan your budget accordingly. The cost of redundancy is typically justified by the risk reduction for production workloads.
 
-> For more information, please consult [AWS Direct Connect documentation](https://docs.aws.amazon.com/directconnect/)
+> For more information, please consult [AWS Direct Connect documentation](https://docs.aws.amazon.com/directconnect/).
 
 </Tab>
 <Tab label="Azure">
+
+<a id="azure"></a>
 
 ### Prerequisites
 
@@ -408,10 +421,12 @@ On the OVHcloud side, use [Configure OCC L3 with BGP](/guides/network/ovhcloud-c
 - **FastPath**: For Ultra Performance or ErGw3AZ gateways, enable [FastPath](https://learn.microsoft.com/en-us/azure/expressroute/about-fastpath) for improved network performance.
 - **Route limits**: Azure Private Peering supports up to **4,000 routes** per circuit. Aggregate OVHcloud prefixes to stay within limits.
 
-> For more information, please consult [Azure ExpressRoute documentation](https://learn.microsoft.com/en-us/azure/expressroute/)
+> For more information, please consult [Azure ExpressRoute documentation](https://learn.microsoft.com/en-us/azure/expressroute/).
 
 </Tab>
 <Tab label="GCP">
+
+<a id="gcp"></a>
 
 ### Prerequisites
 
@@ -541,7 +556,7 @@ Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp):
 - **Shared VPC**: If using Shared VPC, create the Interconnect in the host project and share with service projects.
 - **MTU**: GCP Interconnect supports **1440 MTU** for Partner Interconnect. Ensure OVHcloud Connect and provider VXCs use matching MTU settings.
 
-> For more information, please consult [GCP Interconnect documentation](https://cloud.google.com/network-connectivity/docs/interconnect) and [GCP Cloud Router documentation](https://cloud.google.com/network-connectivity/docs/router)
+> For more information, please consult [GCP Interconnect documentation](https://docs.cloud.google.com/network-connectivity/docs/interconnect) and [GCP Cloud Router documentation](https://docs.cloud.google.com/network-connectivity/docs/router).
 
 </Tab>
 </Tabs>
@@ -549,11 +564,11 @@ Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp):
 ### What's next?
 
 - [Simple architecture](/guides/network/ovhcloud-connect/simple-architecture) for non-critical use cases
-- [Monitor your connections](/guides/network/ovhcloud-connect/diagnostics)
+- [Monitor your connections](/guides/network/ovhcloud-connect/monitor)
 - [Multi-AZ configuration](/guides/network/ovhcloud-connect/multi-az) for OVHcloud side resilience
 
 ### Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

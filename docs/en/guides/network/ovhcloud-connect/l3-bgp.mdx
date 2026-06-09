@@ -1,7 +1,7 @@
 ---
 title: 'Configure OVHcloud Connect L3 with BGP'
 description: 'Configure OVHcloud Connect L3 using BGP for dynamic route exchange between your network and OVHcloud'
-lastUpdated: 2026-04-14
+lastUpdated: 2026-06-09
 ---
 
 import Api from '@components/Api';
@@ -32,7 +32,7 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go t
 
 ### Overview
 
-```
+```text
 Your Router ── [ eBGP at PoP ] ── OVHcloud PoP Router ── [ iBGP at DC ] ── vRack Router ── Services
    ASN 65001        /30 peering         ASN 35540           AZ        (172.16.x.x)
                                                            extra config
@@ -146,7 +146,7 @@ Configure your physical router to establish the eBGP session with OVHcloud at th
 
 #### Cisco IOS / IOS-XE
 
-```
+```text
 ! Interface facing OVHcloud
 interface GigabitEthernet0/0
  description OVHcloud Connect
@@ -173,7 +173,7 @@ ip prefix-list OVH-PREFIXES seq 10 permit 172.16.0.0/12 le 24
 
 #### Juniper JunOS
 
-```
+```text
 interfaces {
     ge-0/0/0 {
         description "OVHcloud Connect";
@@ -232,7 +232,7 @@ policy-options {
 
 **Cisco:**
 
-```
+```bash
 show ip bgp summary
 show bgp ipv4 unicast neighbors 192.0.2.1
 show ip route bgp
@@ -240,7 +240,7 @@ show ip route bgp
 
 **Juniper:**
 
-```
+```bash
 show bgp summary
 show bgp neighbor 192.0.2.1
 show route protocol bgp
@@ -274,7 +274,7 @@ Available diagnostic names: `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `di
 - **Apply prefix filters.** Use prefix-lists on both import and export to prevent accidental route leaks.
 - **Set maximum-prefix limits.** Protect your router from receiving an unexpected number of routes.
 - **Use MD5 authentication.** If required, configure MD5 on the BGP session for added security.
-- **Monitor the session.** Set up alerts for BGP flaps and session drops — see [Monitor your connection](/guides/network/ovhcloud-connect/diagnostics).
+- **Monitor the session.** Set up alerts for BGP flaps and session drops — see [Monitor your connection](/guides/network/ovhcloud-connect/monitor).
 - **For redundant setups.** Use Local Preference or AS-path prepending to control primary/backup path selection — see [Multi-AZ](/guides/network/ovhcloud-connect/multi-az).
 
 ### Troubleshooting
@@ -299,6 +299,8 @@ To remove the BGP configuration, delete in reverse order:
 
 - [Set up vRack networking](/guides/network/ovhcloud-connect/vrack-network-setup) — If you have not configured AZ subnets yet
 - [Associate OVHcloud Connect with your vRack](/guides/network/ovhcloud-connect/associate-vrack)
-- [Monitor your connection](/guides/network/ovhcloud-connect/diagnostics)
+- [Monitor your connection](/guides/network/ovhcloud-connect/monitor)
 
-Join our [community of users](https://community.ovh.com/).
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
+
+Join our [community of users](/links/community).

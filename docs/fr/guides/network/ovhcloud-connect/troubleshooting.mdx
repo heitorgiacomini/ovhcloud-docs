@@ -1,7 +1,7 @@
 ---
 title: "Dépannage d'OVHcloud Connect"
 description: 'Diagnostiquez et résolvez les problèmes les plus courants rencontrés avec OVHcloud Connect'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -24,7 +24,7 @@ Ce guide vous aide à diagnostiquer et à résoudre les problèmes les plus cour
 | **Glossaire** | [Glossaire des termes OVHcloud Connect](/guides/network/ovhcloud-connect/glossary) |
 | **Statut des services OVHcloud** | [status.ovhcloud.com](https://www.status-ovhcloud.com/) |
 | **Prérequis et limitations** | [Prérequis et limitations](/guides/network/ovhcloud-connect/limits) |
-| **Guide de monitoring** | [Superviser votre OVHcloud Connect](/guides/network/ovhcloud-connect/diagnostics) |
+| **Guide de monitoring** | [Superviser votre OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) |
 | **Suivi d'incident** | [Déclarer et suivre un incident](/guides/network/ovhcloud-connect/incident-followup) |
 
 ---
@@ -38,22 +38,22 @@ Après la commande d'OVHcloud Connect Direct, le lien physique n'affiche aucun s
 | # | Cause possible | Solution |
 |---|---|---|
 | 1 | **Cross-connect non encore installé** | Contactez l'opérateur de votre datacenter et fournissez-lui la LOA. Consultez [Commander un cross-connect avec une LOA](/guides/network/ovhcloud-connect/cross-connect-loa). |
-| 2 | **LOA mal interprétée par le datacenter** | Vérifiez les détails de la LOA avec l'opérateur du PoP : baie, cage, panneau de brassage, port, terminaison de la fibre. Consultez [Comment lire les informations d'une LOA](#comment-lire-les-informations-dune-loa) ci-dessous. |
+| 2 | **LOA mal interprétée par le datacenter** | Vérifiez les détails de la LOA avec l'opérateur du PoP : baie, cage, panneau de brassage, port, terminaison de la fibre. Consultez [Comment lire les informations d'une LOA](#comment-lire-les-informations-dune-loa) ci-dessous. |
 | 3 | **Inversion des fibres Tx/Rx** | Les fibres d'émission et de réception peuvent être inversées, ce qui fait arriver la lumière sur le mauvais port. Demandez à l'opérateur du datacenter de vérifier l'absence d'inversion Tx/Rx sur le cross-connect. |
-| 4 | **Problème de module SFP** | Assurez-vous que le SFP correspond à la bande passante commandée : 1000Base-LX/LH pour 1 Gbps, 10GBase-LR pour 10 Gbps, 100GBase-LR4 pour 100 Gbps. Remplacez le SFP s'il est défectueux. Consultez [Prérequis et limitations](/guides/network/ovhcloud-connect/limits). |
+| 4 | **Problème de module SFP** | Assurez-vous que le SFP correspond à la bande passante commandée : 1000Base-LX/LH pour 1 Gbps, 10GBase-LR pour 10 Gbps, 100GBase-LR4 pour 100 Gbps. Remplacez le SFP s'il est défectueux. Consultez [Prérequis et limitations](/guides/network/ovhcloud-connect/limits). |
 | 5 | **Port désactivé ou verrouillé** | Vérifiez l'espace client OVHcloud — le port peut être verrouillé administrativement. Si la valeur optique OUT est DOWN, le port peut également être en cours de résiliation. |
 | 6 | **Câble cross-connect défectueux** | Demandez à l'opérateur du datacenter de tester le câble ou de provisionner un nouveau câble. |
 
 ### Comment lire les informations d'une LOA
 
-Une LOA classique contient des informations formatées ainsi :
+Une LOA classique contient des informations formatées ainsi :
 
-```
+```text
 Equipment: 103 PA3:OG:00GMC3:OVH Patch Panel: PP:0103:1132697
 Port: P16/FO31-32/BCK Fiber Termination: SC/PC
 ```
 
-Interprétation :
+Interprétation :
 
 | Champ | Valeur | Signification |
 |---|---|---|
@@ -68,10 +68,10 @@ Interprétation :
 
 ### Vérifier les valeurs optiques
 
-Dans l'espace client OVHcloud, accédez à **Network** → **OVHcloud Connect** → sélectionnez votre service, puis vérifiez les valeurs optiques IN/OUT :
+Dans l'espace client OVHcloud, accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>, sélectionnez votre service, puis vérifiez les valeurs optiques IN/OUT :
 
-- **OUT est DOWN** — Le port côté OVHcloud n'émet pas de lumière. Causes possibles : problème de port, service en cours de résiliation, port verrouillé, panne de SFP.
-- **IN est DOWN** — OVHcloud ne reçoit pas de lumière de votre côté. Causes possibles : cross-connect non installé, votre équipement non connecté, votre port désactivé, inversion des fibres Tx/Rx.
+- **OUT est DOWN** — Le port côté OVHcloud n'émet pas de lumière. Causes possibles : problème de port, service en cours de résiliation, port verrouillé, panne de SFP.
+- **IN est DOWN** — OVHcloud ne reçoit pas de lumière de votre côté. Causes possibles : cross-connect non installé, votre équipement non connecté, votre port désactivé, inversion des fibres Tx/Rx.
 
 ### Logigramme de diagnostic
 
@@ -94,31 +94,31 @@ Les valeurs optiques sont UP des deux côtés, mais l'interface Ethernet reste D
 
 ### Désactiver l'auto-négociation
 
-**Cisco IOS :**
+**Cisco IOS :**
 
-```
+```text
 interface GigabitEthernet0/0
  no negotiate auto
 ```
 
-ou :
+ou :
 
-```
+```text
 interface GigabitEthernet0/0
  speed nonegotiate
 ```
 
-**Cisco NX-OS :**
+**Cisco NX-OS :**
 
-```
+```text
 interface Ethernet1/1
  speed 1000
  no negotiate auto
 ```
 
-**Juniper JunOS :**
+**Juniper JunOS :**
 
-```
+```text
 set interfaces ge-0/0/0 ether-options no-auto-negotiation
 ```
 
@@ -132,8 +132,8 @@ Le lien physique est up, mais la session BGP n'atteint pas l'état `Established`
 
 | # | Cause possible | Solution |
 |---|---|---|
-| 1 | **Adresse IP du pair incorrecte** | Vérifiez que l'IP du pair configurée sur votre routeur correspond exactement à l'IP attribuée par OVHcloud dans l'espace client. Le sous-réseau de peering du PoP est un /30 : OVHcloud prend la première IP, vous prenez la seconde. Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp). |
-| 2 | **ASN incorrect** | Vérifiez que vous établissez le peering avec l'ASN OVHcloud **35540** et que votre propre ASN est correctement configuré (plage d'ASN privés 64512-65534 recommandée). Évitez les ASN réservés : **65501** (PoP UE), **65502** (PoP CA), **65519** (PoP Asie). |
+| 1 | **Adresse IP du pair incorrecte** | Vérifiez que l'IP du pair configurée sur votre routeur correspond exactement à l'IP attribuée par OVHcloud dans l'espace client. Le sous-réseau de peering du PoP est un /30 : OVHcloud prend la première IP, vous prenez la seconde. Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp). |
+| 2 | **ASN incorrect** | Vérifiez que vous établissez le peering avec l'ASN OVHcloud **35540** et que votre propre ASN est correctement configuré (plage d'ASN privés 64512-65534 recommandée). Évitez les ASN réservés : **65501** (PoP UE), **65502** (PoP CA), **65519** (PoP Asie). |
 | 3 | **ID de VLAN incompatible** | Le tag VLAN sur votre interface doit correspondre à l'ID de VLAN configuré dans la configuration du PoP de l'espace client OVHcloud. Vérifiez avec `show interfaces` ou `show vlans`. |
 | 4 | **Pare-feu bloquant le port TCP 179** | BGP utilise le port TCP 179. Assurez-vous qu'aucun pare-feu ou ACL ne bloque ce port entre les deux pairs. |
 | 5 | **Interface non configurée avec l'encapsulation correcte** | Pour les connexions L3, l'interface doit utiliser l'encapsulation 802.1Q avec l'ID de VLAN correct. Consultez les exemples de configuration dans [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp). |
@@ -142,18 +142,18 @@ Le lien physique est up, mais la session BGP n'atteint pas l'état `Established`
 
 ### Commandes de vérification
 
-**Cisco IOS :**
+**Cisco IOS :**
 
-```
+```bash
 show ip bgp summary
 show bgp ipv4 unicast neighbors 192.0.2.1
 show interfaces GigabitEthernet0/0
 show ip interface brief
 ```
 
-**Juniper JunOS :**
+**Juniper JunOS :**
 
-```
+```bash
 show bgp summary
 show bgp neighbor 192.0.2.1
 show interfaces terse
@@ -182,18 +182,18 @@ La session BGP affiche `Established`, mais aucun préfixe n'est reçu d'OVHcloud
 
 ### Commandes de vérification
 
-**Cisco IOS :**
+**Cisco IOS :**
 
-```
+```bash
 show ip bgp summary
 show ip bgp neighbors 192.0.2.1 received-routes
 show ip bgp neighbors 192.0.2.1 advertised-routes
 show ip route bgp
 ```
 
-**Juniper JunOS :**
+**Juniper JunOS :**
 
-```
+```bash
 show bgp summary
 show route receive-protocol bgp 192.0.2.1
 show route advertising-protocol bgp 192.0.2.1
@@ -218,18 +218,18 @@ La session BGP oscille entre les états `Established` et `Active`/`Idle`, provoq
 
 ### Commandes de vérification
 
-**Cisco IOS :**
+**Cisco IOS :**
 
-```
+```bash
 show interfaces GigabitEthernet0/0
 show ip bgp summary
 show ip bgp flap-statistics
 show log | include BGP
 ```
 
-**Juniper JunOS :**
+**Juniper JunOS :**
 
-```
+```bash
 show interfaces ge-0/0/0 extensive
 show bgp summary
 show log messages | match BGP
@@ -250,18 +250,18 @@ BGP est up, les routes apparaissent dans la table de routage des deux côtés, m
 | 3 | **Configuration de sous-réseau incorrecte** | Vérifiez que les IPs source et destination appartiennent aux bons sous-réseaux et qu'aucune plage ne se chevauche. Consultez [Configurer votre réseau vRack](/guides/network/ovhcloud-connect/vrack-network-setup). |
 | 4 | **Routage asymétrique** | Si vous avez plusieurs chemins (par exemple internet + OVHcloud Connect), le trafic retour peut emprunter un chemin différent. Garantissez un routage symétrique grâce aux attributs BGP (Local Preference, AS-path prepending). |
 | 5 | **Ressource vRack non rattachée** | La ressource OVHcloud cible (serveur Bare Metal, instance Public Cloud, Hosted Private Cloud) doit être rattachée au même vRack qu'OVHcloud Connect. Vérifiez dans l'espace client. |
-| 6 | **MTU incompatible entraînant de la fragmentation** | Les grands paquets peuvent être perdus silencieusement si le MTU diffère entre les segments. Testez avec différentes tailles de paquets : `ping -s 1472 -M do <destination>` (Linux) pour vérifier les problèmes de fragmentation. |
+| 6 | **MTU incompatible entraînant de la fragmentation** | Les grands paquets peuvent être perdus silencieusement si le MTU diffère entre les segments. Testez avec différentes tailles de paquets : `ping -s 1472 -M do <destination>` (Linux) pour vérifier les problèmes de fragmentation. |
 
 ### Commandes de vérification
 
-**De votre côté :**
+**De votre côté :**
 
-```
+```bash
 ping 172.16.1.1
 traceroute 172.16.1.1
 ```
 
-**Depuis un hôte Linux dans OVHcloud :**
+**Depuis un hôte Linux dans OVHcloud :**
 
 ```bash
 ping -c 10 10.0.0.1
@@ -280,7 +280,7 @@ La connexion fonctionne, mais le débit est inférieur aux attentes ou la latenc
 | # | Cause possible | Solution |
 |---|---|---|
 | 1 | **Saturation de la bande passante** | Vérifiez l'utilisation des interfaces dans l'espace client OVHcloud et sur votre routeur. Si vous dépassez régulièrement 80 % de la bande passante provisionnée, planifiez une montée en gamme. |
-| 2 | **MTU incompatible entraînant de la fragmentation** | Les paquets fragmentés réduisent le débit effectif. Vérifiez le MTU de bout en bout et exécutez une découverte de path MTU : `ping -s 1472 -M do <destination>`. |
+| 2 | **MTU incompatible entraînant de la fragmentation** | Les paquets fragmentés réduisent le débit effectif. Vérifiez le MTU de bout en bout et exécutez une découverte de path MTU : `ping -s 1472 -M do <destination>`. |
 | 3 | **Erreurs d'interface (CRC, FCS, drops)** | Vérifiez les compteurs d'erreurs avec `show interfaces`. Les problèmes physiques (fibre encrassée, SFP défectueux, connecteur mal serré) provoquent des retransmissions et dégradent les performances. |
 | 4 | **Routage sous-optimal** | Le trafic peut emprunter un chemin plus long qu'attendu. Vérifiez le `traceroute` et les attributs BGP (Local Preference, AS-path) pour garantir une sélection optimale du chemin. |
 | 5 | **Congestion chez le fournisseur** | Si vous utilisez OVHcloud Connect Provider, vérifiez le portail du fournisseur (Megaport, Equinix Fabric, Console Connect) pour l'utilisation et les alertes sur le circuit virtuel. |
@@ -288,14 +288,14 @@ La connexion fonctionne, mais le débit est inférieur aux attentes ou la latenc
 
 ### Commandes de vérification
 
-**Cisco IOS :**
+**Cisco IOS :**
 
-```
+```bash
 show interfaces GigabitEthernet0/0 | include rate|error|drop|CRC
 show ip route 172.16.1.0
 ```
 
-**Depuis un hôte Linux :**
+**Depuis un hôte Linux :**
 
 ```bash
 iperf3 -c <destination> -t 30
@@ -313,13 +313,13 @@ Vous avez commandé un service OVHcloud Connect Provider, mais la connexion via 
 | # | Cause possible | Solution |
 |---|---|---|
 | 1 | **Pairing key / clé de service incorrecte** | Vérifiez que la pairing key (ou clé de service) saisie dans le portail de votre fournisseur correspond exactement à la clé issue de l'espace client OVHcloud. |
-| 2 | **Circuit virtuel du fournisseur non provisionné** | Vérifiez le statut du VXC (Megaport), de la connexion virtuelle (Equinix) ou de la connexion (Console Connect) dans le portail du fournisseur. Il doit être affiché « Active » ou « Provisioned ». |
+| 2 | **Circuit virtuel du fournisseur non provisionné** | Vérifiez le statut du VXC (Megaport), de la connexion virtuelle (Equinix) ou de la connexion (Console Connect) dans le portail du fournisseur. Il doit être affiché « Active » ou « Provisioned ». |
 | 3 | **Le fournisseur n'est pas présent au PoP** | Le fournisseur doit être disponible au PoP OVHcloud que vous avez sélectionné. Vérifiez la disponibilité du PoP dans [Fournisseurs](/guides/network/ovhcloud-connect/providers) et [Localisations des PoP](/guides/network/ovhcloud-connect/pop-locations-regions). |
 | 4 | **Bande passante incompatible** | La bande passante commandée côté fournisseur doit correspondre, ou être compatible, avec la bande passante du service OVHcloud Connect. |
 | 5 | **Maintenance ou incident côté fournisseur** | Consultez la page de statut de votre fournisseur pour vérifier les incidents en cours ou les maintenances planifiées. |
 
 :::tip
-**Astuce :** si le portail du fournisseur affiche la connexion comme « Active » mais qu'OVHcloud l'affiche encore comme « Pending », attendez quelques minutes que le provisionnement se termine. Si cela persiste au-delà de 30 minutes, contactez le support OVHcloud.
+**Astuce :** si le portail du fournisseur affiche la connexion comme « Active » mais qu'OVHcloud l'affiche encore comme « Pending », attendez quelques minutes que le provisionnement se termine. Si cela persiste au-delà de 30 minutes, contactez le support OVHcloud.
 :::
 
 ---
@@ -336,7 +336,7 @@ Votre service OVHcloud Connect apparaît dans l'espace client mais ne peut pas �
 | 2 | **Fenêtre d'interconnexion de 60 jours (Direct)** | Après la commande, vous disposez de **60 jours** pour finaliser l'interconnexion (commander le cross-connect et interconnecter votre équipement). Au-delà de 60 jours — même sans détection de lumière — le service est considéré comme opérationnel et la facturation démarre. |
 | 3 | **Circuit du fournisseur non encore relié (Provider)** | Assurez-vous que le circuit virtuel du fournisseur est provisionné et relié au service OVHcloud à l'aide de la pairing key correcte. |
 | 4 | **Provisionnement en cours** | Les nouveaux services peuvent mettre quelques minutes à devenir configurables après la commande. Patientez et rafraîchissez l'espace client. |
-| 5 | **Problème de commande** | Si le service reste à l'état « Pending » pendant une période prolongée, contactez le support OVHcloud avec la référence de votre commande. |
+| 5 | **Problème de commande** | Si le service reste à l'état « Pending » pendant une période prolongée, contactez le support OVHcloud avec la référence de votre commande. |
 
 ---
 
@@ -349,16 +349,16 @@ Vous disposez de deux liens OVHcloud Connect pour la redondance, mais le trafic 
 | # | Cause possible | Solution |
 |---|---|---|
 | 1 | **Les deux liens dans le même PoP** | Pour une véritable résilience Multi-AZ, les deux liens doivent se terminer sur des **PoP différents** et des **Availability Zones différentes**. Consultez [Multi-AZ](/guides/network/ovhcloud-connect/multi-az). |
-| 2 | **Bascule BGP non configurée** | Configurez les attributs BGP pour contrôler la sélection du chemin : utilisez la **Local Preference** pour privilégier le chemin principal et l'**AS-path prepending** sur le secours. Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp). |
+| 2 | **Bascule BGP non configurée** | Configurez les attributs BGP pour contrôler la sélection du chemin : utilisez la **Local Preference** pour privilégier le chemin principal et l'**AS-path prepending** sur le secours. Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp). |
 | 3 | **BFD non activé** | Sans BFD, la bascule BGP repose sur les hold timers (90 secondes par défaut). Activez **BFD (Bidirectional Forwarding Detection)** pour réduire le temps de bascule à moins d'une seconde. Contactez le support OVHcloud pour confirmer la disponibilité de BFD pour votre service. |
 | 4 | **vRack non partagé entre les deux services** | Les deux services OVHcloud Connect doivent être associés au **même vRack** pour que la bascule fonctionne. Vérifiez dans l'espace client. Consultez [Associer à un vRack](/guides/network/ovhcloud-connect/associate-vrack). |
 | 5 | **Prefix-list filtrant les routes de secours** | Assurez-vous que vos filtres de préfixes en import/export autorisent les mêmes préfixes sur les deux liens. |
 
 ### Commandes de vérification
 
-**Cisco IOS :**
+**Cisco IOS :**
 
-```
+```bash
 show ip bgp
 show ip bgp summary
 show ip route bgp
@@ -408,7 +408,7 @@ Pour la liste complète des prérequis et limitations, consultez [Prérequis et 
 
 ---
 
-## Référence rapide : commandes de diagnostic
+## Référence rapide : commandes de diagnostic
 
 ### Cisco IOS / IOS-XE
 
@@ -451,11 +451,11 @@ Pour la liste complète des prérequis et limitations, consultez [Prérequis et 
 
 ## Quand contacter le support
 
-Si vous avez suivi les étapes de dépannage ci-dessus et que le problème persiste, ouvrez un ticket de support :
+Si vous avez suivi les étapes de dépannage ci-dessus et que le problème persiste, ouvrez un ticket de support :
 
-1. Depuis l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, allez dans **Support** → **Créer un ticket**.
-2. Sélectionnez **Network** → **OVHcloud Connect**.
-3. Incluez :
+1. Depuis l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, allez dans <code className="action">Support</code> > <code className="action">Créer un ticket</code>.
+2. Sélectionnez <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+3. Incluez :
    - Le **nom/ID de service** de votre OVHcloud Connect
    - L'**horodatage** du problème (UTC)
    - Les **symptômes** observés
@@ -465,15 +465,15 @@ Si vous avez suivi les étapes de dépannage ci-dessus et que le problème persi
 
 ---
 
-## Et ensuite ?
+## Et ensuite ?
 
-- Mettez en place un [monitoring](/guides/network/ovhcloud-connect/diagnostics) proactif pour détecter les problèmes avant qu'ils n'impactent vos utilisateurs
+- Mettez en place un [monitoring](/guides/network/ovhcloud-connect/monitor) proactif pour détecter les problèmes avant qu'ils n'impactent vos utilisateurs
 - Consultez [Prérequis et limitations](/guides/network/ovhcloud-connect/limits) pour éviter les écueils connus
 - Consultez la [FAQ](/guides/network/ovhcloud-connect/faq) pour les réponses aux questions courantes
 - Vérifiez les [SLA](/guides/network/ovhcloud-connect/slas) pour les garanties de disponibilité et les avoirs de service
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

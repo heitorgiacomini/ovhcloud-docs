@@ -1,14 +1,14 @@
 ---
 title: 'Associate an OVHcloud Connect to Your vRack'
-description: 'Learn how to associate your OVHcloud Connect service with a vRack for private connectivity'
-lastUpdated: 2026-02-18
+description: 'Find out how to associate your OVHcloud Connect service with a vRack for private connectivity'
+lastUpdated: 2026-06-09
 ---
 
 import Api from '@components/Api';
 
 ## Objective
 
-The **vRack** is OVHcloud's private networking service. To allow your OVHcloud resources (servers, VMs, etc.) to communicate through your OVHcloud Connect link, you must associate the OVHcloud Connect service with a vRack.
+The **vRack** is OVHcloud's private networking service. To let your OVHcloud resources (servers, VMs, etc.) communicate through your OVHcloud Connect link, associate the OVHcloud Connect service with a vRack.
 
 ## What the association does
 
@@ -32,11 +32,11 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go t
 
 ### Via the OVHcloud Control Panel
 
-1. Navigate to **Network** → **vRack**.
+1. Navigate to <code className="action">Network</code> > <code className="action">vRack</code>.
 2. Select your vRack.
-3. Click **Add a service**.
+3. Click <code className="action">Add a service</code>.
 4. From the list of eligible services, find your **OVHcloud Connect** service and select it.
-5. Click **Add** to confirm.
+5. Click <code className="action">Add</code> to confirm.
 
 The association is typically effective within a few minutes.
 
@@ -82,20 +82,20 @@ After associating:
 
 If you need to dissociate OVHcloud Connect from a vRack:
 
-1. Go to **Network** → **vRack** in the Control Panel.
+1. Go to <code className="action">Network</code> > <code className="action">vRack</code> in the Control Panel.
 2. Select your vRack.
-3. Find the OVHcloud Connect service and click **Remove**.
+3. Find the OVHcloud Connect service and click <code className="action">Remove</code>.
 4. Confirm the removal.
 
 > **Warning:** Removing the association will immediately interrupt private traffic between your external network and OVHcloud resources in that vRack.
 
 ## What's next?
 
-- [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/diagnostics)
+- [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor)
 - [Set up your vRack network](/guides/network/ovhcloud-connect/vrack-network-setup) to set up subnets properly
 
 ## Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

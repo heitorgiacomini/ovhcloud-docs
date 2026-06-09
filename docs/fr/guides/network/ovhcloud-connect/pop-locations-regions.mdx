@@ -1,12 +1,14 @@
 ---
 title: 'OVHcloud Connect - PoPs et régions'
 description: "Comprenez le fonctionnement d'OCC avec les PoPs et les régions, et identifiez ceux qui correspondent le mieux à votre infrastructure"
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Introduction
 
-Lorsque vous mettez en place OVHcloud Connect, vous choisissez un ou plusieurs **Points de présence (PoP)** comme point de raccordement entre votre réseau (ou celui de votre provider) et OVHcloud. Chaque PoP est rattaché à une zone géographique spécifique ; par conséquent, il ne peut accéder qu'aux régions OVHcloud situées dans cette même zone.
+Lorsque vous mettez en place OVHcloud Connect, vous choisissez un ou plusieurs **Points de présence (PoP)** comme point de raccordement entre votre réseau (ou celui de votre provider) et OVHcloud. Chaque PoP est rattaché à une zone géographique spécifique ; par conséquent, il ne peut accéder qu'aux régions OVHcloud situées dans cette même zone.
 
 Ce guide explique comment les PoPs et les régions OVHcloud interagissent avec OVHcloud Connect, et fournit un cadre pour sélectionner le PoP le plus adapté aux besoins spécifiques de votre infrastructure.
 
@@ -23,12 +25,12 @@ Les PoPs OVHcloud sont situés dans des datacenters majeurs, neutres vis-à-vis 
 Si vous utilisez un **Provider**, ce dernier prend en charge la connectivité physique et peut atteindre le PoP depuis un autre site.
 
 :::info
-OVHcloud ajoute régulièrement de nouveaux emplacements. Consultez toujours la [page web OVHcloud Connect](https://www.ovhcloud.com/en-gb/network/ovhcloud-connect/) pour disposer de la liste la plus à jour.
+OVHcloud ajoute régulièrement de nouveaux emplacements. Consultez toujours la [page web OVHcloud Connect](/links/network/ovhcloud-connect) pour disposer de la liste la plus à jour.
 :::
 
 ## Comment choisir un PoP
 
-Lors de la sélection d'un PoP pour votre service OVHcloud Connect, prenez en compte les éléments suivants :
+Lors de la sélection d'un PoP pour votre service OVHcloud Connect, prenez en compte les éléments suivants :
 
 ### 1. Proximité (latence)
 
@@ -40,12 +42,13 @@ Si vous utilisez OVHcloud Connect Provider, vérifiez que le provider choisi est
 
 ### 3. Redondance
 
-Pour les architectures à haute disponibilité, sélectionnez **deux PoPs situés à des emplacements distincts** afin qu'une défaillance d'un site unique ne mette pas votre connexion hors service. Suivez l'un des tutoriels d'architecture résiliente pour plus de détails :
-- [On-prem](/guides/network/ovhcloud-connect/resilient-architecture)
-- [WAN](/guides/network/ovhcloud-connect/resilient-architecture)
-- [AWS](/guides/network/ovhcloud-connect/resilient-architecture)
-- [Azure](/guides/network/ovhcloud-connect/resilient-architecture)
-- [GCP](/guides/network/ovhcloud-connect/resilient-architecture)
+Pour les architectures à haute disponibilité, sélectionnez **deux PoPs situés à des emplacements distincts** afin qu'une défaillance d'un site unique ne mette pas votre connexion hors service. Suivez l'un des tutoriels d'architecture résiliente pour plus de détails :
+
+- [On-prem](/guides/network/ovhcloud-connect/resilient-architecture#on-premises)
+- [WAN](/guides/network/ovhcloud-connect/resilient-architecture#wan)
+- [AWS](/guides/network/ovhcloud-connect/resilient-architecture#aws)
+- [Azure](/guides/network/ovhcloud-connect/resilient-architecture#azure)
+- [GCP](/guides/network/ovhcloud-connect/resilient-architecture#gcp)
 
 ### 4. Exigences réglementaires / résidence des données
 
@@ -57,7 +60,7 @@ Pour garantir les meilleures performances, votre service OVHcloud Connect doit a
 
 ## Tableaux de correspondance PoP / région
 
-Les tableaux suivants listent les régions accessibles depuis chaque PoP, la région OVHcloud à faible latence correspondante, ainsi que la bande passante OCC Direct disponible, par zone géographique :
+Les tableaux suivants listent les régions accessibles depuis chaque PoP, la région OVHcloud à faible latence correspondante, ainsi que la bande passante OCC Direct disponible, par zone géographique :
 
 <Tabs>
 <Tab label="Europe">
@@ -119,13 +122,13 @@ Tableau de correspondance PoP / région à faible latence
 </Tab>
 </Tabs>
 
-## Et ensuite ?
+## Et ensuite ?
 
 - Comprenez le [Multi-AZ](/guides/network/ovhcloud-connect/multi-az) pour les architectures résilientes
 - Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) pour la mise en place technique
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

@@ -1,7 +1,7 @@
 ---
 title: 'Surveiller votre OVHcloud Connect'
 description: 'Découvrez les outils et les métriques disponibles pour surveiller votre service OVHcloud Connect'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -14,7 +14,7 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ### Espace client OVHcloud
 
-L'interface principale de surveillance de votre connexion donne accès aux métriques suivantes :
+L'interface principale de surveillance de votre connexion donne accès aux métriques suivantes :
 
 | Métrique | Description |
 |---|---|
@@ -26,7 +26,7 @@ L'interface principale de surveillance de votre connexion donne accès aux métr
 
 ### API OVHcloud
 
-Pour une surveillance programmatique et une intégration avec vos propres outils :
+Pour une surveillance programmatique et une intégration avec vos propres outils :
 
 ```python
 import ovh
@@ -44,11 +44,11 @@ pop_config = client.get(f"/ovhCloudConnect/{service_name}/config/pop")
 print(pop_config)
 ```
 
-> Référence complète de l’API : [eu.api.ovh.com/console](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1)
+> Référence complète de l’API : [eu.api.ovh.com/console](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1)
 
 ### Vos propres outils de surveillance
 
-Complétez la surveillance d’OVHcloud avec votre propre infrastructure :
+Complétez la surveillance d’OVHcloud avec votre propre infrastructure :
 
 - **SNMP** — Interrogez les interfaces de votre routeur pour obtenir les compteurs de trafic, les taux d’erreur et l’état des interfaces.
 - **Surveillance BGP** — Utilisez des outils tels que `bgpstream`, `exabgp` ou la surveillance intégrée de votre routeur pour suivre la stabilité des sessions BGP et les changements de préfixes.
@@ -61,7 +61,7 @@ Vous pouvez lancer des diagnostics à la demande depuis l’espace client OVHclo
 
 ### Diagnostics disponibles
 
-**Mode Layer 3 :**
+**Mode Layer 3 :**
 
 | Diagnostic | Description |
 |---|---|
@@ -69,7 +69,7 @@ Vous pouvez lancer des diagnostics à la demande depuis l’espace client OVHclo
 | **Routes** | Récupère la table de routage apprise par OVHcloud via BGP (routes reçues de votre côté). |
 | **Advertised-Routes** | Récupère la table de routage annoncée par OVHcloud à votre côté. |
 
-**Mode Layer 2 :**
+**Mode Layer 2 :**
 
 | Diagnostic | Description |
 |---|---|
@@ -78,7 +78,7 @@ Vous pouvez lancer des diagnostics à la demande depuis l’espace client OVHclo
 ### Lancer un diagnostic
 
 1. Ouvrez le service OVHcloud Connect que vous souhaitez diagnostiquer.
-2. En bas du panneau « POP Configuration », dans la section « Diagnostic POP », cliquez sur le bouton points de suspension <code className="action">...</code>.
+2. En bas du panneau « POP Configuration », dans la section « Diagnostic POP », cliquez sur le bouton points de suspension <code className="action">...</code>.
 3. Sélectionnez le diagnostic à exécuter — par exemple <code className="action">BGP Peering Test</code> en mode Layer 3, ou <code className="action">Obtenir la liste de mes adresses MAC</code> en mode Layer 2.
 4. Confirmez en cliquant sur <code className="action">Lancer le diagnostic</code>.
 
@@ -103,15 +103,15 @@ Les diagnostics sont également disponibles de manière programmatique via l’A
 
 ## Métriques clés à surveiller
 
-<img className="thumbnail" alt="Métriques clés à surveiller" src="/images/network/ovhcloud-connect/diagnostics/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Métriques clés à surveiller" src="/images/network/ovhcloud-connect/monitor/fig-1.fr.svg" loading="lazy" />
 
 ### Alertes critiques (à mettre en place immédiatement)
 
 | Alerte | Déclencheur | Action |
 |---|---|---|
-| **Lien down** | L’état du port physique passe à « down » | Vérifiez le cross-connect, le SFP et contactez le datacenter ou le fournisseur |
-| **Session BGP down** | L’état de la session BGP n’est plus « Established » | Vérifiez la configuration du routeur, l’accessibilité du pair et les règles de pare-feu |
-| **Utilisation élevée de la bande passante** | Le débit dépasse 80 % de la capacité provisionnée | Planifiez une montée en bande passante ou optimisez le trafic |
+| **Lien down** | L’état du port physique passe à « down » | Vérifiez le cross-connect, le SFP et contactez le datacenter ou le fournisseur |
+| **Session BGP down** | L’état de la session BGP n’est plus « Established » | Vérifiez la configuration du routeur, l’accessibilité du pair et les règles de pare-feu |
+| **Utilisation élevée de la bande passante** | Le débit dépasse 80 % de la capacité provisionnée | Planifiez une montée en bande passante ou optimisez le trafic |
 | **Pic de latence** | Le RTT augmente significativement au-dessus de la référence | Lancez un traceroute et vérifiez la présence de congestion ou de changements de routage |
 | **Changement du nombre de préfixes** | Augmentation ou diminution inattendue des préfixes reçus/envoyés | Investiguez d’éventuelles fuites de routes ou modifications de configuration |
 
@@ -119,7 +119,7 @@ Les diagnostics sont également disponibles de manière programmatique via l’A
 
 ### Cisco IOS
 
-```
+```bash
 show interfaces GigabitEthernet0/0
 show ip bgp summary
 show ip bgp neighbors 192.0.2.1 received-routes
@@ -129,7 +129,7 @@ show ip route bgp
 
 ### Juniper JunOS
 
-```
+```bash
 show interfaces terse
 show bgp summary
 show route receive-protocol bgp 192.0.2.1
@@ -145,14 +145,14 @@ show route protocol bgp
 - **Faites des revues régulières** — Consultez les tableaux de bord de surveillance chaque semaine afin de repérer les tendances (croissance de la bande passante, augmentation de la latence).
 - **Testez la bascule** — Si vous disposez d’une configuration Multi-AZ, testez périodiquement la bascule et vérifiez que la surveillance détecte le basculement.
 
-## Et ensuite ?
+## Et ensuite ?
 
-- [Transférer les logs de votre OVHcloud Connect](/guides/network/ovhcloud-connect/logs-to-customers) vers Logs Data Platform pour un stockage et une analyse à long terme
+- [Transférer les logs de votre OVHcloud Connect](/guides/network/ovhcloud-connect/logs-forwarding) vers Logs Data Platform pour un stockage et une analyse à long terme
 - [Déclarer et suivre un incident](/guides/network/ovhcloud-connect/incident-followup) si vous détectez un problème
 - Consultez les [SLA](/guides/network/ovhcloud-connect/slas) pour comprendre les garanties de disponibilité
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

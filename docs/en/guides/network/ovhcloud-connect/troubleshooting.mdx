@@ -1,7 +1,7 @@
 ---
 title: 'Troubleshoot OVHcloud Connect'
 description: 'Diagnose and resolve the most common issues encountered with OVHcloud Connect'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objective
@@ -24,7 +24,7 @@ This guide helps you diagnose and resolve the most common issues encountered wit
 | **Glossary** | [Glossary of OVHcloud Connect terms](/guides/network/ovhcloud-connect/glossary) |
 | **OVHcloud services status** | [status.ovhcloud.com](https://www.status-ovhcloud.com/) |
 | **Prerequisites & Limitations** | [Prerequisites & Limitations](/guides/network/ovhcloud-connect/limits) |
-| **Monitoring guide** | [Monitor Your OVHcloud Connect](/guides/network/ovhcloud-connect/diagnostics) |
+| **Monitoring guide** | [Monitor Your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) |
 | **Incident follow-up** | [Declare and Follow Up Upon an Incident](/guides/network/ovhcloud-connect/incident-followup) |
 
 ---
@@ -48,7 +48,7 @@ After ordering OVHcloud Connect Direct, the physical link shows no optical signa
 
 A typical LOA contains information formatted like this:
 
-```
+```text
 Equipment: 103 PA3:OG:00GMC3:OVH Patch Panel: PP:0103:1132697
 Port: P16/FO31-32/BCK Fiber Termination: SC/PC
 ```
@@ -68,7 +68,7 @@ Interpretation:
 
 ### Checking optical values
 
-In the OVHcloud Control Panel, navigate to **Network** → **OVHcloud Connect** → select your service, and check the IN/OUT optical values:
+In the OVHcloud Control Panel, navigate to <code className="action">Network</code> → <code className="action">OVHcloud Connect</code> → select your service, and check the IN/OUT optical values:
 
 - **OUT is DOWN** — The OVHcloud-side port is not emitting light. Possible reasons: port issue, service being cancelled, port locked, SFP failure.
 - **IN is DOWN** — OVHcloud is not receiving light from your side. Possible reasons: cross-connect not installed, your equipment not connected, your port disabled, Tx/Rx fibre inversion.
@@ -96,21 +96,21 @@ Optical values show UP on both sides, but the Ethernet interface remains DOWN an
 
 **Cisco IOS:**
 
-```
+```text
 interface GigabitEthernet0/0
  no negotiate auto
 ```
 
 or:
 
-```
+```text
 interface GigabitEthernet0/0
  speed nonegotiate
 ```
 
 **Cisco NX-OS:**
 
-```
+```text
 interface Ethernet1/1
  speed 1000
  no negotiate auto
@@ -118,7 +118,7 @@ interface Ethernet1/1
 
 **Juniper JunOS:**
 
-```
+```text
 set interfaces ge-0/0/0 ether-options no-auto-negotiation
 ```
 
@@ -144,7 +144,7 @@ The physical link is up, but the BGP session does not reach the `Established` st
 
 **Cisco IOS:**
 
-```
+```bash
 show ip bgp summary
 show bgp ipv4 unicast neighbors 192.0.2.1
 show interfaces GigabitEthernet0/0
@@ -153,7 +153,7 @@ show ip interface brief
 
 **Juniper JunOS:**
 
-```
+```bash
 show bgp summary
 show bgp neighbor 192.0.2.1
 show interfaces terse
@@ -184,7 +184,7 @@ The BGP session shows `Established`, but no prefixes are being received from OVH
 
 **Cisco IOS:**
 
-```
+```bash
 show ip bgp summary
 show ip bgp neighbors 192.0.2.1 received-routes
 show ip bgp neighbors 192.0.2.1 advertised-routes
@@ -193,7 +193,7 @@ show ip route bgp
 
 **Juniper JunOS:**
 
-```
+```bash
 show bgp summary
 show route receive-protocol bgp 192.0.2.1
 show route advertising-protocol bgp 192.0.2.1
@@ -220,7 +220,7 @@ The BGP session oscillates between `Established` and `Active`/`Idle` states, cau
 
 **Cisco IOS:**
 
-```
+```bash
 show interfaces GigabitEthernet0/0
 show ip bgp summary
 show ip bgp flap-statistics
@@ -229,7 +229,7 @@ show log | include BGP
 
 **Juniper JunOS:**
 
-```
+```bash
 show interfaces ge-0/0/0 extensive
 show bgp summary
 show log messages | match BGP
@@ -256,7 +256,7 @@ BGP is up, routes appear in the routing table on both sides, but actual traffic 
 
 **From your side:**
 
-```
+```bash
 ping 172.16.1.1
 traceroute 172.16.1.1
 ```
@@ -290,7 +290,7 @@ The connection is working, but throughput is lower than expected or latency is h
 
 **Cisco IOS:**
 
-```
+```bash
 show interfaces GigabitEthernet0/0 | include rate|error|drop|CRC
 show ip route 172.16.1.0
 ```
@@ -358,7 +358,7 @@ You have two OVHcloud Connect links for redundancy, but traffic does not failove
 
 **Cisco IOS:**
 
-```
+```bash
 show ip bgp
 show ip bgp summary
 show ip route bgp
@@ -453,8 +453,8 @@ For the full list of prerequisites and limitations, see [Prerequisites & Limitat
 
 If you have followed the troubleshooting steps above and the issue persists, open a support ticket:
 
-1. From the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, go to **Support** → **Create a ticket**.
-2. Select **Network** → **OVHcloud Connect**.
+1. From the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, go to <code className="action">Support</code> → <code className="action">Create a ticket</code>.
+2. Select <code className="action">Network</code> → <code className="action">OVHcloud Connect</code>.
 3. Include:
    - Your OVHcloud Connect **service name/ID**
    - **Timestamp** of the issue (UTC)
@@ -467,13 +467,13 @@ If you have followed the troubleshooting steps above and the issue persists, ope
 
 ## What's next?
 
-- Set up proactive [monitoring](/guides/network/ovhcloud-connect/diagnostics) to detect issues before they impact your users
+- Set up proactive [monitoring](/guides/network/ovhcloud-connect/monitor) to detect issues before they impact your users
 - Review [Prerequisites & Limitations](/guides/network/ovhcloud-connect/limits) to avoid known pitfalls
 - Consult the [FAQ](/guides/network/ovhcloud-connect/faq) for answers to common questions
 - Check [SLAs](/guides/network/ovhcloud-connect/slas) for uptime guarantees and service credits
 
 ## Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

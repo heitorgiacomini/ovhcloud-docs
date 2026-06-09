@@ -1,7 +1,7 @@
 ---
 title: 'Set up the vRack network for OVHcloud Connect'
 description: 'Create an AZ configuration for OVHcloud Connect L3 and understand IP addressing and VRRP'
-lastUpdated: 2026-04-15
+lastUpdated: 2026-06-09
 ---
 
 import Api from '@components/Api';
@@ -22,7 +22,7 @@ This guide covers the **basic vRack configuration for OVHcloud Connect compatibi
 - [Configure OVHcloud Connect L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp)
 - [Configure OVHcloud Connect L3 with static routing](/guides/network/ovhcloud-connect/l3-static)
 
-For general vRack networking, see the [vRack service presentation](https://www.ovhcloud.com/en/network/vrack/).
+For general vRack networking, see the [vRack service presentation](/links/network/vrack).
 :::
 
 ## Requirements
@@ -30,7 +30,7 @@ For general vRack networking, see the [vRack service presentation](https://www.o
 You need to have cleared steps 1 through 3 of one of the following guides:
 
 - [Quick Start: Direct Connection to OVHcloud](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
-- [Quick Start: Connection to OVHcloud with a Provider](/guides/network/ovhcloud-connect/provider-control-panel-setup)
+- [Quick Start: Connection to OVHcloud with a Provider](/guides/network/ovhcloud-connect/occ-provider-control-panel-setup)
 
 Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
@@ -40,7 +40,7 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go t
 
 When you use OVHcloud Connect in L3 mode, traffic flows through three stages:
 
-```
+```text
 Your Network ──── [ PoP BGP/Static ] ──── [ vRack Router ] ──── OVHcloud AZ(s)
                     (OCC-specific)          (this guide)
 ```
@@ -213,6 +213,8 @@ Now that your AZ configuration is ready, configure the OVHcloud Connect L3 routi
 
 - [Configure OVHcloud Connect L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp)
 - [Configure OVHcloud Connect L3 with static routing](/guides/network/ovhcloud-connect/l3-static)
-- [Monitor your connection](/guides/network/ovhcloud-connect/diagnostics)
+- [Monitor your connection](/guides/network/ovhcloud-connect/monitor)
 
-Join our [community of users](https://community.ovh.com/).
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
+
+Join our [community of users](/links/community).

@@ -1,7 +1,7 @@
 ---
-title: 'Declare and Follow Up Upon an Incident'
-description: 'Learn how to report an OVHcloud Connect incident, provide diagnostic information, and track resolution'
-lastUpdated: 2026-02-18
+title: 'Declare and follow up an OVHcloud Connect incident'
+description: 'Find out how to report an OVHcloud Connect incident, provide diagnostic information, and track resolution'
+lastUpdated: 2026-06-09
 ---
 
 ## Objective
@@ -28,7 +28,8 @@ Before contacting support, collect the following information to speed up diagnos
 ### Example diagnostic commands
 
 **Cisco IOS:**
-```
+
+```bash
 show ip bgp summary
 show interfaces GigabitEthernet0/0
 show ip route
@@ -36,7 +37,8 @@ traceroute 172.16.1.10
 ```
 
 **Juniper JunOS:**
-```
+
+```bash
 show bgp summary
 show interfaces terse
 show route
@@ -44,6 +46,7 @@ traceroute 172.16.1.10
 ```
 
 **From a Linux host in OVHcloud:**
+
 ```bash
 ping -c 10 10.0.0.1
 traceroute 10.0.0.1
@@ -62,8 +65,8 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go t
 
 ## Step 3 — Open a support ticket
 
-1. Go to **Support** → **Create a ticket** (or navigate to the support section).
-2. Select the category related to **Network** / **OVHcloud Connect**.
+1. Go to <code className="action">Support</code> > <code className="action">Create a ticket</code> (or navigate to the support section).
+2. Select the category related to <code className="action">Network</code> / <code className="action">OVHcloud Connect</code>.
 3. Provide a clear **subject line** (e.g. "OVHcloud Connect — BGP session down since 14:30 UTC").
 4. In the description, include:
    - Your OVHcloud Connect **service name/ID**
@@ -110,11 +113,11 @@ After the incident is resolved:
 
 ## What's next?
 
-- Set up proactive [monitoring](/guides/network/ovhcloud-connect/diagnostics) to detect issues before they impact your users
+- Set up proactive [monitoring](/guides/network/ovhcloud-connect/monitor) to detect issues before they impact your users
 - Review your [SLA](/guides/network/ovhcloud-connect/slas) commitments
 
 ## Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).

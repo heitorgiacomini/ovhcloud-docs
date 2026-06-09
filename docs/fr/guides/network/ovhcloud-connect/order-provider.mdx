@@ -1,7 +1,7 @@
 ---
 title: 'Commander OVHcloud Connect Provider'
 description: 'Découvrez comment commander un service OVHcloud Connect via un opérateur réseau tiers'
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
 
 ## Objectif
@@ -14,20 +14,20 @@ Ce guide explique comment commander un service OVHcloud Connect via un **opérat
 |---|---|
 | **Opérateur** | L'opérateur tiers que vous souhaitez utiliser (consultez [Opérateurs](/guides/network/ovhcloud-connect/providers)) |
 | **Localisation du PoP** | Le PoP OVHcloud auquel l'opérateur va se raccorder |
-| **Bande passante** | Le débit souhaité (par exemple 100 Mbps, 1 Gbps, 10 Gbps — les options varient selon l'opérateur) |
+| **Bande passante** | Le débit souhaité (de 50 Mbps à 50 Gbps — les options varient selon l'opérateur) |
 | **Votre ASN et plan IP** | OVHcloud Connect Provider est toujours un service Layer 3 ; vous avez besoin d'un ASN et d'IP de peering pour BGP |
 
 ## Commander depuis l'espace client OVHcloud
 
 1. **Connectez-vous** à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
-2. Cliquez sur **Commander une nouvelle connexion**.
-3. Sélectionnez **Connexion via un opérateur**.
+2. Cliquez sur <code className="action">Commander</code>.
+3. Sélectionnez <code className="action">OVHcloud Connect Provider</code>.
 4. Choisissez votre **opérateur** dans la liste.
 5. Sélectionnez la **localisation du PoP** et la **bande passante**.
 6. OVHcloud génère une **clé de pairing** (clé de service).
-7. Vérifiez le tarif et **confirmez** la commande.
+7. Vérifiez le tarif et cliquez sur <code className="action">Confirmer</code> pour valider la commande.
 
-:::caution
+:::warning
 **Important :** copiez la clé de pairing — vous en aurez besoin à l'étape suivante.
 :::
 
@@ -39,7 +39,7 @@ La clé de pairing identifie votre commande OVHcloud Connect et permet à l'opé
 
 1. Connectez-vous au [portail Megaport](https://portal.megaport.com/).
 2. Créez un nouveau **VXC (Virtual Cross Connect)**.
-3. Sélectionnez **OVHcloud** comme destination.
+3. Sélectionnez <code className="action">OVHcloud</code> comme destination.
 4. Saisissez la **clé de pairing** fournie par OVHcloud.
 5. Choisissez la bande passante puis confirmez.
 
@@ -51,7 +51,7 @@ Documentation Megaport : [docs.megaport.com](https://docs.megaport.com/)
 
 1. Connectez-vous à [Equinix Fabric](https://fabric.equinix.com/).
 2. Créez une nouvelle **connexion**.
-3. Sélectionnez **OVHcloud** dans le catalogue des fournisseurs de services.
+3. Sélectionnez <code className="action">OVHcloud</code> dans le catalogue des fournisseurs de services.
 4. Saisissez la **clé de service** (clé de pairing).
 5. Choisissez le débit puis confirmez.
 
@@ -70,9 +70,9 @@ Documentation Equinix Fabric : [docs.equinix.com/fabric](https://docs.equinix.co
 Documentation Console Connect : [consoleconnect.com/help](https://www.consoleconnect.com/help/)
 :::
 
-## Et ensuite ?
+## Que se passe-t-il après la commande ?
 
-<img className="thumbnail" alt="Et ensuite ?" src="/images/network/ovhcloud-connect/order-provider/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Étapes de provisionnement après commande : clé de pairing générée, provisionnement par l'opérateur, puis activation de la connexion" src="/images/network/ovhcloud-connect/order-provider/fig-1.fr.svg" loading="lazy" />
 
 1. **Clé de pairing générée** — OVHcloud fournit la clé après la passation de votre commande.
 2. **Provisionnement par l'opérateur** — L'opérateur utilise la clé pour mettre en place le lien virtuel ou physique. Les opérateurs à la demande (Megaport, Equinix) le réalisent généralement en quelques minutes.
@@ -85,14 +85,14 @@ Documentation Console Connect : [consoleconnect.com/help](https://www.consolecon
 - **Votre opérateur** vous facture séparément son circuit/VXC (les tarifs varient selon l'opérateur, la bande passante et le contrat).
 - Assurez-vous de bien comprendre les deux structures de facturation avant de passer commande.
 
-## Et ensuite ?
+## Et ensuite ?
 
 - [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp)
 - [Associer le service à votre vRack](/guides/network/ovhcloud-connect/associate-vrack)
-- [Superviser votre connexion](/guides/network/ovhcloud-connect/diagnostics)
+- [Superviser votre connexion](/guides/network/ovhcloud-connect/monitor)
 
 ## Aller plus loin
 
-Pour bénéficier d'une formation ou d'une assistance technique dans la mise en œuvre de nos solutions, contactez votre conseiller commercial ou cliquez sur [ce lien](https://www.ovhcloud.com/fr/professional-services/) afin d'obtenir un devis et demander une analyse personnalisée de votre projet à nos experts de l'équipe Professional Services.
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Échangez avec notre [communauté d'utilisateurs](/links/community).

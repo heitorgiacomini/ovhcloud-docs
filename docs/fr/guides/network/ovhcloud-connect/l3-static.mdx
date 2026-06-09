@@ -1,7 +1,7 @@
 ---
 title: 'Configurer OVHcloud Connect L3 avec des routes statiques'
 description: 'Configurez OVHcloud Connect L3 avec des routes IP statiques pour un routage prévisible entre votre réseau et OVHcloud'
-lastUpdated: 2026-04-14
+lastUpdated: 2026-06-09
 ---
 
 import Api from '@components/Api';
@@ -43,7 +43,7 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ### Vue d’ensemble
 
-```
+```text
 Votre routeur ── [ L3 au PoP ] ── Routeur PoP OVHcloud ── [ Routes statiques au DC ] ── Routeur vRack ── Services
                   peering /30                                next-hop + sous-réseau         (172.16.x.x)
 ```
@@ -155,7 +155,7 @@ Configurez votre routeur physique avec des routes statiques pointant les sous-r�
 
 #### Cisco IOS / IOS-XE
 
-```
+```text
 ! Interface facing OVHcloud
 interface GigabitEthernet0/0
  description OVHcloud Connect
@@ -170,7 +170,7 @@ ip route 172.16.10.0 255.255.255.0 192.0.2.1 name OVH-DC1-Management
 
 #### Juniper JunOS
 
-```
+```text
 interfaces {
     ge-0/0/0 {
         description "OVHcloud Connect";
@@ -197,7 +197,7 @@ routing-options {
 
 **Cisco :**
 
-```
+```bash
 show ip route static
 ping 172.16.1.1 source 192.0.2.2
 traceroute 172.16.1.1 source 192.0.2.2
@@ -205,7 +205,7 @@ traceroute 172.16.1.1 source 192.0.2.2
 
 **Juniper :**
 
-```
+```bash
 show route protocol static
 ping 172.16.1.1 source 192.0.2.2
 traceroute 172.16.1.1 source 192.0.2.2
@@ -245,6 +245,7 @@ Le routage statique présente des limites importantes par rapport à BGP :
 - **Mises à jour manuelles requises.** Lorsque vous ajoutez ou modifiez des sous-réseaux, vous devez mettre à jour à la fois la configuration supplémentaire OVHcloud et la configuration de votre routeur.
 - **Pas de répartition de charge.** Les routes statiques ne prennent pas en charge ECMP ni le traffic engineering. Le trafic suit un chemin unique.
 - **Non recommandé pour le multi-AZ.** Pour les configurations multi-AZ résilientes, BGP est fortement recommandé — voir [Multi-AZ](/guides/network/ovhcloud-connect/multi-az).
+
 :::
 
 ### Supprimer les configurations
@@ -260,6 +261,8 @@ Supprimez dans l’ordre inverse :
 
 - [Configurer le réseau vRack](/guides/network/ovhcloud-connect/vrack-network-setup) — Si vous n’avez pas encore configuré les sous-réseaux d’AZ
 - [Associer OVHcloud Connect à votre vRack](/guides/network/ovhcloud-connect/associate-vrack)
-- [Surveiller votre connexion](/guides/network/ovhcloud-connect/diagnostics)
+- [Surveiller votre connexion](/guides/network/ovhcloud-connect/monitor)
 
-Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

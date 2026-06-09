@@ -1,8 +1,10 @@
 ---
 title: Set up a simple OVHcloud Connect architecture
 description: Connect a single on-premises site, branch WAN, or public cloud (AWS, Azure, GCP) environment to OVHcloud through one OVHcloud Connect link.
-lastUpdated: 2026-02-18
+lastUpdated: 2026-06-09
 ---
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objective
 
@@ -10,7 +12,7 @@ This tutorial guides you through connecting a single on-premises site to OVHclou
 
 ## Instructions
 
-Below, you will find prerequisites and instructions for five separate use-cases, which you may choose depending on desired architecture.
+Below are prerequisites and instructions for five use cases; choose the one matching your desired architecture.
 
 <Tabs>
 <Tab label="On-Premises">
@@ -75,7 +77,7 @@ Define the private subnets in OVHcloud that your on-premises network should reac
 
 #### 7. Set up monitoring
 
-Configure monitoring alerts for link status, BGP session, and bandwidth. See [Monitor](/guides/network/ovhcloud-connect/diagnostics).
+Configure monitoring alerts for link status, BGP session, and bandwidth. See [Monitor](/guides/network/ovhcloud-connect/monitor).
 
 ### Limitations of a simple connection
 
@@ -145,7 +147,7 @@ Link to your vRack and set up the required subnets. See [Associate with vRack](/
 
 From a branch office, verify you can reach OVHcloud resources:
 
-```
+```bash
 ping 172.16.1.10           ## Ping an OVHcloud VM
 traceroute 172.16.1.10     ## Should go: branch → WAN → PoP → OVHcloud (private)
 ```
@@ -158,7 +160,7 @@ ping 10.1.0.1              ## Ping a branch IP from an OVHcloud VM
 
 #### 6. Set up monitoring
 
-Monitor the WAN edge BGP session and OVHcloud Connect link. See [Monitor](/guides/network/ovhcloud-connect/diagnostics).
+Monitor the WAN edge BGP session and OVHcloud Connect link. See [Monitor](/guides/network/ovhcloud-connect/monitor).
 
 </Tab>
 <Tab label="AWS">
@@ -192,7 +194,7 @@ The connection between AWS and OVHcloud is typically routed through a **shared p
 4. Create a **Private Virtual Interface (VIF)** associated with your VPC or Virtual Private Gateway.
 5. Note the BGP ASN, peer IPs, and VLAN ID.
 
-For more information, please consult [AWS Direct Connect documentation](https://docs.aws.amazon.com/directconnect/)
+For more information, please consult [AWS Direct Connect documentation](https://docs.aws.amazon.com/directconnect/).
 
 #### 2. Order OVHcloud Connect Provider
 
@@ -225,11 +227,13 @@ You need BGP sessions on three segments:
 | **OVHcloud Connect** | OVHcloud router | Your router or provider MCR |
 
 If using a provider MCR:
+
 - The MCR peers with AWS via the VIF.
 - The MCR peers with OVHcloud via OVHcloud Connect.
 - Routes are exchanged automatically between the two peers.
 
 If **not** using a provider MCR:
+
 - You need your own router (physical or virtual) co-located with the provider to handle BGP routing between AWS and OVHcloud.
 
 #### 5. Associate OVHcloud Connect with vRack
@@ -455,6 +459,7 @@ After the provider provisions the connection:
 [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp).
 
 Ensure the provider MCR:
+
 - Advertises GCP VPC prefixes (`10.3.0.0/16`) toward OVHcloud (BGP AS [TODO: per-PoP — 65501 EU / 65502 CA / 65519 Asia]).
 - Advertises OVHcloud prefixes (`172.16.0.0/16`) toward GCP Cloud Router.
 
@@ -500,10 +505,10 @@ GCP Cloud Router uses ASN **16550** by default. You can configure a custom ASN d
 ### What's next?
 
 - [Resilient On-Prem architecture](/guides/network/ovhcloud-connect/resilient-architecture) for high availability
-- [Monitor your connection](/guides/network/ovhcloud-connect/diagnostics)
+- [Monitor your connection](/guides/network/ovhcloud-connect/monitor)
 
 ### Go further
 
-If you would like training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en/professional-services/) to get a quote and request a personalized analysis of your project from our Professional Services team experts.
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
 
-Join our [community of users](https://community.ovh.com/).
+Join our [community of users](/links/community).
