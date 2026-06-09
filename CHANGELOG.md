@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.09
+
+### Fixes
+- **chatbot:** point linkPolicy at localized legal-information page (#159)
+
+### Documentation
+- 149 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.08.1
 
 ### Fixes
