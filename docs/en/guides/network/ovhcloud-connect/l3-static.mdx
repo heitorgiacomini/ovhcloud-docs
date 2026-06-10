@@ -73,6 +73,14 @@ The PoP configuration establishes the L3 session at the Point of Presence. This 
 
 **Example request:**
 
+```json
+{
+  "interfaceId": 101,
+  "type": "l3",
+  "customerBgpArea": 65001,
+  "subnet": "192.0.2.0/30"
+}
+```
 
 ### Step 3 — Verify the PoP configuration
 
@@ -120,11 +128,25 @@ With static routing, **VRRP remains active** on the AZ endpoint. OVHcloud device
 
 **Example request — route your on-premises subnet through the OVHcloud Connect link:**
 
+```json
+{
+  "type": "network",
+  "nextHop": "172.16.1.1",
+  "subnet": "10.0.0.0/16"
+}
+```
 
 #### Add multiple static routes
 
-Create one extra configuration per destination subnet:
+Create one extra configuration per destination subnet. Repeat the `POST .../extra` call with a different `subnet` each time:
 
+```json
+{
+  "type": "network",
+  "nextHop": "172.16.1.1",
+  "subnet": "10.1.0.0/16"
+}
+```
 
 #### Verify the extra configuration
 

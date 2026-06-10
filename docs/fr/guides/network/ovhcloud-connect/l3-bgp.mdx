@@ -65,6 +65,14 @@ La configuration PoP établit la session BGP L3 au niveau du Point de présence.
 
 **Exemple de requête :**
 
+```json
+{
+  "interfaceId": 101,
+  "type": "l3",
+  "customerBgpArea": 65001,
+  "subnet": "192.0.2.0/30"
+}
+```
 
 Le `resourceId` dans la réponse correspond à votre nouveau `popId`.
 
@@ -121,6 +129,13 @@ L’activation de BGP au niveau de l’AZ **désactive VRRP** sur cette configur
 
 **Exemple de requête :**
 
+```json
+{
+  "type": "bgp",
+  "bgpNeighborArea": 65501,
+  "bgpNeighborIp": "172.16.1.1"
+}
+```
 
 Vérifiez la configuration supplémentaire :
 

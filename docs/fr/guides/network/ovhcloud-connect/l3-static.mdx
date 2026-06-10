@@ -73,6 +73,14 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 
 **Exemple de requête :**
 
+```json
+{
+  "interfaceId": 101,
+  "type": "l3",
+  "customerBgpArea": 65001,
+  "subnet": "192.0.2.0/30"
+}
+```
 
 ### Étape 3 — Vérifier la configuration PoP
 
@@ -120,11 +128,25 @@ Avec le routage statique, **VRRP reste actif** sur le point de terminaison de l�
 
 **Exemple de requête — router votre sous-réseau on-premises via le lien OVHcloud Connect :**
 
+```json
+{
+  "type": "network",
+  "nextHop": "172.16.1.1",
+  "subnet": "10.0.0.0/16"
+}
+```
 
 #### Ajouter plusieurs routes statiques
 
-Créez une configuration supplémentaire par sous-réseau de destination :
+Créez une configuration supplémentaire par sous-réseau de destination. Répétez l'appel `POST .../extra` avec un `subnet` différent à chaque fois :
 
+```json
+{
+  "type": "network",
+  "nextHop": "172.16.1.1",
+  "subnet": "10.1.0.0/16"
+}
+```
 
 #### Vérifier la configuration supplémentaire
 

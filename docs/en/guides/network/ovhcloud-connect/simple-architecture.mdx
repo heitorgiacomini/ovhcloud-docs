@@ -355,11 +355,11 @@ There are **three BGP segments** in this architecture:
 | Segment | Endpoints | ASNs |
 |---|---|---|
 | Azure ↔ Provider | Azure (ASN 12076) ↔ MCR/Provider ASN | 12076 ↔ Provider |
-| Provider ↔ OVHcloud | MCR/Provider ASN ↔ OVHcloud BGP AS [TODO: per-PoP — 65501 EU / 65502 CA / 65519 Asia] | Provider ↔ [TODO: per-PoP] |
+| Provider ↔ OVHcloud | MCR/Provider ASN ↔ OVHcloud BGP AS (`65501` EU / `65502` CA / `65519` Asia) | Provider ↔ `65501` / `65502` / `65519` |
 | OVHcloud ↔ vRack | Internal routing within OVHcloud | N/A |
 
 :::info
-Azure uses ASN **12076** for ExpressRoute Private Peering.
+Azure uses ASN **12076** for ExpressRoute Private Peering. The OVHcloud BGP AS depends on the PoP region: **65501** (Europe), **65502** (Canada), **65519** (Asia).
 :::
 
 ### Troubleshooting
@@ -460,7 +460,7 @@ After the provider provisions the connection:
 
 Ensure the provider MCR:
 
-- Advertises GCP VPC prefixes (`10.3.0.0/16`) toward OVHcloud (BGP AS [TODO: per-PoP — 65501 EU / 65502 CA / 65519 Asia]).
+- Advertises GCP VPC prefixes (`10.3.0.0/16`) toward OVHcloud (BGP AS `65501` for Europe, `65502` for Canada, `65519` for Asia).
 - Advertises OVHcloud prefixes (`172.16.0.0/16`) toward GCP Cloud Router.
 
 #### 6. Associate your vRack
@@ -482,11 +482,11 @@ Ensure the provider MCR:
 | Segment | Endpoints | ASNs |
 |---|---|---|
 | GCP ↔ Provider | Cloud Router (ASN 16550) ↔ MCR (Provider ASN) | 16550 ↔ Provider |
-| Provider ↔ OVHcloud | MCR (Provider ASN) ↔ OVHcloud BGP AS [TODO: per-PoP — 65501 EU / 65502 CA / 65519 Asia] | Provider ↔ [TODO: per-PoP] |
+| Provider ↔ OVHcloud | MCR (Provider ASN) ↔ OVHcloud BGP AS (`65501` EU / `65502` CA / `65519` Asia) | Provider ↔ `65501` / `65502` / `65519` |
 | OVHcloud ↔ vRack | Internal OVHcloud routing | N/A |
 
 :::info
-GCP Cloud Router uses ASN **16550** by default. You can configure a custom ASN during Cloud Router creation.
+GCP Cloud Router uses ASN **16550** by default. You can configure a custom ASN during Cloud Router creation. The OVHcloud BGP AS depends on the PoP region: **65501** (Europe), **65502** (Canada), **65519** (Asia).
 :::
 
 ### Troubleshooting

@@ -355,11 +355,11 @@ Cette architecture comporte **trois segments BGP** :
 | Segment | Extrémités | ASN |
 |---|---|---|
 | Azure ↔ Fournisseur | Azure (ASN 12076) ↔ ASN du MCR/fournisseur | 12076 ↔ Fournisseur |
-| Fournisseur ↔ OVHcloud | ASN du MCR/fournisseur ↔ AS BGP OVHcloud [TODO: par PoP — 65501 EU / 65502 CA / 65519 Asia] | Fournisseur ↔ [TODO: par PoP] |
+| Fournisseur ↔ OVHcloud | ASN du MCR/fournisseur ↔ AS BGP OVHcloud (`65501` EU / `65502` CA / `65519` Asie) | Fournisseur ↔ `65501` / `65502` / `65519` |
 | OVHcloud ↔ vRack | Routage interne au sein d'OVHcloud | N/A |
 
 :::info
-Azure utilise l'ASN **12076** pour le Private Peering ExpressRoute.
+Azure utilise l'ASN **12076** pour le Private Peering ExpressRoute. L'AS BGP OVHcloud dépend de la région du PoP : **65501** (Europe), **65502** (Canada), **65519** (Asie).
 :::
 
 ### Dépannage
@@ -460,7 +460,7 @@ Une fois que le fournisseur a provisionné la connexion :
 
 Assurez-vous que le MCR du fournisseur :
 
-- Annonce les préfixes du VPC GCP (`10.3.0.0/16`) vers OVHcloud (AS BGP [TODO: par PoP — 65501 EU / 65502 CA / 65519 Asia]).
+- Annonce les préfixes du VPC GCP (`10.3.0.0/16`) vers OVHcloud (AS BGP `65501` pour l'Europe, `65502` pour le Canada, `65519` pour l'Asie).
 - Annonce les préfixes OVHcloud (`172.16.0.0/16`) vers le GCP Cloud Router.
 
 #### 6. Associer votre vRack
@@ -482,11 +482,11 @@ Assurez-vous que le MCR du fournisseur :
 | Segment | Extrémités | ASN |
 |---|---|---|
 | GCP ↔ Fournisseur | Cloud Router (ASN 16550) ↔ MCR (ASN du fournisseur) | 16550 ↔ Fournisseur |
-| Fournisseur ↔ OVHcloud | MCR (ASN du fournisseur) ↔ AS BGP OVHcloud [TODO: par PoP — 65501 EU / 65502 CA / 65519 Asia] | Fournisseur ↔ [TODO: par PoP] |
+| Fournisseur ↔ OVHcloud | MCR (ASN du fournisseur) ↔ AS BGP OVHcloud (`65501` EU / `65502` CA / `65519` Asie) | Fournisseur ↔ `65501` / `65502` / `65519` |
 | OVHcloud ↔ vRack | Routage interne OVHcloud | N/A |
 
 :::info
-Le GCP Cloud Router utilise l'ASN **16550** par défaut. Vous pouvez configurer un ASN personnalisé lors de la création du Cloud Router.
+Le GCP Cloud Router utilise l'ASN **16550** par défaut. Vous pouvez configurer un ASN personnalisé lors de la création du Cloud Router. L'AS BGP OVHcloud dépend de la région du PoP : **65501** (Europe), **65502** (Canada), **65519** (Asie).
 :::
 
 ### Dépannage
