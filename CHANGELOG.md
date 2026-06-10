@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.06.10
+
+### Fixes
+- **build:** use 301.map from plublic directory
+
 ## 2026.06.09
 
 ### Fixes
