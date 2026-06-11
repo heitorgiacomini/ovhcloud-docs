@@ -1,11 +1,15 @@
 ---
 title: Deleting an email account
 description: Find out how to delete or reset an email account of your email solution
-lastUpdated: 2026-02-19
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 ## Objective
 
@@ -20,10 +24,21 @@ You want to:
 ## Requirements
 
 - A preconfigured OVHcloud email solution:
-    - **MX Plan**, available with a [web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/), included in a [100M free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/), or ordered separately.
+    <Region zones={['eu']}>
+    - **MX Plan**, available with a [web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/), included in a [free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/), or ordered separately.
+    </Region>
+    <Region zones={['ca', 'apac']}>
+    - **MX Plan**, available with a [web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/), or ordered separately.
+    </Region>
+    <Region zones={['eu', 'ca']}>
     - [**Exchange**](https://www.ovhcloud.com/en-gb/emails-exchange/).
+    </Region>
+    <Region zones={['eu']}>
     - [**Email Pro**](https://www.ovhcloud.com/en-gb/emails/email-pro/).
+    </Region>
+    <Region zones={['eu']}>
     - [**Zimbra**](https://www.ovhcloud.com/en-gb/emails/zimbra-emails/).
+    </Region>
 - Be the Admin contact of the email service concerned
 - Access details for the email accounts concerned
 
@@ -80,13 +95,18 @@ Depending on when your MX Plan solution was activated or on a recent migration, 
 OVHcloud offers 4 email solutions, and the concept of account deletion differs depending on which email solution you choose.
 
 - **MX Plan email**: This offer contains a certain number of email accounts as a bundle. When you delete an account, you free up an account "slot" of the email service.
+<Region zones={['eu']}>
 - **Email Pro**, **Hosted Exchange** and **Zimbra**: These offers are on-demand. You order an individual subscription per email account. If you want to delete an email account, you will need to **reset** it. Once you have reset your email account, you can use this account again to create a new email address. You can also [cancel the subscription](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/manage-billing-exchange#deleting-accounts) for this account if you wish to permanently delete it.
+</Region>
+<Region zones={['ca']}>
+- **Hosted Exchange**: This offer is on-demand. You order an individual subscription per email account. If you want to delete an email account, you will need to **reset** it. Once you have reset your email account, you can use this account again to create a new email address. You can also [cancel the subscription](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/manage-billing-exchange#deleting-accounts) for this account if you wish to permanently delete it.
+</Region>
 
 ### Delete or reset an email account
 
 Select the tab corresponding to your email solution:
 
-<Tabs>
+<ZoneTabs>
   <Tab label="MX Plan Roundcube">
     To identify the email technology associated with your MX Plan service, please refer to the "[Identifying the email technology of your MX Plan solution](#whichmxplan)" section of this guide.
     
@@ -103,7 +123,7 @@ Select the tab corresponding to your email solution:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/email-mxplan-new-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     1. Go to the <code className="action">Email accounts</code> tab. The window that appears will display the existing email accounts.
     1. Click the <code className="action">...</code> button to the right of the account you want to modify, then click <code className="action">Reset this account</code>.
     
@@ -111,7 +131,7 @@ Select the tab corresponding to your email solution:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/emailpro-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     1. Go to the <code className="action">Email accounts</code> tab.
     1. Click the <code className="action">...</code> button to the right of the account you want to modify, then click <code className="action">Reset</code>.
     
@@ -119,13 +139,13 @@ Select the tab corresponding to your email solution:
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/exchange-reset.png" loading="lazy" />
   </Tab>
-  <Tab label="Zimbra STARTER/PRO">
+  <Tab label="Zimbra STARTER/PRO" availableIn={['eu']}>
     1. Go to the <code className="action">Email account</code> tab. The window that appears will display the existing email accounts.
     1. Click the <code className="action">⋮</code> button to the right of the account you want to modify, then click <code className="action">Delete</code>.
     
     <img className="thumbnail" alt="email" src="/images/web-cloud/email-and-collaborative-solutions/common-email-features/email-reset-account/email-zimbra-reset.png" loading="lazy" />
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ## Go further

@@ -2,9 +2,12 @@
 title: ¿Qué hacer si una dirección de correo electrónico está bloqueada por spam?
 description: "Desbloquee una dirección de correo electrónico bloqueada por spam: identifique la causa de la actividad sospechosa, corríjala y contacte con el soporte de OVHcloud."
 lastUpdated: 2026-05-28
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+
+import { ZoneTabs } from '@components/Zone';
 
 
 ## Objetivo
@@ -124,15 +127,15 @@ Este filtro se configura desde el webmail o un software de mensajería.
 
 Seleccione el plan de correo electrónico correspondiente en las siguientes pestañas:
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Acceda a la pestaña <code className="action">Cuentas de correo</code> de su plataforma. Si la columna "estado" de la dirección de correo electrónico correspondiente indica "bloqueado", haga clic en <code className="action">...</code> a la derecha de la cuenta y, seguidamente, en <code className="action">Desbloquear</code>. La dirección de correo electrónico no se desbloquea automáticamente. Contacte con el soporte a través del tique de asistencia respondiendo a las 3 preguntas formuladas.<br/>
 
     Pase a la [etapa 3](#step3) de la guía.
     
     <img className="thumbnail" alt="Columna estado bloqueado en la pestaña Cuentas de correo Exchange" src="/images/web-cloud/email-and-collaborative-solutions/troubleshooting/locked-for-spam/blocked-for-SPAM-01-01.png" loading="lazy" />
   </Tab>
-  <Tab label="Email Pro">
+  <Tab label="Email Pro" availableIn={['eu']}>
     Acceda a la pestaña <code className="action">Cuentas de correo</code> de su plataforma. Si la columna "estado" a la derecha de la dirección de correo electrónico correspondiente indica "Spam", haga clic en esta mención y, seguidamente, en <code className="action">Responder al tique</code>. La dirección de correo electrónico no se desbloquea automáticamente. Contacte con el soporte a través del tique de asistencia respondiendo a las 3 preguntas formuladas. <br/>
 
     Pase a la [etapa 3](#step3) de la guía.
@@ -195,7 +198,7 @@ Seleccione el plan de correo electrónico correspondiente en las siguientes pest
     Una vez que el soporte tramite el tique, la dirección se desbloqueará. La [etapa 3](#step3) no se aplica en este caso.
 
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Etapa 3: acceder al tique de asistencia <a name="step3"></a>

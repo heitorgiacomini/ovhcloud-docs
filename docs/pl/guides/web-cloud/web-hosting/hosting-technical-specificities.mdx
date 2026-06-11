@@ -1,8 +1,11 @@
 ---
-title: Informacje techniczne związane z hostingiem współdzielonym
+title: Informacje techniczne związane z hostingiem WWW
 description: Zapoznaj się z różnego rodzaju informacjami technicznymi dotyczącymi hostingu WWW
-lastUpdated: 2023-12-08
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Wprowadzenie
 
@@ -53,9 +56,21 @@ Aby zagwarantować wysoką jakość usługi na całej infrastrukturze współdzi
 
 W okresie 3600 sekund (1 godzina) z oferty hostingu możesz wysyłać następujące limity e-maili:
 
-|Oferty|Darmowy hosting 100M|Starter|Perso|Pro|Performance|
-|---|---|---|---|---|---|
-|Maksymalna liczba wysyłanych wiadomości na godzinę i na usługę|10|20|100|200|2000|
+<Region zones={['eu']}>
+
+|Oferty|Darmowy hosting|Starter|Perso|Startup|Pro|Performance|Agency|Agency Plus|Agency Max|
+|---|---|---|---|---|---|---|---|---|---|
+|Maksymalna liczba wysyłanych wiadomości na godzinę i na usługę|10|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Oferty|Starter|Perso|Startup|Pro|Performance|Agency|Agency Plus|Agency Max|
+|---|---|---|---|---|---|---|---|---|
+|Maksymalna liczba wysyłanych wiadomości na godzinę i na usługę|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
 
 :::info
 Ograniczenia te dotyczą **tylko** wiadomości e-mail wysyłanych przy użyciu funkcji *mail()* PHP i nie dotyczą innych ofert e-mail (wysyłka SMTP).
@@ -159,7 +174,9 @@ OVHcloud nie zmienia automatycznie wersji PHP na Twoim hostingu po wdrożeniu no
 
 Znajdź i sprawdź biblioteki, języki i wersje dostępne dla Twojego hostingu na tej stronie: [https://webhosting-infos.hosting.ovh.net](https://webhosting-infos.hosting.ovh.net)
 
+<Region zones={['eu']}>
 Aby zapoznać się ze szczegółami technicznymi usługi Cloud Web, przejdź na stronę: [https://cloudweb-infos.hosting.ovh.net/](https://cloudweb-infos.hosting.ovh.net/).
+</Region>
 
 ### Informacje o automatycznych kopiach zapasowych <a name="backup"></a>
 

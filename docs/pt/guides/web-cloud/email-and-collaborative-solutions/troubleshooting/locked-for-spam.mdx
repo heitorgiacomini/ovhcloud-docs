@@ -2,9 +2,12 @@
 title: O que fazer no caso de um endereço de e-mail bloqueado por spam?
 description: "Desbloqueie um endereço de e-mail bloqueado por spam: identifique a causa da atividade suspeita, corrija-a e contacte o suporte da OVHcloud."
 lastUpdated: 2026-05-28
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+
+import { ZoneTabs } from '@components/Zone';
 
 
 ## Objetivo
@@ -124,8 +127,8 @@ Este filtro configura-se a partir do webmail ou de um software de correio eletr�
 
 Selecione a oferta de e-mail em causa nos seguintes separadores:
 
-<Tabs>
-  <Tab label="Exchange">
+<ZoneTabs>
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     Aceda ao separador <code className="action">Contas de e-mail</code> da sua plataforma. Se a coluna "estado" do endereço de e-mail em causa indicar "bloqueado", clique em <code className="action">...</code> à direita da conta e depois em <code className="action">Desbloquear</code>. O endereço de e-mail não é desbloqueado automaticamente. Contacte o suporte através do ticket de assistência, respondendo às 3 questões colocadas.<br/>
 
     Avance para a [etapa 3](#step3) do guia.
@@ -195,7 +198,7 @@ Selecione a oferta de e-mail em causa nos seguintes separadores:
     Assim que o ticket for tratado pelo suporte, o endereço será desbloqueado. A [etapa 3](#step3) não se aplica neste caso.
 
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 ### Etapa 3: aceder ao ticket de assistência <a name="step3"></a>

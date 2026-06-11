@@ -1,8 +1,11 @@
 ---
 title: Technical specifications of Web Hostings
 description: Find out details about the technical capabilities of your Web Hosting plan
-lastUpdated: 2023-12-08
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Objective
 
@@ -53,9 +56,21 @@ In order to guarantee a good quality of service on the entire shared infrastruct
 
 Over a rolling period of 3600 seconds (1 hour), your Web Hosting plan will allow you to send the following email quotas:
 
-|Offers|Free 100M Hosting|Starter|Personal|Pro|Performance|
-|---|---|---|---|---|---|
-|Maximum number of emails sent per hour and per service|10|20|100|200|2000|
+<Region zones={['eu']}>
+
+|Offers|Free hosting|Starter|Personal|Startup|Professional|Performance|Agency|Agency Plus|Agency Max|
+|---|---|---|---|---|---|---|---|---|---|
+|Maximum number of emails sent per hour and per service|10|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Offers|Starter|Personal|Startup|Professional|Performance|Agency|Agency Plus|Agency Max|
+|---|---|---|---|---|---|---|---|---|
+|Maximum number of emails sent per hour and per service|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
 
 :::info
 These limitations apply to emails sent using the PHP *mail()* function **only**, and do not apply to other email solutions (SMTP sending).
@@ -159,7 +174,9 @@ OVHcloud does not force PHP updates on Web Hostings. Customers are fully respons
 
 Find the libraries, languages and versions available for your Web Hosting plan on this page: [https://webhosting-infos.hosting.ovh.net](https://webhosting-infos.hosting.ovh.net).
 
+<Region zones={['eu']}>
 For the technical specifications of the Cloud Web solution, please visit this page: [https://cloudweb-infos.hosting.ovh.net/](https://cloudweb-infos.hosting.ovh.net/).
+</Region>
 
 ### Automatic backup information <a name="backup"></a>
 

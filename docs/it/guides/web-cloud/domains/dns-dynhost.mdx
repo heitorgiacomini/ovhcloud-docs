@@ -1,7 +1,8 @@
 ---
 title: Impostare un DNS dinamico (DynHost/DynDNS) per il tuo dominio
 description: Questa guida ti mostra come configurare un record DNS dinamico per il tuo dominio OVHcloud
-lastUpdated: 2025-04-28
+lastUpdated: 2026-06-08
+availableIn: [eu]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
@@ -209,6 +210,15 @@ https://dns.eu.ovhapis.com/nic/update?system=dyndns&hostname=$HOSTNAME&myip=$IP
 |---|---|
 |$HOSTNAME|Il sottodominio interessato dalla modifica|
 |$IP|Il nuovo indirizzo IPv4 o IPv6 di destinazione|
+
+:::warning
+
+Il comportamento del parametro `myip` dipende dalla versione del protocollo IP utilizzata:
+
+- **IPv4**: il parametro `myip` è facoltativo. Se viene omesso, viene utilizzato automaticamente l'indirizzo IP da cui ha origine la chiamata API.
+- **IPv6**: poiché `dns.eu.ovhapis.com` non è raggiungibile tramite IPv6, il parametro `myip` è obbligatorio per trasmettere l'indirizzo di destinazione.
+
+:::
 
 Verifica che l'indirizzo IP di destinazione sia stato aggiornato correttamente. Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **3** passi.
 

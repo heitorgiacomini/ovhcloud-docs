@@ -2,9 +2,11 @@
 title: Everything you need to know about DNS records
 description: Discover the different types of DNS records available in an OVHcloud DNS zone
 lastUpdated: 2026-02-19
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Objective
@@ -87,7 +89,7 @@ Select the record you want by clicking each of the following tabs.
     :::
 
     
-    :::tip[Success]
+    :::tip
     The DNAME record is usually used for company name changes. It can also be set up when a user has several domain name extensions (.fr, .net, .com, .info, etc.) to redirect them easily.
     :::
 
@@ -111,7 +113,17 @@ Select the record you want by clicking each of the following tabs.
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer <br/><br/> 
-    Links a domain name to an email server. For example, the address *10 mx1.mail.ovh.net* corresponds to one of the OVHcloud email servers when you have an OVHcloud email solution. Your email provider may have several email servers. Several MX fields must therefore be created. Please read our guide on [Adding an MX record to your domain name’s configuration](/guides/web-cloud/domains/dns-zone-mx).
+    Links a domain name to an email server.
+
+    <Region zones={['eu']}>
+    For example, the address *10 mx1.mail.ovh.net* corresponds to one of the OVHcloud email servers when you have an OVHcloud email solution.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    For example, the address *10 mx1.mail.ovh.ca* corresponds to one of the OVHcloud email servers when you have an OVHcloud email solution.
+    </Region>
+
+    Your email provider may have several email servers. Several MX fields must therefore be created. Please read our guide on [Adding an MX record to your domain name’s configuration](/guides/web-cloud/domains/dns-zone-mx).
     
     :::warning
     In general, we recommend using servers from the same email provider in your DNS zone.
@@ -221,24 +233,24 @@ Select the record you want by clicking each of the following tabs.
     
     If needed, find more details on the [**I**nternet **E**ngineering **T**ask **F**orce (**IETF**)](https://datatracker.ietf.org/doc/html/rfc9460) (EN) website.
     
-    :::tip[Success]
+    :::tip
     Below is a concrete example of setting up an alias (apex) using an HTTPS-type DNS record:
-    
+
     The website **domain.tld** is hosted behind a CDN infrastructure (for example: **cdn.provider.tld**).
+
+    Thanks to the HTTPS-type DNS record, the domain name **domain.tld** can directly inform compatible web browsers that the HTTPS service should be resolved by the CDN provider **cdn.provider.tld**. This is done without redirections and without manual management of IP addresses.
+
+    For this, the HTTPS-type DNS record must specify:
+
+    - Priority: *0*.
+    - Target: *cdn.provider.tld*.
+    - Settings: **Leave the field empty**.
+
+    Thus, it is the resolution of **cdn.provider.tld** that will indicate the parameters to use for **domain.tld**.
     :::
 
   </Tab>
 </Tabs>
-
-Thanks to the HTTPS-type DNS record, the domain name **domain.tld** can directly inform compatible web browsers that the HTTPS service should be resolved by the CDN provider **cdn.provider.tld**. This is done without redirections and without manual management of IP addresses.
->> >
->> > For this, the HTTPS-type DNS record must specify:
->> >
->> > - Priority: *0*.
->> > - Target: *cdn.provider.tld*.
->> > - Settings: **Leave the field empty**.
->> >
->> > Thus, it is the resolution of **cdn.provider.tld** that will indicate the parameters to use for **domain.tld**.
 
 #### Special use case: CNAME records <a name="cnameusecase"></a>
 

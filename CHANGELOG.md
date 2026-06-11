@@ -1,9 +1,77 @@
 # Changelog
 
-## 2026.06.02.1
+## 2026.06.10
+
+### Fixes
+- **build:** use 301.map from plublic directory
+
+## 2026.06.09
+
+### Fixes
+- **chatbot:** point linkPolicy at localized legal-information page (#159)
 
 ### Documentation
-- 7 guides updated across de, en, es, fr, it, pl, pt
+- 149 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.06.08.1
+
+### Fixes
+- **domains/dns-dnssec:** remove .it unavailability notice
+
+### Documentation
+- 153 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.06.08
+
+### Maintenance
+- **telecom:** standardize guides (legacy cleanup, links, structure)
+
+### Documentation
+- 413 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.06.04.1
+
+### Features
+- **web-cloud:** adapt guide content to commercial zones (EU/CA/APAC) - wave 2
+- **theme:** add llms options and pdf export
+
+### Documentation
+- 396 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.06.04
+
+### Features
+- **web-hosting:** translate LDP logs guide to all locales
+
+### Fixes
+- **web-hosting,file-storage:** blank line before ::: closer after list
+
+### Documentation
+- 64 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.06.03
+
+### Features
+- **theme:** commercial-zone-driven content gating
+
+### Documentation
+- 1915 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.06.02.1
+
+### Features
+- **mks:** add cli in GS (#35)
+- **theme:** restore Tabs selection persistence and cross-block sync (#127)
+- **theme:** display guide excerpt/description as a lead under the title (#122)
+- add missing anchors (#121)
+
+### Fixes
+- **cross functio:** update center cell (#126)
+- **compute:** repair PCI get started - missing cp-navs
+- **compute:** repair PCI get started - images, formats
+
+### Documentation
+- 301 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.06.02
 

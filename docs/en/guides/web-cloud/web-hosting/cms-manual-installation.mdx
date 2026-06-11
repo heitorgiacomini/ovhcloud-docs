@@ -1,10 +1,12 @@
 ---
 title: Tutorial - Installing a CMS manually on your Web Hosting plan
 description: Find out more about some of the compatible CMS for Web Hostings
-lastUpdated: 2025-10-28
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Objective
@@ -184,7 +186,17 @@ Some CMS systems work without a database. If this is the case for the CMS you wa
 :::
 
 
-Most CMSs require a database to work. Our [web hosting offers](https://www.ovhcloud.com/en-gb/web-hosting/) include them, with the exception of [100M free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/).
+<Region zones={['eu']}>
+
+Most CMSs require a database to work. Our [web hosting offers](https://www.ovhcloud.com/en-gb/web-hosting/) include them, with the exception of [free hosting](https://www.ovhcloud.com/en-gb/domains/free-web-hosting/).
+
+</Region>
+
+<Region zones={['ca','apac']}>
+
+Most CMSs require a database to work. Our [web hosting offers](https://www.ovhcloud.com/en-gb/web-hosting/) include them.
+
+</Region>
 
 Use our documentation to [create a database from your web hosting plan](/guides/web-cloud/web-hosting/sql-create-database).
 
@@ -289,7 +301,7 @@ Once the transfer is complete, check that all the elements in the local **CMS** 
 :::
 
 
-**Special Case**: If you have a limited Internet speed and/or a hosting plan **Pro** or higher, you can use **SSH** connection to put your CMS source files in your Web Hosting plan’s storage space. 
+**Special Case**: If you have a limited Internet speed and/or a hosting plan **Professional** or higher, you can use **SSH** connection to put your CMS source files in your Web Hosting plan’s storage space. 
 
 To log in to your hosting plan via SSH, please refer to our guide on [Accessing a web hosting plan via SSH](/guides/web-cloud/web-hosting/ssh-on-webhosting).
 
@@ -306,7 +318,7 @@ cd NameOfYourTargetFolder
 <Tabs>
   <Tab label="WordPress">
     ```bash
-    wget http://wordpress.org/latest.tar.gz
+    wget https://wordpress.org/latest.tar.gz
     ```
     
     **latest** allows you to automatically install the latest version of the CMS.

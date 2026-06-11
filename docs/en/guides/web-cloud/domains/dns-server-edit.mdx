@@ -2,9 +2,11 @@
 title: "Modifying an OVHcloud domain name's DNS servers"
 description: Find out how to modify the DNS servers for your OVHcloud registered domain name
 lastUpdated: 2026-03-27
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 
@@ -224,7 +226,19 @@ However, make sure that the DNS zone configurations on the various DNS servers c
 :::warning
 1. Be careful if you decide to use this last option. It requires advanced knowledge of how the DNS network, DNS servers and DNS zones work.
 2. The [DNSSEC](/guides/web-cloud/domains/dns-dnssec) option must be disabled to combine the use of your own DNS servers with OVHcloud DNS.
-3. Be careful not to mix one group of OVHcloud DNS servers with another group of OVHcloud DNS servers. For example, *dns19.ovh.net* and *ns19.ovh.net* correspond to one group of OVHcloud DNS servers, they go hand in hand and are synchronised. At OVHcloud, DNS server groups are identifiable by the number in the server names. Two OVHcloud DNS servers are part of the same DNS server group if they share the same number. For example, *dns19.ovh.net* and *ns19.ovh.net*.
+3. Be careful not to mix one group of OVHcloud DNS servers with another group of OVHcloud DNS servers. At OVHcloud, DNS server groups are identifiable by the number in the server names. Two OVHcloud DNS servers are part of the same DNS server group if they share the same number.
+
+<Region zones={['eu']}>
+
+For example, *dns19.ovh.net* and *ns19.ovh.net* correspond to one group of OVHcloud DNS servers, they go hand in hand and are synchronised. They are part of the same group because they share the same number.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+For example, *dnsXX.ovh.ca* and *nsXX.ovh.ca* correspond to one group of OVHcloud DNS servers, they go hand in hand and are synchronised (e.g. *dns10.ovh.ca* and *ns10.ovh.ca*). They are part of the same group because they share the same number. The exact servers assigned to your domain name are shown in the OVHcloud Control Panel.
+
+</Region>
 
 :::
 
@@ -232,11 +246,25 @@ However, make sure that the DNS zone configurations on the various DNS servers c
 :::tip
 Before adding a DNS server, make sure it **is reachable** and contains a DNS zone for your domain name. Also make sure this DNS zone contains all the NS type records for all the DNS servers you are going to declare for your domain name.
 
+<Region zones={['eu']}>
+
 For example: you want to declare the DNS servers *ns1.dns-server.tld*, *dnsXX.ovh.net* and *nsXX.ovh.net* for your domain name. You will then need to check that the following three NS type records are present in the 3 DNS zones hosted on these 3 DNS servers:
 
 - "Your own domain (or just an @)" IN NS ns1.dns-server.tld.
 - "Your own domain (or just an @)" IN NS dnsXX.ovh.net.
 - "Your own domain (or just an @)" IN NS nsXX.ovh.net.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+For example: you want to declare the DNS servers *ns1.dns-server.tld*, *dnsXX.ovh.ca* and *nsXX.ovh.ca* for your domain name. You will then need to check that the following three NS type records are present in the 3 DNS zones hosted on these 3 DNS servers:
+
+- "Your own domain (or just an @)" IN NS ns1.dns-server.tld.
+- "Your own domain (or just an @)" IN NS dnsXX.ovh.ca.
+- "Your own domain (or just an @)" IN NS nsXX.ovh.ca.
+
+</Region>
 
 :::
 

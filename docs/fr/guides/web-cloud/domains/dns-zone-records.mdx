@@ -2,9 +2,11 @@
 title: Tout savoir sur les enregistrements DNS
 description: "Découvrez les différents types d'enregistrements DNS disponibles dans une zone DNS OVHcloud"
 lastUpdated: 2026-02-19
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Objectif
@@ -111,7 +113,17 @@ Sélectionnez l'enregistrement de votre choix en cliquant sur chacun des onglets
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer<br/><br/>
-    Relie un nom de domaine à un serveur e-mail. Par exemple, l'adresse *10 mx1.mail.ovh.net* correspond à l'un des serveurs e-mail OVHcloud lorsque vous possédez une offre e-mail OVHcloud. Il est probable que votre fournisseur e-mail dispose de plusieurs serveurs e-mail : plusieurs champs MX doivent donc être créés. Consultez notre documentation « [Ajouter un champ MX à la configuration de son nom de domaine](/guides/web-cloud/domains/dns-zone-mx) ».
+    Relie un nom de domaine à un serveur e-mail.
+
+    <Region zones={['eu']}>
+    Par exemple, l'adresse *10 mx1.mail.ovh.net* correspond à l'un des serveurs e-mail OVHcloud lorsque vous possédez une offre e-mail OVHcloud.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    Par exemple, l'adresse *10 mx1.mail.ovh.ca* correspond à l'un des serveurs e-mail OVHcloud lorsque vous possédez une offre e-mail OVHcloud.
+    </Region>
+
+    Il est probable que votre fournisseur e-mail dispose de plusieurs serveurs e-mail : plusieurs champs MX doivent donc être créés. Consultez notre documentation « [Ajouter un champ MX à la configuration de son nom de domaine](/guides/web-cloud/domains/dns-zone-mx) ».
     
     :::warning
     De manière générale, il est recommandé de n’utiliser qu’un ou plusieurs serveurs d’un même fournisseur e-mail dans votre zone DNS.

@@ -2,9 +2,11 @@
 title: Alterar os servidores DNS de um nome de domínio OVHcloud
 description: Saiba como alterar os servidores DNS do seu nome de domínio registado na OVHcloud
 lastUpdated: 2026-03-27
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 
@@ -224,7 +226,19 @@ No entanto, verifique se as configurações das zonas DNS presentes nos diferent
 :::warning
 1. Tenha cuidado se decidir utilizar esta última opção. Esta funcionalidade exige conhecimentos avançados sobre o funcionamento da rede DNS, dos servidores DNS e das zonas DNS.
 2. A opção [DNSSEC](/guides/web-cloud/domains/dns-dnssec) deve ser desativada para combinar a utilização dos seus próprios servidores DNS com os DNS da OVHcloud.
-3. Tenha o cuidado de não misturar um grupo de servidores DNS da OVHcloud com outro grupo de servidores DNS da OVHcloud. Por exemplo, *dns19.ovh.net* e *ns19.ovh.net* correspondem a um grupo de servidores DNS da OVHcloud, andam de mãos dadas e são sincronizados. Na OVHcloud, os grupos de servidores DNS são identificáveis através do número presente nos nomes dos servidores. Dois servidores DNS da OVHcloud fazem parte de um mesmo grupo de servidores DNS quando partilham o mesmo número. Por exemplo, *dns19.ovh.net* e *ns19.ovh.net*.
+3. Tenha o cuidado de não misturar um grupo de servidores DNS da OVHcloud com outro grupo de servidores DNS da OVHcloud. Na OVHcloud, os grupos de servidores DNS são identificáveis através do número presente nos nomes dos servidores. Dois servidores DNS da OVHcloud fazem parte de um mesmo grupo de servidores DNS quando partilham o mesmo número.
+
+<Region zones={['eu']}>
+
+Por exemplo, *dns19.ovh.net* e *ns19.ovh.net* correspondem a um grupo de servidores DNS da OVHcloud, andam de mãos dadas e são sincronizados. Fazem parte do mesmo grupo porque partilham o mesmo número.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+Por exemplo, *dnsXX.ovh.ca* e *nsXX.ovh.ca* correspondem a um grupo de servidores DNS da OVHcloud, andam de mãos dadas e são sincronizados (por exemplo, *dns10.ovh.ca* e *ns10.ovh.ca*). Fazem parte do mesmo grupo porque partilham o mesmo número. Os servidores exatos atribuídos ao seu nome de domínio são indicados na Área de Cliente OVHcloud.
+
+</Region>
 
 :::
 
@@ -232,11 +246,25 @@ No entanto, verifique se as configurações das zonas DNS presentes nos diferent
 :::tip
 Antes de adicionar um servidor DNS, verifique se este último **está contactável** e contém uma zona DNS para o seu nome de domínio. Certifique-se igualmente de que esta zona DNS contém todos os registos do tipo "NS" para todos os servidores DNS que irá declarar para o seu nome de domínio.
 
+<Region zones={['eu']}>
+
 Por exemplo: pretende declarar os servidores DNS *ns1.dns-server.tld*, *dnsXX.ovh.net* e *nsXX.ovh.net* para o seu nome de domínio. Deverá verificar se os três registos do tipo "NS" seguintes estão presentes nas 3 zonas DNS alojadas nestes 3 servidores DNS:
 
 - "Your own domain (or just an @)" IN NS ns1.dns-server.tld.
 - "Your own domain (or just an @)" IN NS dnsXX.ovh.net.
 - "Your own domain (or just an @)" IN NS nsXX.ovh.net.
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+Por exemplo: pretende declarar os servidores DNS *ns1.dns-server.tld*, *dnsXX.ovh.ca* e *nsXX.ovh.ca* para o seu nome de domínio. Deverá verificar se os três registos do tipo "NS" seguintes estão presentes nas 3 zonas DNS alojadas nestes 3 servidores DNS:
+
+- "Your own domain (or just an @)" IN NS ns1.dns-server.tld.
+- "Your own domain (or just an @)" IN NS dnsXX.ovh.ca.
+- "Your own domain (or just an @)" IN NS nsXX.ovh.ca.
+
+</Region>
 
 :::
 

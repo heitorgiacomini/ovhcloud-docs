@@ -2,12 +2,16 @@
 title: FAQ e-mails OVHcloud
 description: Retrouvez les questions les plus fréquemment posées sur les e-mails
 lastUpdated: 2026-03-24
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 
 
+
+
+import { Region, ZoneTabs } from '@components/Zone';
 
 {/* CP-NAV-START:web-mx-plan */}
 {/* CP-NAV-START:web-zimbra */}
@@ -22,20 +26,32 @@ import { Tab, Tabs } from '@rspress/core/theme';
 - **Lien direct :** <ManagerLink to="/#/web/web/email_domain">MX Plan</ManagerLink>
 - **Pour accéder à vos services :** <code className="action">Web Cloud</code> > <code className="action">MX Plan</code> > Sélectionnez votre service MX Plan
 
+<Region zones={['eu']}>
+
 **Zimbra :**
 
 - **Lien direct :** <ManagerLink to="/#/web/zimbra">Zimbra</ManagerLink>
 - **Pour accéder à vos services :** <code className="action">Web Cloud</code> > <code className="action">Zimbra Mail</code> > Sélectionnez votre service Zimbra
+
+</Region>
+
+<Region zones={['eu']}>
 
 **Email Pro :**
 
 - **Lien direct :** <ManagerLink to="/#/web/email_pro">Email Pro</ManagerLink>
 - **Pour accéder à vos services :** <code className="action">Web Cloud</code> > <code className="action">Email Pro</code> > Sélectionnez votre plateforme
 
+</Region>
+
+<Region zones={['eu', 'ca']}>
+
 **Exchange :**
 
 - **Lien direct :** <ManagerLink to="/#/web/exchange">Exchange</ManagerLink>
 - **Pour accéder à vos services :** <code className="action">Web Cloud</code> > <code className="action">Exchange</code> > Sélectionnez votre plateforme
+
+</Region>
 
 ---
 {/* CP-NAV-END:web-exchange */}
@@ -51,7 +67,7 @@ Sur cette page, vous trouverez les questions les plus fréquemment posées conce
 
 OVHcloud propose actuellement 4 offres e-mail. Pour comprendre leurs spécificités, naviguez à travers les onglets ci-dessous :
 
-<Tabs>
+<ZoneTabs>
   <Tab label="E-mails / MX Plan">
     <img className="thumbnail" alt="MX Plan" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/mxplan01_fr.png" loading="lazy" />
     
@@ -59,28 +75,28 @@ OVHcloud propose actuellement 4 offres e-mail. Pour comprendre leurs spécificit
     2. Incluse avec les offres d'hébergement web et peut être commandée via l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
     3. Cette offre existe sous 3 technologies e-mail différentes. **Roundcube**, **OWA** (Outlook Web Access) et **Zimbra**.
   </Tab>
-  <Tab label="Zimbra Mail">
+  <Tab label="Zimbra Mail" availableIn={['eu']}>
     <img className="thumbnail" alt="Zimbra Mail" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/zimbra01_fr.png" loading="lazy" />
     
     1. Offre e-mail la plus récente chez OVHcloud, elle propose un service e-mail flexible et évolutif sur trois niveaux d'offres et de fonctionnalités.
     2. Vous pouvez commander un compte Zimbra via l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> ou directement sur [ovhcloud.com](https://www.ovhcloud.com/fr/mail/).
     3. Comme son nom l'indique, elle utilise l'interface **Zimbra**.
   </Tab>
-  <Tab label="E-mails Pro">
+  <Tab label="E-mails Pro" availableIn={['eu']}>
     <img className="thumbnail" alt="Email Pro" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/emailpro01_fr.png" loading="lazy" />
     
     1. Offre e-mail basée sur la technologie Exchange, offrant des fonctionnalités essentielles avec un espace de stockage de 10 Go.
     2. Vous pouvez commander un compte Email Pro via l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> ou directement sur [ovhcloud.com](https://www.ovhcloud.com/fr/mail/).
     3. Cette offre utilise l'interface webmail **OWA** (Outlook Web Access).
   </Tab>
-  <Tab label="Exchange">
+  <Tab label="Exchange" availableIn={['eu', 'ca']}>
     <img className="thumbnail" alt="Exchange" src="/images/web-cloud/email-and-collaborative-solutions/mx-plan/faq-emails/exchange01_fr.png" loading="lazy" />
     
     1. Offre e-mail complète disposant de fonctionnalités collaboratives avec 50 Go ou 300 Go d'espace de stockage.
     2. Incluse avec les offres d'hébergement web et peut être commandée via l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
     3. Cette offre utilise l'interface webmail **OWA** (Outlook Web Access).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 :::tip
@@ -96,9 +112,13 @@ Sauf précision, les questions abordées ci-dessous concernent l'ensemble des of
 
 L'offre MX Plan se distingue de par son évolution qui repose sur trois technologies e-mail distinctes. Chacune détient sa propre interface webmail :
 
+<Region zones={['eu']}>
 - **Roundcube**.
+</Region>
 - **OWA** (Outlook Web Access).
+<Region zones={['eu']}>
 - **Zimbra**.
+</Region>
 
 Cette diversité de technologies implique une ergonomie de fonctionnement différente pour chaque interface. Certaines fonctionnalités peuvent être configurées via l'espace client, tandis que d'autres le sont via le webmail.
 
@@ -218,8 +238,8 @@ Pour savoir comment configurer un enregistrement DKIM sur votre service e-mail, 
 Il est possible de configurer votre compte e-mail sur un logiciel de messagerie tel que Outlook, Thunderbird, Mail de macOS, etc.
 Pour ce faire nous vous mettons à disposition des guides afin d'effectuer la mise en place de votre adresse. Vous pouvez les retrouver sur [cette page](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/overview).
 
-<Tabs>
-  <Tab label="E-mails et Zimbra Mail">
+<ZoneTabs>
+  <Tab label="E-mails et Zimbra Mail" availableIn={['eu']}>
     **Ordinateur Windows**
     - [Outlook pour Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-outlook-2016).
     - [Thunderbird pour Windows](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-thunderbird-windows).
@@ -236,7 +256,7 @@ Pour ce faire nous vous mettons à disposition des guides afin d'effectuer la mi
     **Smartphone ou tablette Android**
     - [Gmail pour Android](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/how-to-configure-android).
   </Tab>
-  <Tab label="E-mails Pro">
+  <Tab label="E-mails Pro" availableIn={['eu']}>
     **Ordinateur Windows**
     - [Outlook pour Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/outlook-windows-configuration).
     - [Thunderbird pour Windows](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-thunderbird).
@@ -253,7 +273,7 @@ Pour ce faire nous vous mettons à disposition des guides afin d'effectuer la mi
     **Smartphone ou tablette Android**
     - [Gmail pour Android](/guides/web-cloud/email-and-collaborative-solutions/email-pro/how-to-configure-android).
   </Tab>
-  <Tab label="Microsoft Exchange">
+  <Tab label="Microsoft Exchange" availableIn={['eu', 'ca']}>
     **Ordinateur Windows**
     - [Outlook pour Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-outlook-2016).
     - [Thunderbird pour Windows](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/thunderbird-windows-configuration).
@@ -270,7 +290,7 @@ Pour ce faire nous vous mettons à disposition des guides afin d'effectuer la mi
     **Smartphone ou tablette Android**
     - [Gmail pour Android](/guides/web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-android).
   </Tab>
-</Tabs>
+</ZoneTabs>
 
 
 Grâce au [webmail](https://www.ovhcloud.com/fr/mail/), vous pouvez accéder à tout moment à votre messagerie, depuis n'importe quel appareil connecté. Une fois votre compte e-mail créé, connectez-vous ici pour y accéder.

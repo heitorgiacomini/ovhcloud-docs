@@ -1,8 +1,11 @@
 ---
-title: Particularidades técnicas de los alojamientos compartidos
+title: Particularidades técnicas de los alojamientos web
 description: Descubra en esta guía diferentes informaciones y particularidades técnicas relativas a los alojamientos web
-lastUpdated: 2023-12-08
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 ## Objetivo
 
@@ -53,9 +56,21 @@ Con el fin de garantizar una buena calidad de servicio en el conjunto de la infr
 
 Durante un período de 3600 segundos (1 hora), su plan de hosting le permitirá enviar las siguientes cuotas de correo:
 
-|Productos|Alojamiento gratuito 100M|Starter|Perso|Pro|Performance|
-|---|---|---|---|---|---|
-|Cantidad máxima de envío de correo por hora y por servicio|10|20|100|200|2000|
+<Region zones={['eu']}>
+
+|Productos|Alojamiento gratuito|Starter|Personal|Startup|Pro|Performance|Agency|Agency Plus|Agency Max|
+|---|---|---|---|---|---|---|---|---|---|
+|Cantidad máxima de envío de correo por hora y por servicio|10|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+|Productos|Starter|Personal|Startup|Pro|Performance|Agency|Agency Plus|Agency Max|
+|---|---|---|---|---|---|---|---|---|
+|Cantidad máxima de envío de correo por hora y por servicio|20|100|100|200|2000|2000|2000|2000|
+
+</Region>
 
 :::info
 Estas limitaciones se aplican a **únicamente** los mensajes de correo electrónico enviados mediante la función *mail()* de PHP y no a los demás productos de correo (envío SMTP).
@@ -159,7 +174,9 @@ OVHcloud no cambia automáticamente la versión de PHP de su alojamiento cuando 
 
 Consulte y compruebe las librerías, lenguajes y versiones disponibles para su plan de hosting desde esta página: [https://webhosting-infos.hosting.ovh.net](https://webhosting-infos.hosting.ovh.net)
 
+<Region zones={['eu']}>
 Para conocer las especificaciones técnicas de la solución Cloud Web, acceda a la siguiente página: [https://cloudweb-infos.hosting.ovh.net/](https://cloudweb-infos.hosting.ovh.net/).
+</Region>
 
 ### Información sobre las copias de seguridad automáticas <a name="backup"></a>
 

@@ -1,8 +1,11 @@
 ---
 title: Restaurar o espaço de armazenamento do alojamento web
 description: Saiba como restaurar um ficheiro ou a totalidade do espaço de armazenamento do seu alojamento web
-lastUpdated: 2025-12-19
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
+
+import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -23,7 +26,12 @@ Quando efetuar um backup de segurança para o seu site e utilizar uma base de da
 
 ## Requisitos
 
-- Ter um [alojamento web](https://www.ovhcloud.com/pt/web-hosting/) (não funciona com um alojamento [Cloud Web](https://www.ovhcloud.com/pt/web-hosting/cloud-web-offer/)).
+<Region zones={['eu']}>
+- Ter um [alojamento web](https://www.ovhcloud.com/pt/web-hosting/) (não funciona com um alojamento [Cloud Web](https://www.ovhcloud.com/pt/web-hosting/)).
+</Region>
+<Region zones={['ca', 'apac']}>
+- Ter um [alojamento web](https://www.ovhcloud.com/pt/web-hosting/).
+</Region>
 - Consoante o método utilizado, ter acesso à gestão do alojamento web a partir da <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink> ou dispor da palavra-passe do utilizador FTP que lhe permite aceder ao seu espaço de armazenamento. 
 
 ## Instruções

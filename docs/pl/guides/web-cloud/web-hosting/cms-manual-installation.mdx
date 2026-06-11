@@ -1,10 +1,12 @@
 ---
 title: Tutorial - Ręczna instalacja CMS na hostingu
 description: Dowiedz się, jak ręcznie zainstalować CMS na Twoim hostingu
-lastUpdated: 2025-10-28
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
   
 ## Wprowadzenie
@@ -184,7 +186,17 @@ Niektóre systemy CMS działają bez baz danych. Jeśli jest to przypadek system
 :::
 
 
-Większość systemów CMS potrzebuje do działania bazy danych. Nasza oferta[hosting](https://www.ovhcloud.com/pl/web-hosting/) zawiera listę usług, z wyjątkiem [darmowy hosting 100M](https://www.ovhcloud.com/pl/domains/free-web-hosting/).
+<Region zones={['eu']}>
+
+Większość systemów CMS potrzebuje do działania bazy danych. Nasza oferta [hosting](https://www.ovhcloud.com/pl/web-hosting/) zawiera listę usług, z wyjątkiem [darmowy hosting](https://www.ovhcloud.com/pl/domains/free-web-hosting/).
+
+</Region>
+
+<Region zones={['ca','apac']}>
+
+Większość systemów CMS potrzebuje do działania bazy danych. Nasza oferta [hosting](https://www.ovhcloud.com/pl/web-hosting/) zawiera listę usług.
+
+</Region>
 
 Skorzystaj z naszej dokumentacji, aby [utworzyć bazę danych w ramach Twojego hostingu](/guides/web-cloud/web-hosting/sql-create-database).
 
@@ -306,7 +318,7 @@ cd NameOfYourTargetFolder
 <Tabs>
   <Tab label="WordPress">
     ```bash
-    wget http://wordpress.org/latest.tar.gz
+    wget https://wordpress.org/latest.tar.gz
     ```
     
     **latest** pozwala na automatyczne zainstalowanie najnowszej wersji CMS.

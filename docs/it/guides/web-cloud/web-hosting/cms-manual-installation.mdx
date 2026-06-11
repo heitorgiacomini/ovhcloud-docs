@@ -1,10 +1,12 @@
 ---
 title: Tutorial - Installare manualmente un CMS sul tuo hosting
 description: Questa guida ti mostra come installare manualmente un CMS sul tuo hosting
-lastUpdated: 2025-10-28
+lastUpdated: 2026-06-08
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Obiettivo
@@ -184,7 +186,17 @@ Alcuni CMS funzionano senza database. Se questo è il caso del CMS che vuoi inst
 :::
 
 
-Per funzionare correttamente, la maggior parte dei CMS ha bisogno di un database. Le nostre offerte di [hosting web](https://www.ovhcloud.com/it/web-hosting/) ne contengono, ad eccezione di [Hosting gratuito 100M](https://www.ovhcloud.com/it/domains/free-web-hosting/).
+<Region zones={['eu']}>
+
+Per funzionare correttamente, la maggior parte dei CMS ha bisogno di un database. Le nostre offerte di [hosting web](https://www.ovhcloud.com/it/web-hosting/) ne contengono, ad eccezione di [Hosting gratuito](https://www.ovhcloud.com/it/domains/free-web-hosting/).
+
+</Region>
+
+<Region zones={['ca','apac']}>
+
+Per funzionare correttamente, la maggior parte dei CMS ha bisogno di un database. Le nostre offerte di [hosting web](https://www.ovhcloud.com/it/web-hosting/) ne contengono.
+
+</Region>
 
 Utilizza la nostra documentazione per [creare un database dalla tua offerta di hosting web](/guides/web-cloud/web-hosting/sql-create-database).
 
@@ -306,7 +318,7 @@ cd NameOfYourTargetFolder
 <Tabs>
   <Tab label="WordPress">
     ```bash
-    wget http://wordpress.org/latest.tar.gz
+    wget https://wordpress.org/latest.tar.gz
     ```
     
     **latest** permette di installare automaticamente l'ultima versione del CMS.

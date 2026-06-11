@@ -2,9 +2,11 @@
 title: Wszystko o rekordach DNS
 description: Poznaj różne typy rekordów DNS dostępnych w strefie DNS OVHcloud
 lastUpdated: 2026-02-19
+availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
+import { Region } from '@components/Zone';
 
 
 ## Wprowadzenie
@@ -111,7 +113,17 @@ Wybierz odpowiedni rekord, klikając każdą z następujących zakładek.
 <Tabs>
   <Tab label="MX">
     **M**ail e**X**changer <br/><br/>
-    Powiąż nazwę domeny z serwerem e-mail. Na przykład adres *10 mx1.mail.ovh.net* odpowiada jednemu z serwerów e-mail OVHcloud, gdy korzystasz z usługi e-mail OVHcloud. Istnieje prawdopodobieństwo, że Twój dostawca poczty e-mail dysponuje kilkoma serwerami e-mail: należy utworzyć kilka pól MX. Zapoznaj się z naszą dokumentacją "[Dodaj pole MX do konfiguracji nazwy domeny](/guides/web-cloud/domains/dns-zone-mx)".
+    Powiąż nazwę domeny z serwerem e-mail.
+
+    <Region zones={['eu']}>
+    Na przykład adres *10 mx1.mail.ovh.net* odpowiada jednemu z serwerów e-mail OVHcloud, gdy korzystasz z usługi e-mail OVHcloud.
+    </Region>
+
+    <Region zones={['ca', 'apac']}>
+    Na przykład adres *10 mx1.mail.ovh.ca* odpowiada jednemu z serwerów e-mail OVHcloud, gdy korzystasz z usługi e-mail OVHcloud.
+    </Region>
+
+    Istnieje prawdopodobieństwo, że Twój dostawca poczty e-mail dysponuje kilkoma serwerami e-mail: należy utworzyć kilka pól MX. Zapoznaj się z naszą dokumentacją "[Dodaj pole MX do konfiguracji nazwy domeny](/guides/web-cloud/domains/dns-zone-mx)".
     
     :::warning
     Zalecamy używanie w strefie DNS wyłącznie jednego lub kilku serwerów tego samego dostawcy e-mail.
