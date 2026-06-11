@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026.06.11.1
+
+### Fixes
+- **seo:** obfuscate example/localhost links + stop /{lang}/index on language switch (#185)
+- **opcp:** repair stray :w in heading and bump lastUpdated
+
+### Documentation
+- 201 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.11
 
 ### Features
