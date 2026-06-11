@@ -1,7 +1,7 @@
 ---
 title: OPCP - Network integration and platform connectivity
 description: Understand how OPCP integrates into your network — data plane, out-of-band (OOB) administration network, and which flows to allow per service model
-lastUpdated: 2026-06-03
+lastUpdated: 2026-06-11
 ---
 
 ## Objective
@@ -90,8 +90,7 @@ Data exchanged between the OPCP Core Controllers travels through OPCP's own netw
 No direct communication is possible between the data plane and the OOB network from inside OPCP. Any cross-network communication must go through your upstream network, which leaves you in full control of the security rules between the two perimeters.
 :::
 
-### 3. Deployment topologies:w
-
+### 3. Deployment topologies
 
 OPCP is delivered in one of three deployment modes, sized for different use cases. These modes differ mainly in the number of supported racks and the resiliency of the control plane. The presence or absence of **spine** and **edge** switches between the racks and your upstream network is a direct consequence of this.
 
