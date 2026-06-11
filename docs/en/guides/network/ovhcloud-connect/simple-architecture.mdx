@@ -1,7 +1,7 @@
 ---
 title: Set up a simple OVHcloud Connect architecture
 description: Connect a single on-premises site, branch WAN, or public cloud (AWS, Azure, GCP) environment to OVHcloud through one OVHcloud Connect link.
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-15
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
@@ -354,7 +354,7 @@ There are **three BGP segments** in this architecture:
 
 | Segment | Endpoints | ASNs |
 |---|---|---|
-| Azure ↔ Provider | Azure (ASN 12076) ↔ MCR/Provider ASN | 12076 ↔ Provider |
+| Azure ↔ Provider | Azure (ASN `12076`) ↔ MCR/Provider ASN | `12076` ↔ Provider |
 | Provider ↔ OVHcloud | MCR/Provider ASN ↔ OVHcloud BGP AS (`65501` EU / `65502` CA / `65519` Asia) | Provider ↔ `65501` / `65502` / `65519` |
 | OVHcloud ↔ vRack | Internal routing within OVHcloud | N/A |
 
@@ -481,7 +481,7 @@ Ensure the provider MCR:
 
 | Segment | Endpoints | ASNs |
 |---|---|---|
-| GCP ↔ Provider | Cloud Router (ASN 16550) ↔ MCR (Provider ASN) | 16550 ↔ Provider |
+| GCP ↔ Provider | Cloud Router (ASN `16550`) ↔ MCR (Provider ASN) | `16550` ↔ Provider |
 | Provider ↔ OVHcloud | MCR (Provider ASN) ↔ OVHcloud BGP AS (`65501` EU / `65502` CA / `65519` Asia) | Provider ↔ `65501` / `65502` / `65519` |
 | OVHcloud ↔ vRack | Internal OVHcloud routing | N/A |
 

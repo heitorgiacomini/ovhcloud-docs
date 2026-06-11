@@ -1,7 +1,7 @@
 ---
 title: 'Quick Start : OVHcloud Connect Direct'
 description: 'Suivez les étapes essentielles pour établir une connexion privée et directe vers OVHcloud'
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-15
 ---
 
 ## Objectif
@@ -13,16 +13,16 @@ Ce guide vous accompagne dans les étapes essentielles pour établir une **conne
 Assurez-vous de disposer de :
 
 - Un **compte OVHcloud** avec une facturation configurée
-- D'un équipement (ou d'un circuit) dans un **datacenter où OVHcloud dispose d'un PoP** (consultez [Emplacements des PoPs](/guides/network/ovhcloud-connect/pop-locations-regions))
-- D'un **routeur** prenant en charge BGP et les interfaces fibre optique monomode
-- D'un **plan d'adressage IP** prévu (IPs de peering et préfixes à annoncer)
-- D'un **ASN** (Autonomous System Number) privé ou public
+- D’un équipement (ou d’un circuit) dans un **datacenter où OVHcloud dispose d’un PoP** (consultez [Emplacements des PoPs](/guides/network/ovhcloud-connect/pop-locations-regions))
+- D’un **routeur** prenant en charge BGP et les interfaces fibre optique monomode
+- D’un **plan d’adressage IP** prévu (IPs de peering et préfixes à annoncer)
+- D’un **ASN** (Autonomous System Number) privé ou public
 
 Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
-## Vue d'ensemble des étapes
+## Vue d’ensemble des étapes
 
-<img className="thumbnail" alt="Vue d'ensemble des étapes" src="/images/network/ovhcloud-connect/occ-direct-control-panel-setup/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d’ensemble des étapes" src="/images/network/ovhcloud-connect/occ-direct-control-panel-setup/fig-1.fr.svg" loading="lazy" />
 
 ### Étape 1 — Commander OVHcloud Connect Direct
 
@@ -35,15 +35,15 @@ Pour les étapes de commande détaillées, consultez [Commander OVHcloud Connect
 
 ### Étape 2 — Recevoir la LOA
 
-Une fois votre commande validée, OVHcloud vous envoie une **Lettre d'autorisation (LOA)** par e-mail. Ce document contient :
+Une fois votre commande validée, OVHcloud vous envoie une **Lettre d’autorisation (LOA)** par e-mail. Ce document contient :
 
-- La référence du datacenter et du rack/cage de l'équipement OVHcloud
+- La référence du datacenter et du rack/cage de l’équipement OVHcloud
 - La désignation du port côté OVHcloud
-- Les instructions pour l'opérateur du datacenter
+- Les instructions pour l’opérateur du datacenter
 
 ### Étape 3 — Installer le cross-connect physique
 
-Remettez la LOA à votre **opérateur de datacenter** (ou prenez-la en charge vous-même si vous gérez votre propre cage). Il installera un câble de brassage en fibre optique entre le port de votre routeur et le port désigné d'OVHcloud.
+Remettez la LOA à votre **opérateur de datacenter** (ou prenez-la en charge vous-même si vous gérez votre propre cage). Il installera un câble de brassage en fibre optique entre le port de votre routeur et le port désigné d’OVHcloud.
 
 Cette étape peut prendre quelques jours selon les processus du datacenter.
 
@@ -57,8 +57,8 @@ Consultez [Associer un OVHcloud Connect à votre vRack](/guides/network/ovhcloud
 
 Une fois le lien physique opérationnel :
 
-1. Dans l'espace client OVHcloud, accédez à votre service OVHcloud Connect et **créez une configuration de PoP** avec les paramètres de session BGP.
-2. Sur **votre routeur**, configurez un voisin BGP en utilisant l'IP de peering et l'ASN d'OVHcloud fournis dans les détails de configuration.
+1. Dans l’espace client OVHcloud, accédez à votre service OVHcloud Connect et **créez une configuration de PoP** avec les paramètres de session BGP.
+2. Sur **votre routeur**, configurez un voisin BGP en utilisant l’IP de peering et l’ASN d’OVHcloud fournis dans les détails de configuration.
 3. Annoncez les préfixes IP que vous souhaitez atteindre depuis OVHcloud.
 
 Pour la configuration BGP détaillée, consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp).
@@ -69,9 +69,9 @@ Effectuez ces vérifications pour confirmer que tout fonctionne :
 
 | Vérification | Comment |
 |---|---|
-| **Lien physique** | Vérifiez que le port apparaît comme « up » dans l'espace client OVHcloud et sur votre routeur (`show interfaces`). |
+| **Lien physique** | Vérifiez que le port apparaît comme « up » dans l’espace client OVHcloud et sur votre routeur (`show interfaces`). |
 | **Session BGP** | Vérifiez que la session est **Established** : `show ip bgp summary` (Cisco) ou `show bgp summary` (Juniper). |
-| **Échange de routes** | Vérifiez que les routes d'OVHcloud apparaissent dans votre table de routage et inversement. |
+| **Échange de routes** | Vérifiez que les routes d’OVHcloud apparaissent dans votre table de routage et inversement. |
 | **Connectivité** | Effectuez un ping vers une ressource OVHcloud connue (par exemple une VM dans votre vRack) depuis votre réseau on-premises. |
 | **Traceroute** | Exécutez un `traceroute` pour vérifier que le trafic emprunte bien le chemin privé (et non Internet). |
 
@@ -82,7 +82,7 @@ Effectuez ces vérifications pour confirmer que tout fonctionne :
 | Le port apparaît « down » | Câble physique, compatibilité SFP/transceiver, statut du cross-connect côté datacenter |
 | Session BGP bloquée en « Active » ou « Idle » | IPs de peering, configuration ASN, règles de pare-feu (port TCP 179) |
 | Aucune route échangée | Filtres de préfixes BGP, configuration des route-maps, limites maximum-prefix |
-| Impossible de pinguer les ressources OVHcloud | Association au vRack, ID VLAN, configuration des sous-réseaux dans l'AZ |
+| Impossible de pinguer les ressources OVHcloud | Association au vRack, ID VLAN, configuration des sous-réseaux dans l’AZ |
 
 Si vous ne parvenez pas à résoudre le problème, [ouvrez un ticket de support](/guides/network/ovhcloud-connect/incident-followup) en joignant la sortie BGP, le statut des interfaces et les résultats du traceroute.
 
@@ -96,4 +96,4 @@ Si vous ne parvenez pas à résoudre le problème, [ouvrez un ticket de support]
 
 Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](/links/community).
+Échangez avec notre [communauté d’utilisateurs](/links/community).

@@ -1,14 +1,14 @@
 ---
 title: 'Configurer OVHcloud Connect L3 avec des routes statiques'
 description: 'Configurez OVHcloud Connect L3 avec des routes IP statiques pour un routage prévisible entre votre réseau et OVHcloud'
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-15
 ---
 
 import Api from '@components/Api';
 
 ## Objectif
 
-**Ce guide explique comment** configurer OVHcloud Connect en mode L3 avec routage statique. Cela implique deux niveaux de configuration :
+**Ce guide explique comment** configurer OVHcloud Connect en mode L3 avec routage statique. Cela implique deux niveaux de configuration :
 
 1. **Configuration PoP** — La session L3 entre votre routeur et OVHcloud au niveau du Point de présence.
 2. **Configuration supplémentaire AZ (network)** — Des routes statiques au sein de l’Availability Zone OVHcloud pour la distribution des routes.
@@ -48,8 +48,8 @@ Votre routeur ── [ L3 au PoP ] ── Routeur PoP OVHcloud ── [ Routes s
                   peering /30                                next-hop + sous-réseau         (172.16.x.x)
 ```
 
-- **Niveau PoP** : une session L3 avec un sous-réseau de peering /30 entre votre routeur et OVHcloud.
-- **Niveau AZ** : des routes statiques définies par une IP next-hop et un sous-réseau de destination.
+- **Niveau PoP** : une session L3 avec un sous-réseau de peering /30 entre votre routeur et OVHcloud.
+- **Niveau AZ** : des routes statiques définies par une IP next-hop et un sous-réseau de destination.
 
 ### Étape 1 — Identifier l’ID de votre interface
 
@@ -62,7 +62,7 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop"} />
 
-**Paramètres de la requête :**
+**Paramètres de la requête :**
 
 | Paramètre | Type | Requis | Description |
 |---|---|---|---|
@@ -71,7 +71,7 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 | `customerBgpArea` | long | Non | Votre numéro d’AS (toujours requis pour le L3 — utilisé pour le peering au niveau du PoP) |
 | `subnet` | ipv4Block | Non | Sous-réseau de peering /30. La première IP est OVHcloud, la seconde est la vôtre. |
 
-**Exemple de requête :**
+**Exemple de requête :**
 
 ```json
 {
@@ -87,7 +87,7 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}"} />
 
 
-**Exemple de réponse :**
+**Exemple de réponse :**
 
 ```json
 {
@@ -101,7 +101,7 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 }
 ```
 
-À partir de cette réponse :
+À partir de cette réponse :
 
 | Paramètre | Valeur | Signification |
 |---|---|---|
@@ -118,7 +118,7 @@ Avec le routage statique, **VRRP reste actif** sur le point de terminaison de l�
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra"} />
 
-**Paramètres de la requête :**
+**Paramètres de la requête :**
 
 | Paramètre | Type | Requis | Description |
 |---|---|---|---|
@@ -126,7 +126,7 @@ Avec le routage statique, **VRRP reste actif** sur le point de terminaison de l�
 | `nextHop` | ipv4 | Non | Adresse IP next-hop pour la route statique |
 | `subnet` | ipv4Block | Non | Sous-réseau de destination pour la route statique |
 
-**Exemple de requête — router votre sous-réseau on-premises via le lien OVHcloud Connect :**
+**Exemple de requête — router votre sous-réseau on-premises via le lien OVHcloud Connect :**
 
 ```json
 {
@@ -138,7 +138,7 @@ Avec le routage statique, **VRRP reste actif** sur le point de terminaison de l�
 
 #### Ajouter plusieurs routes statiques
 
-Créez une configuration supplémentaire par sous-réseau de destination. Répétez l'appel `POST .../extra` avec un `subnet` différent à chaque fois :
+Créez une configuration supplémentaire par sous-réseau de destination. Répétez l’appel `POST .../extra` avec un `subnet` différent à chaque fois :
 
 ```json
 {
@@ -152,7 +152,7 @@ Créez une configuration supplémentaire par sous-réseau de destination. Répé
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra/\{extraId\}"} />
 
-**Exemple de réponse :**
+**Exemple de réponse :**
 
 ```json
 {
@@ -217,7 +217,7 @@ routing-options {
 
 #### Depuis votre routeur
 
-**Cisco :**
+**Cisco :**
 
 ```bash
 show ip route static
@@ -225,7 +225,7 @@ ping 172.16.1.1 source 192.0.2.2
 traceroute 172.16.1.1 source 192.0.2.2
 ```
 
-**Juniper :**
+**Juniper :**
 
 ```bash
 show route protocol static
@@ -233,7 +233,7 @@ ping 172.16.1.1 source 192.0.2.2
 traceroute 172.16.1.1 source 192.0.2.2
 ```
 
-**Résultats attendus :**
+**Résultats attendus :**
 
 | Vérification | Sortie attendue |
 |---|---|
@@ -243,11 +243,11 @@ traceroute 172.16.1.1 source 192.0.2.2
 
 #### Depuis l’API OVHcloud
 
-Vérifiez l’état de l’interface :
+Vérifiez l’état de l’interface :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/interface/\{id\}/status"} />
 
-Vérifiez le statut de la configuration PoP :
+Vérifiez le statut de la configuration PoP :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/status"} />
 
@@ -256,12 +256,12 @@ Vérifiez le statut de la configuration PoP :
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/diagnostic"} />
 
 
-Noms de diagnostics disponibles : `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
+Noms de diagnostics disponibles : `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
 
 ### Limites du routage statique
 
 :::warning
-Le routage statique présente des limites importantes par rapport à BGP :
+Le routage statique présente des limites importantes par rapport à BGP :
 
 - **Pas de bascule automatique.** Si un lien tombe, le trafic est blackholé jusqu’à ce que vous mettiez manuellement à jour les routes. Pour une bascule automatique, utilisez [BGP](/guides/network/ovhcloud-connect/l3-bgp).
 - **Mises à jour manuelles requises.** Lorsque vous ajoutez ou modifiez des sous-réseaux, vous devez mettre à jour à la fois la configuration supplémentaire OVHcloud et la configuration de votre routeur.
@@ -272,7 +272,7 @@ Le routage statique présente des limites importantes par rapport à BGP :
 
 ### Supprimer les configurations
 
-Supprimez dans l’ordre inverse :
+Supprimez dans l’ordre inverse :
 
 <Api version="v1" section="/ovhCloudConnect" method="DELETE" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra/\{extraId\}"} />
 
@@ -287,4 +287,4 @@ Supprimez dans l’ordre inverse :
 
 Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](/links/community).
+Échangez avec notre [communauté d’utilisateurs](/links/community).

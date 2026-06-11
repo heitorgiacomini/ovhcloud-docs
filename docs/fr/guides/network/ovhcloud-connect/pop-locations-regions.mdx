@@ -1,14 +1,14 @@
 ---
 title: 'OVHcloud Connect - PoPs et régions'
-description: "Comprenez le fonctionnement d'OCC avec les PoPs et les régions, et identifiez ceux qui correspondent le mieux à votre infrastructure"
-lastUpdated: 2026-06-09
+description: "Comprenez le fonctionnement d’OCC avec les PoPs et les régions, et identifiez ceux qui correspondent le mieux à votre infrastructure"
+lastUpdated: 2026-06-15
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Introduction
 
-Lorsque vous mettez en place OVHcloud Connect, vous choisissez un ou plusieurs **Points de présence (PoP)** comme point de raccordement entre votre réseau (ou celui de votre provider) et OVHcloud. Chaque PoP est rattaché à une zone géographique spécifique ; par conséquent, il ne peut accéder qu'aux régions OVHcloud situées dans cette même zone.
+Lorsque vous mettez en place OVHcloud Connect, vous choisissez un ou plusieurs **Points de présence (PoP)** comme point de raccordement entre votre réseau (ou celui de votre provider) et OVHcloud. Chaque PoP est rattaché à une zone géographique spécifique ; par conséquent, il ne peut accéder qu’aux régions OVHcloud situées dans cette même zone.
 
 Ce guide explique comment les PoPs et les régions OVHcloud interagissent avec OVHcloud Connect, et fournit un cadre pour sélectionner le PoP le plus adapté aux besoins spécifiques de votre infrastructure.
 
@@ -30,7 +30,7 @@ OVHcloud ajoute régulièrement de nouveaux emplacements. Consultez toujours la 
 
 ## Comment choisir un PoP
 
-Lors de la sélection d'un PoP pour votre service OVHcloud Connect, prenez en compte les éléments suivants :
+Lors de la sélection d’un PoP pour votre service OVHcloud Connect, prenez en compte les éléments suivants :
 
 ### 1. Proximité (latence)
 
@@ -42,7 +42,7 @@ Si vous utilisez OVHcloud Connect Provider, vérifiez que le provider choisi est
 
 ### 3. Redondance
 
-Pour les architectures à haute disponibilité, sélectionnez **deux PoPs situés à des emplacements distincts** afin qu'une défaillance d'un site unique ne mette pas votre connexion hors service. Suivez l'un des tutoriels d'architecture résiliente pour plus de détails :
+Pour les architectures à haute disponibilité, sélectionnez **deux PoPs situés à des emplacements distincts** afin qu’une défaillance d’un site unique ne mette pas votre connexion hors service. Suivez l’un des tutoriels d’architecture résiliente pour plus de détails :
 
 - [On-prem](/guides/network/ovhcloud-connect/resilient-architecture#on-premises)
 - [WAN](/guides/network/ovhcloud-connect/resilient-architecture#wan)
@@ -56,7 +56,7 @@ Certains secteurs ou pays exigent que les données restent dans une zone géogra
 
 ### 5. Région OVHcloud cible
 
-Pour garantir les meilleures performances, votre service OVHcloud Connect doit aboutir dans la région où s'exécutent (ou s'exécuteront) vos workloads OVHcloud. Vérifiez que le PoP dessert la région dont vous avez besoin.
+Pour garantir les meilleures performances, votre service OVHcloud Connect doit aboutir dans la région où s’exécutent (ou s’exécuteront) vos workloads OVHcloud. Vérifiez que le PoP dessert la région dont vous avez besoin.
 
 ## Tableaux de correspondance PoP / région
 
@@ -131,4 +131,4 @@ Tableau de correspondance PoP / région à faible latence
 
 Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](/links/community).
+Échangez avec notre [communauté d’utilisateurs](/links/community).

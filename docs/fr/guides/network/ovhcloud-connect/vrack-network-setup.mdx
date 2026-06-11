@@ -1,19 +1,19 @@
 ---
 title: 'Configurer le réseau vRack pour OVHcloud Connect'
-description: "Créez une configuration AZ pour OVHcloud Connect L3 et comprenez l'adressage IP ainsi que VRRP"
-lastUpdated: 2026-06-09
+description: "Créez une configuration AZ pour OVHcloud Connect L3 et comprenez l’adressage IP ainsi que VRRP"
+lastUpdated: 2026-06-15
 ---
 
 import Api from '@components/Api';
 
 ## Objectif
 
-Avant de configurer le routage L3 d'OVHcloud Connect (BGP ou statique), vous devez préparer la **configuration AZ** qui crée un routeur virtuel à l'intérieur du vRack, reliant votre lien OVHcloud Connect aux Availability Zones (AZ) OVHcloud où s'exécutent vos services.
+Avant de configurer le routage L3 d’OVHcloud Connect (BGP ou statique), vous devez préparer la **configuration AZ** qui crée un routeur virtuel à l’intérieur du vRack, reliant votre lien OVHcloud Connect aux Availability Zones (AZ) OVHcloud où s’exécutent vos services.
 
 **Ce guide explique comment :**
 
-- Créer une **configuration AZ** (routeur virtuel) à l'intérieur de votre vRack
-- Comprendre les **règles d'adressage IP** du sous-réseau AZ (adresses réservées, VRRP)
+- Créer une **configuration AZ** (routeur virtuel) à l’intérieur de votre vRack
+- Comprendre les **règles d’adressage IP** du sous-réseau AZ (adresses réservées, VRRP)
 - Comprendre les **limitations** de ce routeur (pas de VLAN, pas de trunk)
 
 :::info
@@ -27,7 +27,7 @@ Pour une vue générale du réseau vRack, consultez la [présentation du service
 
 ## Prérequis
 
-Vous devez avoir réalisé les étapes 1 à 3 de l'un des guides suivants :
+Vous devez avoir réalisé les étapes 1 à 3 de l’un des guides suivants :
 
 - [Démarrage rapide : connexion directe à OVHcloud](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
 - [Démarrage rapide : connexion à OVHcloud via un opérateur](/guides/network/ovhcloud-connect/occ-provider-control-panel-setup)
@@ -36,7 +36,7 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 ## En pratique
 
-### Vue d'ensemble
+### Vue d’ensemble
 
 Lorsque vous utilisez OVHcloud Connect en mode L3, le trafic transite par trois étages :
 
@@ -45,11 +45,11 @@ Votre réseau ──── [ PoP BGP/Statique ] ──── [ Routeur vRack ] �
                     (spécifique OCC)          (ce guide)
 ```
 
-La **configuration AZ** crée une instance de routage L3 à l'intérieur du vRack. Cette instance est composée de deux équipements physiques OVHcloud (étiquetés « A » et « B ») pour assurer la redondance. Vous devez créer une configuration AZ par AZ que vous souhaitez atteindre.
+La **configuration AZ** crée une instance de routage L3 à l’intérieur du vRack. Cette instance est composée de deux équipements physiques OVHcloud (étiquetés « A » et « B ») pour assurer la redondance. Vous devez créer une configuration AZ par AZ que vous souhaitez atteindre.
 
-### Sous-réseau AZ — règles d'adressage IP
+### Sous-réseau AZ — règles d’adressage IP
 
-Lorsque vous créez une configuration AZ, vous lui attribuez un **sous-réseau privé**. À l'intérieur de ce sous-réseau, plusieurs adresses IP sont réservées par OVHcloud :
+Lorsque vous créez une configuration AZ, vous lui attribuez un **sous-réseau privé**. À l’intérieur de ce sous-réseau, plusieurs adresses IP sont réservées par OVHcloud :
 
 | Adresse IP | Rôle |
 |---|---|
@@ -63,14 +63,14 @@ Lorsque vous créez une configuration AZ, vous lui attribuez un **sous-réseau p
 
 | Recommandation | Pourquoi |
 |---|---|
-| **Minimum /28 par AZ** | L'API impose ce minimum. |
-| **Éviter les recouvrements d'IP** | Les sous-réseaux ne doivent pas se chevaucher avec votre réseau on-premises, votre WAN ou d'autres fournisseurs cloud. |
+| **Minimum /28 par AZ** | L’API impose ce minimum. |
+| **Éviter les recouvrements d’IP** | Les sous-réseaux ne doivent pas se chevaucher avec votre réseau on-premises, votre WAN ou d’autres fournisseurs cloud. |
 | **Utiliser des adresses privées (RFC 1918)** | Utilisez les plages `10.0.0.0/8`, `172.16.0.0/12` ou `192.168.0.0/16`. |
 | **Utiliser des sous-réseaux différents par AZ** | Un même sous-réseau ne peut pas être étendu sur deux AZ. |
 
 ### VRRP — redondance de la passerelle
 
-L'instance de routage AZ d'OVHcloud utilise **VRRP (Virtual Router Redundancy Protocol)** pour assurer la redondance de la passerelle entre les équipements A et B.
+L’instance de routage AZ d’OVHcloud utilise **VRRP (Virtual Router Redundancy Protocol)** pour assurer la redondance de la passerelle entre les équipements A et B.
 
 | Propriété | Détail |
 |---|---|
@@ -78,12 +78,12 @@ L'instance de routage AZ d'OVHcloud utilise **VRRP (Virtual Router Redundancy Pr
 | **VRID** | Attribué par OVHcloud (non configurable) |
 | **Équipement maître** | Équipement A par défaut |
 | **Instances par AZ** | Une instance VRRP par configuration AZ |
-| **Interaction avec BGP** | Activer BGP sur l'extrémité AZ **désactive** VRRP |
+| **Interaction avec BGP** | Activer BGP sur l’extrémité AZ **désactive** VRRP |
 
 :::info
-Lorsque vous utilisez le **routage statique** au niveau de l'AZ (type de configuration extra `static`), VRRP est actif et assure le basculement automatique entre les équipements A et B. Vos services doivent pointer leur passerelle par défaut vers l'IP virtuelle VRRP.
+Lorsque vous utilisez le **routage statique** au niveau de l’AZ (type de configuration extra `static`), VRRP est actif et assure le basculement automatique entre les équipements A et B. Vos services doivent pointer leur passerelle par défaut vers l’IP virtuelle VRRP.
 
-Lorsque vous utilisez **BGP** au niveau de l'AZ (type de configuration extra `bgp`), VRRP est désactivé. C'est BGP qui prend en charge le basculement. Vous devez établir une session BGP avec **les deux** équipements A et B (jusqu'à 4 pairs BGP par AZ).
+Lorsque vous utilisez **BGP** au niveau de l’AZ (type de configuration extra `bgp`), VRRP est désactivé. C’est BGP qui prend en charge le basculement. Vous devez établir une session BGP avec **les deux** équipements A et B (jusqu’à 4 pairs BGP par AZ).
 :::
 
 ### Limitations du routeur vRack
@@ -94,7 +94,7 @@ Le routeur virtuel créé par la configuration AZ présente les limitations suiv
 - **Pas de support VLAN** — Le routeur ne gère pas le tagging VLAN 802.1Q. Tout le trafic est non taggé.
 - **Pas de support trunk** — Le routeur ne peut pas transporter plusieurs VLAN sur une même interface trunk.
 
-Planifiez l'architecture de vos sous-réseaux en conséquence. Utilisez des configurations AZ distinctes si vous devez isoler différents types de trafic entre les AZ.
+Planifiez l’architecture de vos sous-réseaux en conséquence. Utilisez des configurations AZ distinctes si vous devez isoler différents types de trafic entre les AZ.
 :::
 
 ### Étape 1 — Identifier les AZ disponibles
@@ -119,7 +119,7 @@ Seules les AZ pour lesquelles `available` vaut `true` peuvent recevoir une nouve
 
 ### Étape 2 — Créer la configuration AZ
 
-La configuration AZ crée un routeur virtuel dans le vRack pour l'AZ indiquée. Vous avez besoin de l'identifiant `popId` issu de votre configuration PoP existante.
+La configuration AZ crée un routeur virtuel dans le vRack pour l’AZ indiquée. Vous avez besoin de l’identifiant `popId` issu de votre configuration PoP existante.
 
 Listez vos configurations PoP existantes pour récupérer le `popId` :
 
@@ -133,9 +133,9 @@ Créez la configuration AZ :
 
 | Paramètre | Type | Obligatoire | Description |
 |---|---|---|---|
-| `datacenterId` | long | Oui | Identifiant de l'AZ (issu de l'étape 1) |
-| `ovhBgpArea` | long | Non | Numéro AS privé OVHcloud pour la session BGP de l'AZ (attribué automatiquement si omis) |
-| `subnet` | ipv4Block | Non | Sous-réseau privé pour l'AZ (/28 minimum). Exemple : `172.16.1.0/28` |
+| `datacenterId` | long | Oui | Identifiant de l’AZ (issu de l’étape 1) |
+| `ovhBgpArea` | long | Non | Numéro AS privé OVHcloud pour la session BGP de l’AZ (attribué automatiquement si omis) |
+| `subnet` | ipv4Block | Non | Sous-réseau privé pour l’AZ (/28 minimum). Exemple : `172.16.1.0/28` |
 
 
 **Exemple de réponse :**
@@ -149,7 +149,7 @@ Créez la configuration AZ :
 }
 ```
 
-Le `resourceId` correspond à l'identifiant de la nouvelle configuration AZ. La tâche progresse selon les états `todo` → `doing` → `done`.
+Le `resourceId` correspond à l’identifiant de la nouvelle configuration AZ. La tâche progresse selon les états `todo` → `doing` → `done`.
 
 ### Étape 3 — Vérifier la configuration
 
@@ -169,7 +169,7 @@ Une fois la tâche terminée, vérifiez la configuration AZ :
 }
 ```
 
-Suivez l'avancement de la tâche avec :
+Suivez l’avancement de la tâche avec :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/task/\{taskId\}"} />
 
@@ -197,19 +197,19 @@ client.post(
 Un même sous-réseau ne peut pas être étendu sur deux AZ. Chaque configuration AZ doit utiliser un sous-réseau distinct.
 :::
 
-Pour plus d'informations, reportez-vous à notre guide sur le [Multi-AZ](/guides/network/ovhcloud-connect/multi-az).
+Pour plus d’informations, reportez-vous à notre guide sur le [Multi-AZ](/guides/network/ovhcloud-connect/multi-az).
 
 ### Supprimer une configuration AZ
 
 <Api version="v1" section="/ovhCloudConnect" method="DELETE" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}"} />
 
 :::warning
-La suppression d'une configuration AZ stoppe immédiatement le trafic privé à destination et en provenance de cette AZ. Supprimez d'abord toute configuration extra dépendante (BGP ou statique).
+La suppression d’une configuration AZ stoppe immédiatement le trafic privé à destination et en provenance de cette AZ. Supprimez d’abord toute configuration extra dépendante (BGP ou statique).
 :::
 
 ## Aller plus loin
 
-Maintenant que votre configuration AZ est prête, configurez le routage L3 d'OVHcloud Connect :
+Maintenant que votre configuration AZ est prête, configurez le routage L3 d’OVHcloud Connect :
 
 - [Configurer OVHcloud Connect L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp)
 - [Configurer OVHcloud Connect L3 avec du routage statique](/guides/network/ovhcloud-connect/l3-static)
@@ -217,4 +217,4 @@ Maintenant que votre configuration AZ est prête, configurez le routage L3 d'OVH
 
 Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](/links/community).
+Échangez avec notre [communauté d’utilisateurs](/links/community).

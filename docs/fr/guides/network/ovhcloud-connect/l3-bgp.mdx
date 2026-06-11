@@ -1,14 +1,14 @@
 ---
 title: 'Configurer OVHcloud Connect L3 avec BGP'
 description: "Configurez OVHcloud Connect L3 avec BGP pour l’échange dynamique de routes entre votre réseau et OVHcloud"
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-15
 ---
 
 import Api from '@components/Api';
 
 ## Objectif
 
-**Ce guide explique comment** configurer OVHcloud Connect en mode L3 avec BGP. Cela implique deux niveaux de configuration :
+**Ce guide explique comment** configurer OVHcloud Connect en mode L3 avec BGP. Cela implique deux niveaux de configuration :
 
 1. **Configuration PoP** — La session eBGP entre votre routeur et OVHcloud au niveau du Point de présence.
 2. **Configuration supplémentaire AZ (BGP)** — Le peering BGP au sein de l’Availability Zone OVHcloud pour la distribution des routes.
@@ -38,12 +38,12 @@ Votre routeur ── [ eBGP au PoP ] ── Routeur PoP OVHcloud ── [ iBGP a
                                                           config supp.
 ```
 
-- **Niveau PoP** : une session eBGP entre votre routeur (votre ASN) et OVHcloud (ASN 35540) sur un sous-réseau de peering /30.
-- **Niveau AZ** : un voisin BGP configuré au sein de l’AZ pour distribuer les routes vers vos services OVHcloud.
+- **Niveau PoP** : une session eBGP entre votre routeur (votre ASN) et OVHcloud (ASN 35540) sur un sous-réseau de peering /30.
+- **Niveau AZ** : un voisin BGP configuré au sein de l’AZ pour distribuer les routes vers vos services OVHcloud.
 
 ### Étape 1 — Identifier l’ID de votre interface
 
-Récupérez l’ID de l’interface pour votre service OVHcloud Connect :
+Récupérez l’ID de l’interface pour votre service OVHcloud Connect :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/interface"} />
 
@@ -53,7 +53,7 @@ La configuration PoP établit la session BGP L3 au niveau du Point de présence.
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop"} />
 
-**Paramètres de la requête :**
+**Paramètres de la requête :**
 
 | Paramètre | Type | Requis | Description |
 |---|---|---|---|
@@ -63,7 +63,7 @@ La configuration PoP établit la session BGP L3 au niveau du Point de présence.
 | `ovhBgpArea` | long | Non | AS privé OVHcloud (généralement laissé vide — attribué automatiquement) |
 | `subnet` | ipv4Block | Non | Sous-réseau de peering /30 (par exemple `192.0.2.0/30`). La première IP est OVHcloud, la seconde est la vôtre. |
 
-**Exemple de requête :**
+**Exemple de requête :**
 
 ```json
 {
@@ -78,11 +78,11 @@ Le `resourceId` dans la réponse correspond à votre nouveau `popId`.
 
 ### Étape 3 — Vérifier la configuration PoP
 
-Une fois la tâche terminée :
+Une fois la tâche terminée :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}"} />
 
-**Exemple de réponse :**
+**Exemple de réponse :**
 
 ```json
 {
@@ -96,7 +96,7 @@ Une fois la tâche terminée :
 }
 ```
 
-À partir de cette réponse, notez :
+À partir de cette réponse, notez :
 
 | Paramètre | Valeur | Signification |
 |---|---|---|
@@ -105,7 +105,7 @@ Une fois la tâche terminée :
 | **ASN OVHcloud** | `35540` | La valeur `ovhBgpArea` |
 | **Votre ASN** | `65001` | La valeur `customerBgpArea` |
 
-Vérifiez l’état de la session BGP :
+Vérifiez l’état de la session BGP :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/status"} />
 
@@ -119,7 +119,7 @@ L’activation de BGP au niveau de l’AZ **désactive VRRP** sur cette configur
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra"} />
 
-**Paramètres de la requête :**
+**Paramètres de la requête :**
 
 | Paramètre | Type | Requis | Description |
 |---|---|---|---|
@@ -127,7 +127,7 @@ L’activation de BGP au niveau de l’AZ **désactive VRRP** sur cette configur
 | `bgpNeighborArea` | long | Non | Numéro d’AS BGP du voisin de l’AZ |
 | `bgpNeighborIp` | ipv4 | Non | IP du routeur pour la session BGP au sein de l’AZ |
 
-**Exemple de requête :**
+**Exemple de requête :**
 
 ```json
 {
@@ -137,11 +137,11 @@ L’activation de BGP au niveau de l’AZ **désactive VRRP** sur cette configur
 }
 ```
 
-Vérifiez la configuration supplémentaire :
+Vérifiez la configuration supplémentaire :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra/\{extraId\}"} />
 
-**Exemple de réponse :**
+**Exemple de réponse :**
 
 ```json
 {
@@ -245,7 +245,7 @@ policy-options {
 
 #### Depuis votre routeur
 
-**Cisco :**
+**Cisco :**
 
 ```bash
 show ip bgp summary
@@ -253,7 +253,7 @@ show bgp ipv4 unicast neighbors 192.0.2.1
 show ip route bgp
 ```
 
-**Juniper :**
+**Juniper :**
 
 ```bash
 show bgp summary
@@ -261,7 +261,7 @@ show bgp neighbor 192.0.2.1
 show route protocol bgp
 ```
 
-**Résultats attendus :**
+**Résultats attendus :**
 
 | Vérification | Sortie attendue |
 |---|---|
@@ -271,17 +271,17 @@ show route protocol bgp
 
 #### Depuis l’API OVHcloud
 
-Vérifiez les statistiques du PoP (préfixes acceptés) :
+Vérifiez les statistiques du PoP (préfixes acceptés) :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/statistics"} />
 
 #### Lancer un diagnostic
 
-Si la session ne s’établit pas, lancez un diagnostic de peering :
+Si la session ne s’établit pas, lancez un diagnostic de peering :
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/diagnostic"} />
 
-Noms de diagnostics disponibles : `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
+Noms de diagnostics disponibles : `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
 
 ### Bonnes pratiques
 
@@ -304,7 +304,7 @@ Noms de diagnostics disponibles : `diagPeering`, `diagPeeringExtra`, `diagRoutes
 
 ### Supprimer les configurations
 
-Pour supprimer la configuration BGP, supprimez dans l’ordre inverse :
+Pour supprimer la configuration BGP, supprimez dans l’ordre inverse :
 
 <Api version="v1" section="/ovhCloudConnect" method="DELETE" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra/\{extraId\}"} />
 
@@ -318,4 +318,4 @@ Pour supprimer la configuration BGP, supprimez dans l’ordre inverse :
 
 Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](/links/community).
+Échangez avec notre [communauté d’utilisateurs](/links/community).

@@ -1,16 +1,16 @@
 ---
-title: "Automatiser OVHcloud Connect avec l'API, la CLI et Terraform"
-description: "Découvrez comment administrer OVHcloud Connect de manière programmatique via l'API, la CLI et Terraform"
-lastUpdated: 2026-06-09
+title: "Automatiser OVHcloud Connect avec l’API, la CLI et Terraform"
+description: "Découvrez comment administrer OVHcloud Connect de manière programmatique via l’API, la CLI et Terraform"
+lastUpdated: 2026-06-15
 ---
 
 ## Objectif
 
-OVHcloud Connect peut être administré de manière programmatique via l'API OVHcloud, des outils en ligne de commande et Terraform. L'automatisation réduit les erreurs manuelles, accélère le provisionnement et rend votre infrastructure reproductible et versionnée.
+OVHcloud Connect peut être administré de manière programmatique via l’API OVHcloud, des outils en ligne de commande et Terraform. L’automatisation réduit les erreurs manuelles, accélère le provisionnement et rend votre infrastructure reproductible et versionnée.
 
 ## API OVHcloud
 
-L'API OVHcloud fournit des endpoints RESTful pour toutes les opérations OVHcloud Connect : commande, configuration, supervision et résiliation des connexions.
+L’API OVHcloud fournit des endpoints RESTful pour toutes les opérations OVHcloud Connect : commande, configuration, supervision et résiliation des connexions.
 
 **Console API :** [https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1)
 
@@ -19,15 +19,15 @@ L'API OVHcloud fournit des endpoints RESTful pour toutes les opérations OVHclou
 | Endpoint | Description |
 |---|---|
 | `GET /ovhCloudConnect` | Lister tous vos services OVHcloud Connect |
-| `GET /ovhCloudConnect/{serviceName}` | Obtenir les détails d'un service spécifique |
+| `GET /ovhCloudConnect/{serviceName}` | Obtenir les détails d’un service spécifique |
 | `GET /ovhCloudConnect/{serviceName}/config/pop` | Lister les configurations de PoPs |
 | `POST /ovhCloudConnect/{serviceName}/config/pop` | Créer une nouvelle configuration de PoP |
 | `GET /ovhCloudConnect/{serviceName}/serviceInfos` | Obtenir les métadonnées du service et les informations de facturation |
 
-### Premiers pas avec l'API
+### Premiers pas avec l’API
 
 1. **Créez des identifiants API** — Rendez-vous sur [https://eu.api.ovh.com/createToken/](https://eu.api.ovh.com/createToken/) et générez une Application Key, une Application Secret et une Consumer Key.
-2. **Choisissez un SDK** — OVHcloud propose des wrappers d'API officiels dans plusieurs langages :
+2. **Choisissez un SDK** — OVHcloud propose des wrappers d’API officiels dans plusieurs langages :
    - **Python :** [github.com/ovh/python-ovh](https://github.com/ovh/python-ovh)
    - **Node.js :** [github.com/ovh/node-ovh](https://github.com/ovh/node-ovh)
    - **Go :** [github.com/ovh/go-ovh](https://github.com/ovh/go-ovh)
@@ -50,14 +50,14 @@ print(services)
 ```
 
 :::tip
-**Conseil de sécurité :** ne codez jamais en dur vos identifiants API. Utilisez des variables d'environnement, un fichier de configuration (`ovh.conf`) ou un gestionnaire de secrets (par exemple HashiCorp Vault, secrets CI/CD).
+**Conseil de sécurité :** ne codez jamais en dur vos identifiants API. Utilisez des variables d’environnement, un fichier de configuration (`ovh.conf`) ou un gestionnaire de secrets (par exemple HashiCorp Vault, secrets CI/CD).
 :::
 
 ## Interface en ligne de commande (CLI)
 
-Bien qu'il n'existe pas de binaire CLI OVHcloud dédié à OVHcloud Connect, vous pouvez utiliser les wrappers d'API dans un contexte de scripting ou créer des scripts CLI légers à l'aide des SDKs ci-dessus.
+Bien qu’il n’existe pas de binaire CLI OVHcloud dédié à OVHcloud Connect, vous pouvez utiliser les wrappers d’API dans un contexte de scripting ou créer des scripts CLI légers à l’aide des SDKs ci-dessus.
 
-Exemple : un rapide script bash utilisant `curl` et le mécanisme de signature de l'API OVHcloud :
+Exemple : un rapide script bash utilisant `curl` et le mécanisme de signature de l’API OVHcloud :
 
 ```bash
 # Simplified example — use an SDK for proper signature handling
@@ -73,7 +73,7 @@ En pratique, utiliser le SDK Python ou Node.js est bien plus simple que de gére
 
 ## Terraform
 
-Terraform vous permet de définir votre infrastructure OVHcloud Connect en tant que code. C'est idéal pour des déploiements reproductibles, le versioning et la collaboration.
+Terraform vous permet de définir votre infrastructure OVHcloud Connect en tant que code. C’est idéal pour des déploiements reproductibles, le versioning et la collaboration.
 
 ### Provider Terraform OVH
 
@@ -114,4 +114,4 @@ resource "ovh_vrack_ovhcloudconnect" "my_connect" {
 
 Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
-Échangez avec notre [communauté d'utilisateurs](/links/community).
+Échangez avec notre [communauté d’utilisateurs](/links/community).
