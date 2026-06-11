@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026.06.11
+
+### Features
+- **network:** ne GS about gateway (#133)
+- **enteprise-file-storage:** update getting started with trident with service URN retrieval (#166)
+
+### Documentation
+- 1173 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.10
 
 ### Fixes
