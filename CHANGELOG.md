@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.12
+
+### Fixes
+- move stray internal SEO report out of published docs tree (#189)
+
+### Documentation
+- 1 guides updated across fr
+
 ## 2026.06.11.1
 
 ### Fixes
