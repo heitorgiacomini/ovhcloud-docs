@@ -1,12 +1,11 @@
 ---
 title: Publicar um site num alojamento web
 description: Saiba como publicar um site no seu alojamento web da OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Sumário
 
@@ -58,7 +57,6 @@ Depois de ter avaliado as diferentes possibilidades descritas acima, pode escolh
 - **Pretende utilizar os módulos 1 clique**: siga as instruções do manual "[Como instalar um CMS para criar um site](/guides/web-cloud/web-hosting/cms-install-1-click-modules)".
 
 - **Não pretende utilizar os módulos 1 clique**: terá de efetuar manualmente a instalação do site no alojamento. As informações presentes neste manual poderão ser úteis. No entanto, se precisar de ajuda, pode contactar um webmaster.
- 
 
 :::warning
 A responsabilidade sobre a configuração e a gestão dos serviços que a OVHcloud disponibiliza recai sobre o utilizador. Assim, deverá certificar-se de que estes funcionam corretamente.
@@ -66,7 +64,6 @@ A responsabilidade sobre a configuração e a gestão dos serviços que a OVHclo
 Este manual fornece as instruções necessárias para realizar as operações mais habituais. No entanto, se encontrar dificuldades, recomendamos que recorra a um [prestador de serviços especializado](https://partner.ovhcloud.com/pt/directory/) e/ou que contacte o editor do serviço. Não poderemos proporcionar-lhe assistência técnica. Para mais informações, aceda à secção “Quer saber mais?” deste manual.
 
 :::
-
 
 ### 2 - Colocar os ficheiros do site no espaço de armazenamento
 
@@ -92,25 +89,24 @@ Estes elementos foram-lhe enviados por e-mail após a instalação do seu alojam
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Na página que se abrir, clique no separador <code className="action">FTP - SSH</code>.
-    
+
     <img className="thumbnail" alt="FTP - SSH" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 3">
     Aparecerá a informação relativa ao seu espaço de armazenamento e terá a possibilidade de encontrar os elementos necessários para aceder mesmo.
-    
+
     <img className="thumbnail" alt="FTP -SSH tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/tab-pro.png" loading="lazy" />
-    
+
     Caso seja necessário, consulte o nosso manual: "[Aceder ao espaço de armazenamento do alojamento web](/guides/web-cloud/web-hosting/ftp-connection)".
-    
+
     Caso tenha perdido a palavra-passe, consulte o manual "[Modificar a palavra-passe de um utilizador FTP](/guides/web-cloud/web-hosting/ftp-change-password)".
   </Tab>
 </Tabs>
-
 
 Quando tiver obtido todos os elementos, o acesso ao espaço de armazenamento pode ser realizado de dois formas:
 
@@ -138,19 +134,18 @@ Esta secção aplica-se à <ManagerLink to="/beta/#/">nova versão da Área de C
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/beta/#/web-cloud/hosting/sites">Alojamentos</ManagerLink> e escolha o alojamento web em causa.
-    
+
     <img className="thumbnail" alt="Alojamentos" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Aceda ao separador <code className="action">Meus sites</code>. Na tabela que aparece, para o site web desejado, veja o <code className="action">Pasta raiz</code> que aparece.
-    
+
     <img className="thumbnail" alt="siteinstallation" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/root-folders.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 3">
     Publique então os ficheiros do site web nessa pasta.
   </Tab>
 </Tabs>
-
 
 Pode acontecer que encontre no seu espaço de armazenamento um ficheiro intitulado "index.html". Este pode ter sido criado pela OVHcloud durante a instalação do seu alojamento web para mostrar uma página predefinida no seu site web. Se for esse o caso, não se esqueça de o eliminar ao carregar os seus ficheiros.
 
@@ -159,14 +154,12 @@ Um ficheiro "index.php" tomará sempre o controlo sobre um ficheiro "index.html"
 
 :::
 
-
 ### 3 - Associar o site a uma base de dados
 
 :::info
 Esta parte é opcional se o seu website não estiver associado a uma base de dados.
 
 :::
-
 
 Atualmente, a maioria dos sistemas de gestão de conteúdo (CMS), como WordPress e Joomla!, utilizam uma base de dados para armazenar elementos ditos dinâmicos, como comentários ou artigos. Uma ligação entre os ficheiros do site web e a base de dados é, portanto, essencial para que o site web possa funcionar corretamente. Para isso, existe um ficheiro de configuração que contém as informações da base que permite esta ligação.
 
@@ -185,21 +178,20 @@ Se pretende criar uma nova base de dados na OVHcloud, clique nos separadores aba
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web em causa.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Clique no separador <code className="action">Base de dados</code>.
-    
+
     <img className="thumbnail" alt="Databases" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/databases.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 3">
     Clique em <code className="action">Criar uma base de dados</code> ou, se este botão não aparecer, em <code className="action">Ações</code> e <code className="action">Criar uma base de dados</code>. Siga as indicações que surgirem.
-    
+
     <img className="thumbnail" alt="siteinstallation" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/databases/tab.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 #### 3.3. Importar a base de dados existente 
 
@@ -210,7 +202,7 @@ A importação pode ser feita de várias formas. A OVHcloud disponibiliza uma at
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web em causa.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
@@ -220,7 +212,6 @@ A importação pode ser feita de várias formas. A OVHcloud disponibiliza uma at
     Clique no botão <code className="action">...</code> à direita da base de dados e, a seguir, em <code className="action">Importar ficheiro</code>.
   </Tab>
 </Tabs>
-
 
 #### 3.4. Associar o site web à base de dados
 

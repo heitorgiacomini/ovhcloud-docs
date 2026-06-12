@@ -1,12 +1,11 @@
 ---
 title: View and manage all your websites from the OVHcloud Control Panel
 description: Find out how to view and manage all of your websites via the OVHcloud Control Panel
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objective
 
@@ -37,12 +36,12 @@ Click on the tabs below to view each of the **2** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/#/web-hosting/websites">Websites</ManagerLink> page. A table appears, listing all your websites and their main information.
-    
+
     <img className="thumbnail" alt="website_view" src="/images/web-cloud/web-hosting/access-websites-view/website_view_tab.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     The table shows the following columns:
-    
+
     - **Domain name**: shows the main domain name of the website, as configured in the “My sites” tab of your hosting plan.
     - **Diagnostic**: informs you whether your domain name is correctly pointing to the associated web hosting plan. For more details, refer to our guide “[How to check the domain name / website association?](/guides/web-cloud/web-hosting/my-websites-diagnosis)”.
     - **Root folder**: indicates the directory on your hosting plan (www, app, public_html, etc.) to which the domain points.
@@ -55,13 +54,13 @@ Click on the tabs below to view each of the **2** steps.
     - **SSL**: indicates whether SSL is enabled, allowing a secure connection (**https://**). For more information, visit our page “[Secure your OVHcloud website effectively with a premium SSL certificate](https://www.ovhcloud.com/en-gb/web-hosting/options/ssl/)”.
     - **Firewall**: indicates whether the application firewall is enabled on the domain. For more information, visit our page “[Essential options for your web hosting](https://www.ovhcloud.com/en-gb/web-hosting/options/)”.
     - **Boost**: indicates whether the Boost option is enabled, temporarily increasing CPU and RAM resources. For more details, refer to our guide “[Web Hosting - How to change your solution](/guides/web-cloud/web-hosting/how-to-upgrade-web-hosting-offer)”.
-    
+
     Clicking on an item in the table redirects you to the relevant <ManagerLink to="/#/web/hosting">web hosting</ManagerLink> plan. More specifically:
-    
+
     - The **Domain name**, **Diagnostic**, **Root folder**, **Git**, **Separate logs**, **CDN**, **SSL** and **Firewall** columns redirect to the <code className="action">My sites</code> tab.
     - The **Service name**, **Display name** and **Service plan** columns redirect to the <code className="action">General information</code> tab.
     - The **Boost** column redirects to the <code className="action">Boost my hosting plan</code> tab.
-    
+
     :::warning
     Separate logs cannot be enabled for an external domain name. This option is only available for domains registered with OVHcloud.
 

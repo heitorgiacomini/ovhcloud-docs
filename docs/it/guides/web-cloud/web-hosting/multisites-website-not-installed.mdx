@@ -1,12 +1,11 @@
 ---
 title: "Risolvere l’errore \"Sito non installato\""
 description: "Questa guida ti mostra come identificare e risolvere la pagina di errore \"Sito non installato\""
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Obiettivo
 
@@ -22,7 +21,6 @@ OVHcloud mette a disposizione i servizi ma non si occupa della loro configurazio
 Questa guida ti aiuta a eseguire le operazioni necessarie alla configurazione del tuo account. Tuttavia, in caso di difficoltà o dubbi, ti consigliamo di contattare un [provider specializzato](https://partner.ovhcloud.com/it/directory/) o il fornitore del servizio. OVH non sarà infatti in grado di fornirti assistenza. Per maggiori informazioni consulta la sezione "[Per saperne di più](#go-further)" di questa guida.
 
 :::
-
 
 :::info
 Alcune procedure di questa guida si applicano alla <ManagerLink to="/beta/#/">nuova versione dello Spazio Cliente OVHcloud</ManagerLink>.
@@ -67,19 +65,19 @@ Questa sezione si applica alla <ManagerLink to="/beta/#/">nuova versione dello S
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella pagina visualizzata, clicca sulla scheda <code className="action">I miei siti</code>.
-    
+
     <img className="thumbnail" alt="I miei siti" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Nel tavolo che appare, clicca sul pulsante <code className="action">></code> a sinistra del nome del sito web interessato per visualizzare i domini e sottodomini associati.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     |Scenari|Azioni da intraprendere|
     |---|---|
     |Il dominio o sottodominio associato al tuo sito web **è presente** nel tavolo.|Se hai appena aggiunto il tuo dominio o sottodominio sul tuo sito web presente sul tuo hosting web, attendi circa **venti minuti** e poi aggiorna la cache del tuo browser. Se appare comunque il messaggio "Sito non installato", passa alla [parte 2](#check-dns-domain).|
@@ -87,7 +85,6 @@ Questa sezione si applica alla <ManagerLink to="/beta/#/">nuova versione dello S
     |Il dominio o sottodominio **è stato rimosso** dal tavolo senza azione da parte tua.|Il tuo dominio o la sua zona DNS potrebbe essere gestita da un altro account. Aggiungi il tuo dominio o sottodominio seguendo la guida "[Come associare un dominio a un sito web esistente? - Aggiungere un dominio esterno](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website)".|
   </Tab>
 </Tabs>
-
 
 #### 2 - Verifica il puntamento IP nella zona DNS attiva del tuo dominio <a name="check-dns-domain"></a>
 
@@ -102,7 +99,6 @@ Per saperne di più sul concetto di DNS, consulta le pagine seguenti:
 
 :::
 
-
 #### 2\.1 Identificare l’indirizzo IP dell’hosting Web OVHcloud
 
 Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **2** passi.
@@ -110,18 +106,17 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **2** pa
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, poi seleziona l'hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nel riquadro **Informazioni generali**, trovi la dicitura **IPv4**.
-    
+
     <img className="thumbnail" alt="find-ipv4-and-ipv6" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/find-ipv4-and-ipv6.png" loading="lazy" />
 
 Copia l'indirizzo IPv4, poi prosegui nella lettura della guida.
   </Tab>
 </Tabs>
-
 
 L’indirizzo IP associato all’hosting Web è disponibile anche nella nostra guida "[Hosting Web - Lista degli indirizzi IP per cluster](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip)".
 
@@ -136,28 +131,26 @@ Se modifichi direttamente i **server DNS** associati al tuo dominio, l'intervall
 
 :::
 
-
 Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **3** passi.
 
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, poi seleziona l'hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Visualizzi una tabella con tutti i record DNS associati al tuo dominio in OVHcloud. Il contenuto della tabella può essere filtrato in base al tipo di record o al dominio.
-    
+
     <img className="thumbnail" alt="dns zone" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/tab.png" loading="lazy" />
-    
+
     :::info
     Se la scheda <code className="action">Zona DNS</code> del dominio viene visualizzata nel modo seguente:<br/><br/> <img className="thumbnail" alt="zone-without-domain-top-of-the-page" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/zone-without-domain-top-of-the-page.png" loading="lazy" /><br/>
-    
+
     Questo significa che il tuo dominio non è gestito dal tuo Spazio Cliente OVHcloud.<br/> Determina il suo "ufficio di registrazione" e i server DNS a cui è associato tramite il nostro strumento [WHOIS](https://www.ovhcloud.com/it/domains/whois/).<br/> Trova e modifica la zona DNS corrispondente seguendo la sezione dedicata della guida "[Come associare un dominio a un sito web esistente? - Aggiungere un dominio esterno](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website)".
 
     :::
 
-    
     Passare al passaggio 4 per visualizzare i diversi scenari possibili e le azioni da intraprendere.
   </Tab>
   <Tab label="Passaggio 3">
@@ -169,7 +162,6 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **3** pa
     |Questo avviso viene visualizzato nella scheda <code className="action">Zona DNS</code>:<br/><br/><img className="thumbnail" alt="message-other-ovh-dns-servers" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/message-other-ovh-dns-servers.png" loading="lazy" />|Modifica i server DNS del dominio di conseguenza seguendo la nostra guida "[Modificare i server DNS di un dominio OVHcloud](/guides/web-cloud/domains/dns-server-edit)."|
   </Tab>
 </Tabs>
-
 
 ## Per saperne di più <a name="go-further"></a>
 

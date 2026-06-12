@@ -1,12 +1,11 @@
 ---
 title: Configuring and using Git with an OVHcloud web hosting plan
 description: Find out how to configure and use Git with your web hosting plan in the OVHcloud Control Panel
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objective
 
@@ -29,7 +28,6 @@ To date, only the GitHub platform is supported for use with OVHcloud Web Hosting
 
 :::
 
-
 {/* CP-NAV-START:web-hosting */}
 ---
 
@@ -48,7 +46,6 @@ To associate and configure Git, you will need to make changes to your GitHub acc
 
 :::
 
-
 ### Associate a directory with Git <a name="associateGitRepo"></a>
 
 :::warning
@@ -56,34 +53,33 @@ When you associate a directory with Git, all domain names in that directory will
 
 :::
 
-
 {/* CP-STEPS-START:associate-git-repo */}
 Click on the tabs below to view each of the **4** steps.
 
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">⁝</code> button to the right of the relevant website, then on <code className="action">Link Git</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     The Git association form appears. Several items must be configured:
-    
+
     - GitHub Repository
     - GitHub Repository Branch
     - SSH Key (for a private GitHub repository)
     - Webhook (optional)
-    
+
     Continue reading this guide to get the necessary information to complete the required fields.
   </Tab>
 </Tabs>
@@ -107,7 +103,6 @@ Define a name for your deposit and fill in the requested information.
 Tick the option `Add a README file` for GitHub to correctly initialise your repository.
 
 :::
-
 
 Finally, click <code className="action">Create Repository</code>.
 
@@ -146,12 +141,10 @@ When your GitHub repository is public, files can be retrieved without authentica
 
 :::
 
-
 :::info
 Generating an SSH key is a crucial step, as it establishes a secure and encrypted connection between your website’s directory and the GitHub repository. This key ensures that data transfers and code changes are done in a secure and authenticated manner, preventing unauthorized access and ensuring code integrity.
 
 :::
-
 
 Copy your SSH key by clicking on the button on the right.
 
@@ -233,28 +226,27 @@ Click on the tabs below to view each of the **4** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">⁝</code> button to the right of the relevant website, then on <code className="action">Deploy Git</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     A confirmation message appears, as well as a checkbox indicating that in case of a conflict during deployment, you can force the remote changes (from the GitHub repository) over your local repository. Check or uncheck the box according to your choice, then click on <code className="action">Confirm</code> to validate the deployment.
-    
+
     :::warning
     To avoid losing your local changes, remember to save them before overwriting them with the changes from the remote branch.
 
     :::
 
-    
     The new version of your website has been successfully deployed on your OVHcloud web hosting. If other people are working on the same project and making changes to the GitHub repository, you can [configure a webhook on GitHub](#configureWebhook) so that their changes are automatically deployed on your web hosting. This avoids having to deploy Git manually, and your website will always be up to date.
   </Tab>
 </Tabs>
@@ -269,46 +261,46 @@ Click on the tabs below to view each of the **4** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">></code> button to the left of the name of the relevant website to display the associated domain names or subdomains.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Then click on the <code className="action">⁝</code> button to the right of the relevant domain name or subdomain, then on <code className="action">Modify domain</code>.
-    
+
     <img className="thumbnail" alt="Associated domains options" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     Two scenarios are possible:
-    
+
     **1 - One or more other domain names are attached to the website**
-    
+
     The following window appears:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/modify-domain-step1.png" loading="lazy" />
-    
+
     Modify the information as needed and click on <code className="action">Next</code>.
-    
+
     A second confirmation window appears with a summary of your changes:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/modify-domain-step2.png" loading="lazy" />
-    
+
     Click on <code className="action">Confirm</code> to validate the changes to your domain name.
-    
+
     **2 - Only one domain name is attached to the website**
-    
+
     The following window appears:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/modify-alone-domain-step1.png" loading="lazy" />
-    
+
     As the message indicates, [remove your Git association](#deleteGitAssociation) first before modifying your domain name.
   </Tab>
 </Tabs>
@@ -323,40 +315,40 @@ Click on the tabs below to view each of the **4** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">></code> button to the left of the name of the relevant website to display the associated domain names or subdomains.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Then click on the <code className="action">⁝</code> button to the right of the relevant domain name or subdomain, then on <code className="action">Detach domain</code>.
-    
+
     <img className="thumbnail" alt="Associated domains options" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     Two scenarios are possible:
-    
+
     **1 - One or more other domain names are attached to the website**
-    
+
     The following window appears.
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/detach-domain-popup.png" loading="lazy" />
-    
+
     Click on <code className="action">Confirm</code> to validate the detachment of your domain name.
-    
+
     **2 - Only one domain name is attached to the website**
-    
+
     The following window appears:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/detach-alone-domain.png" loading="lazy" />
-    
+
     As the message indicates, [remove your Git association](#deleteGitAssociation) first before detaching your domain name.
   </Tab>
 </Tabs>
@@ -371,22 +363,22 @@ Click on the tabs below to view each of the **4** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">⁝</code> button to the right of the relevant website, then on <code className="action">Configure Git</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     The following information appears:
-    
+
     - SSH Key: If you have not already done so, [register your SSH key in your GitHub account](#linkSSHKey).
     - Repository: Address of your Git repository. This field is greyed out as you cannot modify the Git repository address. To change the Git repository URL, you must [remove the Git association from your directory](#deleteGitAssociation) and then [re-associate the directory with Git](#associateGitRepo).
     - Branch: Name of the GitHub repository branch. You can modify this field if needed.
@@ -406,19 +398,19 @@ Click on the tabs below to view each of the **3** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">⁝</code> button to the right of the relevant website, then on <code className="action">Latest deployment information</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
-    
+
     Find all the information related to the last deployment on this screen.
   </Tab>
 </Tabs>
@@ -433,36 +425,36 @@ Click on the tabs below to view each of the **4** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">⁝</code> button to the right of the relevant website, then on <code className="action">Delete Git</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     The following window appears:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/delete-git-association-popup.png" loading="lazy" />
-    
+
     The message informs you that the deletion will apply to all domain names attached to your website. Check the box <code className="action">Do you want to empty the contents of the `<your_directory>` directory?</code> if you also want to delete the content (folders and files) of the directory.
-    
+
     1\. If you check the box, the following window appears:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/delete-git-association-with-folder-popup-confirm.png" loading="lazy" />
-    
+
     Click on <code className="action">Confirm</code> to validate the deletion of the Git association of your directory as well as its content.
-    
+
     2\. If you do not check the box, the following window appears:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/delete-git-association-popup-confirm.png" loading="lazy" />
-    
+
     Click on <code className="action">Confirm</code> to validate the deletion of the Git association of your directory.
   </Tab>
 </Tabs>
@@ -478,24 +470,23 @@ If you are already in the Git association form, copy the webhook URL and go to t
 
 :::
 
-
 {/* CP-STEPS-START:configure-webhook */}
 Click on the tabs below to view each of the **4** steps.
 
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     In the table that appears, click on the <code className="action">⁝</code> button to the right of the relevant website, then on <code className="action">Configure Git</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
@@ -539,7 +530,7 @@ You have just linked your website code with Git, via your GitHub repository. You
 [Putting a website online on your web hosting plan](/guides/web-cloud/web-hosting/hosting-how-to-get-my-website-online)
 
 For specialised services (SEO, development, etc.), contact [OVHcloud partners](https://partner.ovhcloud.com/en-gb/directory/).
- 
+
 If you would like assistance using and configuring your OVHcloud solutions, please refer to our [support offers](https://www.ovhcloud.com/en-gb/support-levels/).
- 
+
 Join our [community of users](https://community.ovhcloud.com/).

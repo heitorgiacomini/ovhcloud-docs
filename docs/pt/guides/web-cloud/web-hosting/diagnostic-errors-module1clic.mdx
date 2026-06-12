@@ -1,14 +1,11 @@
 ---
 title: Resolver os erros mais frequentes associados aos módulos 1 clique
 description: Saiba como diagnosticar os casos mais comuns de erros associados à criação de módulos 1 clique
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
-
 
 ## Objetivo
 
@@ -23,7 +20,6 @@ A OVHcloud oferece-lhe serviços cuja configuração, gestão e responsabilidade
 Este guia fornece as instruções necessárias para realizar as operações mais habituais. No entanto, se encontrar dificuldades, recomendamos que recorra a um [fornecedor especializado](https://partner.ovhcloud.com/pt/directory/) e/ou que contacte o editor do serviço. Não poderemos proporcionar-lhe assistência técnica. Mais informações na secção "[Quer saber mais?](#go-further)" deste guia.
 
 :::
-
 
 :::info
 Alguns procedimentos deste guia aplicam-se à <ManagerLink to="/beta/#/">nova versão da Área de Cliente OVHcloud</ManagerLink>.
@@ -54,12 +50,10 @@ Aqui, poderá encontrar os erros mais habituais. Se encontrar uma situação dif
 
 :::
 
-
 **Clique nos 15 títulos abaixo para visualizar o conteúdo.**
 
 <details>
 <summary>O seu domínio não está disponível durante a criação do "módulo 1 clique"</summary>
-
 
 <img className="thumbnail" alt="domainenotproposed" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/1-click-modules/domain-unavailable.png" loading="lazy" />
 
@@ -73,22 +67,22 @@ Esta secção aplica-se à <ManagerLink to="/beta/#/">nova versão da Área de C
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/beta/#/web-cloud/hosting/sites">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Alojamentos" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Na página que se abrir, clique no separador <code className="action">Meus sites</code>.
-    
+
     <img className="thumbnail" alt="Meus sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 3">
     Na tabela que surge, clique no botão <code className="action">></code> à esquerda do nome do site relevante para visualizar os nomes de domínio e subdomínios associados.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 4">
     Efetue, de seguida, as seguintes verificações:
-    
+
     |Cenário|Solução|
     |---|---|
     |O domínio ou subdomínio associado ao site que pretende criar não aparece na tabela no separador <code className="action">Meus sites</code>.|Adicione o seu nome de domínio seguindo [estas indicações](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website).|
@@ -96,13 +90,10 @@ Esta secção aplica-se à <ManagerLink to="/beta/#/">nova versão da Área de C
   </Tab>
 </Tabs>
 
-
 </details>
-
 
 <details>
 <summary>"Ocorreu um erro aquando do carregamento das informações (You need at least one free database)"</summary>
-
 
 <img className="thumbnail" alt="No databases available" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/1-click-modules/message-no-db-available.png" loading="lazy" />
 
@@ -117,16 +108,15 @@ Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Clique no separador <code className="action">Bases de dados</code> e, a seguir, em <code className="action">Ações</code> para encomendar uma base de dados suplementar:
-    
+
     <img className="thumbnail" alt="order_a_database" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/databases/order-a-db.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 Uma vez concluído, poderá instalar um novo "módulo com 1 clique".
 
@@ -135,7 +125,6 @@ Nota: não hesite em consultar previamente as nossas ofertas de bases de dados u
 
 :::
 
-
 #### Solução n°2: modificar a sua oferta de alojamento web
 
 :::info
@@ -143,22 +132,20 @@ Encontre a comparação das nossas diferentes [ofertas de alojamento](https://ww
 
 :::
 
-
 Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Na parte `Subscrição` - `Oferta`, clique no botão <code className="action">...</code> e depois em <code className="action">Mudar de oferta</code>:
-    
+
     <img className="thumbnail" alt="upgrade_hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/upgrade-perso.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 As ofertas **Pro**, **Performance**, **Agency**, **Agency Plus** e **Agency Max** permitem-lhe criar mais "módulos 1 clique", cada um com uma base de dados independente. As ofertas **Performance**, **Agency**, **Agency Plus** e **Agency Max** permitem-lhe também ativar gratuitamente um servidor [Web Cloud Databases](https://www.ovhcloud.com/pt/web-cloud/databases/).
 
@@ -171,22 +158,20 @@ A eliminação de uma base de dados é definitiva. Esta operação levará igual
 
 :::
 
-
 Para eliminar uma base de dados, clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Clique no separador <code className="action">Bases de dados</code>. Na tabela que aparecer, clique no botão <code className="action">...</code> à direita da linha correspondente ao banco de dados que pretende eliminar e, a seguir, em <code className="action">Eliminar base de dados</code>:
-    
+
     <img className="thumbnail" alt="delete_a_database" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/databases/sharedsql-deletion.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 Uma vez concluído, poderá instalar um novo "módulo com 1 clique".
 
@@ -208,13 +193,10 @@ Não poderemos proporcionar-lhe assistência técnica.
 
 :::
 
-
 </details>
-
 
 <details>
 <summary>O "módulo 1 clique" será apresentado num endereço web do tipo "xxxxx.cluster0xx.hosting.ovh.net"</summary>
-
 
 <img className="thumbnail" alt="url-cluster" src="/images/assets/screens/other/browsers/urls/url-cluster.png" loading="lazy" />
 
@@ -222,10 +204,8 @@ Depois de realizar todos os backups necessários, [elimine o seu "módulo em 1 c
 
 </details>
 
-
 <details>
 <summary>"A pasta de instalação não está vazia"</summary>
-
 
 <img className="thumbnail" alt="folder_not_empty" src="/images/assets/screens/email-sending-to-customer/webhosting/folder-not-empty.png" loading="lazy" />
 
@@ -243,21 +223,21 @@ Esta secção aplica-se à <ManagerLink to="/beta/#/">nova versão da Área de C
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/beta/#/web-cloud/hosting/sites">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Alojamentos" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Na página que se abrir, clique no separador <code className="action">Meus sites</code>.
-    
+
     <img className="thumbnail" alt="Meus sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 3">
     Na tabela que surge, clique no botão <code className="action">></code> à esquerda do nome do site relevante para visualizar os nomes de domínio e subdomínios associados.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Em seguida, clique no botão <code className="action">⁝</code> à direita do nome de domínio ou subdomínio relevante e, depois, em <code className="action">Desassociar o domínio</code>.
-    
+
     <img className="thumbnail" alt="Associated domains options" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 4">
@@ -265,15 +245,12 @@ Esta secção aplica-se à <ManagerLink to="/beta/#/">nova versão da Área de C
   </Tab>
 </Tabs>
 
-
 Também pode ligar-se ao seu alojamento web através do protocolo [FTP](/guides/web-cloud/web-hosting/ftp-connection), e eliminar o conteúdo da pasta. Depois de o ter guardado localmente ou depois de o ter esvaziado ao mover todo o seu conteúdo para outro diretório FTP.
 
 </details>
 
-
 <details>
 <summary>"Either no configuration (ovhConfig or runtime), or the current configuration is not valid (please, double check the module's requirement) (as a reminder, the global configuration is used for module)."</summary>
-
 
 Esta mensagem indica que o ficheiro ".ovhconfig" é inexistente ou inválido para poder instalar o seu "módulo em 1 clique". Este ficheiro contém a versão de PHP e o ambiente de execução aplicados ao seu alojamento web.
 
@@ -283,10 +260,8 @@ Para verificar esta configuração, consulte o guia "[Alterar a configuração d
 
 </details>
 
-
 <details>
 <summary>"Ocorreu um erro aquando do carregamento das informações (There is not enough space on your hosting (you need at least xxx MB))"</summary>
-
 
 <img className="thumbnail" alt="not_enough_space" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/1-click-modules/message-not-enough-ftp-space.png" loading="lazy" />
 
@@ -304,7 +279,6 @@ O suporte OVHcloud não pode prestar assistência.
 
 :::
 
-
 #### Solução n°2: modificar a sua oferta de alojamento web
 
 :::info
@@ -312,31 +286,27 @@ Encontre a comparação das nossas diferentes [ofertas de alojamento web](https:
 
 :::
 
-
 Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Na parte `Subscrição` - `Oferta`, clique no botão <code className="action">...</code> e depois em <code className="action">Mudar de oferta</code>:
-    
+
     <img className="thumbnail" alt="upgrade_hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/upgrade-perso.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 As ofertas **Pro**, **Performance**, **Agency**, **Agency Plus** e **Agency Max** permitem-lhe criar mais "módulos 1 clique", cada um com uma base de dados independente. As ofertas **Performance**, **Agency**, **Agency Plus** e **Agency Max** permitem-lhe também ativar gratuitamente um servidor [Web Cloud Databases](https://www.ovhcloud.com/pt/web-cloud/databases/).
 
 </details>
 
-
 <details>
 <summary>"Não é possível estabelecer ligação à base de dados" <a name="delete-the-module"></a></summary>
-
 
 <img className="thumbnail" alt="wrong_id_database" src="/images/assets/screens/email-sending-to-customer/databases/db-connection-failed.png" loading="lazy" />
 
@@ -349,17 +319,17 @@ Elimine o seu "módulo em 1 clique". Para isso, clique nos separadores abaixo pa
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Clique no separador <code className="action">Módulo "1 clique"</code>. Na tabela que aparecer, clique no botão <code className="action">...</code> à direita da linha correspondente ao seu nome de domínio e, a seguir, clique em <code className="action">Eliminar o módulo</code>.
-    
+
     <img className="thumbnail" alt="delete_a_module" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/1-click-modules/delete-a-module-2.png" loading="lazy" />
-    
+
     :::warning
     **Eliminar itens na base de dados pode causar uma interrupção do website.**
-    
+
     Certifique-se de que só elimina a instalação que acabou de iniciar. Para isso, verifique se se trata do diretório em causa na coluna `Path` (Caminho).
 
     :::
@@ -367,15 +337,12 @@ Elimine o seu "módulo em 1 clique". Para isso, clique nos separadores abaixo pa
   </Tab>
 </Tabs>
 
-
 A seguir, repita a instalação de um novo "módulo em 1 clique".
 
 </details>
 
-
 <details>
 <summary>"You have insufficient rights on this database."</summary>
-
 
 <img className="thumbnail" alt="insufficient_rights" src="/images/assets/screens/email-sending-to-customer/databases/db-insufficient-rights.png" loading="lazy" />
 
@@ -393,13 +360,10 @@ Não poderemos proporcionar-lhe assistência técnica.
 
 :::
 
-
 </details>
-
 
 <details>
 <summary>"Can't connect to database 'xxxxxxxx' at 'xxxxxx-xxx.eu.clouddb.ovh.net'. The error is: Access denied for user 'xxxx'@'xxxxxxxx' (using password: YES)"</summary>
-
 
 <img className="thumbnail" alt="cant_connect" src="/images/assets/screens/email-sending-to-customer/databases/db-cant-connect-access-denied.png" loading="lazy" />
 
@@ -411,10 +375,8 @@ Verifique igualmente os seus identificadores [ligando-se diretamente](/guides/we
 
 </details>
 
-
 <details>
 <summary>"Can't connect to database 'xxxxxxxx' at 'xxxxxxxx.mysql.db'. The error is: Unknown MySQL server host 'xxxxxxxx.mysql.db'"</summary>
-
 
 <img className="thumbnail" alt="cant_connect_server" src="/images/assets/screens/email-sending-to-customer/databases/db-cant-connect-server.png" loading="lazy" />
 
@@ -425,7 +387,7 @@ Para encontrar o nome do servidor de bases de dados, clique nos separadores abai
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/private_database">Web Cloud Databases</ManagerLink> e selecione o servidor de bases de dados em causa.
-    
+
     <img className="thumbnail" alt="Web Cloud Databases" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-cloud-databases.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
@@ -433,27 +395,23 @@ Para encontrar o nome do servidor de bases de dados, clique nos separadores abai
   </Tab>
 </Tabs>
 
-
 </details>
-
 
 <details>
 <summary>O seu antigo website continua a ser apresentado</summary>
-
 
 Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     No separador <code className="action">Módulos " 1 clique"</code>, clique na ligação do seu website na coluna `Caminho`. Será aberto um novo separador com o seu website. O nome de domínio associado à sua instalação é apresentado no endereço do browser. Por exemplo, se o seu nome de domínio for "domain.tld", é possível que apareça outro domínio ou que apareça uma página padrão da OVHcloud.
   </Tab>
 </Tabs>
-
 
 Esta disfunção pode ter várias causas:
 
@@ -465,19 +423,15 @@ Esta disfunção pode ter várias causas:
 
 </details>
 
-
 <details>
 <summary>A palavra-passe "Administrador" de acesso a "a interface de administração" do seu módulo 1 clique não funciona <a name="adminpassword"></a></summary>
-
 
 Em caso de rejeição da sua palavra-passe atual de acesso à interface de administração do seu **C**ontent **M**anagement **S**ystem (**CMS**), consulte o parágrafo "Alterar a palavra-passe do seu módulo" da nossa documentação sobre [gestão do seu módulo 1 clique](/guides/web-cloud/web-hosting/cms-manage-1-click-module).
 
 </details>
 
-
 <details>
 <summary>O prefixo das tabelas da base de dados já está a ser utilizado na base de dados</summary>
-
 
 Este erro só é aplicável a instalações com "módulos 1 clique" em *modo avançado*.
 
@@ -487,10 +441,8 @@ Repita a instalação com outro prefixo de tabelas ou outra base de dados para c
 
 </details>
 
-
 <details>
 <summary>Os DNS do domínio não apontam para um alojamento web da OVHcloud</summary>
-
 
 Este erro informa-o de que as entradas DNS do nome de domínio utilizado para o seu website não apontam para um alojamento web da OVHcloud. No entanto, não é possível instalar um "módulo 1 clique" num domínio que não aponta para um alojamento OVHcloud.
 Para resolver esta situação, deve editar a sua zona DNS. Para saber mais sobre os endereços IP a indicar, consulte o guia [Lista dos endereços IP dos clusters e alojamentos web](/guides/web-cloud/databases/db-configure-optimise-database-server). De seguida, deverá [editar a zona DNS](/guides/web-cloud/domains/dns-zone-edit).
@@ -500,10 +452,8 @@ Quando terminar, reinicie a instalação de um novo "módulo com 1 clique".
 
 </details>
 
-
 <details>
 <summary>A sua base de dados necessita de estar em versão "X", ora esta está atualmente em versão "Y"</summary>
-
 
 Esta mensagem de correio eletrónico informa-o de que a versão da base de dados é demasiado antiga para instalar o "módulo 1 clique". 
 
@@ -517,15 +467,14 @@ Quando terminar, reinicie a instalação de um novo "módulo com 1 clique".
 
 </details>
 
-
 ## Quer saber mais? <a name="go-further"></a>
 
 [Instalar o site com os módulos 1 clique](/guides/web-cloud/web-hosting/cms-install-1-click-modules)
 
 [Problemas recorrentes durante a utilização de um programa FTP](/guides/web-cloud/web-hosting/ftp-recurring-ftp-problems)
- 
+
 Para serviços especializados (referenciamento, desenvolvimento, etc), contacte os [parceiros OVHcloud](https://partner.ovhcloud.com/pt/directory/).
- 
+
 Se pretender usufruir de uma assistência na utilização e na configuração das suas soluções OVHcloud, consulte as nossas diferentes [ofertas de suporte](https://www.ovhcloud.com/pt/support-levels/).
- 
+
 Fale com nossa [comunidade de utilizadores](https://community.ovhcloud.com/).

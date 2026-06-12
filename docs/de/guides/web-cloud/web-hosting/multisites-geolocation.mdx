@@ -1,12 +1,11 @@
 ---
 title: Wie kann ich eine Website in einem bestimmten Land geolokalisieren?
 description: So lokalisieren Sie Ihre Website mithilfe der geolokalisierten IP-Adressen, die für die Shared Hosting Angebote von OVHcloud verfügbar sind
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Ziel
 
@@ -50,34 +49,33 @@ Um die IP-Geolokalisierungsoption zu aktivieren, klicken Sie auf die Tabs, um di
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">></code> links neben dem Namen der Website, um die zugehörigen Domainnamen oder Subdomains anzuzeigen.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Klicken Sie anschließend auf den Button <code className="action">⁝</code> rechts neben dem gewünschten Domainnamen oder Subdomain und dann auf <code className="action">Domain bearbeiten</code>.
-    
+
     <img className="thumbnail" alt="Associated domains options" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Setzen Sie im neu geöffneten Fenster einen Haken im Feld <code className="action">IP des Landes</code>, um das Drop-down-Menü zu öffnen.
-    
+
     <img className="thumbnail" alt="geolocation option" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/country-ip-selection.png" loading="lazy" />
 
 Wählen Sie aus den 12 angebotenen Ländern die IP-Adresse des Landes aus, für das Sie Ihre Website geolokalisieren möchten: *Tschechische Republik, Finnland, Frankreich, Deutschland, Irland, Italien, Litauen, Niederlande, Polen, Portugal, Spanien, Vereinigtes Königreich*.
-    
+
     Klicken Sie auf <code className="action">Weiter</code> und im nächsten Fenster auf <code className="action">Bestätigen</code>.
   </Tab>
 </Tabs>
-
 
 :::info
 Wenn die aktive DNS-Zone Ihrer Domain vollständig in Ihrem <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> verwaltet wird, ändert sich der A-Eintrag in der DNS-Zone Ihrer Domain automatisch. Um zu überprüfen, ob die IP-Adresse korrekt aktualisiert wurde, lesen Sie unsere Anleitung zur [Bearbeitung der OVHcloud DNS-Zone](/guides/web-cloud/domains/dns-zone-edit).
@@ -87,7 +85,6 @@ Ist das nicht der Fall, müssen Sie die Änderung manuell beim Anbieter vornehme
 In beiden Fällen ist eine Propagationszeit von **4 bis 24 Stunden** nach der Änderung erforderlich, damit die Änderung im Internet voll wirksam und sichtbar ist.
 
 :::
-
 
 ## Weiterführende Informationen
 

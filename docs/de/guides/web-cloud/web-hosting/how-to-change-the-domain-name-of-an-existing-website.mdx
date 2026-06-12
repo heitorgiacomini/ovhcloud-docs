@@ -1,12 +1,11 @@
 ---
 title: Anwendungsbeispiele - Domainnamen einer Website ändern
 description: Erfahren Sie hier, wie Sie den Domainnamen einer bestehenden Website ändern
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Ziel
 
@@ -22,7 +21,6 @@ OVHcloud stellt Ihnen Dienstleistungen zur Verfügung, für deren Konfiguration 
 Dieses Tutorial soll Sie bei allgemeinen Aufgaben bestmöglich unterstützen. Dennoch empfehlen wir Ihnen, falls Sie Hilfe brauchen, einen [spezialisierten Dienstleister](https://partner.ovhcloud.com/de/directory/) zu kontaktieren oder Ihre Fragen in der OVHcloud Community zu stellen. Leider können wir Ihnen für administrative Aufgaben keine weitergehende technische Unterstützung anbieten. Weitere Informationen finden Sie am [Ende dieser Anleitung](#go-further).
 
 :::
-
 
 ## Voraussetzungen
 
@@ -48,7 +46,6 @@ Achten Sie daher genau auf die Änderungen, die Sie vornehmen, und kontaktieren 
 
 :::
 
-
 Um den Domainnamen für den Zugang zu Ihrer Website zu ändern, müssen mehrere Schritte in einer bestimmten Reihenfolge durchgeführt werden.
 
 ### 1 - Die neue Domain auf Ihrem Webhosting deklarieren <a name="step1"></a>
@@ -63,7 +60,7 @@ Für Schritt 1 sind mehrere Bedingungen zu erfüllen:
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/#/web/hosting">Hosting-Pakete</ManagerLink>, und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
@@ -74,14 +71,12 @@ Für Schritt 1 sind mehrere Bedingungen zu erfüllen:
   </Tab>
 </Tabs>
 
-
 :::warning
 Wenn Sie die Optionen **Länder-IP** oder **CDN** auf Ihrer neuen Domain aktivieren, ermitteln Sie die richtige IP-Adresse mithilfe unserer Dokumentation: [Verzeichnis von IP-Adressen für die Webhosting Cluster](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip).
 
 Um die Nummer des Clusters zu finden, in dem sich Ihr Webhosting befindet, lesen Sie unsere Anleitung "[Webhosting - Cluster und Filer eines Webhostings finden](/guides/web-cloud/web-hosting/how-to-know-cluster-and-filer)".
 
 :::
-
 
 > **SSL-Zertifikate**
 >
@@ -98,7 +93,6 @@ Nach Schritt 1 ist eine Propagationszeit von 4 bis maximal 24 Stunden erforderli
 
 :::
 
-
 Wenn Ihre Website keine Datenbanken verwendet und/oder keine URL für Ihre Website umgeschrieben wird, muss diese bereits korrekt mit Ihrer neuen Domain angezeigt werden. Gehen Sie in diesem Fall direkt zu [Schritt 3](#step3) dieser Anleitung. Ist das nicht der Fall, fahren Sie mit Schritt 2 fort.
 
 ### 2 - Umschreiben der URLs Ihrer Website auf die neue Domain
@@ -111,7 +105,6 @@ Achtung, die in Schritt 2 beschriebenen Operationen sind äußerst sensibel und 
 Wir empfehlen Ihnen, vor jeder Aktion eine [Sicherung Ihres FTP-Speicherplatzes](/guides/web-cloud/web-hosting/ftp-save-and-backup) sowie eine [Sicherung Ihrer Datenbank](/guides/web-cloud/web-hosting/sql-database-export) abzurufen. So können Sie Ihre Website im Fall eines Fehlers wiederherstellen.
 
 :::
-
 
 Wir werden zwei Arten von Websites unterscheiden: 
 
@@ -146,7 +139,6 @@ Sobald Schritt 2 abgeschlossen ist, wird Ihre Website unter dem neuen Domainname
 
 :::
 
-
 ### 3 - Den alten Domainnamen entfernen <a name="step3"></a>
 
 Um “Duplicated Content” zu vermeiden und sobald Ihr neuer Domainname vollständig mit Ihrer Website funktioniert, müssen Sie die Angabe Ihres alten Domainnamens auf Ihrer Website mithilfe der Anleitung "[Wie kann ich einen Domainnamen von einer bestehenden Website trennen?](/guides/web-cloud/web-hosting/my-websites-detach-domain-existing-website)" entfernen.
@@ -155,7 +147,6 @@ Um “Duplicated Content” zu vermeiden und sobald Ihr neuer Domainname vollst�
 Denken Sie daran, sich um Ihr SSL *Sectigo EV*, *Sectigo DV* oder *Custom* Zertifikat zu kümmern, wie in [Schritt 1](#step1) beschrieben.
 
 :::
-
 
 Sobald Ihr alter Domainname von der Website getrennt ist, die auf Ihrem Webhosting-Service läuft, und falls er bei OVHcloud registriert ist, können Sie diesen mithilfe einer [sichtbaren dauerhaften 301-Weiterleitung](/guides/web-cloud/domains/redirect-domain-name) weiterleiten. Dies ermöglicht es Ihren Besuchern, automatisch zu Ihrer Website weitergeleitet zu werden, wobei Ihr neuer Domainname in der Adressleiste/URL ihres Browsers angezeigt wird.
 

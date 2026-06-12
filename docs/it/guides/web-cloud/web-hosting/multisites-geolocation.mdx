@@ -1,12 +1,11 @@
 ---
 title: Come geolocalizzare un sito Web in un paese specifico?
 description: Questa guida ti mostra come individuare un sito Web grazie agli indirizzi IP geolocalizzati disponibili sulle offerte di hosting condiviso OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Obiettivo
 
@@ -51,34 +50,33 @@ Per utilizzare l'opzione di geolocalizzazione via IP, clicca sulle schede qui so
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella pagina visualizzata, clicca sulla scheda <code className="action">I miei siti</code>.
-    
+
     <img className="thumbnail" alt="I miei siti" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Nel riquadro che appare, fai clic sul pulsante <code className="action">></code> a sinistra del nome del sito web desiderato per visualizzare i domini o sottodomini associati.
-    
+
     <img className="thumbnail" alt="Sito web" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Fai quindi clic sul pulsante <code className="action">⁝</code> a destra del nome del dominio o sottodominio desiderato, quindi su <code className="action">Modifica il dominio</code>.
-    
+
     <img className="thumbnail" alt="Opzioni domini associati" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 4">
     Nella nuova finestra, seleziona <code className="action">IP del Paese</code> e inserisci il menu a tendina.
-    
+
     <img className="thumbnail" alt="geolocation option" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/country-ip-selection.png" loading="lazy" />
 
 Scegli l'indirizzo IP del Paese per il quale vuoi geolocalizzare il tuo sito, tra i 12 Paesi proposti: *Repubblica Ceca, Finlandia, Francia, Germania, Irlanda, Italia, Lituania, Paesi Bassi, Polonia, Portogallo, Spagna, Regno Unito*.
-    
+
     Clicca su <code className="action">Continua</code> e poi su <code className="action">Conferma</code> dalla finestra riepilogativa.
   </Tab>
 </Tabs>
-
 
 :::info
 Una volta completati gli step precedenti e se la zona DNS attiva del dominio è completamente gestita nello <ManagerLink to="/">Spazio Cliente OVHcloud</ManagerLink>, il record di tipo A nella zona DNS del dominio verrà modificato automaticamente. Per verificare che l'indirizzo IP sia stato aggiornato correttamente, consulta la guida su [modifica della zona DNS OVHcloud](/guides/web-cloud/domains/dns-zone-edit).
@@ -88,7 +86,6 @@ In caso contrario, sarà necessario effettuare la modifica manualmente presso il
 In entrambi i casi, un periodo di propagazione da **4 a 24 ore** dopo la modifica sarà necessario per renderla pienamente efficace e visibile su Internet.
 
 :::
-
 
 ## Per saperne di più
 

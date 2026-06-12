@@ -1,14 +1,13 @@
 ---
 title: Ripristinare i dati dello spazio di storage di un hosting Web
 description: Questa guida ti mostra come recuperare un file o l’intero contenuto dello spazio di storage di un hosting Web OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Obiettivo
 
@@ -20,7 +19,6 @@ I backup proposti da OVHcloud per gli hosting condivisi sono non contrattuali. I
 Quando effettui un backup di sicurezza per il tuo sito e utilizzi un database, fai anche un backup del tuo database. Consulta la guida per [recuperare il backup del database di un hosting Web](/guides/web-cloud/web-hosting/sql-database-export).
 
 :::
-
 
 **Questa guida ti mostra come ripristinare un file o l’intero contenuto dello storage del tuo hosting Web OVHcloud.**
 
@@ -72,26 +70,24 @@ I nostri sistemi installano il backup sul tuo hosting prima di eliminare il cont
 
 :::
 
-
 Per verificare la quota utilizzata sull'hosting, clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **2** passi.
 
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, poi seleziona l'hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nel riquadro **Informazioni generali**, trovi la dicitura **Spazio disco**.
-    
+
     <img className="thumbnail" alt="disk_space" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/find-disk-space.png" loading="lazy" />
 
 Lo spazio di storage utilizzato compare sotto questa voce.Se lo spazio di storage FTP utilizzato è superiore alla metà dello spazio di storage FTP totale della tua offerta di hosting, recupera in locale alcuni elementi voluminosi del tuo sito Web (per farlo, puoi utilizzare [Filezilla](/guides/web-cloud/web-hosting/ftp-filezilla-user-guide)).
-    
+
     Eliminali dallo spazio di storage FTP. Questa operazione diminuirà la dimensione dello spazio di storage FTP utilizzato e potrai avviare il ripristino dallo Spazio Cliente OVHcloud.
   </Tab>
 </Tabs>
-
 
 Una volta scelto il metodo di ripristino più adatto alle tue esigenze, prosegui nella lettura di questa guida nel paragrafo corrispondente:
 
@@ -107,7 +103,6 @@ Perché questo metodo funzioni è necessario che i diritti `chmod` alla radice d
 
 :::
 
-
 :::info
 **Sito in modalità manutenzione**
 
@@ -121,28 +116,27 @@ In questo caso:
 
 :::
 
-
 Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **5** passi.
 
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, poi seleziona l'hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella nuova pagina clicca sulla scheda <code className="action">FTP - SSH</code>.
-    
+
     <img className="thumbnail" alt="FTP -SSH" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Clicca sul pulsante <code className="action">Ripristina un backup</code>.
-    
+
     <img className="thumbnail" alt="backupftp" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/restore-backup.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 4">
     Nella nuova finestra è possibile selezionare la data di ripristino dal menu a tendina:
-    
+
     |Data|Momento del backup|
     |---|---|
     |g-1|Il giorno stesso alle 00:01|
@@ -150,24 +144,22 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **5** pa
     |g-3|Due giorni prima alle 00:01|
     |1 settimana|La domenica precedente alle 01:00|
     |2 settimane|La domenica di due settimane prima alle 01:00|
-    
+
     Una volta selezionata la data, clicca su <code className="action">Seguente</code>. 
   </Tab>
   <Tab label="Passaggio 5">
     <img className="thumbnail" alt="backupftp" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/restore-backup-step-1.png" loading="lazy" />
 
 Assicurati che questa azione non comporti la perdita di dati, ad esempio di un file archiviato sullo spazio di storage dopo la data di ripristino selezionata. Come già precisato, il backup sovrascriverà i dati presenti nello storage.
-    
+
     Clicca su <code className="action">Conferma</code> per avviare l’operazione.
   </Tab>
 </Tabs>
-
 
 :::info
 Il ripristino automatico può richiedere da qualche minuto a qualche ora. Se dura **più di 24 ore**, contatta [il supporto OVHcloud](https://www.ovhcloud.com/it/support-levels/).
 
 :::
-
 
 ### Ripristina un file da un software o un’interfaccia Web <a name="viainterface"></a>
 
@@ -177,7 +169,6 @@ Questa operazione prevede diversi step. Assicurati di avere a disposizione la pa
 Questa soluzione richiede conoscenze del software o dell’interfaccia utilizzati. In questa guida puoi trovare informazioni utili per effettuare l’operazione ma, in caso di necessità, ti consigliamo di rivolgerti a uno specialista del settore. 
 
 :::
-
 
 #### 1 - Scegliere il software o l’interfaccia Web da utilizzare
 
@@ -216,7 +207,6 @@ Le copie di backup sono accessibili solo tramite una connessione FTP.
 
 :::
 
-
 #### 3 - Recuperare i file
 
 A questo punto recupera i file da ripristinare esplorando il contenuto del tuo spazio di storage. L’operazione differisce a seconda del software o dell’interfaccia utilizzati.
@@ -228,7 +218,6 @@ Se utilizzi un client per accedere allo spazio di storage FTP, per effettuare qu
 
 :::
 
-
 #### 4 - Ripristinare i file
 
 Dopo aver recuperato i file, accedi di nuovo allo storage senza aggiungere suffissi al nome utente FTP: ti connetterai al contenuto corrente del tuo storage e non a un backup precedente.
@@ -239,7 +228,6 @@ A questo punto non ti resta che ripristinare i file: recuperali esplorando il co
 Se utilizzi un client per accedere allo spazio di storage FTP, per effettuare questa operazione è necessario consultare la documentazione ufficiale del client.
 
 :::
-
 
 ## Per saperne di più
 

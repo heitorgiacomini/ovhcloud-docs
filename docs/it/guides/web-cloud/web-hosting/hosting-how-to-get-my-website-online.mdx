@@ -1,12 +1,11 @@
 ---
 title: Mettere online un sito Internet su un hosting Web
 description: Questa guide ti mostra come pubblicare un sito su un hosting Web OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Obiettivo
 
@@ -57,7 +56,6 @@ In base all’opzione scelta, hai quindi due possibilità:
 - **utilizzare i nostri moduli in 1 click**: per maggiori informazioni, consulta la guida "[Installare i moduli in 1 click OVHcloud](/guides/web-cloud/web-hosting/cms-install-1-click-modules)".
 
 - **non utilizzare i nostri moduli in 1 click**: in questo caso, l’installazione del sito deve essere eseguita manualmente sull’hosting. Questa guida contiene informazioni utili per effettuare questa operazione ma, in caso di necessità, ti consigliamo di rivolgerti a un webmaster.
- 
 
 :::warning
 OVHcloud mette a disposizione i servizi ma non si occupa della loro configurazione e gestione; garantirne quotidianamente il corretto funzionamento è quindi responsabilità dell’utente. 
@@ -65,7 +63,6 @@ OVHcloud mette a disposizione i servizi ma non si occupa della loro configurazio
 Questa guida ti aiuta a eseguire le operazioni necessarie alla pubblicazione dei tuoi contenuti. Tuttavia, in caso di difficoltà o dubbi, ti consigliamo di contattare un fornitore specializzato.  Per maggiori informazioni consulta la sezione “Per saperne di più”.
 
 :::
-
 
 ### 2 - Carica i file del sito nello spazio di storage
 
@@ -91,25 +88,24 @@ Se hai necessità di recuperarli, clicca sulle schede qui sotto per visualizzare
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, poi seleziona l'hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella nuova pagina clicca sulla scheda <code className="action">FTP - SSH</code>.
-    
+
     <img className="thumbnail" alt="FTP -SSH" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Visualizzi le informazioni associate allo spazio di storage. le informazioni di accesso allo spazio di storage.
-    
+
     <img className="thumbnail" alt="FTP - SSH tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/tab-pro.png" loading="lazy" />
 
 In caso di necessità, consulta la guida [Accedere allo spazio di storage di un hosting Web](/guides/web-cloud/web-hosting/ftp-connection).
-    
+
     Se hai smarrito la password, segui la procedura descritta nella guida [Modificare la password di un utente FTP](/guides/web-cloud/web-hosting/ftp-change-password).
   </Tab>
 </Tabs>
-
 
 Una volta recuperati i dati potrai connetterti allo spazio di storage in due modi diversi, utilizzando: 
 
@@ -137,19 +133,18 @@ Questa sezione si applica alla <ManagerLink to="/beta/#/">nuova versione dello S
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Seleziona la scheda <code className="action">I miei siti</code>. Nella tabella che appare, per il sito web desiderato, guarda la <code className="action">Cartella di root</code> che appare.
-    
+
     <img className="thumbnail" alt="Installazione sito" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/root-folders.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Pubblica quindi i file del sito web in quest'ultimo.
   </Tab>
 </Tabs>
-
 
 Potrebbe capitare che tu trovi sul tuo spazio di archiviazione un file intitolato "index.html". Quest'ultimo può essere stato creato da OVHcloud all'installazione del tuo hosting web per visualizzare una pagina predefinita sul tuo sito web. Se è così, non dimenticarti di eliminarlo quando carichi i tuoi file.
 
@@ -158,14 +153,12 @@ Un file "index.php" sostituirà sempre il file "index.html". Pertanto, quando en
 
 :::
 
-
 ### 3 - Associa il sito Web a un database
 
 :::info
 Se il tuo sito Internet non ha un database associato, salta questo passaggio.
 
 :::
-
 
 Oggi, la maggior parte dei sistemi di gestione del contenuto (CMS), come WordPress e Joomla!, utilizza un database per memorizzare elementi detti dinamici, come commenti o articoli. Una connessione tra i file del sito web e il database è quindi essenziale affinché il sito web possa funzionare correttamente. Per farlo, esiste un file di configurazione che contiene le informazioni del database che permette questa connessione.
 
@@ -184,21 +177,20 @@ Per creare un nuovo database in OVHcloud, clicca sulle schede qui sotto per visu
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> e seleziona l'hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Seleziona la scheda <code className="action">Database</code>.
-    
+
     <img className="thumbnail" alt="Databases" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/databases.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Clicca su <code className="action">Crea un database</code> o, se non compare, su <code className="action">Azioni</code> > <code className="action">Crea un database</code>. Inserisci le informazioni richieste.
-    
+
     <img className="thumbnail" alt="Installazione sito" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/databases/tab.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 #### 3.3. Importare il database esistente 
 
@@ -209,7 +201,7 @@ L’importazione può essere effettuata in diversi modi. OVHcloud ne propone una
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> e seleziona l’hosting Web interessato.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
@@ -219,7 +211,6 @@ L’importazione può essere effettuata in diversi modi. OVHcloud ne propone una
     Clicca su <code className="action">...</code> in corrispondenza del tuo database e poi su <code className="action">Importa un file</code>.
   </Tab>
 </Tabs>
-
 
 #### 3.4. Collegare il sito web al database
 

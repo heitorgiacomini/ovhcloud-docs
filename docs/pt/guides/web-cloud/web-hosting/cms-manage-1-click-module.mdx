@@ -1,12 +1,11 @@
 ---
 title: Como gerir o seu módulo em 1 clique?
 description: Saiba como gerir o módulo 1 clique na Área de Cliente OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objetivo
 
@@ -20,7 +19,6 @@ A responsabilidade sobre a configuração e a gestão dos serviços que a OVHclo
 Este manual fornece as instruções necessárias para realizar as operações mais habituais. No entanto, se encontrar dificuldades, recomendamos que recorra a um [prestador de serviços especializado](https://partner.ovhcloud.com/pt/directory/) e/ou que contacte o editor do serviço. Não poderemos proporcionar-lhe assistência técnica. Para mais informações, aceda à secção [Quer saber mais](#go-further)?
 
 :::
-
 
 ## Requisitos
 
@@ -47,9 +45,9 @@ Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e selecione o seu alojamento web.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Clique no separador <code className="action">Módulos "1 clique"</code>.
   </Tab>
   <Tab label="Etapa 2">
@@ -57,12 +55,10 @@ Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
   </Tab>
 </Tabs>
 
-
 :::info
 Se o website não for apresentado corretamente após esta operação, consulte os guias OVHcloud relativos aos alojamentos partilhados na secção [Diagnóstico](/guides/web-cloud/web-hosting/overview).
 
 :::
-
 
 ### Aceder à interface de administrador
 
@@ -71,16 +67,15 @@ Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e selecione o seu alojamento web.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Clique no separador <code className="action">Módulos "1 clique"</code>.
   </Tab>
   <Tab label="Etapa 2">
     Clique no botão <code className="action">...</code> à direita da linha relativa ao módulo e, a seguir, em <code className="action">Aceder à interface de administração do módulo</code>.
   </Tab>
 </Tabs>
-
 
 ### Encontrar o identificador de administrador
 
@@ -89,7 +84,7 @@ Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e selecione o seu alojamento web.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
@@ -99,7 +94,6 @@ Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
     Também pode procurar o e-mail recebido durante a criação do módulo. Na sua <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>, clique no seu nome no canto superior direito do ecrã e, no menu que aparecer, clique em <code className="action">E-mails de serviço</code>.
   </Tab>
 </Tabs>
-
 
 ### Modificar a palavra-passe do seu módulo <a name="password-change"></a>
 
@@ -124,7 +118,6 @@ O backup dos seus dados faz parte das operações essenciais à [segurança dos 
 
 :::
 
-
 #### 1 - Identificar a base de dados do módulo <a name="step1"></a>
 
 Para eliminar o módulo 1 clique, deve começar por identificar a sua base de dados de forma **segura**.
@@ -134,9 +127,9 @@ Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e selecione o seu alojamento web.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Clique no separador <code className="action">Bases de dados</code>.
   </Tab>
   <Tab label="Etapa 2">
@@ -146,7 +139,6 @@ Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
     Caso contrário, dirija-se ao separador <code className="action">Meus sites</code>. Registe o nome da `Pasta raiz` presente na linha do site em questão: trata-se do diretório onde se encontram os ficheiros que constituem o seu módulo 1 clique no servidor FTP.
   </Tab>
 </Tabs>
-
 
 Aceda ao [espaço FTP](/guides/web-cloud/web-hosting/ftp-connection) do seu alojamento. Abra a `Pasta raiz` encontrada anteriormente no separador <code className="action">Meus sites</code> e procure o ficheiro de configuração do seu módulo:
 
@@ -166,13 +158,12 @@ A eliminação do módulo 1 clique e da base de dados irá também resultar **na
 
 :::
 
-
 Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e selecione o seu alojamento web.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
@@ -180,22 +171,21 @@ Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
   </Tab>
   <Tab label="Etapa 3">
     Clique no botão <code className="action">...</code> à direita da linha que designa o seu módulo e, a seguir, no comando <code className="action">Eliminar o módulo</code>.
-    
+
     :::tip[Success]
     Não encontra o botão <code className="action">Eliminar o módulo</code>? Ou deseja apenas eliminar ficheiros do seu módulo?
-    
+
     Consulte os nossos manuais:
-    
+
     - [Aceder ao espaço de armazenamento FTP do alojamento web](/guides/web-cloud/web-hosting/ftp-connection).
     - [Tutorial - Utilizar o FileZilla com o seu alojamento OVHcloud](/guides/web-cloud/web-hosting/ftp-filezilla-user-guide).
-    
+
     <iframe class="video" width="560" height="315" src="https://www.youtube-nocookie.com/embed/LHpsuvyNFtQ?si=4655K8lQQpkE2YNG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
     :::
 
   </Tab>
 </Tabs>
-
 
 :::warning
 A eliminação do módulo 1 clique **não levará automaticamente à eliminação da base de dados**. Se ativar a instalação de um novo CMS sem eliminar previamente a base de dados do anterior (e o alojamento não permitir a criação automática de uma nova base de dados), aparecerá a mensagem "[Ocorreu um erro aquando do carregamento das informações (You need at least one free database)](/guides/web-cloud/web-hosting/diagnostic-errors-module1clic#ocorreu-um-erro-aquando-do-carregamento-das-informacoes-you-need-at-least-one-free-database)" na sua Área de Cliente.
@@ -204,15 +194,14 @@ Se já atingiu o número máximo de bases de dados permitido pela sua [solução
 
 :::
 
-
 Para terminar a eliminação do módulo, clique nos separadores abaixo para visualizar cada uma das **3** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e selecione o seu alojamento web.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Clique no separador <code className="action">Bases de dados</code>.
   </Tab>
   <Tab label="Etapa 2">
@@ -222,7 +211,6 @@ Para terminar a eliminação do módulo, clique nos separadores abaixo para visu
     Antes de reiniciar a instalação de um novo módulo, verifique que as tarefas de eliminação solicitadas anteriormente foram finalizadas através do separador <code className="action">Operações em curso</code>.
   </Tab>
 </Tabs>
-
 
 ### Boas práticas
 

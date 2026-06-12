@@ -1,12 +1,11 @@
 ---
 title: "Comment modifier le dossier racine d'un site web existant ?"
 description: Découvrez comment modifier le dossier racine déclaré pour un site web déjà existant sur votre hébergement web depuis votre espace client OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objectif
 
@@ -28,7 +27,6 @@ Si vous n'avez pas encore créé le site web concerné sur votre hébergement we
 Si votre site web dispose d'une configuration avec Git, consultez préalablement notre guide « [Configurer et utiliser Git avec son hébergement web OVHcloud](/guides/web-cloud/web-hosting/git-integration-webhosting) » pour supprimer l'association avec Git **avant** de poursuivre. En effet, la modification du dossier racine déclaré pour un site web est indisponible si votre site web est configuré avec Git. Si tel était le cas, le changement de dossier racine perturberait l'association avec Git.
 
 :::
-
 
 ## Prérequis
 
@@ -64,34 +62,32 @@ En effet, la suite de ce guide décrit uniquement la procédure permettant de mo
 
 :::
 
-
 Cliquez sur les onglets ci-dessous pour afficher successivement chacune des **4** étapes.
 
 <Tabs>
   <Tab label="Étape 1">
     Accédez à la page <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hébergements</ManagerLink>, puis choisissez l'hébergement web concerné.
-    
+
     <img className="thumbnail" alt="Hébergements" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 2">
     Sur la page qui s'affiche, cliquez sur l'onglet <code className="action">Mes sites</code>.
-    
+
     <img className="thumbnail" alt="Mes sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 3">
     Dans le tableau qui apparaît, cliquez sur le bouton <code className="action">⁝</code> situé à droite du site web concerné, puis sur <code className="action">Modifier le site</code>.
-    
+
     <img className="thumbnail" alt="Options du site" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 4">
     Dans la fenêtre qui s'ouvre et dans le formulaire **Dossier racine**, remplacez l'ancien dossier racine par le nouveau.
-    
+
     <img className="thumbnail" alt="Modifier le dossier racine" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/edit-site-folder.png" loading="lazy" />
-    
+
     Cliquez ensuite sur <code className="action">Confirmer</code>.
   </Tab>
 </Tabs>
-
 
 ## Aller plus loin
 

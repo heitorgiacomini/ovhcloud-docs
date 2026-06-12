@@ -1,7 +1,7 @@
 ---
 title: Erstellung einer Subdomain
 description: Erfahren Sie hier, wie Sie eine Subdomain bei OVHcloud erstellen und nutzen
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
@@ -14,7 +14,7 @@ Bei der Verwendung Ihres Domainnamens erstellen und konfigurieren Sie **Subdomai
 Zum Beispiel ist *www.ovhcloud.com* eine Subdomain des Domainnamens *ovhcloud.com*.
 
 Sie können für einen Domainnamen eine unbegrenzte Anzahl an Subdomains erstellen.
-  
+
 **Diese Anleitung erklärt Besonderheiten von Subdomains und wie Sie Subdomains bei OVHcloud erstellen.**
 
 ## Voraussetzungen
@@ -22,7 +22,7 @@ Sie können für einen Domainnamen eine unbegrenzte Anzahl an Subdomains erstell
 - Sie verwalten mindestens einen [Domainnamen](https://www.ovhcloud.com/de/domains/).
 - Sie verfügen über eine aktive DNS-Zone für Ihren Domainnamen. Bei Bedarf lesen Sie unsere Anleitung [OVHcloud DNS-Zone erstellen](/guides/web-cloud/domains/dns-zone-create).
 - Sie verfügen über ausreichende Rechte zur Verwaltung aller betroffenen Dienste. Weitere Informationen finden Sie in unserer Anleitung zur [Verwaltung der Kontakte Ihrer Dienste](/guides/account-and-service-management/account-information/managing-contacts).
-  
+
 {/* CP-NAV-START:web-domains */}
 ---
 
@@ -61,7 +61,6 @@ Sie können für einen Domainnamen eine unbegrenzte Anzahl an Subdomains erstell
 
 <summary>Wie entsteht die Zusammensetzung eines Domainnamens?</summary>
 
-
 Ein **Domainname** besteht aus Leveln. Diese Level sind in der Regel durch ein `.` (mit Ausnahme einiger **Endungen** der *ersten Ebene* wie *.co.uk*, *.gouv.fr* oder *.notaires.fr*):
 
 - **T**op **L**evel **D**omain (**TLD**): Stellt die Domains des *Top Level* dar. Sie werden üblicherweise als **Endungen** bezeichnet. Derzeit gibt es 4 Arten von Top-Level-Domains: 
@@ -77,11 +76,9 @@ Ein **Domainname** besteht aus Leveln. Diese Level sind in der Regel durch ein `
 
 </details>
 
-
 <details>
 
 <summary>Was ist eine Subdomain?</summary>
-
 
 Ein [Domainname](https://www.ovhcloud.com/de/domains/) kann mehreren Arten von Diensten zugeordnet werden (E-Mail, Website, etc.).
 
@@ -113,7 +110,6 @@ Wenn Sie beispielsweise über die Domain *example.com* verfügen, können Sie fo
 
 </details>
 
-
 ### Wie erstelle ich eine Subdomain? <a name="subdomain-creation"></a>
 
 Alle [Domainnamen](https://www.ovhcloud.com/de/domains/) benötigen eine **DNS-Zone**. Die DNS-Zone ist die Konfigurationsdatei eines Domainnamens, die sich aus "DNS-Einträgen" zusammensetzt. Das sind Datensätze, die dem Domainnamen verschiedene Dienste und Funktionen zuordnen.
@@ -137,7 +133,6 @@ Die aktive DNS-Zone Ihrer Domainname wird nicht zwingend bei demselben Anbieter 
 2: Wenn Ihre Domainname nicht bei OVHcloud registriert ist, kontaktieren Sie den aktuellen *Registrar* Ihrer Domainname, um herauszufinden, wo ihre aktive DNS-Zone gehostet ist. Beachten Sie, dass Sie unsere Anleitung „[Domainname zu OVHcloud transferieren](/guides/web-cloud/domains/transfer-incoming-generic-domain)“ verwenden können, um diese Aktion durchzuführen.
 
 :::
-
 
 Wenn die für Ihre Domainname deklarierten DNS-Server eine der folgenden Formen haben:
 
@@ -168,14 +163,12 @@ Aus Sicherheitsgründen müssen Sie der Subdomain auch den Zugriff auf den "Ziel
 
 :::
 
-
 Im nächsten Teil erfahren Sie, wie Sie einer Subdomain den Zugriff auf die verschiedenen von OVHcloud angebotenen Dienste im Universum Web Cloud (Webhosting, Exchange Server etc.) erlauben.
 
 :::warning
 Wenn Sie eine Subdomain für einen Dienst einrichten möchten, der nicht bei OVHcloud gehostet wird, können wir Ihnen diesbezüglich keine Unterstützung bieten. Bitte wenden Sie sich an Ihren Dienstleister, um mit der Konfiguration fortzufahren. 
 
 :::
-
 
 ### Ihre Subdomain mit einem OVHcloud Dienst verbinden, autorisieren und konfigurieren <a name="link-subdomain"></a>
 
@@ -196,7 +189,6 @@ Das Hinzufügen eines Domainnamens oder Subdomain zu einem der Webseiten Ihres W
 Bei einer Subdomain wird das gleiche Token nicht berücksichtigt und muss nicht für die Subdomain, sondern für den Domainnamen hinzugefügt werden. Fügen Sie in diesem Fall zusätzlich das Token als DNS-Eintrag vom Typ TXT für den Domainnamen in der aktiven DNS-Zone Ihrer Domainname hinzu.
 
 :::
-
 
 <Region zones={['eu', 'ca']}>
 

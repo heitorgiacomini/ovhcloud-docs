@@ -1,16 +1,13 @@
 ---
 title: Hosting WWW - Środowisko, wersja PHP, .ovhconfig
 description: Dowiedz się, jak zmienić środowisko uruchomieniowe, wersję PHP, zaporę aplikacyjną, silnik, tryb i .ovhconfig na hostingu WWW
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
-
 
 ## Wprowadzenie
 
@@ -36,7 +33,6 @@ Są one dostępne domyślnie w "katalogu głównym FTP" przestrzeni dyskowej FTP
 Zawierają one wartości wyżej wymienionych elementów.
 
 :::
-
 
 Zmiana konfiguracji hostingu w <ManagerLink to="/">Panelu klienta OVHcloud</ManagerLink> lub zmiana wartości w pliku ".ovhconfig" jest tym samym zadaniem.
 
@@ -82,7 +78,6 @@ Modyfikacja co najmniej jednego z tych elementów może mieć wpływ na wyświet
 
 :::
 
-
 #### 1.1 - Środowiska uruchomieniowe <a name="runtime-environment"></a>
 
 Środowiska wykonawcze zawierają zestaw języków programowania. W zależności od wybranego środowiska wykonawczego, języki są dostępne w mniej lub bardziej zaawansowanych wersjach. Celem tych środowisk jest umożliwienie Ci poprawnego uruchamiania plików, z których składa się Twoja strona WWW, zgodnie z Twoimi potrzebami technicznymi.
@@ -106,7 +101,6 @@ Poniżej znajdziesz elementy zawarte w naszych różnych środowiskach wykonawcz
 
 :::
 
-
 #### 1.2 - Wersje PHP <a name="php-versions"></a>
 
 PHP jest dynamicznym językiem programowania używanym do tworzenia stron WWW. W zależności od wieku Twojej strony WWW, wykonywanych aktualizacji oraz niektórych zmiennych niezbędnych do prawidłowego działania Twojej strony, możesz być zmuszony do zmiany wersji PHP, której używa.
@@ -125,7 +119,6 @@ Niektóre wersje PHP działają tylko z niektórymi środowiskami wykonawczymi. 
 W związku z faktem, że niektóre funkcjonalności mogą zniknąć w kolejnych wersjach, **przed wprowadzeniem jakichkolwiek zmian upewnij się, że nowa, wybrana wersja PHP jest kompatybilna ze stroną WWW.**
 
 :::
-
 
 OVHcloud zapewnia instalację najnowszych wersji PHP na swoich serwerach, jednak upewnij się, że Twoja strona WWW jest **zawsze aktualna** i kompatybilna z najnowszymi wersjami PHP. W zależności od rodzaju Twojej strony WWW, istnieją dwie metody weryfikacji jej kompatybilności:
 
@@ -148,20 +141,19 @@ W razie potrzeby sprawdź wersję PHP aktualnie używaną przez Twój hosting na
 <details>
 <summary>W Panelu klienta OVHcloud</summary>
 
-
 Kliknij poniższe zakładki, aby wyświetlić kolejne **2** kroki.
 
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, następnie wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
     W zakładce <code className="action">Informacje ogólne</code> znajdź wersję poniżej *Ogólna wersja PHP*.
-    
+
     <img className="thumbnail" alt="phpversion" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/change-php-version-step1.png" loading="lazy" />
-    
+
     :::info
     Jeśli pojawiło się niebieskie kółko aktualizacji, odczekaj kilka minut, aż aktualizacja wersji się zakończy.
 
@@ -170,13 +162,10 @@ Kliknij poniższe zakładki, aby wyświetlić kolejne **2** kroki.
   </Tab>
 </Tabs>
 
-
 </details>
-
 
 <details>
 <summary>Za pośrednictwem skryptu</summary>
-
 
 Utwórz skrypt **.php** zawierający tylko następujący kod:
 
@@ -193,9 +182,7 @@ Musisz obowiązkowo użyć pliku ".ovhconfig".
 
 :::
 
-
 </details>
-
 
 #### 1.3 - Frameworki PHP <a name="php-runtime"></a>
 
@@ -221,7 +208,6 @@ Jeśli korzystasz z modułów płatności, włączanie zapory aplikacyjnej może
 
 :::
 
-
 #### 1.5 - Tryby wykonywania <a name="runtime-mod"></a>
 
 Tryby wykonywania umożliwiają zarządzanie pamięcią podręczną plików statycznych Twojej strony WWW (np. obrazów), jak również przetwarzanie błędów PHP (przydatne, gdy strona WWW wyświetla na przykład pustą stronę). 
@@ -238,7 +224,6 @@ W przypadku wersji 7.1 PHP i wyższych błędy wyświetlają się na stronie WWW
 
 :::
 
-
 Teraz już znasz różne modyfikowalne ustawienia Twojego hostingu WWW OVHcloud, poznaj obydwie metody modyfikacji tych ustawień.
 
 ### 2 - Metoda 1: modyfikacja konfiguracji hostingu w Panelu klienta OVHcloud <a name="setting-ovh-manager"></a>
@@ -248,27 +233,26 @@ Przypominamy, że zmiana co najmniej jednego z tych elementów może mieć wpły
 
 :::
 
-
 Kliknij poniższe zakładki, aby wyświetlić kolejne **3** kroki.
 
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, następnie wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
     W ramce **Konfiguracja** znajduje się wzmianka **Ogólna wersja PHP**.
-    
+
     <img className="thumbnail" alt="Global PHP version" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/modify-hosting-configuration.png" loading="lazy" />
 
 Z prawej strony wzmianki **Ogólna wersja PHP** znajdującej się prawie na środku strony, kliknij przycisk <code className="action">...</code>, a następnie <code className="action">Zmień konfigurację</code>.
-    
+
     :::info
     Jeśli przycisk <code className="action">Zmień konfigurację</code> jest wyszarzony, możliwe jest, że trwa weryfikacja **Ogólna wersja PHP**. W takim przypadku obok wersji wyświetli się okrągły niebieski symbol oznaczający, że weryfikacja jest w toku. Odczekaj kilka minut, aby przycisk <code className="action">Zmień konfigurację</code> stał się znowu dostępny.
-    
+
     Jeśli opcja **Ogólna wersja PHP** nie wyświetla się w Twoim <ManagerLink to="/">Panelu klienta OVHcloud</ManagerLink>, sprawdź, czy plik *.ovhconfig* znajduje się w katalogu głównym FTP Twojego hostingu OVHcloud.
-    
+
     Wszystkie informacje dotyczące pliku *.ovhconfig* znajdziesz w trzeciej części "[Metoda 2: Modyfikacja konfiguracji hostingu WWW z poziomu pliku ".ovhconfig"](#setting-ovhconfig)" niniejszego przewodnika.
 
     :::
@@ -276,24 +260,22 @@ Z prawej strony wzmianki **Ogólna wersja PHP** znajdującej się prawie na śro
   </Tab>
   <Tab label="Krok 3">
     W oknie, które się pojawi, masz do wyboru dwie opcje. Wybierz opcję odpowiadającą operacji, którą chcesz przeprowadzić, następnie kliknij <code className="action">Dalej</code>.
-    
+
     |Wybór|Szczegóły|
     |---|---|
     |`Przywróć poprzednią konfigurację`|Po zaznaczeniu tej opcji wybierz konfigurację, którą chcesz przywrócić obok opcji `Wybór poprzedniej konfiguracji`. Opcja ta może być niedostępna, jeśli nie przeprowadzałeś zmian konfiguracji w przeszłości.|
     |`Zmień bieżącą konfigurację`|Po zaznaczeniu tej opcji wybierz spośród poszczególnych pól modyfikacje do wprowadzenia w danej konfiguracji. W razie potrzeby wróć do pierwszej części niniejszego przewodnika "[Opis ustawień konfiguracji dostępnych na hostingu WWW OVHcloud](#all-parameters)".|
-    
+
     :::info
     Zmiana środowiska uruchomieniowego hostingu automatycznie resetuje sesje PHP.
 
     :::
 
-    
     Kiedy wszystko jest gotowe, kliknij <code className="action">Zatwierdź</code>, aby zastosować modyfikację. Odczekaj kilka chwil, aż zmiany staną się widoczne.
-    
+
     <img className="thumbnail" alt="HostingConfiguration" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/modify-hosting-configuration-step-1-and-2.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 ### 3 - Metoda 2: zmiana konfiguracji hostingu WWW z poziomu pliku ".ovhconfig" <a name="setting-ovhconfig"></a>
 
@@ -306,23 +288,22 @@ Kliknij poniższe zakładki, aby wyświetlić kolejne **3** kroki.
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, następnie wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
     Na stronie, która się wyświetli kliknij zakładkę <code className="action">FTP - SSH</code>.
-    
+
     <img className="thumbnail" alt="FTP - SSH" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 3">
     Znajdziesz tam informacje potrzebne do zalogowania się.
-    
+
     <img className="thumbnail" alt="FTP - SSH tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/tab-perso.png" loading="lazy" />
 
 Jeśli chodzi o hasło użytkownika FTP, zapoznaj się z instrukcjami zawartymi w przewodniku OVHcloud "[Zmiana hasła do konta FTP](/guides/web-cloud/web-hosting/ftp-change-password)".
   </Tab>
 </Tabs>
-
 
 #### 3.2 - Odzyskaj lub utwórz plik ".ovhconfig"
 
@@ -351,7 +332,6 @@ container.image=stable64
 Jeśli właśnie utworzyłeś plik ".ovhconfig", skopiuj powyższy kod do pliku i kontynuuj lekturę tego przewodnika.
 
 :::
-
 
 Wpisz wartości zmiennych odpowiadające konfiguracji, którą chcesz zastosować na Twoim hostingu.
 
@@ -444,13 +424,12 @@ Utwórz plik ".ovhconfig" zawierający żądaną wersję PHP dla danej lub danyc
 
 :::
 
-
 ## Sprawdź również
 
 [Logowanie do przestrzeni dyskowej hostingu WWW](/guides/web-cloud/web-hosting/ftp-connection)
 
 W przypadku wyspecjalizowanych usług (pozycjonowanie, rozwój, etc.) skontaktuj się z [partnerami OVHcloud](https://partner.ovhcloud.com/pl/directory/).
- 
+
 Jeśli chcesz otrzymywać wsparcie w zakresie konfiguracji i użytkowania Twoich rozwiązań OVHcloud, zapoznaj się z naszymi [ofertami pomocy](https://www.ovhcloud.com/pl/support-levels/).
- 
+
 Dołącz do [grona naszych użytkowników](https://community.ovhcloud.com/).

@@ -1,14 +1,11 @@
 ---
 title: Ospitare più siti su uno stesso hosting
 description: Questa guida ti mostra come ospitare diversi siti web sulla tua offerta di hosting web
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
-
 
 ## Obiettivo
 
@@ -22,7 +19,6 @@ Desideri aggiungere un nuovo sito web al tuo hosting web?
 Se hai già creato il sito web desiderato sul tuo hosting web e desideri associargli un nuovo nome di dominio o sottodominio, consulta **direttamente** [questa guida](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website).
 
 :::
-
 
 :::info
 Questa procedura si applica alla <ManagerLink to="/beta/#/">nuova versione dello Spazio Cliente OVHcloud</ManagerLink>, attualmente disponibile in beta. Per seguirla, passa a questa interfaccia dal tuo Spazio Cliente abituale.
@@ -57,7 +53,6 @@ Questa procedura si applica alla <ManagerLink to="/beta/#/">nuova versione dello
 <details>
 <summary>Aggiungere un sito web con un nome di dominio gestito dal tuo Spazio Cliente OVHcloud</summary>
 
-
 Questa parte è applicabile **solo** se il nome di dominio (e/o la sua zona DNS attiva) con cui desideri creare il tuo sito web si trova **nel tuo Spazio Cliente OVHcloud**.
 
 Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** passi.
@@ -65,68 +60,66 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** pa
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella pagina visualizzata, clicca sulla scheda <code className="action">I miei siti</code>.
-    
+
     <img className="thumbnail" alt="I miei siti" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Nella parte alta a sinistra della tabella visualizzata, fai clic sul pulsante <code className="action">Aggiungi un sito</code>.
-    
+
     <img className="thumbnail" alt="My websites tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 4">
     Seleziona l'opzione <code className="action">Associa un dominio OVHcloud esistente</code> e fai clic su <code className="action">Continua</code>.
-    
+
     Nel campo **Nome del sito - obbligatorio**, inserisci il nome che desideri utilizzare per il tuo sito web. Questo nome sarà visibile unicamente nell'etichetta <code className="action">I miei siti</code> del tuo hosting web.
-    
+
     Successivamente, seleziona il nome di dominio da associare nel menu a discesa **Nome di dominio - obbligatorio** che appare in basso.
-    
+
     :::info
     Per aggiungere un sottodominio, seleziona prima il nome di dominio nella lista (ad esempio: domain.tld). Seleziona quindi la casella <code className="action">Crea un sottodominio</code>. Un campo di testo apparirà per permetterti di inserire il sottodominio (ad esempio: **sub**.domain.tld).
-    
+
     **Caso particolare**: I sottodomini in `www` (ad esempio: **www**.domain.tld) vengono automaticamente aggiunti come complemento del nome di dominio. Di conseguenza, non è necessario specificare questo sottodominio particolare nel campo di testo.
 
     :::
 
     <img className="thumbnail" alt="Add domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-ovh-step-1.png" loading="lazy" />
-    
+
     :::warning
     Per impostazione predefinita, la **cartella di root** del tuo sito web viene creata automaticamente al momento dell'aggiunta del sito web al tuo hosting web. La stessa **cartella di root** viene inoltre generata nello spazio di archiviazione del tuo hosting web (accessibile in FTP, SFTP o SSH, a seconda della tua offerta).
-    
+
     Se desideri personalizzare il nome della **cartella di root**, soprattutto se il contenuto del tuo sito web è già presente in una directory specifica del tuo spazio di archiviazione, puoi farlo attivando il pulsante <code className="action">Configurazione avanzata</code>.
 
     :::
 
-    
     Se desideri personalizzare il nome della cartella di root o utilizzare una delle **opzioni avanzate** disponibili, attiva il pulsante <code className="action">Configurazione avanzata</code> e vai alla **passaggio 6**. Altrimenti, prosegui direttamente alla **passaggio 7**.
   </Tab>
   <Tab label="Passaggio 5">
     :::info
     Questa fase è **facoltativa**. Si rivolge esclusivamente ai clienti che desiderano personalizzare la cartella di root e/o attivare alcune funzionalità disponibili tramite il pulsante <code className="action">Configurazione avanzata</code>.
-    
+
     **Tutte queste funzionalità possono essere attivate in un secondo momento una volta che il nome di dominio è stato aggiunto al tuo sito web.** Per farlo, consulta direttamente [questa guida](/guides/web-cloud/web-hosting/multisites-modify-domain).
 
     :::
 
-    
     Per personalizzare il nome della cartella di root che sarà associata al tuo sito web e conterrà i suoi file, inserisci il nome desiderato nel campo **Cartella di root**.
-    
+
     Di seguito troverai una descrizione delle altre opzioni. A seconda della tua [offerta di hosting web](https://www.ovhcloud.com/it/web-hosting/), alcuni elementi tra quelli proposti qui sotto non potranno essere selezionati.
-    
+
     <img className="thumbnail" alt="Add domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-ovh-advanced-configurations.png" loading="lazy" />
-    
+
     |Opzione|Descrizione|
     |---|---|
     |IP del Paese|Consente di beneficiare di un indirizzo IP geolocalizzato (tra una lista di paesi) per il nome di dominio selezionato.<br/> Scopri di più grazie a [questa pagina](https://www.ovhcloud.com/it/web-hosting/options/).|
     |Firewall|Consente di attivare un firewall (filtraggio e analisi delle richieste) per il nome di dominio selezionato.<br/> Scopri di più grazie a [questa pagina](https://www.ovhcloud.com/it/web-hosting/options/).|
     |CDN|Consente di attivare il CDN (caching degli elementi statici del tuo sito web, come le immagini) per il nome di dominio selezionato.<br/> Scopri di più grazie a [questa pagina CDN](https://www.ovhcloud.com/it/web-hosting/options/cdn/).<br/> Attivando SSL e CDN, potrai beneficiare anche del protocollo **HTTP/2** (questo protocollo è attivo di default nel nostro datacenter di Gravelines).|
-    
+
     Una volta attivato il pulsante <code className="action">Configurazione avanzata</code>, puoi anche scegliere la modalità di configurazione DNS del tuo nome di dominio:
-    
+
     - **Per una configurazione DNS automatica**, lascia selezionata la casella <code className="action">Configurazione automatica (Consigliato)</code>.
     - **Per una configurazione DNS manuale**, seleziona la casella <code className="action">Configurazione manuale</code>. Per effettuare quindi la configurazione della tua zona DNS, consulta le seguenti guide:
         - [Hosting Web - Lista degli indirizzi IP per cluster](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip)
@@ -134,25 +127,25 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** pa
   </Tab>
   <Tab label="Passaggio 6">
     OVHcloud mette a disposizione i moduli WordPress, Joomla!, PrestaShop e Drupal. Essi permettono di disporre di una struttura di sito web pronta all'uso, installata automaticamente nella cartella di root configurata in precedenza. Per saperne di più, consulta la nostra documentazione "[Installare i moduli in 1 click OVHcloud](/guides/web-cloud/web-hosting/cms-install-1-click-modules)".
-    
+
     Se desideri installare un modulo in un clic, seleziona il modulo desiderato in fondo alla pagina, quindi vai alla fase successiva.
-    
+
     ![choose module](/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-choose-1-click-module.png)
-    
+
     Al contrario, se desideri installare manualmente il tuo sito web, recupera i suoi file e caricali nella cartella di root appropriata sullo spazio di archiviazione del tuo hosting web. Per saperne di più, consulta la nostra documentazione "[Mettere online un sito Internet su un hosting Web](/guides/web-cloud/web-hosting/hosting-how-to-get-my-website-online)".
   </Tab>
   <Tab label="Passaggio 7">
     Verifica che tutte le informazioni inserite in precedenza siano corrette, quindi fai clic su <code className="action">Continua</code> per finalizzare l'aggiunta del tuo nome di dominio o sottodominio al tuo sito web.
-    
+
     Questa aggiunta può richiedere fino a un'ora.
-    
+
     Se non hai selezionato l'opzione <code className="action">Configurazione manuale</code> nella sezione <code className="action">Configurazione avanzata</code>, la configurazione DNS si realizzerà automaticamente se la zona DNS attiva del tuo nome di dominio è gestita nel tuo Spazio Cliente OVHcloud.
-    
+
     In caso contrario, consulta le seguenti guide per configurare manualmente la tua zona DNS:
-    
+
     - [Hosting Web - Lista degli indirizzi IP per cluster](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip)
     - [Modificare una zona DNS di OVHcloud](/guides/web-cloud/domains/dns-zone-edit)
-    
+
     :::info
     La modifica della configurazione DNS del tuo nome di dominio richiede un periodo di propagazione che può arrivare fino a 24 ore prima che diventi pienamente efficace.
 
@@ -161,13 +154,10 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** pa
   </Tab>
 </Tabs>
 
-
 </details>
-
 
 <details>
 <summary>Aggiungere un sito web con un dominio non gestito dal tuo Spazio Cliente OVHcloud</summary>
-
 
 Questa parte è applicabile **solo** se desideri aggiungere un sito web con un nome di dominio che non è presente nel tuo account OVHcloud. Può trattarsi di un nome di dominio presente in un altro account OVHcloud o registrato da un altro fornitore.
 
@@ -176,69 +166,66 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** pa
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella pagina visualizzata, clicca sulla scheda <code className="action">I miei siti</code>.
-    
+
     <img className="thumbnail" alt="I miei siti" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Nella parte alta a sinistra della tabella visualizzata, fai clic sul pulsante <code className="action">Aggiungi un sito</code>.
-    
+
     <img className="thumbnail" alt="My websites tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 4">
     Seleziona l'opzione <code className="action">Associa un dominio esterno</code> e fai clic su <code className="action">Continua</code>.
-    
+
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-domain-or-sub-domain-external-step-1.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 5">
     Nel campo **Nome del sito - obbligatorio**, inserisci il nome che desideri utilizzare per il tuo sito web. Questo nome sarà visibile unicamente nell'etichetta <code className="action">I miei siti</code> del tuo hosting web.
-    
+
     Inserisci quindi il nome di dominio (ad esempio: domain.tld) o il sottodominio (ad esempio: **sub**.domain.tld) da associare nel campo **Nome di dominio - obbligatorio** che appare in basso.
-    
+
     :::tip[Success]
     **Caso particolare**: I sottodomini in `www` (ad esempio: **www**.domain.tld) vengono automaticamente aggiunti come complemento del nome di dominio. Di conseguenza, non è necessario specificare questo sottodominio particolare nel campo di testo.
 
     :::
 
-    
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-site-external-step-2.png" loading="lazy" />
-    
+
     :::warning
     Per impostazione predefinita, la **cartella di root** del tuo sito web viene creata automaticamente al momento dell'aggiunta del sito web al tuo hosting web. La stessa **cartella di root** viene inoltre generata nello spazio di archiviazione del tuo hosting web (accessibile in FTP, SFTP o SSH, a seconda della tua offerta).
 
     :::
 
-    
     Per personalizzare il nome della cartella di root che sarà associata al tuo sito web e conterrà i suoi file, inserisci il nome desiderato nel campo **Cartella di root**. Se non desideri personalizzarlo, lascia il campo vuoto.
-    
+
     Una volta completate le informazioni, fai clic sul pulsante <code className="action">Continua</code>.
   </Tab>
   <Tab label="Passaggio 6">
     :::info
     A differenza dei nomi di dominio gestiti direttamente dal tuo Spazio Cliente OVHcloud, le **opzioni avanzate** non sono direttamente disponibili durante l'aggiunta di un sito web con un nome di dominio o un sottodominio non gestito dal tuo account OVHcloud.
-    
+
     Tuttavia, **tutte queste funzionalità possono essere attivate o modificate in seguito una volta che il nome del dominio o il sottodominio esterno è stato aggiunto al tuo sito web.** Per farlo, consulta direttamente [questa guida](/guides/web-cloud/web-hosting/multisites-modify-domain).
 
     :::
 
-    
     L'aggiunta di un sito web con un nome di dominio esterno a OVHcloud richiede una validazione obbligatoria aggiuntiva. Ciò ci permette di verificare che l'aggiunta del nome di dominio esterno sia legittima. Ti verrà quindi chiesto di modificare la configurazione DNS del nome di dominio.
-    
+
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-domain-or-sub-domain-external-step-3.png" loading="lazy" />
-    
+
     Prendi nota degli elementi visualizzati, quindi clicca sul pulsante <code className="action">Continua</code>. A questo punto, il nome del dominio verrà aggiunto temporaneamente, in modo che tu possa modificare la sua configurazione DNS.
-    
+
     :::warning
     Devi effettuare queste modifiche **rapidamente** affinché il tuo nome di dominio sia correttamente associato al tuo sito web. Senza questa azione, l'aggiunta del tuo nome di dominio verrà annullata e il tuo sito web appena creato non sarà accessibile.
-    
+
     Le voci DNS di tipo **A** e **TXT** devono essere obbligatoriamente inserite nella zona DNS attiva del tuo nome di dominio affinché esso sia associato al tuo sito web. Solo le voci DNS di tipo **AAAA** sono opzionali.
-    
+
     Nota che se desideri associare `sub.domain.tld`, dovrai creare l'entrata TXT `ovhcontrol.domain.tld` e non l'entrata `ovhcontrol.sub.domain.tld`.
-    
+
     Per trovare la zona DNS attiva del tuo nome di dominio, trova i [server DNS](/guides/web-cloud/domains/dns-server-edit) a cui è collegato. Dovrai validare solo il nome di dominio utilizzando il campo **TXT**, non tutti i suoi sottodomini.
 
     :::
@@ -246,22 +233,19 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** pa
   </Tab>
   <Tab label="Passaggio 7">
     OVHcloud mette a disposizione i moduli WordPress, Joomla!, PrestaShop e Drupal. Essi permettono di disporre di una struttura di sito web pronta all'uso, installata automaticamente nella directory principale configurata in precedenza. Per saperne di più, consulta la nostra documentazione "[Installare i moduli in 1 click OVHcloud](/guides/web-cloud/web-hosting/cms-install-1-click-modules)".
-    
+
     Se desideri installare un modulo in un clic, seleziona il modulo desiderato in fondo alla pagina, quindi clicca su <code className="action">Continua</code> per completare la richiesta di aggiunta del tuo sito web sul tuo hosting web.
-    
+
     ![choose module](/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-choose-1-click-module.png)
-    
+
     Al contrario, se desideri installare manualmente il tuo sito web, recupera i suoi file e caricali nella directory principale appropriata sullo spazio di archiviazione del tuo hosting web. Per saperne di più, consulta la nostra documentazione "[Mettere online un sito Internet su un hosting Web](/guides/web-cloud/web-hosting/hosting-how-to-get-my-website-online)".
   </Tab>
 </Tabs>
 
-
 </details>
-
 
 <details>
 <summary>Aggiungi un sito web con un nuovo nome di dominio che non è ancora stato registrato</summary>
-
 
 Questa parte si applica esclusivamente se desideri aggiungere un sito web con un nome di dominio che non è ancora stato registrato, né presso OVHcloud né presso un altro ufficio di registrazione. In altre parole, riguarda i Domini che non sono ancora stati sottoscritti.
 
@@ -270,29 +254,29 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** pa
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella pagina visualizzata, clicca sulla scheda <code className="action">I miei siti</code>.
-    
+
     <img className="thumbnail" alt="I miei siti" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Nella parte alta a sinistra della tabella visualizzata, fai clic sul pulsante <code className="action">Aggiungi un sito</code>.
-    
+
     <img className="thumbnail" alt="My websites tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 4">
     Seleziona l'opzione <code className="action">Ordina un nuovo dominio</code> e fai clic su <code className="action">Continua</code>.
-    
+
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-domain-or-sub-domain-new-step-1.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 5">
     Verrai quindi reindirizzato alla nostra pagina commerciale per l'acquisto di un nome di dominio. Scegli il tuo nuovo nome di dominio in base alle disponibilità del mercato. Segui quindi le istruzioni del tunnel di acquisto fino alla validazione del bonifico. Questo senza sottoscrivere un nuovo hosting web.
-    
+
     Una volta che la tua ordinazione è stata pagata e validata, attendi alcuni istanti, il tempo necessario per il suo trattamento.
-    
+
     :::info
     Una volta che il tuo nome di dominio appare nel tuo Spazio Cliente OVHcloud, segui la parte "[Aggiungi un nome di dominio gestito dal tuo Spazio Cliente OVHcloud](#add-domain-ovhcloud)" di questa guida per aggiungere il tuo sito web al tuo hosting web.
 
@@ -301,9 +285,7 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **7** pa
   </Tab>
 </Tabs>
 
-
 </details>
-
 
 ### 2 - Pubblica il tuo sito web <a name="site-online"></a>
 
@@ -315,7 +297,6 @@ Se desideri aggiungere diversi siti web, ripeti le azioni descritte in questa gu
 Ti invitiamo a prestare attenzione al numero di siti web presenti sul tuo hosting web. Più questo numero è elevato, più le risorse allocate al tuo hosting web vengono sollecitate. [La pagina delle nostre offerte di hosting web](https://www.ovhcloud.com/it/web-hosting/) indica il numero raccomandato di siti web che puoi ospitare sul tuo hosting web.
 
 :::
-
 
 ## Per saperne di più
 

@@ -1,14 +1,11 @@
 ---
 title: Hosting multiple websites on your Web Hosting plan
 description: Find out how to host several websites on your Web Hosting plan
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
-
 
 ## Objective
 
@@ -22,7 +19,6 @@ Would you like to add a new website to your web hosting?
 If you have already created the website on your web hosting and want to associate it with a new domain name or subdomain, please refer to [this guide](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website) **directly**.
 
 :::
-
 
 :::info
 This procedure applies to the <ManagerLink to="/beta/#/">new version of the OVHcloud Control Panel</ManagerLink>, currently available in beta. To follow it, switch to this interface from your usual Control Panel.
@@ -57,7 +53,6 @@ This procedure applies to the <ManagerLink to="/beta/#/">new version of the OVHc
 <details>
 <summary>Add a website with a domain name managed from your OVHcloud Control Panel</summary>
 
-
 This section applies only if the domain name (and/or its active DNS zone) with which you want to create your website is **in your OVHcloud Control Panel**.
 
 {/* CP-STEPS-START:add-ovhcloud-domain */}
@@ -66,69 +61,66 @@ Click on the tabs below to view each of the **7** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     Above and to the left of the table that appears, click on the <code className="action">Add a site</code> button.
-    
+
     <img className="thumbnail" alt="My websites tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     Tick the <code className="action">Associate an existing OVHcloud domain</code> option and click on <code className="action">Continue</code>.
-    
+
     In the **Site name** field, enter the name you want to use for your website. This name will be visible only from the <code className="action">My sites</code> tab of your web hosting.
-    
+
     Then select the domain name to associate from the drop-down menu **Domain name - required** that appears below.
-    
+
     :::info
     To add a subdomain, first select the domain name from the list (e.g., domain.tld). Then tick the <code className="action">Create a subdomain</code> box. A text field appears for you to enter the subdomain (e.g., **sub**.domain.tld).
-    
+
     **Special case**: `www` subdomains (e.g., **www**.domain.tld) are automatically added as a complement to the domain name. Therefore, it is unnecessary to specify this particular subdomain in the text field.
 
     :::
 
-    
     <img className="thumbnail" alt="Add domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-ovh-step-1.png" loading="lazy" />
-    
+
     :::warning
     By default, the **root folder** of your website is automatically created when you add the website to your web hosting. This same **root folder** is also generated in the storage space of your web hosting (accessible via FTP, SFTP or SSH, depending on your offer).
-    
+
     If you want to customise the name of the **root folder**, especially if the content of your website is already present in a specific folder in your storage space, you can do so by activating the <code className="action">Advanced configuration</code> button.
 
     :::
 
-    
     If you wish to customise the name of the root folder or use one of the **Advanced options** available, activate the <code className="action">Advanced configuration</code> button and proceed to **Step 6**. Otherwise, continue directly to **Step 7**.
   </Tab>
   <Tab label="Step 5">
     :::info
     This step is **optional**. It is intended solely for customers wishing to customise the root folder and/or activate certain features available via the <code className="action">Advanced configuration</code> button.
-    
+
     **All these features can be activated later once the domain name has been added to your website.** For this, please refer directly to [this guide](/guides/web-cloud/web-hosting/multisites-modify-domain).
 
     :::
 
-    
     To customise the name of the root folder that will be associated with your website and will contain its files, enter the desired name in the **Root folder** field.
-    
+
     Below you will find a description of the other options. Depending on your [web hosting](https://www.ovhcloud.com/en-gb/web-hosting/) offer, some of the options listed below may not be available for selection.
-    
+
     <img className="thumbnail" alt="Add domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-ovh-advanced-configurations.png" loading="lazy" />
-    
+
     |Option|Description|
     |---|---|
     |Country IP|Allows you to benefit from a geolocated IP address (from a list of countries) for the selected domain name.<br/> Learn more from [this page](https://www.ovhcloud.com/en-gb/web-hosting/options/).|
     |Firewall|Allows you to activate a firewall (filtering and analysis of requests) on the selected domain name.<br/> Learn more from [this page](https://www.ovhcloud.com/en-gb/web-hosting/options/).|
     |CDN|Allows you to activate the CDN (caching of static elements of your website, such as images) on the selected domain name.<br/> Learn more from [our CDN page](https://www.ovhcloud.com/en-gb/web-hosting/options/cdn/).<br/> By activating SSL and the CDN, you will also benefit from the **HTTP/2** protocol (this protocol is activated by default in our Gravelines datacenter).|
-    
+
     Once the <code className="action">Advanced configuration</code> button is activated, you can also choose the DNS configuration mode for your domain name:
-    
+
     - **For automatic DNS configuration**, leave the <code className="action">Automatic configuration (recommended)</code> box ticked.
     - **For manual DNS configuration**, tick the <code className="action">Manual configuration</code> box. To complete the configuration of your DNS zone, refer to the following guides:
         - [Web Hosting - List of IP addresses by cluster](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip)
@@ -136,25 +128,25 @@ Click on the tabs below to view each of the **7** steps.
   </Tab>
   <Tab label="Step 6">
     OVHcloud provides the WordPress, Joomla!, PrestaShop and Drupal modules. They allow you to have a ready-to-use website structure, automatically installed in the root folder configured previously. For more information, please refer to our documentation "[Setting up your website with 1-click modules](/guides/web-cloud/web-hosting/cms-install-1-click-modules)".
-    
+
     If you want to install a 1-click module, select your preferred module at the bottom of the page, then proceed to the next step.
-    
+
     ![choose module](/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-choose-1-click-module.png)
-    
+
     Conversely, if you want to manually install your website, retrieve its files and upload them to the appropriate root folder on the storage space of your web hosting. For more information, please refer to our documentation "[Publishing a website on your Web Hosting plan](/guides/web-cloud/web-hosting/hosting-how-to-get-my-website-online)".
   </Tab>
   <Tab label="Step 7">
     Check that all the previously entered information is correct, then click on <code className="action">Continue</code> to finalise the addition of your domain name or subdomain to your website.
-    
+
     This addition can take up to one hour.
-    
+
     If you have not selected the <code className="action">Manual configuration</code> option in the <code className="action">Advanced configuration</code> section, the DNS configuration will be carried out automatically if the active DNS zone of your domain name is managed in your OVHcloud Control Panel.
-    
+
     Otherwise, refer to the following guides to manually configure your DNS zone:
-    
+
     - [Web Hosting - List of IP addresses by cluster](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip)
     - [Edit an OVHcloud DNS zone](/guides/web-cloud/domains/dns-zone-edit)
-    
+
     :::info
     Modifying the DNS configuration of your domain name requires a propagation delay that can take up to 24 hours before it is fully effective.
 
@@ -167,10 +159,8 @@ Click on the tabs below to view each of the **7** steps.
 
 </details>
 
-
 <details>
 <summary>Add a website with a domain name not managed from your OVHcloud Control Panel</summary>
-
 
 This section applies only if you want to add a website with a domain name that is not present in your OVHcloud account. It may be a domain name in another OVHcloud account or registered with another provider.
 
@@ -180,69 +170,66 @@ Click on the tabs below to view each of the **7** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     Above and to the left of the table that appears, click on the <code className="action">Add a site</code> button.
-    
+
     <img className="thumbnail" alt="My websites tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     Tick the <code className="action">Associate an external domain</code> option and click on <code className="action">Continue</code>.
-    
+
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-domain-or-sub-domain-external-step-1.png" loading="lazy" />
   </Tab>
   <Tab label="Step 5">
     In the **Site name** field, enter the name you want to use for your website. This name will be visible only from the <code className="action">My sites</code> tab of your web hosting.
-    
+
     Then enter the domain name (e.g., domain.tld) or the subdomain (e.g., **sub**.domain.tld) to associate in the **Domain name - required** field that appears below.
-    
+
     :::tip[Success]
     **Special case**: `www` subdomains (e.g., **www**.domain.tld) are automatically added as a complement to the domain name. Therefore, it is unnecessary to specify this particular subdomain in the text field.
 
     :::
 
-    
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-site-external-step-2.png" loading="lazy" />
-    
+
     :::warning
     By default, the **root folder** of your website is automatically created when you add the website to your web hosting. This same **root folder** is also generated in the storage space of your web hosting (accessible via FTP, SFTP or SSH, depending on your offer).
 
     :::
 
-    
     To customise the name of the root folder that will be associated with your website and will contain its files, enter the desired name in the **Root folder** field. If you do not wish to customise it, leave the field empty.
-    
+
     Once the information is completed, click on the <code className="action">Continue</code> button.
   </Tab>
   <Tab label="Step 6">
     :::info
     Unlike domain names directly managed from your OVHcloud Control Panel, the **Advanced options** are not directly available when adding a website with a domain name or subdomain not managed from your OVHcloud account.
-    
+
     However, **all these features can be activated or modified later once the domain name or external subdomain has been added to your website.** For this, please refer directly to [this guide](/guides/web-cloud/web-hosting/multisites-modify-domain).
 
     :::
 
-    
     Adding a website with an external domain name to OVHcloud requires an additional mandatory validation. This allows us to ensure that the addition of the external domain name is legitimate. A message will then ask you to modify the DNS configuration of the domain name.
-    
+
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-domain-or-sub-domain-external-step-3.png" loading="lazy" />
-    
+
     Take note of the elements displayed, then click on the <code className="action">Continue</code> button. From then on, the domain name is temporarily added, giving you time to modify its DNS configuration.
-    
+
     :::warning
     You must make these changes **quickly** for your domain name to be correctly associated with your website. Without this action, the addition of your domain name will be cancelled and your recently created website will not be accessible.
-    
+
     The DNS entries of type **A** and **TXT** must be placed in the active DNS zone of your domain name for it to be associated with your website. Only the DNS entries of type **AAAA** are optional.
-    
+
     Note that if you wish to associate `sub.domain.tld`, you will need to create the `ovhcontrol.domain.tld` TXT entry and not the `ovhcontrol.sub.domain.tld` entry.
-    
+
     To find the active DNS zone of your domain name, find the [DNS servers](/guides/web-cloud/domains/dns-server-edit) to which it is linked. You will only need to validate the domain name using the **TXT** field, not all its subdomains.
 
     :::
@@ -250,11 +237,11 @@ Click on the tabs below to view each of the **7** steps.
   </Tab>
   <Tab label="Step 7">
     OVHcloud provides the WordPress, Joomla!, PrestaShop and Drupal modules. They allow you to have a ready-to-use website structure, automatically installed in the root folder configured previously. For more information, please refer to our documentation "[Setting up your website with 1-click modules](/guides/web-cloud/web-hosting/cms-install-1-click-modules)".
-    
+
     If you want to install a 1-click module, select your preferred module at the bottom of the page, then click on <code className="action">Continue</code> to finalise the request to add your website to your web hosting.
-    
+
     ![choose module](/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-site-choose-1-click-module.png)
-    
+
     Conversely, if you want to manually install your website, retrieve its files and upload them to the appropriate root folder on the storage space of your web hosting. For more information, please refer to our documentation "[Publishing a website on your Web Hosting plan](/guides/web-cloud/web-hosting/hosting-how-to-get-my-website-online)".
   </Tab>
 </Tabs>
@@ -263,10 +250,8 @@ Click on the tabs below to view each of the **7** steps.
 
 </details>
 
-
 <details>
 <summary>Add a website with a new domain name that has not yet been registered</summary>
-
 
 This section applies only if you want to add a website with a domain name that has not yet been registered, either with OVHcloud or with another registrar. In other words, it concerns domain names that have not yet been subscribed to.
 
@@ -276,29 +261,29 @@ Click on the tabs below to view each of the **5** steps.
 <Tabs>
   <Tab label="Step 1">
     Go to the <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting plans</ManagerLink> page, then select the web hosting plan concerned.
-    
+
     <img className="thumbnail" alt="Hosting plans" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 2">
     On the page that opens, click on the <code className="action">My sites</code> tab.
-    
+
     <img className="thumbnail" alt="My sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Step 3">
     Above and to the left of the table that appears, click on the <code className="action">Add a site</code> button.
-    
+
     <img className="thumbnail" alt="My websites tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Step 4">
     Tick the <code className="action">Order a new domain</code> option and click on <code className="action">Continue</code>.
-    
+
     <img className="thumbnail" alt="Add external domain" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/add-a-domain-or-sub-domain-new-step-1.png" loading="lazy" />
   </Tab>
   <Tab label="Step 5">
     You are then redirected to our commercial page for domain name subscription. Choose your new domain name according to market availability. Then follow the instructions in the order process until the order confirmation. This without subscribing to a new web hosting plan in addition.
-    
+
     Once your order is paid and validated, wait a few moments for it to be processed.
-    
+
     :::info
     Once your domain name appears in your OVHcloud Control Panel, follow the section "[Add a domain name managed from your OVHcloud Control Panel](#add-domain-ovhcloud)" of this guide to add your website to your web hosting.
 
@@ -311,7 +296,6 @@ Click on the tabs below to view each of the **5** steps.
 
 </details>
 
-
 ### 2 - Put your website online <a name="site-online"></a>
 
 Once the website is declared with your domain name on your web hosting, you can put the content of your website online. As a reminder, you must perform this operation in the **root folder** that you defined when adding the website in your OVHcloud Control Panel.
@@ -322,7 +306,6 @@ If you wish to add multiple websites, repeat the actions described in this guide
 We recommend that you be careful about the number of websites on your web hosting. The higher the number, the more your allocated resources will be used. [Our web hosting offers page](https://www.ovhcloud.com/en-gb/web-hosting/) indicates the recommended number of websites you can host on your web hosting.
 
 :::
-
 
 ## Go further
 

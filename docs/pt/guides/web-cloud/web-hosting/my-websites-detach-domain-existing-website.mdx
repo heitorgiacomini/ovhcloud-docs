@@ -1,12 +1,11 @@
 ---
 title: Como desassociar um nome de domínio de um site web existente
 description: Descubra como desassociar um nome de domínio ou subdomínio de um site web já existente no seu alojamento web
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objetivo
 
@@ -46,36 +45,35 @@ Desassociar um nome de domínio ou subdomínio de um site web no seu alojamento 
 
 :::
 
-
 Clique nos separadores abaixo para visualizar cada uma das **4** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/beta/#/web-cloud/hosting/sites">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Alojamentos" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Na página que se abrir, clique no separador <code className="action">Meus sites</code>.
-    
+
     <img className="thumbnail" alt="Meus sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 3">
     Na tabela que surge, clique no botão <code className="action">></code> à esquerda do nome do site relevante para visualizar os nomes de domínio ou subdomínios associados.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Em seguida, clique no botão <code className="action">⁝</code> à direita do nome de domínio ou subdomínio relevante e, depois, em <code className="action">Desassociar o domínio</code>.
-    
+
     <img className="thumbnail" alt="Associated domains options" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 4">
     A nova janela que se abre pede-lhe para confirmar a desassociação do nome de domínio ou subdomínio.
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/detach-domain-popup.png" loading="lazy" />
-    
+
     Consoante a sua escolha, marque ou não a caixa <code className="action">Configuração automática (recomendada)</code>, depois clique em <code className="action">Validar</code> para confirmar a sua escolha.
-    
+
     > ![!warning]
     >
     > **Caso particular: Associou Git ao seu site web e apenas um nome de domínio está associado ao site web**
@@ -87,7 +85,6 @@ Clique nos separadores abaixo para visualizar cada uma das **4** etapas.
     > Como o aviso indica, terá de [eliminar a sua associação Git](/guides/web-cloud/web-hosting/git-integration-webhosting) primeiro, **antes** de desassociar o seu nome de domínio.
   </Tab>
 </Tabs>
-
 
 ### Caso particular: Desassociação de um nome de domínio ou subdomínio para o utilizar com outro site web
 

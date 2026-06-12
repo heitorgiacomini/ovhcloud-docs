@@ -1,14 +1,13 @@
 ---
 title: Przywracanie plików z kopii zapasowej OVHcloud
 description: Dowiedz się, jak przywrócić plik lub całą przestrzeń dyskową Twojego hostingu
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Wprowadzenie 
 
@@ -20,7 +19,6 @@ Kopie zapasowe proponowane przez OVHcloud dla hostingu współdzielonego są nie
 Wykonując kopię zapasową bezpieczeństwa Twojej strony WWW i używając bazy danych, wykonaj również kopię zapasową bazy danych. Zapoznaj się z naszym przewodnikiem, aby [tworzenie i pobieranie kopii zapasowej bazy danych na hostingu WWW](/guides/web-cloud/web-hosting/sql-database-export).
 
 :::
-
 
 **Dowiedz się, jak przywrócić plik lub całą przestrzeń dyskową Twojego hostingu.**
 
@@ -72,26 +70,24 @@ Nasze roboty instalują na Twoim hostingu kopię zapasową, zanim usuną zawarto
 
 :::
 
-
 Aby sprawdzić rozmiar używany na Twoim hostingu, kliknij poniższe zakładki, aby wyświetlić kolejne **2** kroki.
 
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, następnie wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
     W ramce **Informacje ogólne** znajduje się wzmianka **Przestrzeń dyskowa**.
-    
+
     <img className="thumbnail" alt="disk_space" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/find-disk-space.png" loading="lazy" />
 
 Jeśli używana przestrzeń dyskowa FTP jest większa niż połowa całkowitej przestrzeni dyskowej FTP w Twojej ofercie hostingu, możesz lokalnie pobrać duże elementy Twojej strony WWW (w tym celu możesz użyć [Filezilla](/guides/web-cloud/web-hosting/ftp-filezilla-user-guide)).
-    
+
     Usuń je z przestrzeni FTP. Zmniejszy to rozmiar przestrzeni dyskowej FTP, której używasz i będziesz mógł przywrócić dane z Panelu klienta OVHcloud.
   </Tab>
 </Tabs>
-
 
 Przejdź do sekcji dotyczącej wybranej przez Ciebie metody przywracania przestrzeni dyskowej. 
 
@@ -107,7 +103,6 @@ Aby metoda ta działała, uprawnienia `chmod` do katalogu głównego hostingu mu
 
 :::
 
-
 :::info
 **Strona w trybie konserwacji**
 
@@ -121,28 +116,27 @@ W tym przypadku:
 
 :::
 
-
 Kliknij poniższe zakładki, aby wyświetlić kolejne **5** kroków.
 
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, następnie wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
     Na stronie, która się wyświetli kliknij zakładkę <code className="action">FTP - SSH</code>.
-    
+
     <img className="thumbnail" alt="FTP - SSH" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 3">
     Na stronie, która się otworzy, kliknij przycisk <code className="action">Przywróć kopię zapasową</code>.
-    
+
     <img className="thumbnail" alt="kopia zapasowa" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/restore-backup.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 4">
     W oknie, które się wyświetla wybierz z rozwijanego menu odpowiednią dla Ciebie datę:
-    
+
     |Wyświetlane oznaczenie daty|Data wykonania kopii zapasowej|
     |---|---|
     |D-1|dzisiaj, o 00:01 rano;|
@@ -150,18 +144,17 @@ Kliknij poniższe zakładki, aby wyświetlić kolejne **5** kroków.
     |D-3|przedwczoraj, o 00:01 rano;|
     |1 tydzień temu|poprzednia niedziela, o 01:00 rano;|
     |2 tygodnie temu|niedziela dwa tygodnie temu, o 01:00 rano.|
-    
+
     Po wybraniu daty, kliknij przycisk <code className="action">Dalej</code>. 
   </Tab>
   <Tab label="Krok 5">
     <img className="thumbnail" alt="kopia zapasowa" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/restore-backup-step-1.png" loading="lazy" />
 
 Poświęć chwilę, aby upewnić się, że żaden plik nie zostanie usunięty w wyniku przywrócenia przestrzeni dyskowej, np. plik, który zapisałeś na przestrzeni po wybranej dacie przywrócenia. Jak zostało wspomniane wyżej, przywrócenie przestrzeni dyskowej spowoduje usunięcie wszystkich aktualnych danych, które zostaną zastąpione danymi z kopii zapasowej.
-    
+
     Kiedy jesteś gotowy do uruchomienia przywracania kopii zapasowej, kliknij przycisk <code className="action">Zatwierdź</code>.
   </Tab>
 </Tabs>
-
 
 :::info
 Automatyczne przywracanie może trwać od kilku minut do kilku godzin. Jeśli trwa to **więcej niż 24 godziny**, skontaktuj się z [OVHcloud support](https://www.ovhcloud.com/pl/support-levels/).
@@ -175,7 +168,6 @@ Operacja składa się z kilku etapów. Upewnij się, że posiadasz hasło użytk
 Rozwiązanie to wymaga znajomości programu lub interfejsu, którego będziesz używał. Poniżej zamieszczamy kilka informacji dotyczących sposobu postępowania. W przypadku trudności zalecamy skorzystanie z pomocy specjalisty lub kontakt z producentem programu lub interfejsu. Niestety firma OVHcloud nie będzie mogła udzielić wsparcia w tym zakresie.
 
 :::
-
 
 #### 1 - Wybranie programu lub interfejsu, którego będziesz używał
 
@@ -214,7 +206,6 @@ Kopie zapasowe są dostępne wyłącznie za pośrednictwem połączenia FTP.
 
 :::
 
-
 #### 3 - Pobieranie wybranego pliku lub plików
 
 Po zalogowaniu się, pobierz wybrany plik lub pliki. W tym celu przejrzyj zawartość Twojej przestrzeni dyskowej i zapisz lokalnie pliki. Operacja przebiega różnie w zależności od używanego programu lub interfejsu.
@@ -226,7 +217,6 @@ Jeśli do logowania się do przestrzeni dyskowej FTP używasz programu, zalecamy
 
 :::
 
-
 #### 4 - Przywracanie wybranego pliku lub plików
 
 Kiedy masz już plik lub pliki, zaloguj się ponownie do przestrzeni dyskowej. Nie dodawaj jednak sufiksu do Twojego użytkownika FTP, aby się zalogować. Jeśli nie wpiszesz sufiksu, zyskasz dostęp do aktualnej zawartości Twojej przestrzeni dyskowej, a nie to wcześniejszej kopii zapasowej.
@@ -237,7 +227,6 @@ Po zalogowaniu wgraj wybrany plik lub pliki. W tym celu przejrzyj zawartość Tw
 Jeśli do logowania się do przestrzeni dyskowej FTP używasz programu, zalecamy zapoznanie się z oficjalną dokumentacją dotyczącą oprogramowania, aby móc prawidłowo przeprowadzić operacje.
 
 :::
-
 
 ## Sprawdź również
 

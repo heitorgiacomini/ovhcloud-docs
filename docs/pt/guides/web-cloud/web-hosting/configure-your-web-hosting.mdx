@@ -1,16 +1,13 @@
 ---
 title: Alojamento web - Ambiente, versão PHP, .ovhconfig
 description: Saiba como alterar o ambiente de execução, a versão PHP, a firewall aplicacional, o motor, o modo e o .ovhconfig de um alojamento web
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Region } from '@components/Zone';
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
-
 
 ## Objetivo
 
@@ -36,7 +33,6 @@ Eles estão presentes de forma nativa e por predefinição na "raiz FTP" do espa
 Contêm os valores dos elementos acima mencionados.
 
 :::
-
 
 Em resumo, alterar a configuração do seu alojamento web a partir da <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink> ou modificar os valores presentes no ficheiro ".ovhconfig" equivale a realizar a mesma operação.
 
@@ -82,7 +78,6 @@ A alteração de, pelo menos, um destes itens pode afetar a visualização ou o 
 
 :::
 
-
 #### 1.1 - Os ambientes de execução <a name="runtime-environment"></a>
 
 Os ambientes de execução contêm um conjunto de linguagens de programação. Em função do ambiente de execução escolhido, as linguagens estão disponíveis em versões mais ou menos avançadas. O objetivo destes ambientes é permitir-lhe executar corretamente os ficheiros que compõem o seu website, de acordo com as suas necessidades técnicas.
@@ -106,7 +101,6 @@ O ambiente *Legacy* pode ser útil para sites antigos que ainda utilizem versõe
 
 :::
 
-
 #### 1.2 - As versões de PHP <a name="php-versions"></a>
 
 PHP é uma linguagem de programação dinâmica utilizada para criar websites. Para o seu website, e em função da sua antiguidade, das atualizações efetuadas ou de certas variáveis necessárias ao seu bom funcionamento, poderá ser necessário alterar a versão de PHP que utiliza.
@@ -125,7 +119,6 @@ Certas versões de PHP só funcionam com certos ambientes de execução. Encontr
 Uma vez que as novas versões podem não incluir determinadas funcionalidades, **certifique-se de que a nova versão de PHP é compatível com o seu website antes de realizar qualquer alteração.**
 
 :::
-
 
 Embora a OVHcloud trate da instalação das versões mais recentes de PHP nos seus servidores, cabe-lhe a si assegurar que o seu website está **sempre atualizado** e compatível com as versões mais recentes de PHP. Em função do website que utiliza, existem duas formas de verificar:
 
@@ -148,20 +141,19 @@ Se necessário, pode conhecer a versão de PHP atualmente utilizada pelo seu alo
 <details>
 <summary>Através da Área de Cliente OVHcloud</summary>
 
-
 Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     No separador <code className="action">Informações gerais</code>, localize a versão abaixo de *Versão global de PHP*.
-    
+
     <img className="thumbnail" alt="phpversion" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/change-php-version-step1.png" loading="lazy" />
-    
+
     :::info
     Se vir um símbolo redondo azul, aguarde alguns minutos para que a versão seja atualizada.
 
@@ -170,13 +162,10 @@ Clique nos separadores abaixo para visualizar cada uma das **2** etapas.
   </Tab>
 </Tabs>
 
-
 </details>
-
 
 <details>
 <summary>Através de um script</summary>
-
 
 Crie um script **.php** que contenha apenas o seguinte código:
 
@@ -193,9 +182,7 @@ O comando que permite mudar a versão de PHP no ficheiro ".htaccess" também nã
 
 :::
 
-
 </details>
-
 
 #### 1.3 - Os motores de execução PHP <a name="php-runtime"></a>
 
@@ -221,7 +208,6 @@ Se utilizar módulos de pagamento, a ativação da firewall aplicacional pode, p
 
 :::
 
-
 #### 1.5 - Modos de execução <a name="runtime-mod"></a>
 
 Os modos de execução permitem gerir o comportamento da cache dos ficheiros estáticos do seu website (as imagens, por exemplo) e o tratamento dos erros PHP (úteis quando o seu site apresenta uma página branca, por exemplo). 
@@ -238,7 +224,6 @@ Para as versões 7.1 e posteriores de PHP, os erros aparecerão no site, indepen
 
 :::
 
-
 Agora que conhece os diferentes parâmetros alteráveis para o seu alojamento web OVHcloud, descubra os dois métodos para modificar estes parâmetros.
 
 ### 2 - Método 1: alterar a configuração do alojamento web a partir da Área de Cliente OVHcloud <a name="setting-ovh-manager"></a>
@@ -248,27 +233,26 @@ Lembre-se de que a alteração de, pelo menos, um destes itens pode afetar a vis
 
 :::
 
-
 Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
 
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     No marco **Configuração**, encontrará **Versão global de PHP**.
-    
+
     <img className="thumbnail" alt="Global PHP version" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/modify-hosting-configuration.png" loading="lazy" />
-    
+
     À direita da entrada **Versão global de PHP**, localizada quase no centro da página, clique no botão <code className="action">...</code> e, a seguir, em <code className="action">Alterar configuração</code>.
-    
+
     :::info
     Se o botão <code className="action">Alterar configuração</code> estiver cinzento, é possível que esteja a decorrer uma verificação da **Versão global de PHP**. Se for o caso, aparecerá um símbolo redondo azul junto da versão, indicando que a verificação está em curso. Aguarde alguns minutos para que o botão <code className="action">Alterar configuração</code> volte a ficar acessível.
-    
+
     Se a opção **Versão global de PHP** não aparecer na <ManagerLink to="/">Área de Cliente OVHcloud</ManagerLink>, verifique se o ficheiro *.ovhconfig* existe na raiz de FTP do seu alojamento partilhado OVHcloud.
-    
+
     Encontre todas as informações relativas ao ficheiro *.ovhconfig* na terceira parte "[Método 2: alterar a configuração do alojamento web a partir do ficheiro ".ovhconfig"](#setting-ovhconfig)" deste guia.
 
     :::
@@ -276,24 +260,22 @@ Clique nos separadores abaixo para visualizar cada uma das **3** etapas.
   </Tab>
   <Tab label="Etapa 3">
     Aparecerá uma janela com duas opções possíveis. Selecione a que corresponde à ação que deseja realizar e clique em <code className="action">Seguinte</code>.
-    
+
     |Escolha|Detalhes|
     |---|---|
     |`Voltar a uma configuração anterior`|Depois de selecionar esta opção, escolha a configuração a restaurar ao lado de `Escolha histórica`. Esta opção não estará disponível se não tiver efetuado nenhuma alteração anteriormente.|
     |`Alterar a configuração atual`|Depois de selecionar esta opção, escolha as alterações que deseja introduzir na configuração entre os campos propostos. Se necessário, volte à primeira parte "[Descrição dos parâmetros de configuração disponíveis nos alojamentos web da OVHcloud](#all-parameters)" deste guia.|
-    
+
     :::info
     Alterar o ambiente de execução do seu alojamento web reinicializa automaticamente as sessões PHP.
 
     :::
 
-    
     Clique em <code className="action">Validar</code> para aplicar a alteração. Aguarde alguns instantes até que ela se realize.
-    
+
     <img className="thumbnail" alt="hostingconfiguration" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/general-information/modify-hosting-configuration-step-1-and-2.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 ### 3 - Método 2: modificar a configuração do alojamento web a partir do ficheiro ".ovhconfig" <a name="setting-ovhconfig"></a>
 
@@ -306,23 +288,22 @@ Para isso, clique nos separadores abaixo para visualizar cada uma das **3** etap
 <Tabs>
   <Tab label="Etapa 1">
     Aceda à página <ManagerLink to="/#/web/hosting">Alojamentos</ManagerLink> e escolha o alojamento web correspondente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
     Na página que se abrir, clique no separador <code className="action">FTP - SSH</code>.
-    
+
     <img className="thumbnail" alt="FTP - SSH" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 3">
     Nele, encontrará informações que lhe permitem aceder. 
-    
+
     <img className="thumbnail" alt="FTP - SSH tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/tab-perso.png" loading="lazy" />
 
 Quanto à palavra-passe do utilizador FTP, consulte as instruções descritas no manual "[Alterar a palavra-passe de um utilizador FTP](/guides/web-cloud/web-hosting/ftp-change-password)" se necessário.
   </Tab>
 </Tabs>
-
 
 #### 3.2 - Recuperar ou criar o ficheiro ".ovhconfig"
 
@@ -351,7 +332,6 @@ container.image=stable64
 Se acabou de criar o ficheiro ".ovhconfig", copie o código acima no seu ficheiro e continue a ler este guia.
 
 :::
-
 
 Personalize os valores das variáveis em função da configuração que pretende utilizar com o seu alojamento web.
 
@@ -444,13 +424,12 @@ Crie um ficheiro ".ovhconfig" contendo a versão de PHP desejada para o(s) síti
 
 :::
 
-
 ## Quer saber mais?
 
 [Ligar-se ao espaço de armazenamento do alojamento web](/guides/web-cloud/web-hosting/ftp-connection)
 
 Para serviços especializados (referenciamento, desenvolvimento, etc), contacte os [parceiros OVHcloud](https://partner.ovhcloud.com/pt/directory/).
- 
+
 Se pretender usufruir de uma assistência na utilização e na configuração das suas soluções OVHcloud, consulte as nossas diferentes [ofertas de suporte](https://www.ovhcloud.com/pt/support-levels/).
- 
+
 Fale com nossa [comunidade de utilizadores](https://community.ovhcloud.com/).

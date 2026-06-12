@@ -1,14 +1,12 @@
 ---
 title: 1-Klick-Module verwalten
 description: Erfahren Sie hier, wie Sie Ihr 1-Klick-Modul über Ihr OVHcloud Kundencenter verwalten
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Region } from '@components/Zone';
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
 
 ## Ziel
 
@@ -22,7 +20,6 @@ OVHcloud stellt Ihnen Dienstleistungen zur Verfügung, für deren Konfiguration 
 Diese Anleitung soll Sie bei allgemeinen Aufgaben bestmöglich unterstützen. Dennoch empfehlen wir Ihnen, falls Sie Hilfe brauchen, einen [spezialisierten Dienstleister](https://partner.ovhcloud.com/de/directory/) zu kontaktieren und/oder Ihre Fragen in der OVHcloud Community zu stellen. Leider können wir Ihnen für administrative Aufgaben keine weitergehende technische Unterstützung anbieten. Weitere Informationen finden Sie am [Ende dieser Anleitung](#go-further).
 
 :::
-
 
 ## Voraussetzungen
 
@@ -54,9 +51,9 @@ Klicken Sie auf die nachfolgenden Tabs, um die **2** Schritte nacheinander anzuz
 <Tabs>
   <Tab label="Schritt 1">
     Öffnen Sie die Seite <ManagerLink to="/#/web/hosting">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Klicken Sie auf den Tab <code className="action">1-Klick-Module</code>.
   </Tab>
   <Tab label="Schritt 2">
@@ -64,12 +61,10 @@ Klicken Sie auf die nachfolgenden Tabs, um die **2** Schritte nacheinander anzuz
   </Tab>
 </Tabs>
 
-
 :::info
 Sollte Ihre Website nach diesem Vorgang nicht korrekt angezeigt werden, lesen Sie die zu den Webhosting-Paketen gehörigen OVHcloud Anleitungen unter [Diagnose](/guides/web-cloud/web-hosting/overview).
 
 :::
-
 
 ### Auf das Verwaltungsinterface zugreifen
 
@@ -78,16 +73,15 @@ Klicken Sie auf die nachfolgenden Tabs, um die **2** Schritte nacheinander anzuz
 <Tabs>
   <Tab label="Schritt 1">
     Öffnen Sie die Seite <ManagerLink to="/#/web/hosting">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Klicken Sie auf den Tab <code className="action">1-Klick-Module</code>.
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf den Button <code className="action">...</code> rechts neben der Zeile für Ihr Modul und dann auf <code className="action">Zum Verwaltungsinterface des Moduls</code>.
   </Tab>
 </Tabs>
-
 
 ### Administrator-ID abrufen
 
@@ -96,7 +90,7 @@ Klicken Sie auf die nachfolgenden Tabs, um die **3** Schritte nacheinander anzuz
 <Tabs>
   <Tab label="Schritt 1">
     Öffnen Sie die Seite <ManagerLink to="/#/web/hosting">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
@@ -106,7 +100,6 @@ Klicken Sie auf die nachfolgenden Tabs, um die **3** Schritte nacheinander anzuz
     Sie können auch die bei der Erstellung Ihres Moduls erhaltene E-Mail über Ihr <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> abrufen: Klicken Sie oben rechts auf Ihren Namen und dann im Kontextmenü auf <code className="action">Meine Kommunikation</code>.
   </Tab>
 </Tabs>
-
 
 ### Passwort Ihres Moduls ändern <a name="password-change"></a>
 
@@ -120,7 +113,6 @@ Finden Sie die offizielle Dokumentation zu den von unseren Webhostings unterstü
 
 :::
 
-
 Sie können auch das Passwort für den Zugang zum Verwaltungsinterface Ihres CMS direkt über Ihre Datenbank ändern.
 
 Wir empfehlen Ihnen jedoch dringend, die Operation mithilfe der vom Herausgeber Ihres CMS zur Verfügung gestellten Dokumentation durchzuführen oder bei Problemen einen [spezialisierten Dienstleister](https://partner.ovhcloud.com/de/directory/) zu kontaktieren. Wir werden Ihnen leider keine Unterstützung anbieten können. Weitere Informationen finden Sie im Abschnitt [Weiterführende Informationen](#go-further) dieser Anleitung.
@@ -132,7 +124,6 @@ Daten-Backups sind ein Bestandteil der Operationen, die für die [Absicherung Ih
 
 :::
 
-
 #### 1 - Die zu Ihrem Modul gehörige Datenbank identifizieren <a name="step1"></a>
 
 Um Ihr 1-Klick-Modul zu löschen, müssen Sie zuerst dessen Datenbank **identifizieren**.
@@ -142,9 +133,9 @@ Klicken Sie auf die nachfolgenden Tabs, um die **3** Schritte nacheinander anzuz
 <Tabs>
   <Tab label="Schritt 1">
     Öffnen Sie die Seite <ManagerLink to="/#/web/hosting">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Klicken Sie auf den Tab <code className="action">Datenbanken</code>.
   </Tab>
   <Tab label="Schritt 2">
@@ -154,7 +145,6 @@ Klicken Sie auf die nachfolgenden Tabs, um die **3** Schritte nacheinander anzuz
     Andernfalls wechseln Sie zum Tab <code className="action">Meine Seiten</code>. Notieren Sie den Namen des `Wurzelverzeichnis`, das in der Zeile der betreffenden Webseite angezeigt wird: Dies ist das Verzeichnis, in dem sich die Dateien des 1-Klick-Moduls auf dem FTP-Server befinden.
   </Tab>
 </Tabs>
-
 
 Loggen Sie sich anschließend in den [FTP-Bereich](/guides/web-cloud/web-hosting/ftp-connection) Ihres Hostings ein. Öffnen Sie das entsprechende `Wurzelverzeichnis` aus dem Tab <code className="action">Meine Seiten</code> und suchen Sie die Konfigurationsdatei Ihres Moduls:
 
@@ -174,13 +164,12 @@ Die Löschung Ihres 1-Klick-Moduls und seiner Datenbank zieht auch die Löschung
 
 :::
 
-
 Klicken Sie auf die nachfolgenden Tabs, um die **3** Schritte nacheinander anzuzeigen.
 
 <Tabs>
   <Tab label="Schritt 1">
     Öffnen Sie die Seite <ManagerLink to="/#/web/hosting">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
@@ -188,22 +177,21 @@ Klicken Sie auf die nachfolgenden Tabs, um die **3** Schritte nacheinander anzuz
   </Tab>
   <Tab label="Schritt 3">
     Klicken Sie auf den Button <code className="action">...</code> rechts neben der Zeile für Ihr Modul und dann auf den Befehl <code className="action">Das Modul löschen</code>.
-    
+
     :::tip[Success]
     Sie können den Button <code className="action">Das Modul löschen</code> nicht finden? Oder möchten Sie nur Dateien auf Ihrem Modul löschen?
-    
+
     Unsere Anleitungen:
-    
+
     - [Mit dem FTP-Speicherplatz eines Webhostings verbinden](/guides/web-cloud/web-hosting/ftp-connection)
     - [Tutorial - FileZilla mit Ihrem OVHcloud Hosting nutzen](/guides/web-cloud/web-hosting/ftp-filezilla-user-guide)
-    
+
     <iframe class="video" width="560" height="315" src="https://www.youtube-nocookie.com/embed/LHpsuvyNFtQ?si=4655K8lQQpkE2YNG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
     :::
 
   </Tab>
 </Tabs>
-
 
 :::warning
 Die Löschung Ihres 1-Klick-Moduls **beinhaltet nicht die Löschung der Datenbank**. Wenn Sie die Installation eines neuen CMS starten, ohne zuvor die bestehende Datenbank gelöscht zu haben (und Ihr Hosting erlaubt nicht die automatische Erstellung einer neuen Datenbank), erscheint die Nachricht "[Beim Laden der Informationen ist ein Fehler aufgetreten (You need at least one free database)](/guides/web-cloud/web-hosting/diagnostic-errors-module1clic#beim-laden-der-informationen-ist-ein-fehler-aufgetreten-sie-benotigen-mindestens-eine-freie-datenbank/)" in Ihrem Kundencenter.
@@ -212,15 +200,14 @@ Wenn Sie die maximale Anzahl an Datenbanken erreicht haben, die in Ihrem [Webhos
 
 :::
 
-
 Um die Löschung Ihres Moduls abzuschließen, klicken Sie auf die nachfolgenden Tabs, um die **3** Schritte nacheinander anzuzeigen.
 
 <Tabs>
   <Tab label="Schritt 1">
     Öffnen Sie die Seite <ManagerLink to="/#/web/hosting">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Klicken Sie auf den Tab <code className="action">Datenbanken</code>.
   </Tab>
   <Tab label="Schritt 2">
@@ -230,7 +217,6 @@ Um die Löschung Ihres Moduls abzuschließen, klicken Sie auf die nachfolgenden 
     Überprüfen Sie im Tab <code className="action">Aktuelle Tasks</code>, dass die zuvor ausgelösten Lösch-Tasks abgeschlossen sind, bevor Sie die Installation eines neuen Moduls starten.
   </Tab>
 </Tabs>
-
 
 ### Bewährte Praktiken
 

@@ -1,12 +1,11 @@
 ---
 title: Przykłady zastosowania - Jak zmienić domenę na istniejącej stronie
 description: Dowiedz się, jak zmienić nazwę domeny na istniejącej stronie
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Wprowadzenie
 
@@ -22,7 +21,6 @@ OVHcloud oddaje do Twojej dyspozycji usługi, których konfiguracja, zarządzani
 Oddajemy do Twojej dyspozycji niniejszy tutorial, którego celem jest pomoc w jak najlepszym wykonywaniu bieżących zadań. W przypadku trudności zalecamy skorzystanie z pomocy [wyspecjalizowanego usługodawcy](https://partner.ovhcloud.com/pl/directory/). Niestety firma OVHcloud nie będzie mogła udzielić wsparcia w tym zakresie. Więcej informacji znajduje się w sekcji ["Sprawdź również"](#go-further) niniejszego przewodnika.
 
 :::
-
 
 ## Wymagania początkowe
 
@@ -48,7 +46,6 @@ Bądź czujny nad operacjami, które zamierzasz wykonać lub skontaktuj się z [
 
 :::
 
-
 Aby zmienić domenę dostępu do Twojej strony WWW, należy wykonać kilka kroków w określonej kolejności.
 
 ### 1 - Zadeklarowanie nowej domeny na hostingu <a name="step1"></a>
@@ -63,7 +60,7 @@ Aby pomyślnie przejść do etapu 1 należy spełnić kilka warunków:
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/#/web/hosting">Hosting</ManagerLink>, następnie wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
@@ -74,14 +71,12 @@ Aby pomyślnie przejść do etapu 1 należy spełnić kilka warunków:
   </Tab>
 </Tabs>
 
-
 :::warning
 Jeśli aktywujesz opcje **IP kraju** lub **CDN** dla swojej nowej domeny, użyj właściwego adresu IP w naszej dokumentacji zawierającej listę [wszystkie adresy IP hostingu współdzielonego](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip).
 
 Aby odnaleźć numer klastra, w którym znajduje się Twój hosting, zapoznaj się z naszym przewodnikiem "[Hosting www - Poznaj klaster i syn](/guides/web-cloud/web-hosting/how-to-know-cluster-and-filer)".
 
 :::
-
 
 > **Certyfikaty SSL**
 >
@@ -98,7 +93,6 @@ Po zakończeniu etapu 1, zanim zmiany staną się skuteczne, niezbędny jest cza
 
 :::
 
-
 Jeśli Twoja strona WWW nie używa baz danych i/lub nie przeprowadzasz przepisywania adresu URL dla Twojej strony WWW, ta ostatnia musi być wyświetlana poprawnie dla Twojej nowej domeny. W takim przypadku przejdź bezpośrednio do [etapu 3](#step3) niniejszego przewodnika. Jeśli tak nie jest, przejdź do poniższego etapu 2.
 
 ### 2 - Przepisanie adresów URL na Twojej stronie WWW z nową domeną
@@ -111,7 +105,6 @@ Uwaga: Operacje opisane w etapie 2 są niezwykle wrażliwe i mogą mieć poważn
 Przed podjęciem jakichkolwiek działań zalecamy pobranie [kopii zapasowej przestrzeni dyskowej FTP](/guides/web-cloud/web-hosting/ftp-save-and-backup) oraz [kopii zapasowej bazy danych](/guides/web-cloud/web-hosting/sql-database-export). W przypadku nieprawidłowej operacji przywrócisz Twoją stronę WWW.
 
 :::
-
 
 Rozróżnimy dwa rodzaje strony internetowej: 
 
@@ -146,7 +139,6 @@ Po zakończeniu etapu 2 Twoja strona WWW powinna wyświetlać się z Twoją now�
 
 :::
 
-
 ### 3 - Usunięcie poprzedniej nazwy domeny <a name="step3"></a>
 
 Aby uniknąć „*Duplicate-content*” i po w pełni funkcjonalnej nowej nazwie domeny z Twoją stroną internetową, należy usunąć deklarację starej nazwy domeny ze swojej strony internetowej, korzystając z przewodnika „[Jak odłączyć nazwę domeny od istniejącej strony internetowej ?](/guides/web-cloud/web-hosting/my-websites-detach-domain-existing-website)”.
@@ -155,7 +147,6 @@ Aby uniknąć „*Duplicate-content*” i po w pełni funkcjonalnej nowej nazwie
 Pamiętaj, aby zająć się certyfikatem SSL *Sectigo EV*, *Sectigo DV* lub *Custom* zgodnie z opisem w [krok 1](#step1).
 
 :::
-
 
 Po odłączeniu starej nazwy domeny od witryny znajdującej się na Twoim serwisie internetowym i jeśli jest ona zarejestrowana u OVHcloud, możesz przekierować tę domenę przy użyciu [trwalego widocznego przekierowania 301](/guides/web-cloud/domains/redirect-domain-name). Dzięki temu Twoi odwiedzający zostaną automatycznie przekierowani na Twoją stronę, widząc nową domenę w pasku adresu/URL swojej przeglądarki.
 

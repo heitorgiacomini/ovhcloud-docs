@@ -1,12 +1,11 @@
 ---
 title: Jak zmienić katalog główny istniejącej strony WWW?
 description: Dowiedz się, jak zmienić katalog główny zadeklarowany dla istniejącej strony WWW na hostingu za pomocą Panelu klienta OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Wprowadzenie
 
@@ -28,7 +27,6 @@ Jeśli nie utworzyłeś jeszcze danej strony WWW na hostingu, zapoznaj się **be
 Jeśli Twoja strona WWW jest skonfigurowana z Git, zapoznaj się najpierw z naszym przewodnikiem "[Konfiguracja i korzystanie z Git na hostingu OVHcloud](/guides/web-cloud/web-hosting/git-integration-webhosting)", aby usunąć powiązanie z Git **przed** kontynuowaniem. Zmiana katalogu głównego jest niedostępna, jeśli Twoja strona WWW jest skonfigurowana z Git. W przeciwnym razie zmiana katalogu głównego zakłóciłaby powiązanie z Git.
 
 :::
-
 
 ## Wymagania początkowe
 
@@ -64,34 +62,32 @@ Ten przewodnik opisuje wyłącznie procedurę zmiany, z poziomu Panelu klienta O
 
 :::
 
-
 Kliknij na poniższe karty, aby wyświetlić kolejno każdy z **4** kroków.
 
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> i wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
     Na wyświetlonej stronie kliknij zakładkę <code className="action">Moje strony</code>.
-    
+
     <img className="thumbnail" alt="Moje strony" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 3">
     W wyświetlonej tabeli kliknij przycisk <code className="action">⁝</code> po prawej stronie odpowiedniej strony WWW, a następnie <code className="action">Edytuj stronę</code>.
-    
+
     <img className="thumbnail" alt="Opcje strony" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 4">
     W otwartym oknie, w formularzu **Katalog główny**, zastąp stary katalog główny nowym.
-    
+
     <img className="thumbnail" alt="Zmiana katalogu głównego" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/edit-site-folder.png" loading="lazy" />
-    
+
     Następnie kliknij <code className="action">Potwierdź</code>.
   </Tab>
 </Tabs>
-
 
 ## Sprawdź również
 

@@ -1,14 +1,11 @@
 ---
 title: "Jak sprawdzić przypisanie 'nazwy domeny / strony internetowej'?"
 description: Użyj naszego narzędzia diagnostycznego, aby upewnić się, że Twoja domena lub poddomena jest poprawnie zadeklarowana z Twoją stroną internetową na Twoim hosting
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
-
 
 ## Wprowadzenie
 
@@ -47,34 +44,33 @@ Kliknij poniższe zakładki, aby wyświetlić kolejne **4** kroki.
 <Tabs>
   <Tab label="Krok 1">
     Przejdź na stronę <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> i wybierz odpowiedni hosting.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
     Na wyświetlonej stronie kliknij zakładkę <code className="action">Moje strony</code>.
-    
+
     <img className="thumbnail" alt="Moje strony" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 3">
     W tabeli, która się pojawi, kliknij przycisk <code className="action">></code> po lewej stronie nazwy strony internetowej, aby wyświetlić przypisane domeny lub poddomeny.
-    
+
     <img className="thumbnail" alt="Strona internetowa" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 4">
     Nazwy domen i poddomen przypisane do Twojej strony internetowej będą widoczne.
-    
+
     <img className="thumbnail" alt="Domains associated websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab-with-domains-associated-displayed.png" loading="lazy" />
-    
+
     Kolumna `Diagnostyka` informuje, czy Twoja domena poprawnie wskazuje na przypisany hosting. Pozwala szybko sprawdzić, czy konfiguracja DNS Twojej domeny została poprawnie wykonana wraz z Twoim hostingiem. Dzięki tej kolumnie możesz zidentyfikować i rozwiązać ewentualne problemy z wskazywaniem. Dla każdej domeny możliwe są trzy wyniki diagnostyczne:
-    
+
     - `A/AAAA` zielony.
     - `A/AAAA` żółty.
     - `A/AAAA` szary.
-    
+
     Zobacz sekcję "[Interpretacja kolorów narzędzia diagnostycznego](#interpretation)", aby dowiedzieć się, co oznaczają te trzy kolory.
   </Tab>
 </Tabs>
-
 
 ### Interpretacja kolorów narzędzia diagnostycznego <a name="interpretation"></a>
 
@@ -83,17 +79,14 @@ Kliknij poniższe zakładki, aby wyświetlić kolejne **4** kroki.
 <details>
 <summary>A/AAAA zielony</summary>
 
-
 <img className="thumbnail" alt="A and AAAA green" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/diagnostic-green-info.png" loading="lazy" />
 
 Gdy ikona `A/AAAA` jest zielona w kolumnie `Diagnostyka`, oznacza to, że rekord **A** (dla adresów IPv4) i/lub rekord **AAAA** (dla adresów IPv6) Twojej domeny poprawnie wskazuje na adres IP Twojego hostingu. Konfiguracja DNS Twojej domeny jest więc zgodna z potrzebami działania strony internetowej na Twoim Hosting.
 
 </details>
 
-
 <details>
 <summary>A/AAAA żółty</summary>
-
 
 <img className="thumbnail" alt="A and AAAA yellow" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/diagnostic-yellow-info.png" loading="lazy" />
 
@@ -103,10 +96,8 @@ Aby rozwiązać problemy z wskazywaniem DNS Twojej domeny i upewnić się, że p
 
 </details>
 
-
 <details>
 <summary>A/AAAA szary</summary>
-
 
 <img className="thumbnail" alt="A and AAAA grey" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/diagnostic-grey-info.png" loading="lazy" />
 
@@ -115,7 +106,6 @@ Gdy ikona `A/AAAA` jest szara w kolumnie `Diagnostyka`, oznacza to, że domena n
 Aby dodać rekordy **A** i/lub **AAAA** i poprawnie skonfigurować swoją domenę, postępuj zgodnie z instrukcjami opisanymi w naszym przewodniku "[Modyfikacja strefy DNS](/guides/web-cloud/domains/dns-zone-edit)".
 
 </details>
-
 
 ## Sprawdź również
 

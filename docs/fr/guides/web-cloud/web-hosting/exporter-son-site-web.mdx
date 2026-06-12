@@ -1,12 +1,11 @@
 ---
 title: Exporter son site web
 description: Découvrez comment exporter votre site web OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objectif
 
@@ -55,25 +54,24 @@ Si vous n’êtes pas en possession de ces derniers, cliquez sur les onglets ci-
 <Tabs>
   <Tab label="Étape 1">
     Accédez à la page <ManagerLink to="/#/web/hosting">Hébergements</ManagerLink>, puis choisissez l'hébergement web concerné.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 2">
     Sur la page qui s'affiche, cliquez sur l'onglet <code className="action">FTP - SSH</code>. 
-    
+
     <img className="thumbnail" alt="FTP- SSH" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 3">
     Les informations liées à votre espace de stockage apparaissent alors. Vous devriez pouvoir retrouver les éléments requis pour vous connecter à celui-ci.
-    
+
     <img className="thumbnail" alt="FTP - SSH tab" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/ftp-ssh/tab-pro.png" loading="lazy" />
 
 Si nécessaire, nous vous invitons à consulter notre guide : [« Se connecter à l’espace de stockage de son hébergement web »](/guides/web-cloud/web-hosting/ftp-connection).
-    
+
     Si vous n'êtes plus en possession du mot de passe, reportez-vous aux instructions décrites dans notre documentation [« Modifier le mot de passe d’un utilisateur FTP »](/guides/web-cloud/web-hosting/ftp-change-password).
   </Tab>
 </Tabs>
-
 
 Une fois tous les éléments en votre possession, la récupération de vos fichiers sur l'espace de stockage peut s'effectuer de deux manières différentes :
 
@@ -95,21 +93,20 @@ Cette section s'applique à la <ManagerLink to="/beta/#/">nouvelle version de l'
 <Tabs>
   <Tab label="Étape 1">
     Accédez à la page <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hébergements</ManagerLink>, puis choisissez l'hébergement web concerné.
-    
+
     <img className="thumbnail" alt="Hébergements" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 2">
     Sur la page qui s'affiche, cliquez sur l'onglet <code className="action">Mes sites</code>.
-    
+
     <img className="thumbnail" alt="Mes sites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 3">
     Dans le tableau qui apparaît, pour le site web souhaité, regardez le <code className="action">Dossier racine</code> qui s'affiche.
-    
+
     <img className="thumbnail" alt="export-website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/root-folders.png" loading="lazy" />
   </Tab>
 </Tabs>
-
 
 Toujours connecté à votre espace de stockage, il ne vous reste plus qu’à télécharger les fichiers de votre site web en accédant au dossier racine identifié précédemment.
 
@@ -119,7 +116,6 @@ Toujours connecté à votre espace de stockage, il ne vous reste plus qu’à t�
 Cette étape est facultative si votre site web n’utilise pas de base de données.
 
 :::
-
 
 Pour récupérer une sauvegarde de votre base de données, consultez notre guide :
 [« Récupérer la sauvegarde de la base de données d’un hébergement web »](/guides/web-cloud/web-hosting/sql-database-export).

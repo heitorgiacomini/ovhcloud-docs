@@ -1,12 +1,11 @@
 ---
 title: Come modificare la cartella root di un sito web esistente?
 description: Scopri come modificare la cartella root dichiarata per un sito web già esistente sul tuo hosting web dallo Spazio Cliente OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Obiettivo
 
@@ -28,7 +27,6 @@ Se non hai ancora creato il sito web interessato sul tuo hosting web, consulta *
 Se il tuo sito web dispone di una configurazione con Git, consulta preventivamente la nostra guida "[Configurare e utilizzare Git con un hosting Web OVHcloud](/guides/web-cloud/web-hosting/git-integration-webhosting)" per rimuovere l'associazione con Git **prima** di proseguire. La modifica della cartella root dichiarata per un sito web non è disponibile se il tuo sito web è configurato con Git. In tal caso, la modifica della cartella root comprometterebbe l'associazione con Git.
 
 :::
-
 
 ## Prerequisiti
 
@@ -64,34 +62,32 @@ Questa guida descrive unicamente la procedura per modificare, dallo Spazio Clien
 
 :::
 
-
 Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **4** passaggi.
 
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella pagina visualizzata, clicca sulla scheda <code className="action">I miei siti</code>.
-    
+
     <img className="thumbnail" alt="I miei siti" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Nella tabella che compare, clicca sul pulsante <code className="action">⁝</code> situato a destra del sito web interessato, poi su <code className="action">Modifica sito</code>.
-    
+
     <img className="thumbnail" alt="Opzioni del sito" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 4">
     Nella finestra che si apre, nel formulario **Cartella root**, sostituisci la vecchia cartella root con quella nuova.
-    
+
     <img className="thumbnail" alt="Modifica cartella root" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/edit-site-folder.png" loading="lazy" />
-    
+
     Clicca quindi su <code className="action">Conferma</code>.
   </Tab>
 </Tabs>
-
 
 ## Per saperne di più
 

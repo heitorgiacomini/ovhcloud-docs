@@ -1,12 +1,11 @@
 ---
 title: Jak zarządzać modułem za 1 kliknięciem?
 description: Dowiedz się, jak zarządzać modułem za pomocą 1 kliknięcia w Panelu klienta OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Wprowadzenie 
 
@@ -20,7 +19,6 @@ OVHcloud udostępnia różnorodne usługi, jednak to Ty odpowiadasz za ich konfi
 Oddajemy w Twoje ręce niniejszy przewodnik, którego celem jest pomoc w wykonywaniu bieżących zadań. W przypadku trudności zalecamy skorzystanie z pomocy wyspecjalizowanego webmastera lub kontakt z producentem oprogramowania. Niestety firma OVHcloud nie będzie mogła udzielić wsparcia w tym zakresie. Więcej informacji znajduje się w sekcji [Sprawdź również](#go-further) ten przewodnik.
 
 :::
-
 
 ## Wymagania początkowe
 
@@ -47,9 +45,9 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **2** kroków.
 <Tabs>
   <Tab label="Krok 1">
     Przejdź do strony <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> i wybierz odpowiedni hosting WWW.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Kliknij zakładkę <code className="action">Moduły CMS</code>.
   </Tab>
   <Tab label="Krok 2">
@@ -57,12 +55,10 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **2** kroków.
   </Tab>
 </Tabs>
 
-
 :::info
 Jeśli po wykonaniu tej operacji Twoja strona WWW nie wyświetla się poprawnie, zapoznaj się z przewodnikami OVHcloud dotyczącymi hostingu współdzielonego w sekcji [Diagnostyka](/guides/web-cloud/web-hosting/overview).
 
 :::
-
 
 ### Dostęp do interfejsu administratora
 
@@ -71,16 +67,15 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **2** kroków.
 <Tabs>
   <Tab label="Krok 1">
     Przejdź do strony <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> i wybierz odpowiedni hosting WWW.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Kliknij zakładkę <code className="action">Moduły CMS</code>.
   </Tab>
   <Tab label="Krok 2">
     Kliknij przycisk <code className="action">...</code> znajdujący się po prawej stronie linii dla Twojego modułu, po czym kliknij <code className="action">Dostęp do interfejsu administracyjnego modułu</code>.
   </Tab>
 </Tabs>
-
 
 ### Znajdź identyfikator administratora
 
@@ -89,7 +84,7 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **3** kroków.
 <Tabs>
   <Tab label="Krok 1">
     Przejdź do strony <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> i wybierz odpowiedni hosting WWW.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
@@ -99,7 +94,6 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **3** kroków.
     Możesz również wyszukać e-mail otrzymany podczas tworzenia modułu. W <ManagerLink to="/">Panelu klienta OVHcloud</ManagerLink> kliknij Twoją nazwę w prawym górnym rogu ekranu, a następnie w menu, które się wyświetla, kliknij <code className="action">E-maile od działu wsparcia</code>.
   </Tab>
 </Tabs>
-
 
 ### Zmiana hasła do modułu <a name="password-change"></a>
 
@@ -124,7 +118,6 @@ Tworzenie kopii zapasowych danych jest częścią operacji niezbędnych do [zabe
 
 :::
 
-
 #### 1 - Zidentyfikować bazę danych powiązaną z modułem <a name="step1"></a>
 
 Aby usunąć moduł za pomocą 1 kliknięcia, należy rozpocząć od zidentyfikowania bazy danych w **sposób** pewny.
@@ -134,9 +127,9 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **3** kroków.
 <Tabs>
   <Tab label="Krok 1">
     Przejdź do strony <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> i wybierz odpowiedni hosting WWW.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Kliknij zakładkę <code className="action">Bazy danych</code>.
   </Tab>
   <Tab label="Krok 2">
@@ -146,7 +139,6 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **3** kroków.
     W przeciwnym razie przejdź do karty <code className="action">Moje strony</code>. Zanotuj nazwę `Katalog główny` widoczną w wierszu odpowiedniego serwisu internetowego: jest to katalog, w którym znajdują się pliki tworzące Twój moduł za 1 kliknięciem na serwerze FTP.
   </Tab>
 </Tabs>
-
 
 Zaloguj się do [przestrzeni FTP Twojego hostingu](/guides/web-cloud/web-hosting/ftp-connection). Otwórz `Katalog główny` znajdujący się w zakładce <code className="action">Moje strony</code> i wyszukaj plik konfiguracyjny Twojego modułu:
 
@@ -166,13 +158,12 @@ Usunięcie modułu za 1 kliknięciem i bazy danych spowoduje usunięcie wszystki
 
 :::
 
-
 Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **3** kroków.
 
 <Tabs>
   <Tab label="Krok 1">
     Przejdź do strony <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> i wybierz odpowiedni hosting WWW.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Krok 2">
@@ -180,22 +171,21 @@ Kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **3** kroków.
   </Tab>
   <Tab label="Krok 3">
     Kliknij przycisk <code className="action">...</code> znajdujący się po prawej stronie linii wyznaczającej moduł, po czym kliknij polecenie <code className="action">Usuń moduł</code>.
-    
+
     :::tip[Success]
     Nie możesz znaleźć przycisku <code className="action">Usuń moduł</code>? A może chcesz usunąć tylko pliki z Twojego dodatku?
-    
+
     Sprawdź nasze przewodniki:
-    
+
     - [Logowanie do przestrzeni dyskowej FTP hostingu](/guides/web-cloud/web-hosting/ftp-connection).
     - [Tutorial - Korzystanie z FileZilla na Twoim hostingu OVHcloud](/guides/web-cloud/web-hosting/ftp-filezilla-user-guide).
-    
+
     <iframe class="video" width="560" height="315" src="https://www.youtube-nocookie.com/embed/LHpsuvyNFtQ?si=4655K8lQQpkE2YNG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
     :::
 
   </Tab>
 </Tabs>
-
 
 :::warning
 Usunięcie modułu 1 kliknięcia **nie spowoduje automatycznego usunięcia bazy danych**. Jeśli uruchomisz instalację nowego CMS bez wcześniejszego usunięcia bazy danych (a Twój hosting nie pozwala na automatyczne utworzenie nowej bazy), w Panelu klienta wyświetli się komunikat "[Wystąpił błąd podczas pobierania informacji (You need at least one free database)](/guides/web-cloud/web-hosting/diagnostic-errors-module1clic#wystapil-blad-podczas-pobierania-informacji-you-need-at-least-one-free-database)".
@@ -204,15 +194,14 @@ Jeśli osiągnąłeś już maksymalną liczbę baz danych dozwoloną w Twoim [ho
 
 :::
 
-
 Aby dokończyć usuwanie modułu, kliknij poniższe zakładki, aby kolejno wyświetlić każdy z **3** kroków.
 
 <Tabs>
   <Tab label="Krok 1">
     Przejdź do strony <ManagerLink to="/#/web/hosting">Hosting</ManagerLink> i wybierz odpowiedni hosting WWW.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
-    
+
     Kliknij zakładkę <code className="action">Bazy danych</code>.
   </Tab>
   <Tab label="Krok 2">
@@ -222,7 +211,6 @@ Aby dokończyć usuwanie modułu, kliknij poniższe zakładki, aby kolejno wyśw
     Przed ponownym uruchomieniem instalacji nowego modułu sprawdź, czy wymagane wcześniej zadania usunięcia zostały sfinalizowane w zakładce <code className="action">Zadania w trakcie</code>.
   </Tab>
 </Tabs>
-
 
 ### Dobre praktyki
 

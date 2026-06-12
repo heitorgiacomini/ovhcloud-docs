@@ -1,12 +1,11 @@
 ---
 title: Konfiguration und Nutzung von Git mit OVHcloud Webhosting
 description: Erfahren Sie hier, wie Sie Git mit Ihrem Webhosting In Ihrem OVHcloud Kundencenter konfigurieren und verwenden
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Ziel
 
@@ -29,7 +28,6 @@ Bis dato wird nur die GitHub-Plattform für die Verwendung mit OVHcloud Webhosti
 
 :::
 
-
 {/* CP-NAV-START:web-hosting */}
 ---
 
@@ -48,7 +46,6 @@ Für die Zuordnung und Konfiguration von Git müssen Sie Änderungen in Ihrem Gi
 
 :::
 
-
 ### Verzeichnis mit Git verknüpfen <a name="associateGitRepo"></a>
 
 :::warning
@@ -56,37 +53,35 @@ Wenn Sie ein Verzeichnis mit Git verknüpfen, werden alle mit diesem Verzeichnis
 
 :::
 
-
 Klicken Sie auf die Tabs, um die **4** Schritte anzuzeigen.
 
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">⁝</code> rechts neben dem gewünschten Website, und dann auf <code className="action">Git zuordnen</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Das Git-Verknüpfungsformular wird angezeigt. Mehrere Elemente müssen konfiguriert werden:
-    
+
     - GitHub-Repository
     - Zweig des GitHub-Repositorys
     - SSH-Schlüssel (für ein privates GitHub-Repository)
     - Webhook (optional)
-    
+
     Lesen Sie weiter in dieser Anleitung, um die erforderlichen Informationen zu erhalten, um die erforderlichen Felder auszufüllen.
   </Tab>
 </Tabs>
-
 
 #### GitHub-Repository definieren
 
@@ -104,7 +99,6 @@ Legen Sie einen Namen für Ihr Repository fest und geben Sie die angeforderten I
 Aktivieren Sie die Option `Add a README file`, damit GitHub Ihr Repository korrekt initialisiert.
 
 :::
-
 
 Klicken Sie abschließend auf <code className="action">Create Repository</code>.
 
@@ -143,12 +137,10 @@ Wenn Ihr GitHub-Repository öffentlich ist, können die Dateien ohne Authentifiz
 
 :::
 
-
 :::info
 Die Erstellung eines SSH-Schlüssels ist ein wichtiger Schritt, da er eine sichere verschlüsselte Verbindung zwischen dem Verzeichnis Ihrer Website und dem GitHub-Repository herstellt. Dieser Schlüssel stellt sicher, dass Datenübertragungen und Codeänderungen sicher und authentifiziert erfolgen, um unbefugten Zugriff zu verhindern und die Codeintegrität zu gewährleisten.
 
 :::
-
 
 Kopieren Sie Ihren SSH-Schlüssel, indem Sie rechts auf den Button klicken.
 
@@ -226,32 +218,30 @@ Klicken Sie auf die Tabs, um die **4** Schritte anzuzeigen.
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">⁝</code> rechts neben der betroffenen Website und dann auf <code className="action">Git deployen</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Es wird eine Bestätigungsmeldung angezeigt, dass Sie bei einem Konflikt während der Bereitstellung Remote-Änderungen (aus dem GitHub-Repository) in Ihrem lokalen Repository erzwingen können. Aktivieren oder deaktivieren Sie die Option hierzu, und klicken Sie auf <code className="action">Bestätigen</code>, um die Bereitstellung zu bestätigen.
-    
+
     :::warning
     Um Ihre lokalen Änderungen nicht zu verlieren, sollten Sie diese vor dem Überschreiben durch die Änderungen des entfernten Zweigs sichern.
 
     :::
 
-    
     Die neue Version Ihrer Website wurde erfolgreich auf Ihrem OVHcloud Webhosting bereitgestellt. Wenn andere Personen am gleichen Projekt arbeiten und Änderungen an das GitHub-Repository vornehmen, können Sie [einen Webhook auf GitHub konfigurieren](#configureWebhook), damit diese Änderungen automatisch auf Ihrem Webhosting bereitgestellt werden. So müssen Sie Git nicht manuell bereitstellen, und Ihr Webhosting bleibt immer auf dem neuesten Stand.
   </Tab>
 </Tabs>
-
 
 ### Domainnamen bearbeiten
 
@@ -260,50 +250,49 @@ Klicken Sie auf die Tabs, um die **4** Schritte anzuzeigen.
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">></code> links neben dem Namen der Website, um die zugehörigen Domainnamen oder Subdomains anzuzeigen.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Klicken Sie anschließend auf den Button <code className="action">⁝</code> rechts neben dem gewünschten Domainnamen oder Subdomain und dann auf <code className="action">Domain bearbeiten</code>.
-    
+
     <img className="thumbnail" alt="Associated domains options" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Es gibt zwei mögliche Szenarien:
-    
+
     **1 - Ein oder mehrere andere Domainnamen sind an die Website angehängt**
-    
+
     Das folgende Fenster wird angezeigt:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/modify-domain-step1.png" loading="lazy" />
-    
+
     Passen Sie die Informationen nach Ihren Wünschen an und klicken Sie auf <code className="action">Weiter</code>.
-    
+
     Ein zweites Bestätigungsfenster wird angezeigt mit einem Zusammenfassung Ihrer Änderungen:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/modify-domain-step2.png" loading="lazy" />
-    
+
     Klicken Sie auf <code className="action">Bestätigen</code>, um die Änderungen an Ihrem Domainnamen zu bestätigen.
-    
+
     **2 - Nur ein Domainname ist an die Website angehängt**
-    
+
     Das folgende Fenster wird angezeigt:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/modify-alone-domain-step1.png" loading="lazy" />
-    
+
     Wie in der Nachricht erwähnt, [löschen Sie Ihre Git-Assoziation](#deleteGitAssociation), bevor Sie Ihren Domainnamen ändern.
   </Tab>
 </Tabs>
-
 
 ### Abtrennen eines Domainnamens
 
@@ -312,44 +301,43 @@ Klicken Sie auf die Tabs, um die **4** Schritte anzuzeigen.
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">></code> links neben dem Namen der Website, um die zugehörigen Domainnamen oder Subdomains anzuzeigen.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
-    
+
     Klicken Sie anschließend auf den Button <code className="action">⁝</code> rechts neben dem gewünschten Domainnamen oder Subdomain und dann auf <code className="action">Domain abtrennen</code>.
-    
+
     <img className="thumbnail" alt="Associated domains options" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/associated-domains-options.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Es gibt zwei mögliche Szenarien:
-    
+
     **1 - Ein oder mehrere andere Domainnamen sind an die Website angehängt**
-    
+
     Das folgende Fenster wird angezeigt.
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/detach-domain-popup.png" loading="lazy" />
-    
+
     Klicken Sie auf <code className="action">Bestätigen</code>, um das Abtrennen Ihres Domainnamens zu bestätigen.
-    
+
     **2 - Nur ein Domainnamen ist an die Website angehängt**
-    
+
     Das folgende Fenster wird angezeigt:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/detach-alone-domain.png" loading="lazy" />
-    
+
     Wie in der Nachricht erwähnt, [löschen Sie Ihre Ihre Git-Assoziation](#deleteGitAssociation), bevor Sie Ihren Domainnamen freigeben.
   </Tab>
 </Tabs>
-
 
 ### Git konfigurieren
 
@@ -358,29 +346,28 @@ Klicken Sie auf die Tabs, um die **4** Schritte anzuzeigen.
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">⁝</code> rechts neben der betroffenen Website und dann auf <code className="action">Git konfigurieren</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Die folgenden Informationen werden angezeigt:
-    
+
     - SSH-Schlüssel: Falls Sie dies noch nicht getan haben, [registrieren Sie Ihren SSH-Schlüssel in Ihrem GitHub-Account](#linkSSHKey).
     - Repository: Adresse Ihres Git-Repositorys. Dieses Feld ist grau, da Sie die Adresse des Git-Repositorys nicht ändern können. Um die URL des Git-Repositorys zu ändern, müssen Sie [die Git-Verknüpfung Ihres Verzeichnisses entfernen](#deleteGitAssociation) und anschließend [das Verzeichnis erneut mit Git verknüpfen](#associateGitRepo).
     - Zweig: Name des GitHub-Repository-Zweigs. Sie können dieses Feld ggf. ändern.
     - Webhook-URL: Falls Sie Ihre Deployments auf Git optimieren möchten, [konfigurieren Sie den Webhook auf GitHub](#configureWebhook).
   </Tab>
 </Tabs>
-
 
 ### Informationen zur letzten Bereitstellung
 
@@ -391,23 +378,22 @@ Klicken Sie auf die Tabs, um die **3** Schritte anzuzeigen.
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">⁝</code> rechts neben der betroffenen Website und dann auf <code className="action">Informationen zur lezten Bereitstellung</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
-    
+
     Auf diesem Bildschirm finden Sie alle Informationen zum letzten Deployment.
   </Tab>
 </Tabs>
-
 
 ### Zuordnung von Git entfernen <a name="deleteGitAssociation"></a>
 
@@ -416,40 +402,39 @@ Klicken Sie auf die Tabs, um die **4** Schritte anzuzeigen.
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">⁝</code> rechts neben der betroffenen Website und dann auf <code className="action">Git löschen</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Das folgende Fenster wird angezeigt:
-    
+
     <img className="thumbnail" alt="My websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/delete-git-association-popup.png" loading="lazy" />
-    
+
     Die Meldung informiert Sie darüber, dass die Löschung auf alle Domains angewendet wird, die an Ihre Website angehängt sind. Aktivieren Sie die Option <code className="action">Möchten Sie den Inhalt des Verzeichnisses `<your_directory>` leeren?</code>, wenn Sie auch den Inhalt (Ordner und Dateien) des Verzeichnisses löschen möchten.
-    
+
     1\.	Wenn Sie das Feld aktivieren, wird das folgende Fenster angezeigt:
-    
+
     <img className="thumbnail" alt="Meine Webseiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/delete-git-association-with-folder-popup-confirm.png" loading="lazy" />
-    
+
     Klicken Sie auf <code className="action">Bestätigen</code>, um die Löschung der Git-Zuordnung Ihres Verzeichnisses sowie seines Inhalts zu bestätigen.
-    
+
     2\.	Wenn Sie das Feld nicht aktivieren, wird das folgende Fenster angezeigt:
-    
+
     <img className="thumbnail" alt="Meine Webseiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/multisite/delete-git-association-popup-confirm.png" loading="lazy" />
-    
+
     Klicken Sie auf <code className="action">Bestätigen</code>, um die Löschung der Git-Zuordnung Ihres Verzeichnisses zu bestätigen.
   </Tab>
 </Tabs>
-
 
 ### Webhook auf GitHub konfigurieren
 
@@ -460,30 +445,28 @@ Wenn Sie sich bereits im Git-Zuordnungsformular befinden, kopieren Sie die Webho
 
 :::
 
-
 Klicken Sie auf die Tabs, um die **4** Schritte anzuzeigen.
 
 <Tabs>
   <Tab label="Schritt 1">
     Gehen Sie auf die Seite <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting-Pakete</ManagerLink> und wählen Sie das betreffende Webhosting aus.
-    
+
     <img className="thumbnail" alt="Hosting-Pakete" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 2">
     Klicken Sie auf der angezeigten Seite auf den Tab <code className="action">Meine Seiten</code>.
-    
+
     <img className="thumbnail" alt="Meine Seiten" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 3">
     Im angezeigten Tabelle klicken Sie auf den Button <code className="action">⁝</code> rechts neben der betroffenen Website und dann auf <code className="action">Git konfigurieren</code>.
-    
+
     <img className="thumbnail" alt="Website" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/website-options-git-enabled.png" loading="lazy" />
   </Tab>
   <Tab label="Schritt 4">
     Am unteren Rand des angezeigten Formulars kopieren Sie die Adresse, die sich im Feld <code className="action">Webhook-URL</code> befindet. Sie müssen diese URL registrieren und den Webhook auf Ihrem GitHub-Account konfigurieren.
   </Tab>
 </Tabs>
-
 
 #### Webhook konfigurieren <a name="configureWebhook"></a>
 
@@ -517,9 +500,9 @@ Sie haben den Code Ihrer Website über Ihr GitHub-Repository mit Git verbunden. 
 ## Weiterführende Informationen
 
 [Eine Website auf Ihrem Webhosting online stellen](/guides/web-cloud/web-hosting/hosting-how-to-get-my-website-online)
- 
+
 Kontaktieren Sie für spezialisierte Dienstleistungen (SEO, Web-Entwicklung etc.) die [OVHcloud Partner](https://partner.ovhcloud.com/de/directory/).
- 
+
 Wenn Sie Hilfe bei der Nutzung und Konfiguration Ihrer OVHcloud Lösungen benötigen, beachten Sie unsere [Support-Angebote](https://www.ovhcloud.com/de/support-levels/).
- 
+
 Treten Sie unserer [User Community](https://community.ovhcloud.com/) bei.

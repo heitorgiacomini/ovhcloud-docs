@@ -1,12 +1,11 @@
 ---
 title: "Cas d'usage - Comment changer le domaine d'un site existant"
 description: "Découvrez comment changer le nom de domaine d'un site existant"
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objectif
 
@@ -22,7 +21,6 @@ OVHcloud met à votre disposition des services dont la configuration, la gestion
 Nous mettons à votre disposition ce tutoriel afin de vous accompagner au mieux sur des tâches courantes. Cependant, nous vous recommandons de faire appel à un [prestataire spécialisé](https://partner.ovhcloud.com/fr/directory/) si vous éprouvez des difficultés. En effet, nous ne serons pas en mesure de vous fournir une assistance. Plus d'informations dans la section « [Aller plus loin](#go-further) » de ce guide.
 
 :::
-
 
 ## Prérequis
 
@@ -48,7 +46,6 @@ Soyez vigilant quant aux manipulations que vous allez entreprendre ou contactez 
 
 :::
 
-
 Pour changer le nom de domaine d'accès à votre site web, plusieurs étapes sont à réaliser dans un ordre bien précis.
 
 ### 1 - Déclarer le nouveau domaine sur votre hébergement mutualisé <a name="step1"></a>
@@ -63,7 +60,7 @@ Plusieurs conditions sont à remplir pour réussir l'étape 1 :
 <Tabs>
   <Tab label="Étape 1">
     Accédez à la page <ManagerLink to="/#/web/hosting">Hébergements</ManagerLink>, puis choisissez l'hébergement web concerné.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Étape 2">
@@ -74,14 +71,12 @@ Plusieurs conditions sont à remplir pour réussir l'étape 1 :
   </Tab>
 </Tabs>
 
-
 :::warning
 Si vous activez les options **IP du pays** ou **CDN** avec votre nouveau domaine, utilisez bien la bonne adresse IP à l'aide de notre documentation recensant [l'ensemble des adresses IP de nos hébergements mutualisés](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip).
 
 Pour retrouver le numéro du cluster où se trouve votre hébergement, consultez notre guide « [Hébergement web - Comment connaître son cluster et son filer](/guides/web-cloud/web-hosting/how-to-know-cluster-and-filer) ».
 
 :::
-
 
 > **Certificats SSL**
 >
@@ -98,7 +93,6 @@ Une fois l'étape 1 réalisée, un temps de propagation de 4 à 24 heures maximu
 
 :::
 
-
 Si votre site n'utilise pas de bases de données et/ou que vous n'effectuez pas de réécriture d'URL pour votre site web, ce dernier doit déjà s'afficher correctement avec votre nouveau domaine. Dans ce cas, passez directement à [l'étape 3](#step3) de ce guide. Si ce n'est pas le cas, poursuivez à l'étape 2 ci-dessous.
 
 ### 2 - Réécriture des URLs dans votre site web avec le nouveau domaine
@@ -111,7 +105,6 @@ Attention, les opérations décrites dans l'étape 2 sont extrêmement sensibles
 Avant d'effectuer toute action, nous vous conseillons de récupérer une [sauvegarde de votre espace de stockage FTP](/guides/web-cloud/web-hosting/ftp-save-and-backup) ainsi qu'une [sauvegarde de votre base de données](/guides/web-cloud/web-hosting/sql-database-export). Cela vous permettra de restaurer votre site en cas de mauvaise manipulation.
 
 :::
-
 
 Nous allons distinguer deux types de site web : 
 
@@ -146,7 +139,6 @@ Une fois l'étape 2 terminée, votre site doit s'afficher avec votre nouveau dom
 
 :::
 
-
 ### 3 - Retirer l'ancien nom de domaine <a name="step3"></a>
 
 Pour éviter le « *Duplicate-content* » et lorsque votre nouveau nom de domaine est pleinement opérationnel avec votre site web, vous devrez supprimer la déclaration de votre ancien nom de domaine sur votre site web à l'aide du guide « [Comment détacher un nom de domaine d'un site web existant ?](/guides/web-cloud/web-hosting/my-websites-detach-domain-existing-website) ».
@@ -155,7 +147,6 @@ Pour éviter le « *Duplicate-content* » et lorsque votre nouveau nom de domain
 N'oubliez pas de vous occuper de votre certificat SSL *Sectigo EV*, *Sectigo DV* ou *Custom* comme précisé dans [l'étape 1](#step1).
 
 :::
-
 
 Une fois votre ancien nom de domaine dissocié de votre site web présent sur votre hébergement web et s'il est enregistré chez OVHcloud, vous pourrez rediriger ce dernier à l'aide d'une [redirection visible permanente 301](/guides/web-cloud/domains/redirect-domain-name). Cela permettra à vos visiteurs d'être automatiquement redirigés vers votre site en visualisant votre nouveau domaine dans la barre d'adresse/URL de leur navigateur.
 

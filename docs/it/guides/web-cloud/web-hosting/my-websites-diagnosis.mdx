@@ -1,14 +1,11 @@
 ---
 title: "Come verificare l'associazione 'nome di dominio / sito web'?"
 description: Utilizza il nostro strumento diagnostico per verificare che il tuo nome di dominio o sottodominio sia correttamente registrato con il tuo sito web sul tuo hosting web
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
-
-
 
 ## Obiettivo
 
@@ -47,34 +44,33 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **4** pa
 <Tabs>
   <Tab label="Passaggio 1">
     Accedi alla pagina <ManagerLink to="/beta/#/web-cloud/hosting/sites">Hosting</ManagerLink> e seleziona l'hosting web interessato.
-    
+
     <img className="thumbnail" alt="Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 2">
     Nella pagina visualizzata, clicca sulla scheda <code className="action">I miei siti</code>.
-    
+
     <img className="thumbnail" alt="I miei siti" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-sites.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 3">
     Nel riquadro che appare, fai clic sul pulsante <code className="action">></code> a sinistra del nome del sito web desiderato per visualizzare i domini o sottodomini associati.
-    
+
     <img className="thumbnail" alt="Sito web" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab.png" loading="lazy" />
   </Tab>
   <Tab label="Passaggio 4">
     I nomi di dominio o sottodomini associati al tuo sito web appaiono. 
-    
+
     <img className="thumbnail" alt="Domains associated websites" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/tab-with-domains-associated-displayed.png" loading="lazy" />
-    
+
     La colonna `Diagnostica` ti informa se il tuo nome di dominio punta correttamente all'hosting web associato. Ti permette di verificare rapidamente che la configurazione DNS del tuo nome di dominio sia correttamente effettuata con il tuo hosting web. Così, questa colonna ti aiuta ad identificare e risolvere eventuali problemi di puntamento. Per ogni nome di dominio, tre risultati di diagnostica sono possibili:
-    
+
     - `A/AAAA` verde.
     - `A/AAAA` giallo.
     - `A/AAAA` grigio.
-    
+
     Consulta la parte "[Interpretazione dei colori dello strumento di diagnostica](#interpretation)" di questa guida per conoscere il significato di questi 3 colori.
   </Tab>
 </Tabs>
-
 
 ### Interpretazione dei colori dello strumento di diagnostica <a name="interpretation"></a>
 
@@ -83,17 +79,14 @@ Clicca sulle schede qui sotto per visualizzare in sequenza ciascuno dei **4** pa
 <details>
 <summary>A/AAAA verde</summary>
 
-
 <img className="thumbnail" alt="A and AAAA green" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/diagnostic-green-info.png" loading="lazy" />
 
 Quando l'icona `A/AAAA` è verde nella colonna `Diagnostica`, ciò significa che il record **A** (per gli indirizzi IPv4) e/o il record **AAAA** (per gli indirizzi IPv6) del tuo nome di dominio punta correttamente all'indirizzo IP del tuo hosting web. La configurazione DNS del tuo nome di dominio è quindi conforme per funzionare con il sito web del tuo hosting web.
 
 </details>
 
-
 <details>
 <summary>A/AAAA giallo</summary>
-
 
 <img className="thumbnail" alt="A and AAAA yellow" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/diagnostic-yellow-info.png" loading="lazy" />
 
@@ -103,10 +96,8 @@ Per risolvere i problemi di puntamento DNS del tuo nome di dominio e assicurarti
 
 </details>
 
-
 <details>
 <summary>A/AAAA grigio</summary>
-
 
 <img className="thumbnail" alt="A and AAAA grey" src="/images/assets/screens/control-panel/product-selection/web-cloud/web-hosting/my-websites/diagnostic-grey-info.png" loading="lazy" />
 
@@ -115,7 +106,6 @@ Quando l'icona `A/AAAA` è grigia nella colonna `Diagnostica`, ciò significa ch
 Per aggiungere i record **A** e/o **AAAA** e configurare correttamente il tuo nome di dominio, segui le fasi descritte nella nostra guida "[Modificare una zona DNS di OVHcloud](/guides/web-cloud/domains/dns-zone-edit)".
 
 </details>
-
 
 ## Per saperne di più
 

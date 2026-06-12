@@ -1,7 +1,7 @@
 ---
 title: Jak utworzyć subdomenę?
 description: Dowiedz się, jak zdefiniować subdomenę i jak ją utworzyć w OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
@@ -14,7 +14,7 @@ Podczas korzystania z nazwy domeny konieczne będzie utworzenie i skonfigurowani
 Na przykład *www.ovhcloud.com* jest subdomeną nazwy domeny *ovhcloud.com*.
 
 Możesz utworzyć nieskończoną liczbę subdomen na podstawie jednej nazwy domeny.
-  
+
 **Poznaj subdomeny i dowiedz się, jak je utworzyć w OVHcloud.**
 
 ## Wymagania początkowe
@@ -22,7 +22,7 @@ Możesz utworzyć nieskończoną liczbę subdomen na podstawie jednej nazwy dome
 - Posiadanie co najmniej jednej [nazwy domeny](https://www.ovhcloud.com/pl/domains/);
 - Dysponowanie aktywną strefą DNS dla Twojej nazwy domeny. W razie potrzeby sprawdź przewodnik "[Utwórz strefę DNS OVHcloud](/guides/web-cloud/domains/dns-zone-create)";
 - Wystarczające uprawnienia dotyczące wszystkich usług. Więcej informacji znajdziesz w naszym przewodniku [Zarządzanie kontaktami dla usług OVHcloud](/guides/account-and-service-management/account-information/managing-contacts).
-  
+
 {/* CP-NAV-START:web-domains */}
 ---
 
@@ -61,7 +61,6 @@ Możesz utworzyć nieskończoną liczbę subdomen na podstawie jednej nazwy dome
 
 <summary>Co składa się na nazwę domeny?</summary>
 
-
 **Nazwa domeny** składa się z poziomów. Poziomy te są zazwyczaj oddzielone znakiem `.` (z wyjątkiem niektórych **rozszerzeń** od *pierwszego poziomu*, takich jak *.co.uk*, *.gouv.fr* i *.notaires.fr*):
 
 - **T**op **L**evel **D**omain (**TLD**): reprezentuje nazwy domen *pierwszego poziomu*. Najczęściej nazywamy je **rozszerzeniami**. Obecnie istnieją 4 typy nazw domen najwyższego poziomu: 
@@ -78,11 +77,9 @@ Możesz utworzyć nieskończoną liczbę subdomen na podstawie jednej nazwy dome
 
 </details>
 
-
 <details>
 
 <summary>Co to jest subdomena?</summary>
-
 
 [Nazwa domeny](https://www.ovhcloud.com/pl/domains/) może być powiązana z kilkoma rodzajami usług (e-mail, strona internetowa, etc.).
 
@@ -114,7 +111,6 @@ Poza trzecim poziomem nazwy domeny, jest on również uważany za **subdomenę**
 
 </details>
 
-
 ### Jak utworzyć subdomenę? <a name="subdomain-creation"></a>
 
 Wszystkie [nazwy domen](https://www.ovhcloud.com/pl/domains/) potrzebują do działania **strefy DNS**. Strefa DNS zawiera informacje techniczne nazywane *rekordami DNS*. Jest, w pewnym sensie, centrum ruchu wskazówek.
@@ -138,7 +134,6 @@ Aktywna strefa DNS Twojej nazwy domeny nie musi być zarządzana u tego samego d
 2: Jeśli Twoja nazwa domeny nie jest zarejestrowana w OVHcloud, skontaktuj się z *aktualnym operatorem* Twojej nazwy domeny, aby dowiedzieć się, gdzie hostowana jest aktywna strefa DNS. Aby wykonać transfer nazwy domeny do OVHcloud, zapoznaj się z naszym [przewodnikiem](/guides/web-cloud/domains/transfer-incoming-generic-domain).
 
 :::
-
 
 Jeśli serwery DNS zadeklarowane dla Twojej nazwy domeny mają jedną z dwóch form:
 
@@ -169,14 +164,12 @@ Ze względów bezpieczeństwa musisz również autoryzować subdomenę, aby mia�
 
 :::
 
-
 W dalszej części dowiesz się, jak autoryzować subdomenę, aby miała dostęp do różnych usług "Web cloud" (hosting www, serwer Exchange, itp.) oferowanych przez OVHcloud.
 
 :::warning
 Jeśli chcesz skonfigurować subdomenę dla usługi hostowanej poza OVHcloud, nie będziemy w stanie udzielić Ci wsparcia w tym zakresie. Prosimy o kontakt z zewnętrznym dostawcą usług w celu kontynuowania konfiguracji. 
 
 :::
-
 
 ### Powiązanie, autoryzacja i konfiguracja Twojej subdomeny z usługą OVHcloud <a name="link-subdomain"></a>
 
@@ -197,7 +190,6 @@ Dodanie nazwy domeny lub poddomeny na jednym z witryn internetowych Twojej ofert
 W przypadku subdomeny ten sam token nie jest brany pod uwagę i musi zostać dodany nie dla subdomeny, ale dla nazwy domeny. W tym przypadku dodaj dodatkowo token w postaci rekordu DNS typu TXT dla nazwy domeny w aktywnej strefie DNS Twojej nazwy domeny.
 
 :::
-
 
 <Region zones={['eu', 'ca']}>
 

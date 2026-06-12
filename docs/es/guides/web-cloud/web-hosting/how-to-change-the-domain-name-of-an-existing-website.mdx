@@ -1,12 +1,11 @@
 ---
 title: Casos de uso - Cómo cambiar el dominio de un sitio existente
 description: Descubra cómo cambiar el dominio de un sitio existente
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
 import { Tab, Tabs } from '@rspress/core/theme';
-
 
 ## Objetivo
 
@@ -22,7 +21,6 @@ La configuración, la gestión y la responsabilidad de los servicios que OVHclou
 Ponemos a su disposición este tutorial para ayudarle lo mejor posible en tareas habituales. No obstante, si tiene alguna duda, le recomendamos que contacte con un [proveedor especializado](https://partner.ovhcloud.com/es-es/directory/). Nosotros no podremos asistirle. Más información en la sección ["Más información"](#go-further) de esta guía.
 
 :::
-
 
 ## Requisitos
 
@@ -48,7 +46,6 @@ Esté atento a las operaciones que vaya a realizar o contacte con un [proveedor 
 
 :::
 
-
 Para cambiar el dominio de acceso al sitio web, deberá realizar diversas acciones en un orden adecuado.
 
 ### 1 - Declarar el nuevo dominio en su alojamiento compartido <a name="step1"></a>
@@ -63,7 +60,7 @@ Para que el paso 1 se cumpla correctamente, deberá cumplir varias condiciones:
 <Tabs>
   <Tab label="Etapa 1">
     Acceda a la página <ManagerLink to="/#/web/hosting">Alojamientos</ManagerLink> y seleccione el alojamiento web correspondiente.
-    
+
     <img className="thumbnail" alt="Web Hosting" src="/images/assets/screens/control-panel/product-selection/web-cloud/hosting-plans.png" loading="lazy" />
   </Tab>
   <Tab label="Etapa 2">
@@ -74,14 +71,12 @@ Para que el paso 1 se cumpla correctamente, deberá cumplir varias condiciones:
   </Tab>
 </Tabs>
 
-
 :::warning
 Si activa las opciones **IP del país** o **CDN** con su nuevo dominio, utilice la dirección IP correcta con nuestra documentación que recoge [todas las direcciones IP de nuestros alojamientos compartidos](/guides/web-cloud/web-hosting/clusters-and-shared-hosting-ip).
 
 Para consultar el número del cluster en el que se encuentra el alojamiento, consulte nuestra guía "[Web hosting - Cómo conocer su cluster y su filer](/guides/web-cloud/web-hosting/how-to-know-cluster-and-filer)".
 
 :::
-
 
 > **Certificados SSL**
 >
@@ -98,7 +93,6 @@ Una vez realizada la primera etapa, los cambios tardarán entre 4 y 24 horas en 
 
 :::
 
-
 Si su sitio web no utiliza bases de datos ni reescribe URL para su sitio web, este último ya debe mostrarse correctamente con su nuevo dominio. En ese caso, vaya directamente a [el paso 3](#step3) de esta guía. En caso contrario, vaya al paso 2.
 
 ### 2 - Reescritura de las URLs en su sitio web con el nuevo dominio
@@ -111,7 +105,6 @@ Atención, las operaciones descritas en el paso 2 son extremadamente sensibles y
 Antes de realizar cualquier acción, le recomendamos que obtenga una [copia de seguridad de su espacio de almacenamiento FTP](/guides/web-cloud/web-hosting/ftp-save-and-backup) y una [copia de seguridad de su base de datos](/guides/web-cloud/web-hosting/sql-database-export). Para restaurar el sitio web en caso de manipulación incorrecta.
 
 :::
-
 
 Vamos a diferenciar dos tipos de sitios web: 
 
@@ -146,7 +139,6 @@ Una vez finalizado el paso 2, su sitio web debe mostrarse con su nuevo dominio.
 
 :::
 
-
 ### 3 - Retirar el antiguo nombre de dominio <a name="step3"></a>
 
 Para evitar el "duplicate-content" y cuando su nuevo nombre de dominio esté completamente operativo con su sitio web, deberá eliminar la declaración de su antiguo nombre de dominio en su sitio web utilizando el tutorial « [Cómo desasociar un dominio de un sitio web existente](/guides/web-cloud/web-hosting/my-websites-detach-domain-existing-website) ».
@@ -155,7 +147,6 @@ Para evitar el "duplicate-content" y cuando su nuevo nombre de dominio esté com
 No olvide contratar su certificado SSL *Sectigo EV*, *Sectigo DV* o *Custom* como se especifica en [el paso 1](#step1).
 
 :::
-
 
 Una vez que su antiguo nombre de dominio esté desvinculado del sitio web alojado en su alojamiento web y si está registrado en OVHcloud, podrá redirigirlo mediante una [redirección visible permanente 301](/guides/web-cloud/domains/redirect-domain-name). Esto permitirá que sus visitantes sean redirigidos automáticamente hacia su sitio web y visualicen su nuevo dominio en la barra de direcciones/URL de su navegador.
 

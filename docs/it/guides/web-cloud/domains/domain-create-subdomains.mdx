@@ -1,7 +1,7 @@
 ---
 title: Come creare un sottodominio?
 description: Questa guida ti mostra la definizione di un sottodominio e come crearlo in OVHcloud
-lastUpdated: 2026-06-09
+lastUpdated: 2026-06-12
 availableIn: [eu, ca, apac]
 ---
 
@@ -14,7 +14,7 @@ Durante l'utilizzo del dominio, è necessario creare e configurare **sottodomini
 Ad esempio, *www.ovhcloud.com* è un sottodominio del dominio *ovhcloud.com*.
 
 È possibile creare un'infinità di sottodomini a partire da un solo dominio.
-  
+
 **Questa guida ti mostra i sottodomini e come crearli in OVHcloud.**
 
 ## Prerequisiti
@@ -22,7 +22,7 @@ Ad esempio, *www.ovhcloud.com* è un sottodominio del dominio *ovhcloud.com*.
 - Disporre di almeno un [nome di dominio](https://www.ovhcloud.com/it/domains/);
 - Disporre di una zona DNS attiva per il nome di dominio. Se necessario, consulta la nostra guida "[Creare una zona DNS in OVHcloud](/guides/web-cloud/domains/dns-zone-create)";
 - Disporre dei diritti necessari per tutti i servizi in questione. Per maggiori informazioni consulta la nostra guida [Gestire i contatti dei servizi](/guides/account-and-service-management/account-information/managing-contacts).
-  
+
 {/* CP-NAV-START:web-domains */}
 ---
 
@@ -61,7 +61,6 @@ Ad esempio, *www.ovhcloud.com* è un sottodominio del dominio *ovhcloud.com*.
 
 <summary>Qual è la composizione di un nome di dominio?</summary>
 
-
 Un **nome di dominio** è composto da diversi livelli. Questi livelli sono generalmente separati da un `.` (ad eccezione di alcune **estensioni** del *primo livello* come *.co.uk*, *.gouv.fr* e *.notaires.fr*):
 
 - **T**op **L**evel **D**omain (**TLD**): rappresenta i domini di *primo livello*. Le chiamiamo più comunemente **estensioni**. Al momento sono disponibili 4 tipi di dominio di primo livello: 
@@ -78,11 +77,9 @@ Un **nome di dominio** è composto da diversi livelli. Questi livelli sono gener
 
 </details>
 
-
 <details>
 
 <summary>Cos'è un sottodominio?</summary>
-
 
 Un [nome di dominio](https://www.ovhcloud.com/it/domains/) può essere associato a diversi tipi di servizi (email, sito Web, ecc...).
 
@@ -114,7 +111,6 @@ Al di là del terzo livello di dominio, si tratta ugualmente di **sotto-domini**
 
 </details>
 
-
 ### Come creare un sottodominio? <a name="subdomain-creation"></a>
 
 Per funzionare correttamente, tutti i [nomi di dominio](https://www.ovhcloud.com/it/domains/) hanno bisogno di una **zona DNS**. La zona DNS è composta da informazioni tecniche chiamate *record DNS*. È come un centro di scambio.
@@ -138,7 +134,6 @@ La zona DNS attiva del tuo nome di dominio non è necessariamente gestita presso
 2: se il nome di dominio non è registrato in OVHcloud, contatta il *Registrar* attuale per conoscere la zona DNS attiva. È possibile trasferire il nome di dominio in OVHcloud seguendo la nostra [guida dedicata](/guides/web-cloud/domains/transfer-incoming-generic-domain).
 
 :::
-
 
 Se i server DNS dichiarati per il tuo nome di dominio hanno una di queste due forme:
 
@@ -169,14 +164,12 @@ Per motivi di sicurezza, è necessario autorizzare il sottodominio ad accedere a
 
 :::
 
-
 Nella parte successiva dell’esercitazione, questa guida ti mostra come autorizzare un sottodominio ad accedere ai diversi servizi dell’universo "Web Cloud" (hosting Web, server Exchange, ecc...) offerti da OVHcloud.
 
 :::warning
 Se desideri configurare un sottodominio per un servizio ospitato in un luogo diverso da OVHcloud, OVHcloud non sarà in grado di fornirti assistenza. Per proseguire con la configurazione, contatta il fornitore del servizio esterno. 
 
 :::
-
 
 ### Associare, autorizzare e configurare il sottodominio con un servizio OVHcloud <a name="link-subdomain"></a>
 
@@ -197,7 +190,6 @@ L'aggiunta di un nome di dominio o di un sottodominio su uno dei siti web del tu
 Per un sottodominio, lo stesso token non viene preso in considerazione e deve essere aggiunto non per il sottodominio ma per il nome di dominio. In questo caso, aggiungi il token come record DNS di tipo TXT per il nome di dominio nella zona DNS attiva del tuo nome di dominio.
 
 :::
-
 
 <Region zones={['eu', 'ca']}>
 
