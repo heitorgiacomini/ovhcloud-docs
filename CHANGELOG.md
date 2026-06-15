@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026.06.12
+
+### Features
+- **sidebar:** add clickable category landing pages (#190)
+
+### Fixes
+- **content:** repoint hub-spoke vRack APIv6 link to consolidated vrack guide (#194)
+- move stray internal SEO report out of published docs tree (#189)
+
+### Documentation
+- 9 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.11.1
 
 ### Fixes
