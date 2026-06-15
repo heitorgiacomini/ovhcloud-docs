@@ -2,11 +2,14 @@
 
 ## 2026.06.12
 
+### Features
+- **sidebar:** add clickable category landing pages (#190)
+
 ### Fixes
 - move stray internal SEO report out of published docs tree (#189)
 
 ### Documentation
-- 1 guides updated across fr
+- 2 guides updated across fr
 
 ## 2026.06.11.1
 
