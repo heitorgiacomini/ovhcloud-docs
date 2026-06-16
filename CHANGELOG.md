@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026.06.16
+
+### Features
+- **e-learning:** course detail pages with region-aware CTAs, localized into 7 languages (#198)
+- **components:** product-aware region pickers (#191)
+
+### Documentation
+- 323 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.12
 
 ### Features
