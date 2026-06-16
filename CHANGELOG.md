@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.16.2
+
+### Fixes
+- **theme:** enable responsive table wrapping (#209)
+
+### Maintenance
+- **scripts:** update changelog commit message format
+
 ## 2026.06.16.1
 
 ### Features
