@@ -1,17 +1,17 @@
 ---
-title: "How to Deploy an Instance via OpenStack APIs"
-excerpt: "Learn how to deploy an OPCP instance via OpenStack APIs by configuring networks, subnets, instances, and SSH keys"
-updated: 2025-11-18
+title: How to Deploy an Instance via the OpenStack CLI
+description: Find out how to deploy an OPCP instance via the OpenStack command-line interface by configuring networks, subnets, instances, and SSH keys
+lastUpdated: 2026-06-16
 ---
 
 ## Objective
 
-This guide details the steps to install an OPCP node by creating an instance through the OpenStack APIs. 
+This guide details the steps to install an OPCP node by creating an instance through the OpenStack CLI. 
 Before deploying services on your OPCP clusters, you must have at least one installed and active node.
 
 ## Requirements
 
-- Have an active [OPCP](/links/hosted-private-cloud/onprem-cloud-platform) service.
+- Have an active [OPCP](https://www.ovhcloud.com/en-gb/hosted-private-cloud/onprem-cloud-platform/) service.
 - Have a user account with sufficient rights to access the OpenStack APIs.
 - [Prepare the environment to use the OpenStack API](/guides/public-cloud/cross-functional/compute-prepare-openstack-api-environment).
 - [Load the environment variables for the project](/guides/hosted-private-cloud/opcp/how-to-use-api-and-get-credentials).
@@ -20,35 +20,36 @@ Before deploying services on your OPCP clusters, you must have at least one inst
 
 You can obtain a list of available OpenStack commands using the following command:
 
-```sh
+```bash
 openstack command list
 ```
 
 You can filter the displayed commands by specifying a group:
 
-```sh
+```bash
 openstack command list --group compute
 ```
 
 You can also get information about a specific command by adding `help` before it:
 
-```sh
+```bash
 openstack help flavor list 
 
 usage: openstack flavor list [-h] [-f {csv,json,table,value,yaml}] [-c COLUMN]
                              [--quote {all,minimal,none,nonnumeric}] [--noindent]
-                             [--max-width <integer>] [--fit-width] [--print-empty]
+                             [--max-width `<integer>`] [--fit-width] [--print-empty]
                              [--sort-column SORT_COLUMN]
                              [--sort-ascending | --sort-descending] [--public | --private | --all]
-                             [--min-disk <min-disk>] [--min-ram <min-ram>] [--long]
-                             [--marker <flavor-id>] [--limit <num-flavors>]
+                             [--min-disk `<min-disk>`] [--min-ram `<min-ram>`] [--long]
+                             [--marker `<flavor-id>`] [--limit `<num-flavors>`]
 
 List flavors ...
 ```
 
-:::tip
+:::tip[Success]
 Check the OpenStack client documentation directly on the [OpenStack website](https://docs.openstack.org/python-openstackclient/latest/cli/index.html).
 :::
+
 
 ### Retrieve the Parameters Needed to Create an Instance
 
@@ -59,7 +60,7 @@ Check the OpenStack client documentation directly on the [OpenStack website](htt
 Before deploying your instance, it is generally necessary to create a **private network** so that it is accessible within your local infrastructure.
 If you already have a network with a subnet in your project that you want to use, you can skip this creation step and directly list your networks to get the name or ID of the desired network.
 
-```sh
+```bash
 openstack network create $NETWORK_NAME
 +---------------------------+--------------------------------------+
 | Field                     | Value                                |
@@ -106,7 +107,7 @@ Additionally, if you want to create the network in a **specific VLAN**, you can 
 
 For example, if you want to create a shared private network in VLAN 2025 named `opcpdocs`:
 
-```sh
+```bash
 openstack network create --share --provider-network-type vlan --provider-physical-network physnet1 --provider-segment 2025 opcpdocs
 +---------------------------+--------------------------------------+
 | Field                     | Value                                |
@@ -143,7 +144,7 @@ openstack network create --share --provider-network-type vlan --provider-physica
 
 Once the network is created, you can list it using the command:
 
-```sh
+```bash
 openstack network list --name $NETWORK_NAME
 +--------------------------------------+-----------+---------+
 | ID                                   | Name      | Subnets |
@@ -158,14 +159,14 @@ If needed, you can list all networks by removing the `--name` argument.
 
 By default, the only required information to create a subnet on your network is the CIDR you want to configure and the network you just created:
 
-```sh
+```bash
 openstack subnet create --network $NETWORK_NAME --subnet-range 192.168.120.0/24 $SUBNET_NAME
 ```
 
-However, if you want to specify an allocation pool, you can define it using various parameters.<br />
+However, if you want to specify an allocation pool, you can define it using various parameters.<br/>
 For example, to create a subnet with CIDR 192.168.120.0/24, allocating only 50 IP addresses from the CIDR, and using a specific gateway, you can use the following command:
 
-```sh
+```bash
 openstack subnet create --network opcpdocs --subnet-range 192.168.120.0/24 --allocation-pool start=192.168.120.11,end=192.168.120.60 --gateway 192.168.120.8 opcpdocs-subnet
 +----------------------+--------------------------------------+
 | Field                | Value                                |
@@ -203,7 +204,7 @@ First, you need to add a public SSH key to connect to your instances.
 
 - List the SSH key-related commands:
 
-```sh
+```bash
 openstack help | grep keypair
   keypair create  Create new public or private key for server ssh access
   keypair delete  Delete public or private key(s)
@@ -213,13 +214,13 @@ openstack help | grep keypair
 
 - Add the public SSH key:
 
-```sh
+```bash
 openstack keypair create --public-key ~/.ssh/id_rsa.pub $SSHKEY
 ```
 
 - List available SSH keys:
 
-```sh
+```bash
 openstack keypair list
 +---------------+-------------------------------------------------+------+
 | Name          | Fingerprint                                     | Type |
@@ -232,7 +233,7 @@ openstack keypair list
 
 Next, retrieve the ID or name of the flavor you want to use:
 
-```sh
+```bash
 openstack flavor list
 +--------------------------------------+---------------------+---------+------+-----------+-------+-----------+
 | ID                                   | Name                |     RAM | Disk | Ephemeral | VCPUs | Is Public |
@@ -249,7 +250,7 @@ openstack flavor list
 
 Finally, get the ID or name of the image to use for the instance:
 
-```sh
+```bash
 openstack image list
 +--------------------------------------+-----------------------------------------------+--------+
 | ID                                   | Name                                          | Status |
@@ -265,7 +266,7 @@ openstack image list
 
 With the previously gathered information, you can create an instance to deploy an operating system along with your SSH public key on the desired flavor:
 
-```sh
+```bash
 openstack server create --key-name OPCPdocs2 --flavor scale-1 --image "Debian 12 LVM OPCP" --network opcpdocs OPCPdocs-server
 +-------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Field                               | Value                                                                                                                                                                                                                                          |
@@ -323,7 +324,7 @@ By default, the instance to be installed is automatically selected from the pool
 
 After a few minutes, the instance is deployed, and you can list your installed instances using the following command:
 
-```sh
+```bash
 openstack server list
 +--------------------------------------+-----------------+--------+-------------------------+---------------------+---------+
 | ID                                   | Name            | Status | Networks                | Image               | Flavor  |
@@ -334,7 +335,7 @@ openstack server list
 
 If you want to install the instance on a specific node, you can specify the node ID in your command:
 
-```sh
+```bash
 openstack server create --flavor $flavor_ID --image $image_ID --network $network_ID --key-name $your_keyname --availability-zone nova::$baremetal_node_ID $server_name
 ```
 
@@ -346,7 +347,7 @@ To check the current state of a node and retrieve its ID, you can consult our do
 
 You can delete an instance with the following command:
 
-```sh
+```bash
 openstack server delete $INSTANCE_ID
 ```
 
@@ -361,6 +362,6 @@ The operation may take several minutes before the node is `Available` again and 
 
 ## Go further
 
-If you need training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](/links/professional-services) to request a quote and have your project analyzed by our Professional Services team experts.
+If you need training or technical assistance for the implementation of our solutions, contact your sales representative or click [this link](https://www.ovhcloud.com/en-gb/professional-services/) to request a quote and have your project analyzed by our Professional Services team experts.
 
-Join our [community of users](/links/community).
+Join our [community of users](https://community.ovhcloud.com/community/en).

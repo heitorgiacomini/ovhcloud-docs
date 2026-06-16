@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026.06.16.1
+
+### Features
+- **theme:** remove the Duration badge from e-learning course pages
+
+### Fixes
+- **mks:** grafana install typo (#193)
+- fix node upgrade informations in understanding-mks-architecture (#196)
+
+### Documentation
+- 77 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.16
 
 ### Features
