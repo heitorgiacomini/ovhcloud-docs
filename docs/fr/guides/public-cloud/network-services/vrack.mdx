@@ -1,7 +1,7 @@
 ---
 title: Configuration du vRack Public Cloud
 description: Découvrez comment configurer un vRack Public Cloud
-lastUpdated: 2026-06-10
+lastUpdated: 2026-06-16
 ---
 
 import Api from '@components/Api';
@@ -158,10 +158,22 @@ Avant de commencer, consultez les guides suivants :
 - [Charger les variables d’environnement OpenStack](/guides/public-cloud/cross-functional/compute-set-openstack-environment-variables)
 
 :::info
-La CLI OpenStack est pratique pour gérer votre vRack, cependant certaines fonctions peuvent différer selon la version du client ou du système d’exploitation. Consultez la [documentation officielle d'OpenStack](https://docs.openstack.org/fr/).
+La CLI OpenStack est pratique pour gérer votre vRack, cependant certaines fonctions peuvent différer selon la version du client ou du système d’exploitation. Consultez la [documentation officielle d’OpenStack](https://docs.openstack.org/fr/).
 
 :::
 
+
+</details>
+
+
+<details>
+
+<summary>CLI ovhcloud</summary>
+
+
+Le [CLI ovhcloud](https://github.com/ovh/ovhcloud-cli) permet de gérer vos réseaux privés vRack et les interfaces réseau de vos instances Public Cloud directement depuis le terminal.
+
+Consultez la [documentation officielle](https://github.com/ovh/ovhcloud-cli) pour l’installation et la configuration.
 
 </details>
 
@@ -573,7 +585,8 @@ Vous pouvez remplir les champs comme cela :
     **Créer le réseau privé**
 
     ```bash
-    ovhcloud cloud network private create <region> \
+    ovhcloud cloud network private vrack create <region> \
+      --cloud-project <project_id> \
       --name my-vrack-network \
       --vlan-id 42
     ```
@@ -585,9 +598,9 @@ Vous pouvez remplir les champs comme cela :
     **Créer un sous-réseau**
 
     ```bash
-    ovhcloud cloud network private subnet create <network_id> \
+    ovhcloud cloud network private vrack subnet create <network_id> \
+      --cloud-project <project_id> \
       --region <region> \
-      --name my-subnet \
       --cidr 10.1.0.0/16 \
       --ip-version 4 \
       --enable-dhcp
@@ -1099,18 +1112,6 @@ Sélectionnez l'interface à supprimer et validez :
     +--------------------------------------+--------------+--------+------------------------------------------------------------------------+------------+
     ```
     
-    ou
-    
-    ```bash
-    nova list
-    
-    +--------------------------------------+--------------+--------+------------+-------------+----------------------------------------------------------------------+
-    | ID                                   | Name         | Status | Task State | Power State | Networks                                                             |
-    +--------------------------------------+--------------+--------+------------+-------------+----------------------------------------------------------------------+
-    | 12345678-90ab-cdef-xxxx-xxxxxxxxxxxx | Mon-Instance | ACTIVE | -          | Running     | Ext-Net=xx.xx.xx.xx,2001:41d0:yyyy:yyyy::yyyy;MonVrack=192.168.0.124 |
-    +--------------------------------------+--------------+--------+------------+-------------+----------------------------------------------------------------------+
-    ```
-    
     Identification des réseaux publics et privés :
     
     ```bash
@@ -1125,24 +1126,10 @@ Sélectionnez l'interface à supprimer et validez :
     +--------------------------------------+------------+-------------------------------------+
     ```
     
-    ou
-    
-    ```bash
-    nova net-list
-    
-    +--------------------------------------+------------+------+
-    | ID                                   | Label      | CIDR |
-    +--------------------------------------+------------+------+
-    | 12345678-90ab-cdef-xxxx-xxxxxxxxxxxx | MonVLAN-42 | None |
-    | 34567890-12ab-cdef-xxxx-xxxxxxxxxxxx | Ext-Net    | None |
-    | 67890123-4abc-ef12-xxxx-xxxxxxxxxxxx | MonVLAN-0  | None |
-    +--------------------------------------+------------+------+
-    ```
-    
     :::info
-    Vous devrez noter les ID des réseaux vous intéressant :
+    Notez les ID des réseaux qui vous intéressent :
     
-    - Ext-Net pour avoir une IP publique.
+    - Ext-Net pour une IP publique.
     - Celui du ou des VLAN nécessaires à votre configuration.
 
     :::
@@ -1150,41 +1137,75 @@ Sélectionnez l'interface à supprimer et validez :
     
     **Ajout d'une interface réseau privée**
     
-    Pour attacher une nouvelle interface, exécutez la commande suivante :
+    Pour attacher une nouvelle interface :
     
     ```bash
-    nova interface-attach --net-id <ID-VLAN> <ID-instance>
+    openstack server add network <instance_id> <network_id>
     ```
     
-    Par exemple :
+    Vérifiez que l'action a bien été prise en compte :
     
     ```bash
-    nova interface-attach --net-id 12345678-90ab-cdef-xxxx-xxxxxxxxxxxx 12345678-90ab-cdef-xxxx-xxxxxxxxxxxx
-    ```
-    
-    Vous pouvez vérifier que l'action a bien été prise en compte :
-    
-    ```bash
-    nova show <ID-instance>
-    
-    +--------------------------------------+----------------------------------------------------------+
-    | Property                             | Value                                                    |
-    +--------------------------------------+----------------------------------------------------------+
-    | Ext-Net network                      | xx.xx.xx.xx, 2001:41d0:xxx:xxxx::xxxx                    | => votre IP publique
-    | MonVLAN-42 network                   | 192.168.0.x                                              | => votre IP privée
-    [...]
-    ```
-    
-    ou
-    
-    ```bash
-    openstack server show <ID-instance>
+    openstack server show <instance_id>
     +--------------------------------------+-------------------------------------------------------------------------+
     | Field                                | Value                                                                   |
     +--------------------------------------+-------------------------------------------------------------------------+
     [...]
-    | addresses                            | Ext-Net=xx.xx.xx.xx, 2001:41d0:xxx:xxxx::xxxx ; MonVLAN-42=192.168.0.x  | => votre IP publique ; votre IP privée
+    | addresses                            | Ext-Net=xx.xx.xx.xx, 2001:41d0:xxx:xxxx::xxxx ; MonVLAN-42=192.168.0.x  |
     [...]
+    ```
+
+    **Détachement d'une interface réseau**
+
+    :::warning
+    Détacher une interface réseau entraîne sa suppression immédiate. Si vous détachez l'interface publique (Ext-Net), l'adresse IP sera relâchée et ne pourra pas être récupérée.
+    :::
+
+    Identifiez le port à supprimer :
+
+    ```bash
+    openstack port list --server <instance_id>
+    ```
+
+    Puis détachez l'interface :
+
+    ```bash
+    openstack server remove port <instance_id> <port_id>
+    ```
+  </Tab>
+  <Tab label="Depuis le CLI ovhcloud">
+    Utilisez le [CLI ovhcloud](https://github.com/ovh/ovhcloud-cli) pour gérer les interfaces réseau d'une instance existante. Définissez votre projet cloud avec `--cloud-project <project_id>` ou configurez-le dans votre profil.
+
+    **Lister les interfaces de l'instance**
+
+    ```bash
+    ovhcloud cloud instance interface list <instance_id> \
+      --cloud-project <project_id>
+    ```
+
+    **Attacher une interface réseau privée**
+
+    ```bash
+    ovhcloud cloud instance interface create <instance_id> <network_id> \
+      --cloud-project <project_id>
+    ```
+
+    Pour attacher avec une adresse IP fixe :
+
+    ```bash
+    ovhcloud cloud instance interface create <instance_id> <network_id> <ip_address> \
+      --cloud-project <project_id>
+    ```
+
+    **Détacher une interface réseau**
+
+    :::warning
+    Détacher une interface réseau entraîne sa suppression immédiate. Si vous détachez l'interface publique (Ext-Net), l'adresse IP sera relâchée et ne pourra pas être récupérée.
+    :::
+
+    ```bash
+    ovhcloud cloud instance interface delete <instance_id> <interface_id> \
+      --cloud-project <project_id>
     ```
   </Tab>
 </Tabs>
@@ -1195,50 +1216,28 @@ Sélectionnez l'interface à supprimer et validez :
 :::warning
 Détacher une interface réseau entraîne sa suppression immédiate.
 
-Cependant, il est important de noter que si vous détachez l'interface « Ext-Net » (IP publique), cette adresse serait relâchée et remise en circulation. Vous ne pourriez donc pas vous la réattribuer.<br/>
-Cette action n'est à effectuer que si vous souhaitez isoler votre serveur dans le vRack (réseau privé) ou, à l’inverse, le retirer d’un ou de plusieurs VLAN.
+Si vous détachez l’interface « Ext-Net » (IP publique), cette adresse sera relâchée et remise en circulation. Vous ne pourrez pas vous la réattribuer.<br/>
+Cette action n’est à effectuer que si vous souhaitez isoler votre serveur dans le vRack (réseau privé) ou le retirer d’un ou de plusieurs VLAN.
 
 :::
 
 
-Pour détacher une interface réseau, identifiez d'abord le port Neutron créé.
-
-Pour cela, vous pouvez utiliser les commandes suivantes :
+Pour détacher une interface réseau via la CLI OpenStack, identifiez d’abord le port à supprimer :
 
 ```bash
-neutron port-list
-+--------------------------------------+------+-------------------+---------------------------------------------------------------------------------------------------+
-| id                                   | name | mac_address       | fixed_ips                                                                                         |
-+--------------------------------------+------+-------------------+---------------------------------------------------------------------------------------------------+
-| 12345678-abcd-ef01-2345-678910abcdef |      | fa:xx:xx:xx:xx:xx | {"subnet_id": "01234567-8901-abscdef12345678910abcd", "ip_address": "192.168.0.x"}                |
-| 09876543-210a-bcde-f098-76543210abcd |      | fa:yy:yy:yy:yy:yy | {"subnet_id": "65432109-abcd-ef09-8765-43210abcdef1", "ip_address": "2001:41d0:xxx:xxxx::xxxx"}   |
-|                                      |      |                   | {"subnet_id": "abcdef12-3456-7890-abcd-ef1234567890", "ip_address": "YY.YY.YY.YY"}                |
-+--------------------------------------+------+-------------------+---------------------------------------------------------------------------------------------------+
-```
-
-ou
-
-```bash
-openstack port list
+openstack port list --server <instance_id>
 +--------------------------------------+------+-------------------+-------------------------------------------------------------------------------------------+
 | ID                                   | Name | MAC Address       | Fixed IP Addresses                                                                        |
 +--------------------------------------+------+-------------------+-------------------------------------------------------------------------------------------+
-| 12345678-abcd-ef01-2345-678910abcdef |      | fa:xx:xx:xx:xx:xx | ip_address='192.168.0.xx', subnet_id='301234567-8901-abscdef12345678910abcd'              |
-| 09876543-210a-bcde-f098-76543210abcd |      | fa:yy:yy:yy:yy:yy | ip_address='2001:41d0:xxx:xxxx::xxxx', subnet_id='65432109-abcd-ef09-8765-43210abcdef1'   |
-|                                      |      |                   | ip_address='YY.YY.YY.YY', subnet_id='abcdef12-3456-7890-abcd-ef1234567890'                |
+| 12345678-abcd-ef01-2345-678910abcdef |      | fa:xx:xx:xx:xx:xx | ip_address=’192.168.0.xx’, subnet_id=’01234567-8901-abscdef12345678910abcd’               |
+| 09876543-210a-bcde-f098-76543210abcd |      | fa:yy:yy:yy:yy:yy | ip_address=’2001:41d0:xxx:xxxx::xxxx’, subnet_id=’65432109-abcd-ef09-8765-43210abcdef1’   |
 +--------------------------------------+------+-------------------+-------------------------------------------------------------------------------------------+
 ```
 
-Une fois le port identifié, exécutez la commande suivante :
+Puis supprimez le port :
 
 ```bash
-nova interface-detach <ID_instance> <port_id>
-```
-
-Par exemple :
-
-```bash
-nova interface-detach 12345678-90ab-cdef-xxxx-xxxxxxxxxxxx 12345678-abcd-ef01-2345-678910abcdef
+openstack server remove port <instance_id> <port_id>
 ```
 
 </details>
