@@ -1,12 +1,12 @@
 ---
-title: "Building a custom OpenStack Image on OPCP"
-excerpt: "Find out how to create your own operating system image on On-Prem Cloud Platform"
-updated: 2025-11-21
+title: Building a custom Debian image for OPCP
+description: Find out how to create a custom Debian image for On-Prem Cloud Platform
+lastUpdated: 2026-06-16
 ---
 
 ## Objective
 
-This guide focuses on building customized disk images for both OpenStack Ironic (bare metal) and Nova (compute) using [diskimage-builder](https://github.com/openstack/diskimage-builder).
+This guide focuses on building customized Debian disk images for both OpenStack Ironic (bare metal) and Nova (compute) using [diskimage-builder](https://github.com/openstack/diskimage-builder).
 
 It's a good starting point to understand how [diskimage-builder](https://github.com/openstack/diskimage-builder) (DiB) works with a practical example. We will build a custom Debian 13 image from the upstream image and customize it with Ansible.
 
@@ -61,7 +61,7 @@ The image should be a **whole disk image** that includes:
 
 - Some packages:
 
-```sh
+```bash
 # Debian/Ubuntu
 apt update -y && apt install -y \
   dosfstools \
@@ -78,7 +78,7 @@ apt update -y && apt install -y \
 
 Install diskimage-builder (DiB) in a virtualenv:
 
-```sh
+```bash
 mkdir -p diskimage-builder
 python3 -m venv venv
 . ./venv/bin/activate
@@ -108,7 +108,7 @@ Create an element that uses Ansible for customization:
 
 **Directory Structure:**
 
-```sh
+```bash
 mkdir -p elements/os-custom/extra-data.d/ansible/{roles/customize/tasks,inventory/host_vars/sys_image}
 mkdir -p elements/os-custom/extra-data.d/ansible/roles/customize/files
 mkdir -p elements/os-custom/post-install.d
@@ -118,7 +118,7 @@ mkdir -p elements/os-custom/post-install.d
 
 `elements/os-custom/post-install.d/00-install-ansible`:
 
-```sh
+```bash
 #!/bin/bash
 set -eux
 apt install --yes ansible
@@ -126,7 +126,7 @@ apt install --yes ansible
 
 `elements/os-custom/post-install.d/01-apply-ansible`:
 
-```sh
+```bash
 #!/bin/bash
 set -eux
 export LANG=C.UTF-8
@@ -137,7 +137,7 @@ ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory main.yml
 
 `elements/os-custom/post-install.d/02-remove-ansible`:
 
-```sh
+```bash
 #!/bin/bash
 set -eux
 apt remove --yes ansible
@@ -146,7 +146,7 @@ apt autoremove --yes
 
 **Make scripts executable:**
 
-```sh
+```bash
 chmod +x elements/os-custom/post-install.d/*
 ```
 
@@ -232,7 +232,7 @@ debian
 
 Create an environment file `debian13.env`:
 
-```sh
+```bash
 export DIB_RELEASE=trixie
 export DIB_CLOUD_INIT_DATASOURCES="ConfigDrive, OpenStack"
 export DIB_GRUB_TIMEOUT=10
@@ -240,7 +240,7 @@ export DIB_GRUB_TIMEOUT=10
 
 Build the image:
 
-```sh
+```bash
 mkdir -p tmp-build-dir
 export TMPDIR="$(pwd)/tmp-build-dir"
 export ELEMENTS_PATH="$(pwd)/elements"
@@ -253,7 +253,7 @@ You should get a file `debian13.qcow2`.
 
 If you want environment and packages SBOM files:
 
-```sh
+```bash
 cp debian13.d/dib-manifests/dib_environment debian13.env.sbom
 cp debian13.d/dib-manifests/dib-manifest-dpkg-debian13 debian13.pkg.sbom
 ```
@@ -264,11 +264,11 @@ A quick way to test the generated image is using qemu to spawn a virtual machine
 
 #### BIOS Boot
 
-```sh
+```bash
 qemu-system-x86_64 -enable-kvm -vnc 0.0.0.0:0,password=on -monitor stdio -m 2048 -drive file=debian13.qcow2,if=virtio,format=qcow2
 ```
 
-```sh
+```bash
 # Set up a custom VNC password
 QEMU 10.0.3 monitor - type 'help' for more information
 (qemu) change vnc password
@@ -279,7 +279,7 @@ Use any VNC client to connect :5200
 
 #### EFI
 
-```sh
+```bash
 # Copy OVMF vars to avoid modifying the original
 cp /usr/share/OVMF/OVMF_VARS_4M.fd /tmp/debian13-OVMF_VARS_4M.fd
 
@@ -293,7 +293,7 @@ qemu-system-x86_64 -enable-kvm \
   -drive file=debian13.qcow2,if=virtio,format=qcow2
 ```
 
-```sh
+```bash
 # Set up a custom VNC password
 QEMU 10.0.3 monitor - type 'help' for more information
 (qemu) change vnc password
@@ -304,7 +304,7 @@ Use any VNC client to connect :5200
 
 ### Upload Image to OpenStack:
 
-```sh
+```bash
 openstack image create \
   --disk-format qcow2 \
   --container-format bare \
