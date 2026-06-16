@@ -95,7 +95,7 @@ Refer to our guide "[Hosting multiple websites on your Web Hosting plan](/guides
 
 Some users do not place their websites directly in the `root folder`, but inside a subfolder (for example: **MyWebsite**) inside this `root folder`.
 
-In this case, the URL to access the site will be as follows: **http://domain.tld/MyWebsite**.
+In this case, the URL to access the site will be as follows: `http://domain.tld/MyWebsite`.
 
 If the files of your website are not directly in the `root folder` declared for your website in the OVHcloud Control Panel and you do not want to display the folder name in the URL of your website, edit the ".htaccess" file located at the root of the directory containing your website.
 
@@ -108,7 +108,7 @@ RewriteCond %{REQUEST_URI} !^/MyWebsite
 RewriteRule ^(.*)$ /MyWebsite/
 ```
 
-In our example, this forces your website address to be displayed as **http://domain.tld**, whereas in reality the page called is **http://domain.tld/MyWebsite**.
+In our example, this forces your website address to be displayed as `http://domain.tld`, whereas in reality the page called is `http://domain.tld/MyWebsite`.
 
 ### Automatically redirect a visitor to use HTTPS when the website was accessed using a HTTP URL 
 

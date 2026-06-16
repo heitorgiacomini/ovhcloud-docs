@@ -94,7 +94,7 @@ Consulte o nosso guia "[Partilhar o alojamento entre vários sites](/guides/web-
 
 Alguns utilizadores não colocam os seus websites diretamente na base do `pasta raiz`. Eles criam uma sub-pasta (por exemplo: **MyWebsite**) no seu `pasta raiz` para colocar o seu website.
 
-Neste caso, o URL para aceder ao site terá a seguinte forma: **http://domain.tld/MyWebsite**
+Neste caso, o URL para aceder ao site terá a seguinte forma: `http://domain.tld/MyWebsite`
 
 Se os ficheiros do seu site web não estiverem diretamente presentes na `pasta raiz` declarada para o seu site web na sua área de cliente OVHcloud e não quiser mostrar o nome da pasta na URL do seu site web, edite o ficheiro ".htaccess" localizado na raiz do diretório que contém o seu site web.
 
@@ -107,7 +107,7 @@ RewriteCond %{REQUEST_URI} !^/MyWebsite
 RewriteRule ^(.*)$ /MyWebsite/
 ```
 
-No nosso exemplo, isto obriga o endereço do seu site a ser do tipo **http://domain.tld**, ao passo que a página chamada é **http://domain.tld/MyWebsite**.
+No nosso exemplo, isto obriga o endereço do seu site a ser do tipo `http://domain.tld`, ao passo que a página chamada é `http://domain.tld/MyWebsite`.
 
 ### Reencaminhar automaticamente um visitante para o seu website em HTTPS quando o consulta com um URL em HTTP
 

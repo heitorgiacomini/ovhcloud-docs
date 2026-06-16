@@ -94,7 +94,7 @@ Zapoznaj się z naszym przewodnikiem "[Instalacja kilku stron WWW na jednym host
 
 Niektórzy użytkownicy nie umieszczają swojej strony internetowej bezpośrednio na podstawie `Katalog główny`. Następnie tworzą podfolder (np.: **MyWebsite**) w `Katalog główny`, aby umieścić na nim swoją stronę internetową.
 
-W takim przypadku URL dostępu do strony będzie wyglądał następująco: **http://domain.tld/MyWebsite**
+W takim przypadku URL dostępu do strony będzie wyglądał następująco: `http://domain.tld/MyWebsite`
 
 Jeśli pliki Twojej strony internetowej nie znajdują się bezpośrednio w `Katalog główny` zadeklarowanym dla Twojej strony internetowej w Panelu klienta OVHcloud i nie chcesz, aby nazwa katalogu była widoczna w adresie URL strony, edytuj plik ".htaccess" znajdujący się w katalogu głównym folderu zawierającego Twoją stronę internetową.
 
@@ -107,7 +107,7 @@ RewriteCond %{REQUEST_URI} !^/MyWebsite
 RewriteRule ^(.*)$ /MyWebsite/
 ```
 
-W naszym przykładzie adres Twojej strony internetowej musi być typu **http://domain.tld**, natomiast w rzeczywistości strona wywoływana jest **http://domain.tld/MyWebsite**.
+W naszym przykładzie adres Twojej strony internetowej musi być typu `http://domain.tld`, natomiast w rzeczywistości strona wywoływana jest `http://domain.tld/MyWebsite`.
 
 ### Automatyczne przekierowanie osoby odwiedzającej stronę przez HTTPS na stronę WWW podczas wyświetlania jej przez adres URL za pomocą HTTP
 

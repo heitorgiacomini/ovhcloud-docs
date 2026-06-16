@@ -94,7 +94,7 @@ Consulta la nostra guida "[Ospitare più siti su uno stesso hosting](/guides/web
 
 Alcuni utenti non caricano il loro sito direttamente alla base della `Cartella di root` e creano una sottocartella (ad esempio: **MyWebsite**) nella loro `Cartella di root` per creare il tuo sito Web.
 
-In questo caso, l'URL per accedere al sito avrà la forma seguente: **http://domain.tld/MyWebsite**
+In questo caso, l'URL per accedere al sito avrà la forma seguente: `http://domain.tld/MyWebsite`
 
 Se i file del tuo sito web non sono direttamente presenti nella `Cartella di root` dichiarata per il tuo sito web sullo Spazio Cliente OVHcloud e non desideri visualizzare il nome della cartella nell'URL del tuo sito web, modifica il file ".htaccess" presente alla radice della directory che contiene il tuo sito web.
 
@@ -107,7 +107,7 @@ RewriteCond %{REQUEST_URI} !^/MyWebsite
 RewriteRule ^(.*)$ /MyWebsite/
 ```
 
-Nel nostro esempio, questo costringe l'indirizzo del tuo sito ad essere di tipo **http://domain.tld**, mentre in realtà la pagina è **http://domain.tld/MyWebsite**.
+Nel nostro esempio, questo costringe l'indirizzo del tuo sito ad essere di tipo `http://domain.tld`, mentre in realtà la pagina è `http://domain.tld/MyWebsite`.
 
 ### Reindirizzare automaticamente un visitatore verso il tuo sito Web in HTTPS quando lo consulta con un URL in HTTP
 
