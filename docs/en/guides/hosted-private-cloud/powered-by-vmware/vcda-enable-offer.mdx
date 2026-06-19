@@ -1,14 +1,14 @@
 ---
 title: Enable the VCDA migration option on your Public VCF as-a-Service organisation
-description: Find out how to enable the VMware Cloud Director Availability (VCDA) migration option from the OVHcloud Control Panel and manage allowed IP addresses
-lastUpdated: 2026-06-08
+description: Find out how to enable the VMware Cloud Director Availability (VCDA) migration option from the OVHcloud Control Panel
+lastUpdated: 2026-06-19
 ---
 
 ## Objective
 
 OVHcloud provides a migration option based on **VMware Cloud Director Availability (VCDA)** to move your virtual machines to a Public VCF as-a-Service organisation.
 
-**This guide explains how to enable this option from your OVHcloud Control Panel, then where to manage allowed IP addresses after activation.**
+**This guide explains how to enable this option from your OVHcloud Control Panel.**
 
 ## Requirements
 
@@ -17,7 +17,7 @@ OVHcloud provides a migration option based on **VMware Cloud Director Availabili
 - The public IP address (CIDR `/32`) of the server hosting your on-premises VCDA appliance.
 
 :::info
-The IP entered during activation is used to allow your source environment to communicate with the OVHcloud VCDA service.
+The IP entered during activation is used to identify your source environment during configuration of the OVHcloud VCDA service.
 :::
 
 ## Instructions
@@ -40,24 +40,19 @@ Once inside the organisation, open the dashboard and click <code className="acti
 
 In the activation form, enter the public IP address of your source server in CIDR `/32` format, then click <code className="action">Order</code>.
 
-This operation enables the VCDA migration option on the organisation and adds this IP to the allow list.
-
 <img className="thumbnail" alt="VCDA activation form with the public IP field" src="/images/hosted-private-cloud/powered-by-vmware/vcda-enable-offer/03-first-activation-form-en.png" loading="lazy" />
 
 :::warning
 Make sure you enter the actual public egress IP used by your on-premises VCDA appliance. An incorrect IP will prevent pairing with the cloud service.
 :::
 
-After validation, a confirmation email is sent to you.
+:::info
+The migration feature activation is handled by OVHcloud during delivery. You will receive a confirmation email once the option has been enabled on your organisation.
+:::
 
 ### Step 4: Use the Migration tab after activation
 
-Once the option is enabled, a <code className="action">Migration</code> tab appears in the organisation interface.
-
-In this tab, you can:
-
-- add additional service IPs to allow access to OVHcloud infrastructure;
-- view the VCDA service IP deployed on your organisation (useful if you need to allow flows on your source side).
+Once the option is enabled, a <code className="action">Migration</code> tab appears in the organisation interface. You can then configure and launch your migrations to your Public VCF as-a-Service organisation.
 
 <img className="thumbnail" alt="New Migration tab after VCDA activation" src="/images/hosted-private-cloud/powered-by-vmware/vcda-enable-offer/04-migration-tab-en.png" loading="lazy" />
 
