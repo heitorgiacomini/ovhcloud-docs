@@ -1,11 +1,11 @@
 ---
 title: Adding IP restrictions on an OVHcloud Managed Private Registry
 description: Find out how to add IP restrictions and manage access to the HMI/API & registry of an OVHcloud Managed Private Registry
-lastUpdated: 2024-02-01
+lastUpdated: 2026-06-16
 ---
 
+import { Tab, Tabs } from '@rspress/core/theme';
 import Api from '@components/Api';
-
 
 ## Objective
 
@@ -27,9 +27,12 @@ The IP restrictions feature allows you to add whitelisted IP for two parts of th
 
 This means that you can configure different IP blocks (CIDR) for the HMI and the registry part, depending on your teams, environments, needs...
 
-### Adding IP restrictions through the API
+### Adding IP restrictions
 
-#### The API Explorer
+<Tabs>
+  <Tab label="OVHcloud API">
+
+**The API Explorer**
 
 To simplify things, we are using the [API Explorer](https://eu.api.ovh.com/) which allows to explore, learn and interact with the API in an interactive way.
 
@@ -41,12 +44,11 @@ If you go to the [Kubernetes section](https://api.ovh.com/console/#/cloud/projec
 
 <img className="thumbnail" alt="Kubernetes section of the API Explorer" src="/images/public-cloud/containers-orchestration/managed-private-registry/add-ip-restrictions/kubernetes-quickstart-api-ovh-com-002.png" loading="lazy" />
 
-#### API endpoints
+**Management endpoint (Harbor UI access)**
 
-- Get an existing IP restriction on management endpoint:
+- Get existing IP restrictions:
 
 <Api version="v1" section="/cloud" method="GET" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/ipRestrictions/management"} />
-
 
 **Result:**
 
@@ -61,10 +63,9 @@ If you go to the [Kubernetes section](https://api.ovh.com/console/#/cloud/projec
 ]
 ```
 
-- Add or update an IP restriction on management endpoint:
+- Add or update IP restrictions:
 
 <Api version="v1" section="/cloud" method="PUT" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/ipRestrictions/management"} />
-
 
 ```json
 [
@@ -92,11 +93,9 @@ If you go to the [Kubernetes section](https://api.ovh.com/console/#/cloud/projec
 The list of specified IPs override the existing IP restrictions if there are any, always specify the complete list of IPs.
 :::
 
-
 :::info
 If you specify an IP address instead of an IP block/CIDR, we will add `/32` at the end of the IP.
 :::
-
 
 After adding IP restrictions for the `management` endpoint, an unauthorized IP will have an "UNAUTHENTICATED" error message on the Harbor user interface:
 
@@ -106,11 +105,11 @@ After adding IP restrictions for the `management` endpoint, an unauthorized IP w
 Wait about 30 seconds for the IP restriction to propagate.
 :::
 
+**Registry endpoint (Docker/Helm access)**
 
-- Get an existing IP restriction on registry endpoint:
+- Get existing IP restrictions:
 
 <Api version="v1" section="/cloud" method="GET" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/ipRestrictions/registry"} />
-
 
 **Result:**
 
@@ -118,10 +117,9 @@ Wait about 30 seconds for the IP restriction to propagate.
 []
 ```
 
-- Add or update an IP restriction on registry endpoint:
+- Add or update IP restrictions:
 
 <Api version="v1" section="/cloud" method="PUT" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/ipRestrictions/registry"} />
-
 
 ```json
 [
@@ -149,11 +147,9 @@ Wait about 30 seconds for the IP restriction to propagate.
 The list of specified IPs override the existing IP restrictions if there are any, always specify the complete list of IPs.
 :::
 
-
 :::info
 If you specify an IP address instead of an IP block/CIDR, we will add `/32` at the end of the IP.
 :::
-
 
 After adding IP restrictions for the `registry` endpoint, an unauthorized IP will have an error message:
 
@@ -177,6 +173,71 @@ Error: login attempt to https://xxxxx.c1.gra9.container.registry.ovh.net/v2/ fai
 Wait about 30 seconds for the IP restriction to propagate.
 :::
 
+  </Tab>
+  <Tab label="OVHcloud CLI">
+
+**Requirements**
+
+- [OVHcloud CLI](/guides/manage-and-operate/cli/getting-started) installed and configured
+
+**Management endpoint (Harbor UI access)**
+
+List current restrictions:
+
+```bash
+ovhcloud cloud managed-registry ip-restrictions management list <registry_id> \
+  --cloud-project <project_id>
+```
+
+Add a restriction:
+
+```bash
+ovhcloud cloud managed-registry ip-restrictions management add <registry_id> \
+  --cloud-project <project_id> \
+  --ip-block 192.0.2.0/24 \
+  --description "production environment"
+```
+
+Remove a restriction:
+
+```bash
+ovhcloud cloud managed-registry ip-restrictions management delete <registry_id> <ip_block_id> \
+  --cloud-project <project_id>
+```
+
+After adding a restriction, an unauthorized IP will have an "UNAUTHENTICATED" error on the Harbor user interface.
+
+**Registry endpoint (Docker/Helm access)**
+
+List current restrictions:
+
+```bash
+ovhcloud cloud managed-registry ip-restrictions registry list <registry_id> \
+  --cloud-project <project_id>
+```
+
+Add a restriction:
+
+```bash
+ovhcloud cloud managed-registry ip-restrictions registry add <registry_id> \
+  --cloud-project <project_id> \
+  --ip-block 192.0.1.0/24 \
+  --description "Q/A environment"
+```
+
+Remove a restriction:
+
+```bash
+ovhcloud cloud managed-registry ip-restrictions registry delete <registry_id> <ip_block_id> \
+  --cloud-project <project_id>
+```
+
+:::info
+Wait about 30 seconds for the IP restriction to propagate.
+:::
+
+  </Tab>
+</Tabs>
 
 ## Go further
 

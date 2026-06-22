@@ -99,6 +99,37 @@ You can retrieve the `registryID` in two ways:
 Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, navigate to the `Public Cloud` section, and select the relevant project. Then, in the left-hand menu under **Containers & Orchestration**, click on `Managed Private Registry`.
 
 </Tab>
+<Tab label="OVHcloud CLI">
+
+**Requirements**
+
+- [OVHcloud CLI](/guides/manage-and-operate/cli/getting-started) installed and configured
+
+**1. Retrieve your registry ID:**
+
+```bash
+ovhcloud cloud managed-registry list --cloud-project <project_id>
+```
+
+**2. Enable IAM authentication:**
+
+```bash
+ovhcloud cloud managed-registry iam enable <registry_id> \
+  --cloud-project <project_id>
+```
+
+:::warning
+All existing Harbor users will be removed when IAM is enabled. Use `--delete-users` to explicitly confirm this, or omit it if the registry has no local users.
+:::
+
+**3. Disable IAM authentication:**
+
+```bash
+ovhcloud cloud managed-registry iam disable <registry_id> \
+  --cloud-project <project_id>
+```
+
+</Tab>
 </Tabs>
 
 

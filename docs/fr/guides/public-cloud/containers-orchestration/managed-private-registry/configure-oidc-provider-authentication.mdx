@@ -1,13 +1,11 @@
 ---
 title: Configure the authentication via an OIDC provider on an OVHcloud Managed Private Registry
 description: Find out how to configure the authentication via an OIDC provider on an OVHcloud Managed Private Registry
-lastUpdated: 2026-02-25
+lastUpdated: 2026-06-16
 ---
 
+import { Tab, Tabs } from '@rspress/core/theme';
 import Api from '@components/Api';
-
-
-
 
 ## Objective
 
@@ -46,9 +44,12 @@ Follow the official guide if you want to [install Keycloack on an OVHcloud Manag
 
 ## Instructions
 
-### Configure ythe OIDC provider through the API
+### Configure the OIDC provider
 
-#### The API Explorer
+<Tabs>
+  <Tab label="OVHcloud API">
+
+**The API Explorer**
 
 To simplify things, we are using the [API Explorer](https://eu.api.ovh.com/) which allows to explore, learn and interact with the API in an interactive way.
 
@@ -60,14 +61,11 @@ If you go to the [Kubernetes section](https://api.ovh.com/console/#/cloud/projec
 
 <img className="thumbnail" alt="Kubernetes section of the API Explorer" src="/images/public-cloud/containers-orchestration/managed-private-registry/configure-oidc-provider-authentication/kubernetes-quickstart-api-ovh-com-002.png" loading="lazy" />
 
-#### API endpoints
-
-- Configure an OIDC provider for your OVHcloud Managed Private Registry:
+**Configure OIDC authentication**
 
 Do a POST HTTP request and fill the input fields with the keycloack/OIDC provider information.
 
 <Api version="v1" section="/cloud" method="POST" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/openIdConnect"} />
-
 
 **Input:**
 
@@ -99,7 +97,6 @@ Go to the [Harbor documentation](https://goharbor.io/docs/2.14.0/administration/
 If you forget to enable the `deleteUsers` option, you will have an error: `{ "class": "Client::BadRequest", "message": "4 users exist, set parameter deleteUsers to delete them" }`. Indeed, when a new Private Registry is created, several users are created. So you need to enable the `deleteUsers` option in order to remove existing local users and enable OIDC authentication.
 :::
 
-
 Now, access the Harbor HMI. New buttons should appear, especially the <code className="action">Login via OIDC provider</code>:
 
 <img className="thumbnail" alt="Harbor login via oidc provider" src="/images/public-cloud/containers-orchestration/managed-private-registry/configure-oidc-provider-authentication/login.png" loading="lazy" />
@@ -115,10 +112,9 @@ When this option is checked, the attribute `UserClaim` must be set, Harbor will 
 
 Click on the <code className="action">Save</code> button to finally log in to Harbor with the OIDC provider.
 
-- Get an existing registry's OIDC configuration:
+**Get existing OIDC configuration**
 
 <Api version="v1" section="/cloud" method="GET" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/openIdConnect"} />
-
 
 **Input:**
 
@@ -147,7 +143,7 @@ registryId: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 }
 ```
 
-- Update an existing registry's OIDC provider:
+**Update OIDC configuration**
 
 With this API endpoint, we can, for example, add adminGroup and groupsClaim fields.
 
@@ -165,7 +161,6 @@ Then, update the configuration with a PUT request.
 
 <Api version="v1" section="/cloud" method="PUT" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/openIdConnect"} />
 
-
 ```
 OIDCPost:
   provider:
@@ -179,12 +174,11 @@ Result:
 null
 ```
 
-- Listing users
+**List users**
 
 When you log in to the Harbor HMI with an OIDC provider user, the user will be saved. Use this API endpoint to list users:
 
 <Api version="v1" section="/cloud" method="GET" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/users"} />
-
 
 **Input:**
 
@@ -206,12 +200,11 @@ registryId: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ]
 ```
 
-- Setting a user as admin
+**Set a user as admin**
 
 By default a user created in an OIDC provider doesn't have the admin rights. To grant a user the admin rights, use the following PUT call:
 
 <Api version="v1" section="/cloud" method="PUT" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/users/\{userID\}/setAsAdmin"} />
-
 
 **Input:**
 
@@ -230,17 +223,15 @@ userID: 8 //the user ID
 The response will be empty but you should get a 2xx HTTP status code telling you that everything worked successfully.
 :::
 
-
 When you log again with this user, you are now an Administrator.
 
 <img className="thumbnail" alt="admin user" src="/images/public-cloud/containers-orchestration/managed-private-registry/configure-oidc-provider-authentication/admin.png" loading="lazy" />
 
-- Deleting an existing registry's OIDC configuration:
+**Delete OIDC configuration**
 
 If you want to delete the authentication with OIDC configuration, execute a DELETE action in the API:
 
 <Api version="v1" section="/cloud" method="DELETE" route={"/cloud/project/\{serviceName\}/containerRegistry/\{registryID\}/openIdConnect"} />
-
 
 **Input:**
 
@@ -258,13 +249,85 @@ registryId: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 The response will be empty but you should get a 2xx HTTP status code telling you that everything worked successfully.
 :::
 
-
 This request will delete all the users.
 
 :::info
 You can generate again the users credentials via the OVHcloud Control Panel, the APIv6 or Terraform and log in with these new local credentials.
 :::
 
+  </Tab>
+  <Tab label="OVHcloud CLI">
+
+**Requirements**
+
+- [OVHcloud CLI](/guides/manage-and-operate/cli/getting-started) installed and configured
+
+**Configure OIDC authentication**
+
+```bash
+ovhcloud cloud managed-registry oidc create <registry_id> \
+  --cloud-project <project_id> \
+  --name keycloak \
+  --endpoint https://xxx.yyy.com/realms/mpr \
+  --client-id <client_id> \
+  --client-secret <client_secret> \
+  --scope "openid,profile,email,offline_access" \
+  --groups-claim groups \
+  --admin-group harbor-admin \
+  --verify-cert \
+  --delete-users
+```
+
+:::info
+The `--delete-users` flag is required if local users already exist in the registry. Without it, the command will fail if any local users are present.
+:::
+
+After configuration, the <code className="action">Login via OIDC provider</code> button will appear in the Harbor login page.
+
+**Get current OIDC configuration**
+
+```bash
+ovhcloud cloud managed-registry oidc get <registry_id> --cloud-project <project_id>
+```
+
+**Update OIDC configuration**
+
+For example, to add or change the admin group:
+
+```bash
+ovhcloud cloud managed-registry oidc edit <registry_id> \
+  --cloud-project <project_id> \
+  --admin-group harbor-admin \
+  --groups-claim groups
+```
+
+When an `adminGroup` is configured, all users belonging to this group will have admin rights on Harbor.
+
+**List users**
+
+```bash
+ovhcloud cloud managed-registry users list <registry_id> --cloud-project <project_id>
+```
+
+**Set a user as admin**
+
+```bash
+ovhcloud cloud managed-registry users set-as-admin <registry_id> <user_id> \
+  --cloud-project <project_id>
+```
+
+**Delete OIDC configuration**
+
+```bash
+ovhcloud cloud managed-registry oidc delete <registry_id> --cloud-project <project_id>
+```
+
+:::info
+You can generate new user credentials via the OVHcloud Control Panel or CLI and log in with these new local credentials after deleting the OIDC configuration.
+:::
+
+  </Tab>
+</Tabs>
 
 ## Go further
 
