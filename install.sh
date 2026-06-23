@@ -623,10 +623,10 @@ EXT1_NUMBER="${9:-}"
 EXT1_NAME="${10:-Standard}"
 EXT1_PASS="${11:-}"
 EXT2_NUMBER="${12:-}"
-EXT2_NAME="${13:-Mobile}"
+EXT2_NAME="${13:-Poste 2}"
 EXT2_PASS="${14:-}"
 EXT3_NUMBER="${15:-}"
-EXT3_NAME="${16:-WebRTC}"
+EXT3_NAME="${16:-Poste 3}"
 EXT3_PASS="${17:-}"
 
 gen_pass() {
@@ -1526,6 +1526,16 @@ read_password() {
     done
 }
 
+read_sip_password() {
+    # Mot de passe opérateur — saisi tel quel, sans critères de complexité
+    local varname="$1" pass
+    while true; do
+        _read_star_input pass "  Mot de passe SIP"
+        [[ -n "$pass" ]] && printf -v "$varname" '%s' "$pass" && break
+        echo "  ✗ Mot de passe vide — saisissez le mot de passe fourni par votre opérateur"
+    done
+}
+
 read_ext_password() {
     local varname="$1" ext="$2" pass
     info "  [Entrée] = génération automatique sécurisée"
@@ -1551,7 +1561,7 @@ _wizard_state() {
     echo "╔══════════════════════════════════════════╗"
     echo "║  FreePBX Factory V1.8 CRA — Installateur ║"
     echo "╚══════════════════════════════════════════╝"
-    echo "  Ctrl+C pour quitter · Connexion perdue ? sudo tmux attach -t factory"
+    echo "  Ctrl+C pour quitter"
     echo "  Vous pouvez recommencer à tout moment en relançant la commande depuis le serveur"
     echo ""
     echo "  ── Récapitulatif ───────────────────────────────"
@@ -1620,9 +1630,9 @@ echo "  Ces deux options sont indépendantes et peuvent être configurées aprè
 echo "  Appuyez sur Entrée pour passer une option sans l'activer."
 echo ""
 KIT_STARTER="non"
-EXT1_NUMBER="" EXT1_NAME="Standard"  EXT1_PASS=""
-EXT2_NUMBER="" EXT2_NAME="Mobile"    EXT2_PASS=""
-EXT3_NUMBER="" EXT3_NAME="WebRTC"    EXT3_PASS=""
+EXT1_NUMBER="" EXT1_NAME="Poste 1"  EXT1_PASS=""
+EXT2_NUMBER="" EXT2_NAME="Poste 2"  EXT2_PASS=""
+EXT3_NUMBER="" EXT3_NAME="Poste 3"  EXT3_PASS=""
 
 if [[ -n "$KIT_STARTER_ARG" ]]; then
     # Pré-sélection wizard — pas de question interactive
@@ -1643,8 +1653,8 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
     EXT3_NUMBER=$(( EXT_BASE + 2 ))
     echo "  Numéros attribués : $EXT1_NUMBER / $EXT2_NUMBER / $EXT3_NUMBER"
     echo ""
-    echo "  Les numéros sont générés aléatoirement (5 chiffres). Les noms (Standard / Mobile / WebRTC)"
-    echo "  identifient vos postes dans l'interface FreePBX. Appuyez sur Entrée pour conserver le nom proposé."
+    echo "  Les numéros sont générés aléatoirement (5 chiffres). Les noms identifient vos postes"
+    echo "  dans l'interface FreePBX. Appuyez sur Entrée pour conserver le nom proposé."
     echo ""
     for i in 1 2 3; do
         varname="EXT${i}_NAME"; varpass="EXT${i}_PASS"; extnum="EXT${i}_NUMBER"
@@ -1681,7 +1691,7 @@ if [[ -n "$TRUNK_ENABLED_ARG" ]]; then
             TRUNK_PASSWORD="$FACTORY_TEST_TRUNK_PASS"
             echo "  ✓ Mot de passe SIP (mode test)"
         else
-            read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
+            read_sip_password TRUNK_PASSWORD
         fi
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
         _trunk_ip=$(getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
@@ -1859,7 +1869,7 @@ log "journal         : $SESSION_LOG"
 
 # Confirmation port noté — l'utilisateur doit saisir le numéro exact pour continuer
 while true; do
-    read -rp "  Saisissez le numéro de port affiché ci-dessus pour confirmer : " _PORT_CHECK
+    read -rp "  Tapez le numéro de port SSH indiqué ci-dessus pour confirmer que vous l'avez noté : " _PORT_CHECK
     [[ "$_PORT_CHECK" == "$SSH_PORT" ]] && { echo -e "${GREEN}  ✓ Port $SSH_PORT confirmé.${NC}"; echo ""; break; }
     echo -e "${RED}  ✗ Numéro incorrect (attendu : $SSH_PORT) — réessayez ou Ctrl+C pour annuler.${NC}"
 done
@@ -1887,17 +1897,9 @@ ok "00_cleanup"
 log ""
 log "=== PHASE 00b — Hardening SSH (port → $SSH_PORT) ==="
 echo ""
-echo -e "${YELLOW}══════════════════════════════════════════════════${NC}"
-echo -e "${YELLOW}  VOTRE CONNEXION SSH VA ÊTRE COUPÉE              ${NC}"
-echo -e "${YELLOW}  Le script continue automatiquement dans tmux.   ${NC}"
-echo -e "${YELLOW}                                                   ${NC}"
-echo -e "${YELLOW}  Nouveau port SSH : ${SSH_PORT}                  ${NC}"
-echo -e "${YELLOW}  Reconnexion :                                    ${NC}"
-echo -e "${YELLOW}    ssh -p ${SSH_PORT} debian@<IP_DU_VPS>         ${NC}"
-echo -e "${YELLOW}    sudo tmux attach -t factory                     ${NC}"
-echo -e "${YELLOW}══════════════════════════════════════════════════${NC}"
+echo -e "${YELLOW}  Le port SSH change maintenant. Votre terminal peut se déconnecter — c'est normal.${NC}"
+echo -e "${YELLOW}  L'installation continue seule dans tmux (20-40 min). Vous pouvez attendre.${NC}"
 echo ""
-read -rp "  Port $SSH_PORT noté ? Appuyez sur Entrée pour continuer... "
 bash "$PHASES_DIR/00_hardening.sh" "$MANAGEMENT_IP" "$SSH_PORT"
 ok "00_hardening — SSH actif sur port $SSH_PORT"
 
