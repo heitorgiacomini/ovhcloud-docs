@@ -1455,25 +1455,14 @@ if [[ -z "${FACTORY_IN_TMUX:-}" ]]; then
     DEBIAN_FRONTEND=noninteractive apt-get install -y tmux -q 2>/dev/null
     tmux kill-session -t factory 2>/dev/null || true
     echo ""
-    echo -e "${CYAN}╔══════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║  Installation démarrée en session tmux persistante.  ║${NC}"
-    echo -e "${CYAN}║                                                      ║${NC}"
-    echo -e "${CYAN}║  Le port SSH définitif s'affiche en jaune avant le   ║${NC}"
-    echo -e "${CYAN}║  déploiement — notez-le soigneusement.               ║${NC}"
-    echo -e "${CYAN}║                                                      ║${NC}"
-    echo -e "${CYAN}║  Si ce terminal se ferme pendant l'installation :    ║${NC}"
-    echo -e "${CYAN}║    1. Reconnectez-vous en SSH (port 22)              ║${NC}"
-    echo -e "${CYAN}║    2. sudo tmux attach -t factory                    ║${NC}"
-    echo -e "${CYAN}║                                                      ║${NC}"
-    echo -e "${CYAN}║  Port SSH noté dans : /root/freepbx-factory-ssh-port.txt ║${NC}"
-    echo -e "${CYAN}║  (console KVM OVHcloud si SSH inaccessible)          ║${NC}"
-    echo -e "${CYAN}╚══════════════════════════════════════════════════════╝${NC}"
+    echo -e "${CYAN}  FreePBX Factory — démarrage en cours...${NC}"
+    echo -e "${CYAN}  L'installation continue même si la connexion SSH est perdue.${NC}"
     echo ""
     # Transmettre TOUS les arguments du wizard à la session tmux (sinon perdus)
     _FWD_ARGS="${MANAGEMENT_IP_ARG:+--management-ip=$MANAGEMENT_IP_ARG} ${KIT_STARTER_ARG:+--kit-starter=$KIT_STARTER_ARG} ${TRUNK_ENABLED_ARG:+--trunk-enabled=$TRUNK_ENABLED_ARG} ${TRUNK_REGISTRAR_ARG:+--trunk-registrar=$TRUNK_REGISTRAR_ARG} ${TRUNK_USERNAME_ARG:+--trunk-username=$TRUNK_USERNAME_ARG} ${TLS_DOMAIN_ARG:+--tls-domain=$TLS_DOMAIN_ARG}"
     _FWD_ENV="FACTORY_IN_TMUX=1${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
     tmux new-session -d -s factory -x 220 -y 50 \
-        "eval export $_FWD_ENV; bash $0 $_FWD_ARGS; echo ''; echo '-- Installation terminée — Appuyer sur Entrée --'; read"
+        "eval export $_FWD_ENV; bash $0 $_FWD_ARGS; echo ''; echo '  Appuyez sur Entrée pour revenir à votre terminal SSH.'; read"
     tmux attach-session -t factory
     exit 0
 fi
@@ -1562,7 +1551,7 @@ _wizard_state() {
     echo "╔══════════════════════════════════════════╗"
     echo "║  FreePBX Factory V1.8 CRA — Installateur ║"
     echo "╚══════════════════════════════════════════╝"
-    echo "  Ctrl+C pour quitter"
+    echo "  Ctrl+C pour quitter · Connexion perdue ? sudo tmux attach -t factory"
     echo "  Vous pouvez recommencer à tout moment en relançant la commande depuis le serveur"
     echo ""
     echo "  ── Récapitulatif ───────────────────────────────"
