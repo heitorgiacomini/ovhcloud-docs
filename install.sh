@@ -1669,7 +1669,12 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
             read -rp "  Nom du poste $i [${default_name}] (Entrée = conserver le nom) : " name
-            [[ -n "$name" ]] && printf -v "$varname" '%s' "$name"
+            if [[ -n "$name" ]]; then
+                printf -v "$varname" '%s' "$name"
+                echo "  ✓ Nom retenu : $name"
+            else
+                echo "  ✓ Nom retenu : ${default_name}"
+            fi
             read_ext_password "$varpass" "${!extnum}"
         fi
     done
@@ -1840,15 +1845,14 @@ _VPS_IP=$(curl -s --max-time 5 https://api.ipify.org 2>/dev/null \
           || echo "<ADRESSE_IP_SERVEUR>")
 _RECONNECT_CMD="ssh -p ${SSH_PORT} debian@${_VPS_IP} -t \"sudo tmux attach -t factory\""
 
-echo -e "${YELLOW}╔══════════════════════════════════════════╗${NC}"
-echo -e "${YELLOW}║  NOTEZ CE PORT SSH                       ║${NC}"
-echo -e "${YELLOW}╠══════════════════════════════════════════╣${NC}"
-printf  "${YELLOW}║     PORT SSH : %-26s${YELLOW}║${NC}\n" "$SSH_PORT"
-echo -e "${YELLOW}╚══════════════════════════════════════════╝${NC}"
-echo ""
-echo -e "${YELLOW}  Copiez cette commande maintenant, en cas de déconnexion :${NC}"
-printf  "${YELLOW}  %s${NC}\n" "$_RECONNECT_CMD"
-echo    "  Fichier de secours : /root/freepbx-factory-ssh-port.txt"
+echo -e "${YELLOW}  ┌─ À NOTER MAINTENANT ───────────────────────────────────────────┐${NC}"
+printf  "${YELLOW}  │  Port SSH : %-52s${YELLOW}│${NC}\n" "$SSH_PORT"
+echo -e "${YELLOW}  │                                                                │${NC}"
+echo -e "${YELLOW}  │  Commande de reconnexion (à copier) :                         │${NC}"
+printf  "${YELLOW}  │  %-64s${YELLOW}│${NC}\n" "$_RECONNECT_CMD"
+echo -e "${YELLOW}  │                                                                │${NC}"
+echo -e "${YELLOW}  │  Secours : /root/freepbx-factory-ssh-port.txt                 │${NC}"
+echo -e "${YELLOW}  └────────────────────────────────────────────────────────────────┘${NC}"
 echo ""
 
 # Tentative de copie dans le presse-papier (best-effort, sans erreur si indisponible)
@@ -2017,6 +2021,11 @@ ok "13_post_checks"
 VPS_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1)
 [[ -z "$VPS_IP" ]] && VPS_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
 [[ -z "$VPS_IP" ]] && VPS_IP="<IP_VPS>"
+if [[ -n "${TLS_DOMAIN}" ]]; then
+    _ADMIN_URL="https://${TLS_DOMAIN}/admin/"
+else
+    _ADMIN_URL="http://${VPS_IP}/admin/"
+fi
 
 # ════════════════════════════════════════════════════════════════════════════
 # Validation compte admin GUI (Apache temporairement actif)
@@ -2248,71 +2257,89 @@ tmux rename-window "DÉPLOYÉ ✓ | SSH: ${SSH_PORT}" 2>/dev/null || true
 # ════════════════════════════════════════════════════════════════════════════
 if [[ "$KIT_STARTER" == "oui" ]]; then
     echo ""
-    echo -e "${YELLOW}══════════════════════════════════════════════════════${NC}"
-    echo -e "${YELLOW}   KIT STARTER — VÉRIFICATION & SOFTPHONES${NC}"
-    echo -e "${YELLOW}══════════════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}══════════════════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}  Vos 3 postes sont prêts — testez votre installation !${NC}"
+    echo -e "${GREEN}══════════════════════════════════════════════════════════${NC}"
     echo ""
-    echo -e "${RED}  ⚠  HTTP uniquement — non chiffré — TLS non configuré${NC}"
-    echo -e "${RED}  ⚠  Arrêtez Apache immédiatement après vérification${NC}"
+
+    # ── 1. Interface d'administration ────────────────────────────────────
+    echo -e "${CYAN}  ── 1. Vérifiez vos postes dans l'interface admin ───────${NC}"
     echo ""
-    echo -e "  ${CYAN}── 1. DÉMARRER APACHE (ponctuel) ─────────────────────${NC}"
-    echo    "     sudo systemctl start apache2"
+    if [[ -z "${TLS_DOMAIN}" ]]; then
+        echo -e "${YELLOW}  Apache est arrêté. Démarrez-le pour accéder à l'interface :${NC}"
+        echo    "    sudo systemctl start apache2"
+        echo ""
+    fi
+    echo    "  Ouvrez dans votre navigateur :"
+    echo    "    ${_ADMIN_URL}"
+    echo    "  Login : ${ADMIN_USERNAME}"
     echo ""
-    echo -e "  ${CYAN}── 2. ACCÉDER À L'INTERFACE FREEPBX ─────────────────${NC}"
-    echo    "     URL   : http://${VPS_IP}/admin/"
-    echo    "     Login : ${ADMIN_USERNAME}"
-    echo -e "     ${YELLOW}⚠ Accessible via IP publique uniquement (pas depuis le LAN du VPS)${NC}"
-    echo    "     Vérifier : Applications → Extensions"
-    echo    "     Extensions attendues : ${EXT1_NUMBER} / ${EXT2_NUMBER} / ${EXT3_NUMBER}"
+    echo    "  Dans le menu FreePBX : Applications → Extensions"
+    printf  "  Vous devriez y voir 3 postes : %s / %s / %s\n" \
+        "${EXT1_NUMBER}" "${EXT2_NUMBER}" "${EXT3_NUMBER}"
     echo ""
-    echo -e "  ${CYAN}── 3. ARRÊTER APACHE ─────────────────────────────────${NC}"
-    echo    "     sudo systemctl stop apache2"
+    if [[ -z "${TLS_DOMAIN}" ]]; then
+        echo    "  Après vérification, arrêtez Apache :"
+        echo    "    sudo systemctl stop apache2"
+        echo ""
+    fi
+
+    # ── 2. Configuration softphones ──────────────────────────────────────
+    echo -e "${CYAN}  ── 2. Connectez un softphone ────────────────────────────${NC}"
     echo ""
-    echo -e "  ${CYAN}── 4. VÉRIFIER LES ENREGISTREMENTS ASTERISK ──────────${NC}"
-    echo    "     sudo asterisk -rx 'pjsip show endpoints'"
-    echo    "     (statut Avail = softphone enregistré)"
+    echo    "  Un softphone est une application téléphonique (Zoiper, Linphone,"
+    echo    "  3CX Client...) installée sur ordinateur ou mobile. Renseignez ces"
+    echo    "  paramètres dans votre logiciel pour connecter chaque poste."
     echo ""
-    echo -e "${GREEN}  ── CONFIGURATION SOFTPHONES ──────────────────────────${NC}"
-    echo    "  Protocole  : PJSIP"
-    echo    "  Serveur SIP: ${VPS_IP}"
-    echo    "  Port SIP   : 5060 (UDP)"
-    echo    "  Domaine    : ${VPS_IP}"
+    echo    "  Paramètres communs à tous les postes :"
+    echo    "    Protocole        : PJSIP"
+    printf  "    Serveur SIP      : %s\n" "${VPS_IP}"
+    echo    "    Port             : 5060 (UDP)"
+    printf  "    Domaine / Proxy  : %s\n" "${VPS_IP}"
     echo ""
-    echo -e "${GREEN}  Ext ${EXT1_NUMBER} — ${EXT1_NAME}${NC}"
-    echo    "    Compte SIP   : ${EXT1_NUMBER}"
-    echo    "    Mot de passe : ${EXT1_PASS}"
+    echo -e "${GREEN}  Poste 1 — ${EXT1_NAME}${NC}"
+    echo    "    Numéro (SIP Username) : ${EXT1_NUMBER}"
+    echo    "    Mot de passe          : ${EXT1_PASS}"
     echo ""
-    echo -e "${GREEN}  Ext ${EXT2_NUMBER} — ${EXT2_NAME}${NC}"
-    echo    "    Compte SIP   : ${EXT2_NUMBER}"
-    echo    "    Mot de passe : ${EXT2_PASS}"
+    echo -e "${GREEN}  Poste 2 — ${EXT2_NAME}${NC}"
+    echo    "    Numéro (SIP Username) : ${EXT2_NUMBER}"
+    echo    "    Mot de passe          : ${EXT2_PASS}"
     echo ""
-    echo -e "${GREEN}  Ext ${EXT3_NUMBER} — ${EXT3_NAME}${NC}"
-    echo    "    Compte SIP   : ${EXT3_NUMBER}"
-    echo    "    Mot de passe : ${EXT3_PASS}"
+    echo -e "${GREEN}  Poste 3 — ${EXT3_NAME}${NC}"
+    echo    "    Numéro (SIP Username) : ${EXT3_NUMBER}"
+    echo    "    Mot de passe          : ${EXT3_PASS}"
     echo ""
-    echo -e "${YELLOW}══════════════════════════════════════════════════════${NC}"
+
+    # ── 3. Appel test ────────────────────────────────────────────────────
+    echo -e "${CYAN}  ── 3. Passez un appel test ──────────────────────────────${NC}"
+    echo ""
+    echo    "  Une fois un softphone connecté (statut : Registered / Connecté) :"
+    printf  "  Composez le %s depuis le %s.\n" "${EXT2_NUMBER}" "${EXT1_NUMBER}"
+    echo    "  Le deuxième poste sonne : votre serveur achemine l'appel."
+    echo ""
+    echo    "  Pour vérifier l'état des postes côté serveur :"
+    echo    "    sudo asterisk -rx 'pjsip show endpoints'"
+    echo    "  Statut Avail = softphone enregistré et prêt à appeler."
+    echo ""
+    echo -e "${GREEN}══════════════════════════════════════════════════════════${NC}"
     echo ""
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
 # RÉSULTAT FINAL
 # ════════════════════════════════════════════════════════════════════════════
+log "=== DÉPLOIEMENT TERMINÉ — Admin: ${ADMIN_USERNAME} — URL: ${_ADMIN_URL} — SSH: ${SSH_PORT} ==="
 echo ""
+echo -e "${GREEN}══════════════════════════════════════════════════════════${NC}"
+echo -e "${GREEN}  FreePBX Factory V1.8 — Déploiement terminé${NC}"
+echo -e "${GREEN}══════════════════════════════════════════════════════════${NC}"
 echo ""
-ok "╔══════════════════════════════════════════╗"
-ok "║   FreePBX Factory V1.8 — DÉPLOYÉ ✓      ║"
-ok "╠══════════════════════════════════════════╣"
-ok "║ Admin    : $ADMIN_USERNAME"
-ok "║ SSH port : $SSH_PORT — restreint à $MANAGEMENT_IP"
-ok "║ URL GUI  : HTTPS requis (configurer TLS)"
-ok "║ Rapport  : $REPORT_FILE"
-ok "║ Journal  : $SESSION_LOG"
-ok "╚══════════════════════════════════════════╝"
+printf  "  %-18s %s\n" "Administrateur :" "${ADMIN_USERNAME}"
+printf  "  %-18s %s\n" "Interface web :"  "${_ADMIN_URL}"
+printf  "  %-18s %s  (restreint à %s)\n" "Port SSH :" "${SSH_PORT}" "${MANAGEMENT_IP}"
 echo ""
-warn "═══ INFORMATIONS À CONSERVER ═══════════════"
-warn "Port SSH     : $SSH_PORT"
-warn "Reconnexion  : ssh -p $SSH_PORT debian@${VPS_IP}"
-warn "Admin FreePBX   : $ADMIN_USERNAME"
-warn "Rapport      : $REPORT_FILE"
-warn "Journal      : $SESSION_LOG"
-warn "══════════════════════════════════════════════"
+printf  "  %-18s %s\n" "Rapport :" "${REPORT_FILE}"
+printf  "  %-18s %s\n" "Journal :"  "${SESSION_LOG}"
+echo ""
+echo -e "${GREEN}══════════════════════════════════════════════════════════${NC}"
+echo ""
