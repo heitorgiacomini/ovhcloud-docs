@@ -77,6 +77,18 @@ export default defineConfig({
         css: false,
       },
     },
+    performance: {
+      // SEO/Core Web Vitals: emit <link rel="preload"> for the critical CSS
+      // bundle and the Source Sans Pro woff2 fonts on every generated page, so
+      // the browser fetches them earlier. Rsbuild's resource-hints plugin reads
+      // the real (hashed, per-locale) asset graph, sets as="style"/as="font" and
+      // adds crossorigin on fonts automatically — no hardcoded hrefs to rot on
+      // the next build. Scoped to css + woff2 only to avoid over-preloading JS.
+      preload: {
+        type: 'all-chunks',
+        include: [/\.css$/, /\.woff2$/],
+      },
+    },
   },
 
   globalStyles: path.join(BASE_DIR, 'styles/index.css'),
