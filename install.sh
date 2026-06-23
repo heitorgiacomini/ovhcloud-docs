@@ -1710,7 +1710,11 @@ else
     read -rp "  Connecter une ligne opérateur SIP ? [o/N] (Entrée = non) : " TRUNK_RESP
     if [[ "${TRUNK_RESP,,}" == "o" ]]; then
         TRUNK_ENABLED="oui"
-        read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net) : " TRUNK_REGISTRAR
+        while true; do
+            read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net) : " TRUNK_REGISTRAR
+            [[ "$TRUNK_REGISTRAR" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*\.[a-zA-Z]{2,}$ ]] && break
+            echo "  ✗ Format invalide : saisissez un nom de domaine (ex: siptrunk.ovh.net), pas un numéro ou une IP"
+        done
         read -rp "  Identifiant SIP (numéro ou login opérateur) : " TRUNK_USERNAME
         read_sip_password TRUNK_PASSWORD
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
