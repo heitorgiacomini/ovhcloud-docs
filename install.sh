@@ -1831,17 +1831,16 @@ echo ""
 _VPS_IP=$(curl -s --max-time 5 https://api.ipify.org 2>/dev/null \
           || hostname -I 2>/dev/null | awk '{print $1}' \
           || echo "<ADRESSE_IP_SERVEUR>")
-_RECONNECT_CMD="ssh -p ${SSH_PORT} debian@${_VPS_IP}"
+_RECONNECT_CMD="ssh -p ${SSH_PORT} debian@${_VPS_IP} -t \"sudo tmux attach -t factory\""
 
 echo -e "${YELLOW}╔══════════════════════════════════════════╗${NC}"
-echo -e "${YELLOW}║  NOTEZ CE PORT SSH — A COPIER MAINTENANT ║${NC}"
+echo -e "${YELLOW}║  NOTEZ CE PORT SSH                       ║${NC}"
 echo -e "${YELLOW}╠══════════════════════════════════════════╣${NC}"
 printf  "${YELLOW}║     PORT SSH : %-26s${YELLOW}║${NC}\n" "$SSH_PORT"
-echo -e "${YELLOW}║                                          ║${NC}"
-echo -e "${YELLOW}║  Commande si la connexion est coupée :   ║${NC}"
-printf  "${YELLOW}║    %-38s${YELLOW}║${NC}\n" "$_RECONNECT_CMD"
-echo -e "${YELLOW}║    sudo tmux attach -t factory           ║${NC}"
 echo -e "${YELLOW}╚══════════════════════════════════════════╝${NC}"
+echo ""
+echo -e "${YELLOW}  Copiez cette commande maintenant, en cas de déconnexion :${NC}"
+printf  "${YELLOW}  %s${NC}\n" "$_RECONNECT_CMD"
 echo    "  Fichier de secours : /root/freepbx-factory-ssh-port.txt"
 echo ""
 
@@ -1851,7 +1850,7 @@ if printf '%s\n' "$_RECONNECT_CMD" | xclip -selection clipboard 2>/dev/null; the
 elif printf '%s\n' "$_RECONNECT_CMD" | xsel --clipboard --input 2>/dev/null; then
     echo -e "${GREEN}[✓] Commande de reconnexion copiée dans le presse-papier.${NC}"
 else
-    echo    "    Sélectionnez et copiez la ligne ci-dessus si possible."
+    echo    "    Notez manuellement la commande SSH affichée en jaune ci-dessus."
 fi
 echo ""
 
