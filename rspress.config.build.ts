@@ -49,6 +49,24 @@ export default defineConfig({
       // injection from useEffect guarantees React has hydrated first.
       tags: [
         {
+          // Trailing-slash normalization (runs before paint, no flash).
+          // Rspress cleanUrls emits flat files (foo.html), so the static
+          // server returns 404.html for `/<locale>/.../foo/`; the SPA router
+          // then renders the real content but leaves the slash in the URL,
+          // producing a visible "404 flash". Strip the slash synchronously in
+          // <head> and replace() to the canonical no-slash URL before React
+          // mounts. Excludes `/` and bare locale roots (`/fr/`, `/en/`, …).
+          tag: 'script',
+          head: true,
+          append: false,
+          children: [
+            '(function(){var p=location.pathname;',
+            "if(/^\\/(fr|en|de|es|it|pl|pt)\\/.+\\/$/.test(p)){",
+            'location.replace(p.replace(/\\/+$/,"")+location.search+location.hash);',
+            '}})();',
+          ].join(''),
+        },
+        {
           tag: 'script',
           head: true,
           append: true,
