@@ -1591,6 +1591,9 @@ _wizard_state() {
 
 _wizard_state
 
+# Purge des séquences d'échappement terminal en attente (réponses DA2 de tmux)
+while read -r -t 0.05 -n 1 _ 2>/dev/null; do :; done
+
 # ── Axe 1 : Compte admin GUI ─────────────────────────────────────────────────
 info "▶ 1/4 — Compte administrateur FreePBX"
 echo ""
