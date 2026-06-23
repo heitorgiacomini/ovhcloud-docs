@@ -53,7 +53,8 @@ TLS_DOMAIN_ARG="${TLS_DOMAIN_ARG:-}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # @@BUNDLE_INJECT_START@@
 _PHASES_TMP="$(mktemp -d /tmp/fpbx-phases-XXXXXX)"
-trap 'rm -rf "$_PHASES_TMP"' EXIT INT TERM HUP
+trap 'rm -rf "$_PHASES_TMP" 2>/dev/null' EXIT
+trap 'echo ""; echo "  Installation annulée. Aucune modification n'"'"'a été apportée au serveur."; echo "  Pour recommencer, relancez la commande wget depuis le serveur."; exit 130' INT TERM HUP
 
 cat > "$_PHASES_TMP/00_cleanup.sh" <<'__FPBXPHASE_00_CLEANUP_SH__'
 #!/bin/bash
@@ -1456,10 +1457,15 @@ if [[ -z "${FACTORY_IN_TMUX:-}" ]]; then
     echo ""
     echo -e "${CYAN}╔══════════════════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}║  Installation démarrée en session tmux persistante.  ║${NC}"
-    echo -e "${CYAN}║  NE FERMEZ PAS cette fenêtre pendant le déploiement. ║${NC}"
+    echo -e "${CYAN}║                                                      ║${NC}"
     echo -e "${CYAN}║  Le port SSH définitif s'affiche en jaune avant le   ║${NC}"
-    echo -e "${CYAN}║  déploiement — notez-le.                             ║${NC}"
-    echo -e "${CYAN}║  En cas de perte : /root/freepbx-factory-ssh-port.txt║${NC}"
+    echo -e "${CYAN}║  déploiement — notez-le soigneusement.               ║${NC}"
+    echo -e "${CYAN}║                                                      ║${NC}"
+    echo -e "${CYAN}║  Si ce terminal se ferme pendant l'installation :    ║${NC}"
+    echo -e "${CYAN}║    1. Reconnectez-vous en SSH (port 22)              ║${NC}"
+    echo -e "${CYAN}║    2. sudo tmux attach -t factory                    ║${NC}"
+    echo -e "${CYAN}║                                                      ║${NC}"
+    echo -e "${CYAN}║  Port SSH noté dans : /root/freepbx-factory-ssh-port.txt ║${NC}"
     echo -e "${CYAN}║  (console KVM OVHcloud si SSH inaccessible)          ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════╝${NC}"
     echo ""
@@ -1550,14 +1556,47 @@ read_ext_password() {
 # ════════════════════════════════════════════════════════════════════════════
 # WIZARD — Saisie paramètres (V1.8 CRA)
 # ════════════════════════════════════════════════════════════════════════════
-echo ""
-echo "╔══════════════════════════════════════════╗"
-echo "║  FreePBX Factory V1.8 CRA — Installateur ║"
-echo "╚══════════════════════════════════════════╝"
-echo ""
+
+_wizard_state() {
+    clear
+    echo "╔══════════════════════════════════════════╗"
+    echo "║  FreePBX Factory V1.8 CRA — Installateur ║"
+    echo "╚══════════════════════════════════════════╝"
+    echo "  Ctrl+C : quitter proprement (aucune modification avant la confirmation finale)"
+    echo "  Fermer ce terminal : tmux continue — pour reprendre : sudo tmux attach -t factory"
+    echo "  Pour abandonner depuis un autre terminal : sudo tmux kill-session -t factory"
+    echo ""
+    echo "  ── Récapitulatif ───────────────────────────────"
+    printf "  %-16s %s\n" "Admin :"       "${ADMIN_USERNAME:-(en attente)}"
+    if [[ "${KIT_STARTER:-}" == "oui" ]]; then
+        printf "  %-16s %s\n" "Postes démo :" "oui — $EXT1_NUMBER / $EXT2_NUMBER / $EXT3_NUMBER"
+    else
+        printf "  %-16s %s\n" "Postes démo :" "${KIT_STARTER:-(en attente)}"
+    fi
+    if [[ "${TRUNK_ENABLED:-}" == "oui" ]]; then
+        printf "  %-16s %s\n" "Trunk SIP :"   "oui — $TRUNK_REGISTRAR"
+    else
+        printf "  %-16s %s\n" "Trunk SIP :"   "${TRUNK_ENABLED:-(en attente)}"
+    fi
+    if [[ -n "${TLS_DOMAIN:-}" ]]; then
+        printf "  %-16s %s\n" "HTTPS :"        "$TLS_DOMAIN"
+    elif [[ "${_TLS_DONE:-}" == "1" ]]; then
+        printf "  %-16s %s\n" "HTTPS :"        "non activé"
+    else
+        printf "  %-16s %s\n" "HTTPS :"        "(en attente)"
+    fi
+    printf "  %-16s %s\n"   "IP de gestion :" "${MANAGEMENT_IP:-(en attente)}"
+    echo "  ────────────────────────────────────────────────"
+    echo ""
+}
+
+_wizard_state
 
 # ── Axe 1 : Compte admin GUI ─────────────────────────────────────────────────
 info "▶ 1/4 — Compte administrateur FreePBX"
+echo ""
+echo "  Ce compte sera votre seul accès à l'interface web FreePBX. Conservez-le soigneusement :"
+echo "  aucune valeur par défaut n'est proposée et aucune récupération automatique n'est possible."
 echo ""
 # FACTORY_TEST_ADMIN / FACTORY_TEST_PASS : bypass test-only (jamais en prod)
 if [[ -n "${FACTORY_TEST_ADMIN:-}" && -n "${FACTORY_TEST_PASS:-}" ]]; then
@@ -1586,7 +1625,11 @@ SSH_ENABLED="oui"  # SSH actif — port aléatoire + clé OVHcloud choisie à la
 echo ""
 
 # ── Axe 2 + 3 : Kit starter + Trunk SIP ─────────────────────────────────────
+_wizard_state
 info "▶ 2/4 — Postes téléphoniques et ligne opérateur (optionnels)"
+echo ""
+echo "  Ces deux options sont indépendantes et peuvent être configurées après le déploiement."
+echo "  Appuyez sur Entrée pour passer une option sans l'activer."
 echo ""
 KIT_STARTER="non"
 EXT1_NUMBER="" EXT1_NAME="Standard"  EXT1_PASS=""
@@ -1600,7 +1643,7 @@ if [[ -n "$KIT_STARTER_ARG" ]]; then
     KIT_RESP="${KIT_STARTER_ARG,,}"
     [[ "$KIT_STARTER" == "oui" ]] && KIT_RESP="o" || KIT_RESP="n"
 else
-    read -rp "  Créer 3 postes téléphoniques de démonstration ? [o/N] : " KIT_RESP
+    read -rp "  Créer 3 postes téléphoniques de démonstration ? [o/N] (Entrée = non) : " KIT_RESP
 fi
 
 if [[ "${KIT_RESP,,}" == "o" ]]; then
@@ -1612,6 +1655,9 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
     EXT3_NUMBER=$(( EXT_BASE + 2 ))
     echo "  Numéros attribués : $EXT1_NUMBER / $EXT2_NUMBER / $EXT3_NUMBER"
     echo ""
+    echo "  Les numéros sont générés aléatoirement (5 chiffres). Les noms (Standard / Mobile / WebRTC)"
+    echo "  identifient vos postes dans l'interface FreePBX. Appuyez sur Entrée pour conserver le nom proposé."
+    echo ""
     for i in 1 2 3; do
         varname="EXT${i}_NAME"; varpass="EXT${i}_PASS"; extnum="EXT${i}_NUMBER"
         default_name="${!varname}"
@@ -1620,7 +1666,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
-            read -rp "  Nom du poste $i [${default_name}] : " name
+            read -rp "  Nom du poste $i [${default_name}] (Entrée = conserver le nom) : " name
             [[ -n "$name" ]] && printf -v "$varname" '%s' "$name"
             read_ext_password "$varpass" "${!extnum}"
         fi
@@ -1629,6 +1675,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
 fi
 echo ""
 
+_wizard_state
 TRUNK_ENABLED="non"
 TRUNK_REGISTRAR="" TRUNK_USERNAME="" TRUNK_PASSWORD=""
 EXTRA_IGNOREIP=""
@@ -1661,7 +1708,7 @@ if [[ -n "$TRUNK_ENABLED_ARG" ]]; then
         echo "  Ligne opérateur : non (pré-sélectionné par le wizard)"
     fi
 else
-    read -rp "  Connecter une ligne opérateur SIP ? [o/N] : " TRUNK_RESP
+    read -rp "  Connecter une ligne opérateur SIP ? [o/N] (Entrée = non) : " TRUNK_RESP
     if [[ "${TRUNK_RESP,,}" == "o" ]]; then
         TRUNK_ENABLED="oui"
         read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net) : " TRUNK_REGISTRAR
@@ -1683,24 +1730,23 @@ fi
 echo ""
 
 # ── TLS HTTPS ─────────────────────────────────────────────────────────────────
+_wizard_state
 info "▶ 3/4 — Adresse web sécurisée HTTPS (optionnel)"
-info "  À la fin de l'installation, l'accès à l'interface graphique FreePBX"
-info "  est désactivé par défaut. Vous pouvez renseigner un sous-domaine dont"
-info "  l'enregistrement DNS de type A pointe vers l'IP publique du VPS."
-info "  Ce sous-domaine permettra de sécuriser l'accès en HTTPS (certificat TLS)."
-info "  Laisser vide pour ignorer — l'interface pourra être démarrée manuellement"
-info "  en HTTP non sécurisé si nécessaire, sous votre responsabilité."
+info "  Un sous-domaine permet d'activer HTTPS avec un certificat Let's Encrypt."
+info "  Sans domaine, l'interface web est désactivée en fin d'installation (accessible manuellement en HTTP)."
 TLS_DOMAIN=""
 if [[ -n "$TLS_DOMAIN_ARG" ]]; then
     TLS_DOMAIN="$TLS_DOMAIN_ARG"
     echo "  ✓ Sous-domaine : $TLS_DOMAIN (pré-sélectionné par le wizard)"
 else
-    read -rp "  Sous-domaine HTTPS (ex: pbx.mon-entreprise.fr) ou Entrée pour ignorer : " TLS_DOMAIN
+    read -rp "  Sous-domaine HTTPS (ex: pbx.mon-entreprise.fr) ou Entrée pour ignorer (Entrée = sans domaine) : " TLS_DOMAIN
     [[ -n "$TLS_DOMAIN" ]] && echo "  ✓ Sous-domaine : $TLS_DOMAIN" || echo "  → HTTPS non activé"
 fi
 echo ""
 
 # ── Récapitulatif ─────────────────────────────────────────────────────────────
+_TLS_DONE=1
+_wizard_state
 info "▶ 4/4 — Récapitulatif"
 # Passage par variable d'environnement — évite la casse si le mot de passe contient '
 ADMIN_SHA1=$(env _P="$ADMIN_PASSWORD" python3 -c "import hashlib,os; print(hashlib.sha1(os.environ['_P'].encode()).hexdigest())")
@@ -1721,7 +1767,9 @@ else
     if [[ -n "$_MGMT_AUTO" ]]; then
         _MGMT_AUTO_CIDR=$(echo "$_MGMT_AUTO" | sed 's/\.[0-9]*$/.0\/24/')
         ok "  IP de gestion détectée : $_MGMT_AUTO_CIDR (depuis la connexion SSH)"
-        read -rp "  Entrée pour confirmer, ou saisissez une autre IP ou CIDR : " _MGMT_RAW
+        echo "  Cette adresse sera la seule autorisée à accéder au SSH et à l'interface d'administration."
+        echo "  Si votre IP change (connexion mobile, VPN), utilisez la console KVM OVHcloud pour mettre à jour la règle."
+        read -rp "  Confirmer [$_MGMT_AUTO_CIDR] (Entrée = confirmer, ou saisir une autre valeur) : " _MGMT_RAW
         if [[ -z "$_MGMT_RAW" ]]; then
             MANAGEMENT_IP="$_MGMT_AUTO_CIDR"
         elif echo "$_MGMT_RAW" | grep -qP '^\d+\.\d+\.\d+\.\d+$'; then
@@ -1823,13 +1871,13 @@ log "journal         : $SESSION_LOG"
 
 # Confirmation port noté — l'utilisateur doit saisir le numéro exact pour continuer
 while true; do
-    read -rp "Saisissez le numéro de port SSH pour confirmer que vous l'avez noté : " _PORT_CHECK
-    [[ "$_PORT_CHECK" == "$SSH_PORT" ]] && { echo -e "${GREEN}[✓] Port $SSH_PORT confirmé.${NC}"; echo ""; break; }
-    echo -e "${RED}  ✗ Attendu : $SSH_PORT — réessayez (ou Ctrl+C pour annuler).${NC}"
+    read -rp "  Saisissez le numéro de port affiché ci-dessus pour confirmer : " _PORT_CHECK
+    [[ "$_PORT_CHECK" == "$SSH_PORT" ]] && { echo -e "${GREEN}  ✓ Port $SSH_PORT confirmé.${NC}"; echo ""; break; }
+    echo -e "${RED}  ✗ Numéro incorrect (attendu : $SSH_PORT) — réessayez ou Ctrl+C pour annuler.${NC}"
 done
 
-read -rp "Lancer le déploiement ? [o/N] : " CONFIRM
-[[ "${CONFIRM,,}" == "o" ]] || { echo "Annulé."; exit 0; }
+read -rp "  Lancer le déploiement ? [o/N] (Entrée = annuler) : " CONFIRM
+[[ "${CONFIRM,,}" == "o" ]] || { echo "  Annulé."; exit 0; }
 INSTALL_START=$(date +%s)
 
 # ── Ping démarrage anonyme (automatique, silencieux) ────────────────────────
