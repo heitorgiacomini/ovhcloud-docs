@@ -1527,8 +1527,9 @@ read_password() {
 }
 
 read_sip_password() {
-    # Mot de passe opérateur — saisi tel quel, sans critères de complexité
     local varname="$1" pass
+    echo "  Saisissez le mot de passe SIP tel que défini dans votre espace client opérateur."
+    echo "  Il doit correspondre exactement : c'est votre opérateur qui en fixe les critères."
     while true; do
         _read_star_input pass "  Mot de passe SIP"
         [[ -n "$pass" ]] && printf -v "$varname" '%s' "$pass" && break
@@ -1711,7 +1712,7 @@ else
         TRUNK_ENABLED="oui"
         read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net) : " TRUNK_REGISTRAR
         read -rp "  Identifiant SIP (numéro ou login opérateur) : " TRUNK_USERNAME
-        read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
+        read_sip_password TRUNK_PASSWORD
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
         _trunk_ip=$(getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
         if [[ -n "$_trunk_ip" ]]; then
