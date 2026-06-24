@@ -1786,7 +1786,7 @@
                 + [Tutorial - How to use PuTTY for SSH connections and authentication](web-cloud/web-hosting/ssh-using-putty-on-windows)
                 + [Using SVN](web-cloud/web-hosting/svn)
                 + [Web Hosting - Copy files using the SCP command](web-cloud/web-hosting/using-scp-command)
-            + [CMS](web-cloud-hosting-configuration-cms)
+            + [CMS](web-cloud-hosting-configuration-cms){landing=web-cloud/web-hosting/landing-page-cms}
                 + [Setting up your website with 1-click modules](web-cloud/web-hosting/cms-install-1-click-modules)
                 + [How to change the admin password of my CMS](web-cloud/web-hosting/cms-update-password-admin)
                 + [How to manage your 1-click module](web-cloud/web-hosting/cms-manage-1-click-module)
@@ -1822,7 +1822,7 @@
                 + [Tutorial - Rewrite the URL for accessing your website using mod_rewrite via the .htaccess file](web-cloud/web-hosting/htaccess-url-rewriting-using-mod-rewrite)
                 + [Blocking a specific IP address from accessing your website](web-cloud/web-hosting/htaccess-how-to-block-a-specific-ip-address-from-accessing-your-website)
                 + [Using .htaccess for advanced purposes](web-cloud/web-hosting/htaccess-what-else-can-you-do)
-            + [CMS](web-cloud-hosting-tutorials-cms)
+            + [CMS](web-cloud-hosting-tutorials-cms){landing=web-cloud/web-hosting/landing-page-cms-tutorials}
                 + [Installing a CMS manually on your Web Hosting plan](web-cloud/web-hosting/cms-manual-installation)
                 + [Installing WordPress manually](web-cloud/web-hosting/cms-manual-installation-wordpress)
                 + [Installing Joomla! manually](web-cloud/web-hosting/cms-manual-installation-joomla)
