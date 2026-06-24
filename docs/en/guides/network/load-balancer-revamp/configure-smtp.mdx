@@ -64,7 +64,7 @@ Create a TCP server farm:
 | `serviceName` | Yes | The identifier of your Load Balancer service. | `loadbalancer-xxxxx` |
 | `port` (body) | No | Listening port for the farm. Use 25 for standard SMTP. | `25` |
 | `zone` (body) | Yes | Zone in which the farm is created. | `all` |
-| `balance` (body) | No | Balancing algorithm. | `roundrobin` |
+| `balance` (body) | No | Load balancing algorithm. | `roundrobin` |
 
 To review or manage existing TCP farms:
 
@@ -222,7 +222,7 @@ A successful connection returns the SMTP banner of one of your backend mail serv
 
 ## Go further
 
-[Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) — manage backend pools and balancing.
+[Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) — manage backend pools and load balancing.
 
 [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends) — expose your services to the Internet.
 

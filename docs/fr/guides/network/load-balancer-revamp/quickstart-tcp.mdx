@@ -38,7 +38,7 @@ L'OVHcloud Load Balancer répartit le trafic réseau entrant sur plusieurs serve
 
 Dans une configuration TCP, trois composants fonctionnent ensemble :
 
-- Une **ferme de serveurs** regroupe vos serveurs backend et applique un algorithme d'équilibrage.
+- Une **ferme de serveurs** regroupe vos serveurs backend et applique un algorithme d'équilibrage de charge.
 - Une **sonde** vérifie que chaque backend répond avant que le trafic ne l'atteigne.
 - Un **frontend** écoute sur un port public et transmet les connexions à la ferme par défaut.
 
@@ -58,7 +58,7 @@ Dans une configuration TCP, trois composants fonctionnent ensemble :
 
 ### Vue d'ensemble <a name="overview"></a>
 
-Le schéma ci-dessous montre comment une connexion TCP circule d'un client vers un serveur backend en passant par le Load Balancer. Le frontend accepte la connexion sur un port public et la transmet à la ferme par défaut, qui sélectionne un backend sain à l'aide de l'algorithme d'équilibrage.
+Le schéma ci-dessous montre comment une connexion TCP circule d'un client vers un serveur backend en passant par le Load Balancer. Le frontend accepte la connexion sur un port public et la transmet à la ferme par défaut, qui sélectionne un backend sain à l'aide de l'algorithme d'équilibrage de charge.
 
 <img className="thumbnail" alt="Vue d'ensemble — schéma" src="/images/network/load-balancer-revamp/quickstart-tcp/fig-1.fr.svg" loading="lazy" />
 
@@ -68,7 +68,7 @@ Le tableau suivant répertorie les principaux paramètres que vous allez défini
 |---|---|---|---|
 | Port | Ferme et frontend | Port TCP sur lequel le composant écoute ou vers lequel il transmet. | `25` (SMTP) |
 | Zone | Ferme et frontend | Zone dans laquelle le composant est déployé. Chaque composant appartient à une zone. | `gra` |
-| Algorithme d'équilibrage | Ferme | Méthode utilisée pour répartir les connexions entre les serveurs. | `Round Robin` |
+| Algorithme d'équilibrage de charge | Ferme | Méthode utilisée pour répartir les connexions entre les serveurs. | `Round Robin` |
 | Adresse IPv4 | Serveur | L'adresse du serveur backend. | `203.0.113.10` |
 | Ferme par défaut | Frontend | La ferme qui reçoit le trafic en provenance du frontend. | La ferme créée à l'étape 1 |
 
@@ -88,7 +88,7 @@ La ferme de serveurs répartit le trafic entre vos serveurs backend. Créez-la e
 3. Cliquez sur `Créer une ferme`.
 4. Dans le formulaire `Créer une ferme de serveurs`, sélectionnez **TCP** comme protocole.
 5. Renseignez les champs. Pour une configuration de base, les champs obligatoires sont le port et la zone. Pour SMTP, utilisez le port `25`. Si vous laissez le port vide, le Load Balancer utilise le même port que le frontend attaché.
-6. Vous pouvez éventuellement sélectionner un algorithme d'équilibrage tel que `Round Robin`.
+6. Vous pouvez éventuellement sélectionner un algorithme d'équilibrage de charge tel que `Round Robin`.
 7. Cliquez sur `Créer une ferme` pour confirmer.
 
 La nouvelle ferme apparaît dans l'onglet `Fermes de serveurs`.
@@ -105,7 +105,7 @@ Créez une ferme de serveurs TCP avec l'appel suivant :
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxxx` |
 | `zone` (corps) | Oui | Zone dans laquelle la ferme est déployée. | `gra` |
 | `port` (corps) | Non | Port backend par défaut. Reprend le port du frontend s'il est omis. | `25` |
-| `balance` (corps) | Non | Algorithme d'équilibrage. | `roundrobin` |
+| `balance` (corps) | Non | Algorithme d'équilibrage de charge. | `roundrobin` |
 
 Pour lister les fermes TCP existantes :
 

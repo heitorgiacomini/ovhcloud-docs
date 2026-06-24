@@ -1,6 +1,6 @@
 ---
 title: What is the OVHcloud Load Balancer
-description: Understand what the OVHcloud Load Balancer is, how HTTP, TCP, and UDP balancing differ, its core components, and when to use the service.
+description: Understand what the OVHcloud Load Balancer is, how HTTP, TCP, and UDP load balancing differ, its core components, and when to use the service.
 lastUpdated: 2026-06-05
 ---
 
@@ -11,11 +11,11 @@ import ManagerLink from '@components/ManagerLink';
 
 This guide explains what the OVHcloud Load Balancer is, how it distributes incoming traffic across your backend servers, and which building blocks you assemble to configure it. It is for anyone evaluating the service or learning its concepts before configuring frontends, server farms, and routes.
 
-**This guide explains the difference between HTTP, TCP, and UDP balancing, the role of each component, and when the Load Balancer is the right fit.**
+**This guide explains the difference between HTTP, TCP, and UDP load balancing, the role of each component, and when the Load Balancer is the right fit.**
 
 ## Overview
 
-The OVHcloud Load Balancer is a managed service that distributes incoming network traffic across several backend servers. Instead of clients connecting directly to a single server, they connect to the Load Balancer, which forwards each connection to one of the servers in a pool according to a configurable balancing algorithm.
+The OVHcloud Load Balancer is a managed service that distributes incoming network traffic across several backend servers. Instead of clients connecting directly to a single server, they connect to the Load Balancer, which forwards each connection to one of the servers in a pool according to a configurable load balancing algorithm.
 
 This solves two common problems. It removes the single point of failure represented by one server, and it lets you scale horizontally by adding servers to handle more traffic without changing the public endpoint your clients use. The Load Balancer sits in front of OVHcloud services such as Dedicated Servers, Virtual Private Servers (VPS), and Public Cloud instances, as well as servers reachable through a private network.
 
@@ -35,7 +35,7 @@ In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, frontends are m
 
 ### Server farm
 
-A server farm (also called a farm) is the pool of backend servers that receive balanced traffic. The farm defines the balancing algorithm, the health probe used to detect unresponsive servers, and the stickiness behaviour that keeps a client bound to the same server when required. A frontend forwards traffic to a farm; the farm decides which individual server handles each connection.
+A server farm (also called a farm) is the pool of backend servers that receive balanced traffic. The farm defines the load balancing algorithm, the health probe used to detect unresponsive servers, and the stickiness behaviour that keeps a client bound to the same server when required. A frontend forwards traffic to a farm; the farm decides which individual server handles each connection.
 
 Farms are managed from the `Farms` tab.
 
@@ -47,23 +47,25 @@ A server is a single backend that belongs to a farm. It is identified by an IP a
 
 A route is a rule that directs HTTP traffic to a specific farm based on conditions such as the requested host or URL path. Routes let a single frontend serve several applications, sending each request to the appropriate farm. Routes apply to HTTP and HTTPS frontends; TCP and UDP frontends always forward to their default farm.
 
+<img className="thumbnail" alt="Route diagram" src="/images/network/load-balancer-revamp/what-is-load-balancer/fig-2.svg" loading="lazy" />
+
 ### Zone
 
 A zone is the geographic location where a Load Balancer instance is deployed. The Load Balancer can operate across multiple zones, and its public IP is announced on the OVHcloud Anycast network so that clients reach the nearest healthy instance. Zones are managed from the `Network` tab.
 
-<img className="thumbnail" alt="Zone diagram" src="/images/network/load-balancer-revamp/what-is-load-balancer/fig-2.svg" loading="lazy" />
+<img className="thumbnail" alt="Zone diagram" src="/images/network/load-balancer-revamp/what-is-load-balancer/fig-3.svg" loading="lazy" />
 
-## HTTP balancing compared with TCP and UDP balancing
+## HTTP load balancing compared with TCP and UDP load balancing
 
 The Load Balancer handles traffic at two layers, and the choice between them determines which features are available. It supports three protocol families: HTTP/HTTPS at the application layer (L7), and TCP and UDP at the transport layer (L4). Select the type that matches the protocol your application speaks.
 
 | Type | Layer | Typical traffic | Capabilities |
 |---|---|---|---|
 | HTTP / HTTPS | Application layer (L7) | Web applications and APIs | URL- and host-based routing, HTTP header manipulation, redirections, SSL/TLS termination, HTTP routes |
-| TCP | Transport layer (L4) | Any TCP-based service (databases, mail, custom protocols) | Connection-level balancing for any TCP application, SSL/TLS pass-through |
-| UDP | Transport layer (L4) | Any UDP-based service (DNS, VoIP, gaming, syslog, custom datagram services) | Datagram-level balancing for any UDP application |
+| TCP | Transport layer (L4) | Any TCP-based service (databases, mail, custom protocols) | Connection-level load balancing for any TCP application, SSL/TLS pass-through |
+| UDP | Transport layer (L4) | Any UDP-based service (DNS, VoIP, gaming, syslog, custom datagram services) | Datagram-level load balancing for any UDP application |
 
-Use HTTP or HTTPS balancing when you need the Load Balancer to inspect and act on requests — for example to route `/api` to one farm and `/` to another, rewrite headers, or terminate TLS. Use TCP balancing when the application is not HTTP, or when the Load Balancer should forward connections without inspecting their content. Use UDP balancing for connectionless datagram services such as DNS, VoIP, gaming, or syslog; UDP behaves like TCP at the connection level and forwards traffic to its default farm.
+Use HTTP or HTTPS load balancing when you need the Load Balancer to inspect and act on requests — for example to route `/api` to one farm and `/` to another, rewrite headers, or terminate TLS. Use TCP load balancing when the application is not HTTP, or when the Load Balancer should forward connections without inspecting their content. Use UDP load balancing for connectionless datagram services such as DNS, VoIP, gaming, or syslog; UDP behaves like TCP at the connection level and forwards traffic to its default farm.
 
 > [!INFO]
 > SSL/TLS termination and HTTP routes are available only on HTTP and HTTPS frontends. TCP and UDP are L4 protocols: a TCP or UDP frontend forwards traffic to its default farm without parsing the payload, and does not support HTTP routes, header manipulation, redirections, SSL/TLS termination, or cookie stickiness.
@@ -74,7 +76,7 @@ Beyond basic distribution, the Load Balancer provides several capabilities that 
 
 | Capability | Description |
 |---|---|
-| Balancing algorithms | Distribute traffic by Round Robin, Least Connections, Source Hash, URI Hash, or First Available. |
+| Load balancing algorithms | Distribute traffic by Round Robin, Least Connections, Source Hash, URI Hash, or First Available. |
 | Health probes | Detect unresponsive servers and stop routing traffic to them automatically. |
 | Stickiness | Keep a client bound to the same backend server using a cookie or the source IP. |
 | SSL/TLS certificates | Terminate HTTPS at the Load Balancer with a managed or imported certificate. |

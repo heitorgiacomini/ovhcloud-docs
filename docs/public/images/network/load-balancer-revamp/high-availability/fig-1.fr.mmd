@@ -1,0 +1,14 @@
+flowchart TB
+  Client[Client] --> Anycast[Adresse IP Anycast]
+  subgraph ZoneA[Zone A]
+    EA[Point d'entrée zone A] --> FA[Frontend zone A] --> FarmA[Ferme de serveurs zone A]
+    FarmA --> S1[Serveur backend 1]
+    FarmA --> S2[Serveur backend 2]
+  end
+  subgraph ZoneB[Zone B]
+    EB[Point d'entrée zone B] --> FB[Frontend zone B] --> FarmB[Ferme de serveurs zone B]
+    FarmB --> S3[Serveur backend 3]
+    FarmB --> S4[Serveur backend 4]
+  end
+  Anycast --> EA
+  Anycast --> EB

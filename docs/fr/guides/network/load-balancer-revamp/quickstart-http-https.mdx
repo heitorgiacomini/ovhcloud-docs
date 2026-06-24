@@ -99,7 +99,7 @@ La ferme de serveurs reçoit le trafic des frontends et le répartit sur ses ser
 1. Ouvrez l'onglet `Fermes`.
 2. Cliquez sur <code className="action">Créer une ferme</code>.
 3. Renseignez les champs. Pour une configuration simple, le `Protocole` et le datacentre sont obligatoires. Définissez explicitement un `Port` — généralement le port 80 pour un service web. Si aucun port n'est défini, le Load Balancer réutilise le port du frontend, et les sondes peuvent ne pas se comporter comme prévu.
-4. Si vous prévoyez d'ajouter plusieurs serveurs, sélectionnez un algorithme d'équilibrage (par exemple `Round Robin` ou `Moins de connexions`) et configurez une sonde afin que le Load Balancer puisse retirer automatiquement un serveur qui ne répond pas.
+4. Si vous prévoyez d'ajouter plusieurs serveurs, sélectionnez un algorithme d'équilibrage de charge (par exemple `Round Robin` ou `Moins de connexions`) et configurez une sonde afin que le Load Balancer puisse retirer automatiquement un serveur qui ne répond pas.
 5. Cliquez sur <code className="action">Créer une ferme</code> pour enregistrer la ferme.
 
 La nouvelle ferme apparaît dans la liste de l'onglet `Fermes`.
@@ -116,7 +116,7 @@ Créez une ferme HTTP :
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3` |
 | `zone` (body) | Oui | La zone dans laquelle la ferme est créée. | `gra` |
 | `port` (body) | Non | Port backend par défaut de la ferme. | `80` |
-| `balance` (body) | Non | Algorithme d'équilibrage. | `roundrobin` |
+| `balance` (body) | Non | Algorithme d'équilibrage de charge. | `roundrobin` |
 | `displayName` (body) | Non | Nom lisible de la ferme. | `web-farm` |
 
 Listez les fermes HTTP existantes pour récupérer le `farmId` généré :

@@ -24,7 +24,7 @@ Use the diagnostic checklist below to identify your symptom, then jump to the ma
 
 ## Introduction
 
-The OVHcloud Load Balancer acts as a reverse proxy. It receives client requests on a frontend and distributes them across the servers of a farm, according to the balancing algorithm and health probe results. Clients connect to the Load Balancer, never directly to your backend servers.
+The OVHcloud Load Balancer acts as a reverse proxy. It receives client requests on a frontend and distributes them across the servers of a farm, according to the load balancing algorithm and health probe results. Clients connect to the Load Balancer, never directly to your backend servers.
 
 Two characteristics of this architecture explain most issues:
 
@@ -225,7 +225,7 @@ In the Control Panel, inspect the `Frontends` tab and the route configuration at
 | Frontend has no default farm | Set a `Default route` so traffic without a matching rule still reaches a farm. |
 | Route conditions overlap or order incorrectly | Review route match rules; the first matching route wins. Reorder or tighten conditions. See [Configure HTTP routes](/guides/network/load-balancer-revamp/configure-http-routes). |
 | Frontend bound to the wrong port or protocol | Edit the frontend and confirm the listening port and protocol match the client traffic. See [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends). |
-| Uneven balancing | Confirm the balancing algorithm and stickiness settings on the farm match your intent. See [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness). |
+| Uneven load balancing | Confirm the load balancing algorithm and stickiness settings on the farm match your intent. See [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness). |
 
 Apply the configuration after any change (see [Configuration not applied](#config-not-applied)).
 

@@ -1,6 +1,6 @@
 ---
 title: Glossaire
-description: Définissez les termes clés de l'OVHcloud Load Balancer : frontend, ferme, serveur, sonde, méthode d'équilibrage, persistance, route, zone, anycast et plus.
+description: Définissez les termes clés de l'OVHcloud Load Balancer : frontend, ferme, serveur, sonde, méthode d'équilibrage de charge, persistance, route, zone, anycast et plus.
 lastUpdated: 2026-06-05
 ---
 
@@ -14,7 +14,7 @@ L'OVHcloud Load Balancer est un service entièrement managé qui répartit le tr
 
 ## Comment les termes s'articulent entre eux
 
-La plupart des termes du Load Balancer relèvent de l'une de trois catégories : un objet que vous configurez (frontend, ferme, serveur), un comportement que vous appliquez au trafic (méthode d'équilibrage, persistance, route, sonde) ou une propriété de la plateforme sous-jacente (zone, anycast, vRack, terminaison SSL). Le schéma ci-dessous montre comment ces objets de configuration s'enchaînent à mesure que le trafic circule d'un client vers un serveur backend.
+La plupart des termes du Load Balancer relèvent de l'une de trois catégories : un objet que vous configurez (frontend, ferme, serveur), un comportement que vous appliquez au trafic (méthode d'équilibrage de charge, persistance, route, sonde) ou une propriété de la plateforme sous-jacente (zone, anycast, vRack, terminaison SSL). Le schéma ci-dessous montre comment ces objets de configuration s'enchaînent à mesure que le trafic circule d'un client vers un serveur backend.
 
 <img className="thumbnail" alt="Comment les termes s'articulent entre eux — schéma" src="/images/network/load-balancer-revamp/glossary/fig-1.fr.svg" loading="lazy" />
 
@@ -25,10 +25,10 @@ Le tableau ci-dessous définit chaque terme clé. La colonne « Espace client 
 | Terme | Définition | Référence dans l'espace client |
 |---|---|---|
 | Frontend | Le point d'entrée du Load Balancer. Un frontend définit le protocole sur lequel il écoute (HTTP, HTTPS, TCP ou UDP) ainsi que le port d'écoute auquel les clients se connectent. Chaque frontend transmet le trafic à une ou plusieurs fermes de serveurs. | Onglet `Frontends` |
-| Ferme de serveurs | Un groupe logique de serveurs backend qui reçoivent le trafic d'un frontend. La ferme porte la méthode d'équilibrage, la sonde et le paramètre de persistance qui s'appliquent à ses membres. Également appelée ferme. | Onglet `Fermes de serveurs` |
+| Ferme de serveurs | Un groupe logique de serveurs backend qui reçoivent le trafic d'un frontend. La ferme porte la méthode d'équilibrage de charge, la sonde et le paramètre de persistance qui s'appliquent à ses membres. Également appelée ferme. | Onglet `Fermes de serveurs` |
 | Serveur | Une instance backend unique enregistrée au sein d'une ferme. Elle traite le trafic applicatif entrant et sortant. Un serveur peut être un serveur dédié, un Virtual Private Server (VPS), une instance Public Cloud ou toute adresse IP joignable. | `Ajouter un serveur` |
 | Sonde | Le contrôle de santé que le Load Balancer exécute sur chaque serveur d'une ferme. Il vérifie périodiquement qu'un serveur répond ; les serveurs qui échouent à la sonde sont retirés de la rotation jusqu'à leur rétablissement. | Configurée par ferme |
-| Méthode d'équilibrage | L'algorithme qui détermine quel serveur d'une ferme reçoit la requête suivante. Les méthodes disponibles sont Round Robin (par défaut), Moins de connexions, Hash Source, Hash URI et Premier disponible. | `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI`, `Premier disponible` |
+| Méthode d'équilibrage de charge | L'algorithme qui détermine quel serveur d'une ferme reçoit la requête suivante. Les méthodes disponibles sont Round Robin (par défaut), Moins de connexions, Hash Source, Hash URI et Premier disponible. | `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI`, `Premier disponible` |
 | Persistance | Le mécanisme qui maintient un client lié au même serveur au fil des requêtes successives, également appelé persistance de session. Les options disponibles sont Aucune, Cookie et IP Source. | `Aucune`, `Cookie`, `IP Source` |
 | Route | Une règle rattachée à un frontend qui détermine quelle ferme reçoit une requête en fonction de conditions telles que le chemin de l'URL ou les en-têtes HTTP. Un frontend possède toujours une route par défaut et peut comporter des routes conditionnelles supplémentaires. | `Route par défaut`, `Router vers une ferme` |
 | Zone | L'emplacement géographique dans lequel un frontend et ses fermes sont déployés. Un même Load Balancer peut héberger des configurations dans plusieurs zones, et les modifications s'appliquent par zone. | Sélectionnée par objet |
@@ -50,8 +50,8 @@ Quelques termes complémentaires apparaissent régulièrement dans les guides du
 
 ## Points à considérer et limitations
 
-- La méthode d'équilibrage, la sonde et le paramètre de persistance se configurent au niveau de la ferme, et non par serveur. Tous les serveurs d'une ferme partagent ces paramètres.
-- L'équilibrage Hash URI s'applique uniquement aux fermes HTTP et HTTPS. Il ne peut pas être utilisé sur les fermes TCP ou UDP.
+- La méthode d'équilibrage de charge, la sonde et le paramètre de persistance se configurent au niveau de la ferme, et non par serveur. Tous les serveurs d'une ferme partagent ces paramètres.
+- L'équilibrage de charge Hash URI s'applique uniquement aux fermes HTTP et HTTPS. Il ne peut pas être utilisé sur les fermes TCP ou UDP.
 - Pour connaître les quotas exacts, les protocoles pris en charge et les limites de service, consultez le guide [Prérequis et limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations).
 
 ## Aller plus loin

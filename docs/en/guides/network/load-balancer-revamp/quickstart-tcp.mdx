@@ -38,7 +38,7 @@ The OVHcloud Load Balancer distributes incoming network traffic across multiple 
 
 In a TCP setup, three components work together:
 
-- A **server farm** groups your backend servers and applies a balancing algorithm.
+- A **server farm** groups your backend servers and applies a load balancing algorithm.
 - A **health probe** checks that each backend is responsive before traffic reaches it.
 - A **frontend** listens on a public port and forwards connections to the default farm.
 
@@ -58,7 +58,7 @@ In a TCP setup, three components work together:
 
 ### Overview <a name="overview"></a>
 
-The diagram below shows how a TCP connection flows from a client through the Load Balancer to a backend server. The frontend accepts the connection on a public port and hands it to the default farm, which selects a healthy backend using the balancing algorithm.
+The diagram below shows how a TCP connection flows from a client through the Load Balancer to a backend server. The frontend accepts the connection on a public port and hands it to the default farm, which selects a healthy backend using the load balancing algorithm.
 
 <img className="thumbnail" alt="Overview diagram" src="/images/network/load-balancer-revamp/quickstart-tcp/fig-1.svg" loading="lazy" />
 
@@ -68,7 +68,7 @@ The following table lists the key parameters you will set in this guide.
 |---|---|---|---|
 | Port | Farm and frontend | TCP port the component listens on or forwards to. | `25` (SMTP) |
 | Zone | Farm and frontend | The zone the component is deployed in. Each component belongs to a zone. | `gra` |
-| Balancing algorithm | Farm | Method used to distribute connections across servers. | `Round Robin` |
+| Load balancing algorithm | Farm | Method used to distribute connections across servers. | `Round Robin` |
 | IPv4 address | Server | The address of the backend server. | `203.0.113.10` |
 | Default farm | Frontend | The farm that receives traffic from the frontend. | The farm created in Step 1 |
 
@@ -88,7 +88,7 @@ The server farm balances traffic across your backend servers. Create it first, b
 3. Click `Create farm`.
 4. In the `Create Server Farm` form, select **TCP** as the protocol.
 5. Fill in the fields. For a basic configuration, the mandatory fields are the port and the zone. For SMTP, use port `25`. If you leave the port empty, the Load Balancer uses the same port as the attached frontend.
-6. Optionally, select a balancing algorithm such as `Round Robin`.
+6. Optionally, select a load balancing algorithm such as `Round Robin`.
 7. Click `Create farm` to confirm.
 
 The new farm appears in the `Server Farms` tab.
@@ -105,7 +105,7 @@ Create a TCP server farm with the following call:
 | `serviceName` | Yes | Your Load Balancer service identifier. | `loadbalancer-xxxxx` |
 | `zone` (body) | Yes | Zone the farm is deployed in. | `gra` |
 | `port` (body) | No | Default backend port. Falls back to the frontend port if omitted. | `25` |
-| `balance` (body) | No | Balancing algorithm. | `roundrobin` |
+| `balance` (body) | No | Load balancing algorithm. | `roundrobin` |
 
 To list existing TCP farms:
 

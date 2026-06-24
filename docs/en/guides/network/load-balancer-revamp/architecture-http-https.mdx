@@ -30,10 +30,10 @@ This is a conceptual reference, not a step-by-step procedure. Each configuration
 
 ## Introduction
 
-The OVHcloud Load Balancer distributes incoming traffic across multiple backend servers using a configurable balancing algorithm. A Load Balancer service has four parts:
+The OVHcloud Load Balancer distributes incoming traffic across multiple backend servers using a configurable load balancing algorithm. A Load Balancer service has four parts:
 
 - **Frontends** — the entry points that listen on a public IP address and a port, and expose the service on the Internet.
-- **Server farms** — groups of backend servers, with the balancing algorithm and health probes that decide where traffic is sent.
+- **Server farms** — groups of backend servers, with the load balancing algorithm and health probes that decide where traffic is sent.
 - **Servers** — the individual backends inside a farm.
 - **SSL/TLS certificates** — the certificates that authenticate the service and encrypt HTTPS connections.
 
@@ -64,7 +64,7 @@ The path a request takes depends on whether the visitor connects over HTTP or HT
 | 2. TLS | Not applicable. | The HTTPS frontend terminates TLS using the attached SSL/TLS certificate. |
 | 3. Frontend | The HTTP frontend accepts the request. | The HTTPS frontend accepts the decrypted request. |
 | 4. Routing | The frontend forwards the request to the default HTTP server farm. | The frontend forwards the request to the default HTTP server farm. |
-| 5. Balancing | The farm selects a backend server using the configured algorithm, skipping any server marked down by the health probe. | Same as HTTP. |
+| 5. Load balancing | The farm selects a backend server using the configured algorithm, skipping any server marked down by the health probe. | Same as HTTP. |
 | 6. Response | The selected server responds; the Load Balancer relays the response to the visitor. | The Load Balancer re-encrypts the response and relays it to the visitor. |
 
 TLS is terminated at the Load Balancer, so the connection between the Load Balancer and the backend servers is plain HTTP in this design. Keep the backend network private or trusted.
@@ -75,7 +75,7 @@ The following decisions shape the reference design. Each one is documented in a 
 
 | Decision | Options | Notes |
 |---|---|---|
-| Balancing algorithm | `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, `First Available` | `Round Robin` is the common default for stateless web traffic. See [configure server farms](/guides/network/load-balancer-revamp/configure-server-farms). |
+| Load balancing algorithm | `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, `First Available` | `Round Robin` is the common default for stateless web traffic. See [configure server farms](/guides/network/load-balancer-revamp/configure-server-farms). |
 | Health probe | HTTP probe recommended when the farm has more than one server | Without a probe, traffic may be routed to an unresponsive backend. See [configure health probes](/guides/network/load-balancer-revamp/configure-health-probes). |
 | Session stickiness | `None`, `Cookie`, `Source IP` | Enable stickiness only if the application keeps server-side session state. See [configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness). |
 | Certificate strategy | Imported certificate or a certificate managed automatically by the Load Balancer | A managed certificate is renewed automatically. See [configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates). |

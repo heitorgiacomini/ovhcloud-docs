@@ -30,10 +30,10 @@ Il s'agit d'une référence conceptuelle, et non d'une procédure pas à pas. Ch
 
 ## Introduction
 
-Le service OVHcloud Load Balancer répartit le trafic entrant entre plusieurs serveurs backend à l'aide d'un algorithme d'équilibrage configurable. Un service Load Balancer comporte quatre éléments :
+Le service OVHcloud Load Balancer répartit le trafic entrant entre plusieurs serveurs backend à l'aide d'un algorithme d'équilibrage de charge configurable. Un service Load Balancer comporte quatre éléments :
 
 - **Frontends** — les points d'entrée qui écoutent sur une adresse IP publique et un port, et exposent le service sur Internet.
-- **Fermes de serveurs** — des groupes de serveurs backend, avec l'algorithme d'équilibrage et les sondes qui déterminent où le trafic est envoyé.
+- **Fermes de serveurs** — des groupes de serveurs backend, avec l'algorithme d'équilibrage de charge et les sondes qui déterminent où le trafic est envoyé.
 - **Serveurs** — les backends individuels au sein d'une ferme.
 - **Certificats SSL/TLS** — les certificats qui authentifient le service et chiffrent les connexions HTTPS.
 
@@ -64,7 +64,7 @@ Le chemin emprunté par une requête dépend de la connexion du visiteur en HTTP
 | 2. TLS | Non applicable. | Le frontend HTTPS termine la session TLS à l'aide du certificat SSL/TLS rattaché. |
 | 3. Frontend | Le frontend HTTP accepte la requête. | Le frontend HTTPS accepte la requête déchiffrée. |
 | 4. Routage | Le frontend transmet la requête à la ferme de serveurs HTTP par défaut. | Le frontend transmet la requête à la ferme de serveurs HTTP par défaut. |
-| 5. Équilibrage | La ferme sélectionne un serveur backend à l'aide de l'algorithme configuré, en ignorant tout serveur marqué comme indisponible par la sonde. | Identique à HTTP. |
+| 5. Équilibrage de charge | La ferme sélectionne un serveur backend à l'aide de l'algorithme configuré, en ignorant tout serveur marqué comme indisponible par la sonde. | Identique à HTTP. |
 | 6. Réponse | Le serveur sélectionné répond ; le Load Balancer relaie la réponse au visiteur. | Le Load Balancer rechiffre la réponse et la relaie au visiteur. |
 
 La session TLS est terminée au niveau du Load Balancer ; dans cette architecture, la connexion entre le Load Balancer et les serveurs backend se fait donc en HTTP non chiffré. Conservez le réseau des backends privé ou de confiance.
@@ -75,7 +75,7 @@ Les décisions suivantes façonnent l'architecture de référence. Chacune est d
 
 | Décision | Options | Remarques |
 |---|---|---|
-| Algorithme d'équilibrage | `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI`, `Premier disponible` | `Round Robin` est le choix par défaut courant pour le trafic web sans état. Consultez [configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms). |
+| Algorithme d'équilibrage de charge | `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI`, `Premier disponible` | `Round Robin` est le choix par défaut courant pour le trafic web sans état. Consultez [configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms). |
 | Sonde | Sonde HTTP recommandée lorsque la ferme comporte plusieurs serveurs | Sans sonde, le trafic peut être acheminé vers un backend qui ne répond pas. Consultez [configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes). |
 | Persistance de session | `Aucune`, `Cookie`, `IP Source` | N'activez la persistance que si l'application conserve un état de session côté serveur. Consultez [configurer la persistance](/guides/network/load-balancer-revamp/configure-stickiness). |
 | Stratégie de certificat | Certificat importé ou certificat géré automatiquement par le Load Balancer | Un certificat géré est renouvelé automatiquement. Consultez [configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates). |

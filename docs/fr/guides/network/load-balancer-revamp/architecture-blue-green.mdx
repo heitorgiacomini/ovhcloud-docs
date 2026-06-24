@@ -35,7 +35,7 @@ Il s'agit d'une architecture de référence, et non d'un guide de configuration 
 
 OVHcloud Load Balancer répartit le trafic entrant entre les serveurs backend. Deux de ses composants portent le modèle blue-green :
 
-- Une **ferme de serveurs** regroupe un ou plusieurs serveurs backend et leur applique un algorithme d'équilibrage et des health checks.
+- Une **ferme de serveurs** regroupe un ou plusieurs serveurs backend et leur applique un algorithme d'équilibrage de charge et des health checks.
 - Un **frontend** écoute sur un port public et transmet le trafic vers une ferme par défaut.
 
 Comme la ferme par défaut d'un frontend peut être modifiée et réappliquée à tout moment, le lien entre un port public et un environnement backend relève de la configuration, et non d'un câblage figé. C'est ce découplage qui rend le basculement possible.
@@ -91,7 +91,7 @@ Cette section crée les deux fermes de serveurs et rattache les serveurs backend
 
 1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
 2. Sélectionnez l'onglet `Fermes`.
-3. Cliquez sur `Créer une ferme` et configurez la ferme dans l'éditeur `Créer une ferme de serveurs` (protocole, algorithme d'équilibrage et health check).
+3. Cliquez sur `Créer une ferme` et configurez la ferme dans l'éditeur `Créer une ferme de serveurs` (protocole, algorithme d'équilibrage de charge et health check).
 4. Une fois la ferme créée, cliquez sur `Ajouter un serveur` et saisissez l'adresse IP privée et le port du serveur backend (par exemple `8080`).
 5. Répétez les étapes 3 et 4 pour créer la seconde ferme avec son propre serveur backend.
 

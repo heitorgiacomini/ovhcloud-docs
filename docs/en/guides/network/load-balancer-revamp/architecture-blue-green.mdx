@@ -35,7 +35,7 @@ This is a reference architecture, not a click-by-click setup guide. For the deta
 
 The OVHcloud Load Balancer distributes incoming traffic across backend servers. Two of its components carry the blue-green pattern:
 
-- A **server farm** groups one or more backend servers and applies a balancing algorithm and health probes to them.
+- A **server farm** groups one or more backend servers and applies a load balancing algorithm and health probes to them.
 - A **frontend** listens on a public port and forwards traffic to a default farm.
 
 Because you can change and reapply a frontend's default farm at any time, the link between a public port and a backend environment is a configuration value, not fixed wiring. This decoupling makes the cutover possible.
@@ -91,7 +91,7 @@ This section creates the two server farms and attaches the backend servers that 
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
 2. Select the `Server Farms` tab.
-3. Click `Create farm` and configure the farm in the `Create Server Farm` editor (protocol, balancing algorithm, and health probe).
+3. Click `Create farm` and configure the farm in the `Create Server Farm` editor (protocol, load balancing algorithm, and health probe).
 4. With the farm created, click `Add server` and enter the backend server's private IP address and port (for example `8080`).
 5. Repeat steps 3 and 4 to create the second farm with its own backend server.
 

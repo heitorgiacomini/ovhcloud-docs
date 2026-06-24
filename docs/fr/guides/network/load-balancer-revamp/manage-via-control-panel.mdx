@@ -66,7 +66,7 @@ L'interface de gestion est organisée en huit onglets, chacun correspondant à u
 
 | Onglet | Rôle | Guide dédié |
 |---|---|---|
-| `Fermes de serveurs` | Créer et gérer des groupes de serveurs backend (fermes), ajouter des serveurs et définir l'algorithme d'équilibrage et la persistance. | [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms) |
+| `Fermes de serveurs` | Créer et gérer des groupes de serveurs backend (fermes), ajouter des serveurs et définir l'algorithme d'équilibrage de charge et la persistance. | [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms) |
 | `Frontends` | Définir des points d'écoute (protocole, port, zone) et les associer à une ferme ou une route par défaut. | [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends) |
 | `Certificats SSL` | Ajouter des certificats personnalisés ou commander un certificat gratuit, et consulter le profil de configuration TLS. | [Configurer les certificats SSL](/guides/network/load-balancer-revamp/configure-ssl-certificates) |
 | `vRack` | Gérer les sous-réseaux privés utilisés lorsque le Load Balancer atteint les backends via un vRack. | [Configurer le vRack](/guides/network/load-balancer-revamp/configure-vrack) |
@@ -83,7 +83,7 @@ Le schéma ci-dessous montre comment les onglets sont liés au service et entre 
 
 L'onglet `Fermes de serveurs` liste chaque ferme backend. Une ferme regroupe les serveurs qui reçoivent le trafic et définit la manière dont ce trafic est réparti. Cliquez sur <code className="action">Créer une ferme</code> pour ajouter une ferme et sur <code className="action">Ajouter un serveur</code> pour y rattacher un backend.
 
-Les algorithmes d'équilibrage disponibles sont `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI` et `Premier disponible`. Les options de persistance sont `Aucune`, `Cookie` et `IP Source`. Ces options sont décrites dans [Configurer la persistance de session](/guides/network/load-balancer-revamp/configure-stickiness).
+Les algorithmes d'équilibrage de charge disponibles sont `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI` et `Premier disponible`. Les options de persistance sont `Aucune`, `Cookie` et `IP Source`. Ces options sont décrites dans [Configurer la persistance de session](/guides/network/load-balancer-revamp/configure-stickiness).
 
 #### Frontends
 

@@ -1,0 +1,10 @@
+flowchart TB
+  U[Requête client] --> A[Point d'entrée Anycast]
+  subgraph Z1[Zone GRA]
+    F1[Frontend GRA] --> C1[Serveurs backend du cluster GRA]
+  end
+  subgraph Z2[Zone BHS]
+    F2[Frontend BHS] --> C2[Serveurs backend du cluster BHS]
+  end
+  A -->|Acheminé vers la zone la plus proche| F1
+  A -->|Acheminé vers la zone la plus proche| F2

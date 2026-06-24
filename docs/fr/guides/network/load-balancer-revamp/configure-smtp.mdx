@@ -64,7 +64,7 @@ Créez une ferme de serveurs TCP :
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-xxxxx` |
 | `port` (body) | Non | Port d'écoute de la ferme. Utilisez 25 pour le SMTP standard. | `25` |
 | `zone` (body) | Oui | Zone dans laquelle la ferme est créée. | `all` |
-| `balance` (body) | Non | Algorithme d'équilibrage. | `roundrobin` |
+| `balance` (body) | Non | Algorithme d'équilibrage de charge. | `roundrobin` |
 
 Pour consulter ou gérer les fermes TCP existantes :
 
@@ -222,7 +222,7 @@ Une connexion réussie renvoie la bannière SMTP de l'un de vos serveurs de mess
 
 ## Aller plus loin
 
-[Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms) — gérez les pools de backends et l'équilibrage.
+[Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms) — gérez les pools de backends et l'équilibrage de charge.
 
 [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends) — exposez vos services à Internet.
 

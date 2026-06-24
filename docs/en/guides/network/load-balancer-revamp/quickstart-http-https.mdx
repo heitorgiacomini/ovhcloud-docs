@@ -99,7 +99,7 @@ The server farm receives traffic from the frontends and distributes it across it
 1. Open the `Server Farms` tab.
 2. Click <code className="action">Create farm</code>.
 3. Fill in the fields. For a simple configuration, the `Protocol` and the datacentre are mandatory. Define a `Port` explicitly — typically port 80 for a web service. If no port is set, the Load Balancer reuses the frontend port, and health probes may not behave as expected.
-4. If you plan to add several servers, select a balancing algorithm (for example `Round Robin` or `Least Connections`) and configure a health probe so the Load Balancer can automatically remove an unresponsive server.
+4. If you plan to add several servers, select a load balancing algorithm (for example `Round Robin` or `Least Connections`) and configure a health probe so the Load Balancer can automatically remove an unresponsive server.
 5. Click <code className="action">Create</code> to save the farm.
 
 The new farm appears in the list under the `Server Farms` tab.
@@ -116,7 +116,7 @@ Create an HTTP farm:
 | `serviceName` | Yes | Your Load Balancer service identifier. | `loadbalancer-a1b2c3` |
 | `zone` (body) | Yes | The zone the farm is created in. | `gra` |
 | `port` (body) | No | Default backend port for the farm. | `80` |
-| `balance` (body) | No | Balancing algorithm. | `roundrobin` |
+| `balance` (body) | No | Load balancing algorithm. | `roundrobin` |
 | `displayName` (body) | No | Human-readable farm name. | `web-farm` |
 
 List existing HTTP farms to retrieve the generated `farmId`:

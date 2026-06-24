@@ -1,0 +1,10 @@
+flowchart TB
+  U[Client request] --> A[Anycast entry point]
+  subgraph Z1[Zone GRA]
+    F1[Frontend GRA] --> C1[Cluster GRA backends]
+  end
+  subgraph Z2[Zone BHS]
+    F2[Frontend BHS] --> C2[Cluster BHS backends]
+  end
+  A -->|Routed to nearest zone| F1
+  A -->|Routed to nearest zone| F2

@@ -66,7 +66,7 @@ The management interface is organised into eight tabs, each mapping to a configu
 
 | Tab | Purpose | Dedicated guide |
 |---|---|---|
-| `Server Farms` | Create and manage backend server groups (farms), add servers, and set the balancing algorithm and stickiness. | [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) |
+| `Server Farms` | Create and manage backend server groups (farms), add servers, and set the load balancing algorithm and stickiness. | [Configure server farms](/guides/network/load-balancer-revamp/configure-server-farms) |
 | `Frontends` | Define listening endpoints (protocol, port, zone) and link them to a default farm or route. | [Configure frontends](/guides/network/load-balancer-revamp/configure-frontends) |
 | `SSL Certificates` | Add custom certificates or order a free certificate, and review the TLS configuration profile. | [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates) |
 | `Subnet` | Manage the private subnets used when the Load Balancer reaches backends over a vRack. | [Configure vRack](/guides/network/load-balancer-revamp/configure-vrack) |
@@ -83,7 +83,7 @@ The diagram below shows how the tabs relate to the service and to one another.
 
 The `Server Farms` tab lists every backend farm. A farm groups the servers that receive traffic and defines how that traffic is distributed. Click <code className="action">Create farm</code> to add a farm and <code className="action">Add server</code> to attach a backend to it.
 
-Available balancing algorithms are `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, and `First Available`. Stickiness options are `None`, `Cookie`, and `Source IP`. These options are described in [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness).
+Available load balancing algorithms are `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, and `First Available`. Stickiness options are `None`, `Cookie`, and `Source IP`. These options are described in [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness).
 
 #### Frontends
 
