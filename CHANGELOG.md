@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026.06.24
+
+### Features
+- add Web Hosting diagnostic landing page in all locales (#254)
+- add Web Hosting security landing page in all locales (#259)
+
+### Documentation
+- 77 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.23
 
 ### Features
