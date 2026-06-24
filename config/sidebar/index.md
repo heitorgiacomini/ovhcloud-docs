@@ -1766,14 +1766,14 @@
             + [Optimising your website’s performance](web-cloud/web-hosting/optimise-your-website-performance)
             + [Using automated tasks on a Web Hosting plan](web-cloud/web-hosting/cron-tasks)*
             + [How to create and manage a Web application via the OVHcloud public API](web-cloud/web-hosting/api-webhosting)
-            + [Databases](web-cloud-hosting-configuration-databases)
+            + [Databases](web-cloud-hosting-configuration-databases){landing=web-cloud/web-hosting/landing-page-databases}
                 + [Creating and managing a database in your Web Hosting plan](web-cloud/web-hosting/sql-create-database)
                 + [Changing the password for a Web Hosting plan’s database](web-cloud/web-hosting/sql-change-password)
                 + [Duplicating the contents of one database to another](web-cloud/web-hosting/copy-database)
                 + [Retrieving the backup of a Web Hosting plan’s database](web-cloud/web-hosting/sql-database-export)
                 + [Recovering a deleted database backup](web-cloud/web-hosting/sql-recovering-deleted-db-backup)
                 + [How to identify your database server](web-cloud/web-hosting/sql-find-server)
-            + [FTP and SSH](web-cloud-hosting-configuration-ftp-and-ssh)
+            + [FTP and SSH](web-cloud-hosting-configuration-ftp-and-ssh){landing=web-cloud/web-hosting/landing-page-ftp-ssh}
                 + [Tutorial - Using FileZilla with your OVHcloud hosting](web-cloud/web-hosting/ftp-filezilla-user-guide)
                 + [Web Hosting - How to manage FTP users](web-cloud/web-hosting/ftp-manage-users)
                 + [Logging in to your Web Hosting plan’s storage space](web-cloud/web-hosting/ftp-connection)
@@ -1786,11 +1786,11 @@
                 + [Tutorial - How to use PuTTY for SSH connections and authentication](web-cloud/web-hosting/ssh-using-putty-on-windows)
                 + [Using SVN](web-cloud/web-hosting/svn)
                 + [Web Hosting - Copy files using the SCP command](web-cloud/web-hosting/using-scp-command)
-            + [CMS](web-cloud-hosting-configuration-cms)
+            + [CMS](web-cloud-hosting-configuration-cms){landing=web-cloud/web-hosting/landing-page-cms}
                 + [Setting up your website with 1-click modules](web-cloud/web-hosting/cms-install-1-click-modules)
                 + [How to change the admin password of my CMS](web-cloud/web-hosting/cms-update-password-admin)
                 + [How to manage your 1-click module](web-cloud/web-hosting/cms-manage-1-click-module)
-        + [Migration](web-cloud-hosting-migration)
+        + [Migration](web-cloud-hosting-migration){landing=web-cloud/web-hosting/landing-page-migration}
             + [How to migrate a website from a web hosting plan to a VPS](web-cloud/web-hosting/migrate-website-to-vps)
             + [Importing a backup into a Web Hosting plan database](web-cloud/web-hosting/sql-importing-mysql-database)
             + [Exporting a website](web-cloud/web-hosting/exporter-son-site-web)
@@ -1803,7 +1803,7 @@
             + [Tutorial - Installation and configuration of Cecil, a static site generator (SSG) in PHP](web-cloud/web-hosting/static-website-installation-cecil)
             + [Tutorial - Add dynamic content to a static web page generated with Cecil](web-cloud/web-hosting/static-website-installation-cecil-api-call)
             + [Installing Composer on a Web Hosting plan](web-cloud/web-hosting/composer-install-composer)
-            + [Tutorials - WordPress](web-cloud-hosting-tutorials-wordpress)
+            + [Tutorials - WordPress](web-cloud-hosting-tutorials-wordpress){landing=web-cloud/web-hosting/landing-page-wordpress}
                 + [Tutorial - First steps with Wordpress](web-cloud/web-hosting/wordpress-first-steps)
                 + [Tutorial - Backing up your WordPress website](web-cloud/web-hosting/how-to-backup-your-wordpress)
                 + [Tutorial - Using the htaccess file with WordPress](web-cloud/web-hosting/htaccess-how-to-protect-wordpress)
@@ -1822,7 +1822,7 @@
                 + [Tutorial - Rewrite the URL for accessing your website using mod_rewrite via the .htaccess file](web-cloud/web-hosting/htaccess-url-rewriting-using-mod-rewrite)
                 + [Blocking a specific IP address from accessing your website](web-cloud/web-hosting/htaccess-how-to-block-a-specific-ip-address-from-accessing-your-website)
                 + [Using .htaccess for advanced purposes](web-cloud/web-hosting/htaccess-what-else-can-you-do)
-            + [CMS](web-cloud-hosting-tutorials-cms)
+            + [CMS](web-cloud-hosting-tutorials-cms){landing=web-cloud/web-hosting/landing-page-cms-tutorials}
                 + [Installing a CMS manually on your Web Hosting plan](web-cloud/web-hosting/cms-manual-installation)
                 + [Installing WordPress manually](web-cloud/web-hosting/cms-manual-installation-wordpress)
                 + [Installing Joomla! manually](web-cloud/web-hosting/cms-manual-installation-joomla)

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026.06.24.1
+
+### Fixes
+- **i18n:** resolve leftover French residue outside web-cloud (#278)
+- **docs:** normalize community links (pcc nutanix)
+- **i18n:** translate leftover French residue in web-cloud guides (#275)
+
+### Documentation
+- 418 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.24
 
 ### Features
