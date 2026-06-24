@@ -1822,8 +1822,9 @@ TRUNK_NAME=""
 TRUNK_CALLERID="$TRUNK_USERNAME"
 SSH_PORT=$(shuf -i 10000-49151 -n 1)
 # Sauvegarde immédiate du port — accessible même si la session tmux se ferme
-echo "$SSH_PORT" > /root/freepbx-factory-ssh-port.txt
-chmod 600 /root/freepbx-factory-ssh-port.txt
+echo "$SSH_PORT" > /home/debian/freepbx-factory-ssh-port.txt
+chmod 644 /home/debian/freepbx-factory-ssh-port.txt
+chown debian:debian /home/debian/freepbx-factory-ssh-port.txt 2>/dev/null || true
 # Titre tmux mis à jour immédiatement — visible même après déconnexion SSH
 tmux rename-window "FreePBX Factory | SSH: ${SSH_PORT}" 2>/dev/null || true
 
@@ -1848,10 +1849,8 @@ _RECONNECT_CMD="ssh -p ${SSH_PORT} debian@${_VPS_IP} -t \"sudo tmux attach -t fa
 echo -e "${YELLOW}  ┌─ À NOTER MAINTENANT ───────────────────────────────────────────┐${NC}"
 printf  "${YELLOW}  │  Port SSH : %-52s${YELLOW}│${NC}\n" "$SSH_PORT"
 echo -e "${YELLOW}  │                                                                │${NC}"
-echo -e "${YELLOW}  │  Commande de reconnexion (à copier) :                         │${NC}"
+echo -e "${YELLOW}  │  En cas de déconnexion SSH avant la fin du déploiement :       │${NC}"
 printf  "${YELLOW}  │  %-64s${YELLOW}│${NC}\n" "$_RECONNECT_CMD"
-echo -e "${YELLOW}  │                                                                │${NC}"
-echo -e "${YELLOW}  │  Secours : /root/freepbx-factory-ssh-port.txt                 │${NC}"
 echo -e "${YELLOW}  └────────────────────────────────────────────────────────────────┘${NC}"
 echo ""
 
@@ -2024,7 +2023,7 @@ VPS_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1)
 if [[ -n "${TLS_DOMAIN}" ]]; then
     _ADMIN_URL="https://${TLS_DOMAIN}/admin/"
 else
-    _ADMIN_URL="http://${VPS_IP}/admin/"
+    _ADMIN_URL="http://${VPS_IP}/admin/  (sudo systemctl start apache2 requis)"
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -2107,7 +2106,7 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 # RAPPORT DE LIVRAISON — CRA EU 2024/2847 (traçabilité déploiement)
 # ════════════════════════════════════════════════════════════════════════════
-REPORT_FILE="/root/freepbx-factory-delivery-report.txt"
+REPORT_FILE="/home/debian/freepbx-factory-delivery-report.txt"
 DEPLOY_DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 _ext_info="désactivé" ; [[ "$KIT_STARTER" == "oui" ]] && _ext_info="$EXT1_NUMBER / $EXT2_NUMBER / $EXT3_NUMBER"
 
@@ -2184,7 +2183,8 @@ ACCÈS GUI TEMPORAIRE (HTTP — non sécurisé)
 ═══════════════════════════════════════════════════════════
 KIT_REPORT_EOF
 fi
-chmod 600 "$REPORT_FILE"
+chmod 640 "$REPORT_FILE"
+chown debian:debian "$REPORT_FILE" 2>/dev/null || true
 log "Rapport de livraison : $REPORT_FILE"
 
 # ════════════════════════════════════════════════════════════════════════════
