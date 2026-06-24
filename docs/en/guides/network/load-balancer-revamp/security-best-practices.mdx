@@ -122,9 +122,7 @@ A free Let's Encrypt certificate is the recommended starting point when your dom
 <Tabs>
 <Tab label="Control Panel">
 
-Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the `Load Balancer` page under the **Network** section. Select your Load Balancer, then open the `SSL Certificates` tab and click `Add Certificate`. Provide the fully qualified domain name (FQDN) you want to secure.
-
-{/* DRAFT: To screenshot - capture the SSL Certificates tab with the Add Certificate dialog open */}
+Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the `Load Balancer` page under the **Network** section. Select your Load Balancer, then open the `SSL Certificates` tab and click <code className="action">Add Certificate</code>. Provide the fully qualified domain name (FQDN) you want to secure.
 
 For the order to complete, the chosen domain name must already point to your OVHcloud Load Balancer service. Follow the order from the `Tasks` tab.
 
@@ -146,9 +144,9 @@ Once the order completes, the certificate is installed automatically on your Loa
 </Tab>
 <Tab label="Terraform">
 
-Ordering a free certificate is not available through the OVHcloud Terraform provider: there is no Terraform resource for certificates, frontends, or the apply/refresh action. Use the Control Panel or the OVHcloud API for this step.
+Ordering a *free* certificate is not available through the OVHcloud Terraform provider: there is no Terraform resource for ordering a free (Let's Encrypt) certificate. Use the Control Panel or the OVHcloud API for this step.
 
-The Terraform provider does cover the Load Balancer service and its farms — for example the `ovh_iploadbalancing` and `ovh_iploadbalancing_http_farm` resources — so you can manage those alongside a certificate ordered through one of the other two methods.
+The Terraform provider does cover the rest of the configuration: custom (imported) certificates with `ovh_iploadbalancing_ssl`, frontends with `ovh_iploadbalancing_http_frontend` (including TLS termination via `ssl` and `default_ssl_id`), the Load Balancer service and its farms (`ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`), and deploying staged changes with `ovh_iploadbalancing_refresh`.
 
 </Tab>
 </Tabs>

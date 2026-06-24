@@ -146,7 +146,7 @@ After modifying frontends or farms, apply the configuration so the change takes 
 |---|---|---|
 | `serviceName` | Yes | Your Load Balancer service ID. |
 
-For infrastructure-as-code workflows, the OVHcloud Terraform provider exposes resources for the service and its farms, such as `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`, and `ovh_iploadbalancing_tcp_farm`. Frontends and the apply (refresh) operation are not exposed as Terraform resources; manage those through the OVHcloud API or the Control Panel.
+For infrastructure-as-code workflows, the OVHcloud Terraform provider exposes resources for the service and its farms, such as `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`, and `ovh_iploadbalancing_tcp_farm`. Frontends are managed with `ovh_iploadbalancing_http_frontend`, `ovh_iploadbalancing_tcp_frontend`, and `ovh_iploadbalancing_udp_frontend`, and the apply (refresh) operation with `ovh_iploadbalancing_refresh`.
 
 For a broader overview of automation surfaces, see the [Automation](/guides/network/load-balancer-revamp/automation) guide.
 

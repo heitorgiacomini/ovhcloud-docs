@@ -1,5 +1,5 @@
 ---
-title: Blue-green deployment architecture
+title: Deploy a blue-green architecture on an OVHcloud Load Balancer
 description: Design a blue-green release pattern on OVHcloud Load Balancer using paired farms and frontends to cut over traffic with near-zero downtime.
 lastUpdated: 2026-06-05
 ---
@@ -65,8 +65,6 @@ After a successful cutover, the public frontend points at Farm B and the staging
 | Farm A | Production (blue) | Candidate (green) |
 | Farm B | Candidate (green) | Production (blue) |
 
-{/* DRAFT: To screenshot - the Server Farms tab showing both Farm A and Farm B with their attached servers */}
-
 :::tip
 Keep a naming convention that reflects the **role** rather than a fixed colour, for example `farm-a` / `farm-b` and `frontend-public` / `frontend-staging`. After several cutovers, fixed "blue"/"green" names no longer match which farm is live.
 :::
@@ -96,8 +94,6 @@ This section creates the two server farms and attaches the backend servers that 
 3. Click `Create farm` and configure the farm in the `Create Server Farm` editor (protocol, balancing algorithm, and health probe).
 4. With the farm created, click `Add server` and enter the backend server's private IP address and port (for example `8080`).
 5. Repeat steps 3 and 4 to create the second farm with its own backend server.
-
-{/* DRAFT: To screenshot - the Create Server Farm editor with protocol and balancing algorithm selected */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -148,12 +144,10 @@ Create the **public frontend** on the standard service port and point it at Farm
 <Tabs>
 <Tab label="Control Panel">
 
-1. Select the `Frontends` tab.
+1. Select the `Frontends & Routing` tab.
 2. Click `Create frontend` to open the `Create Frontend` editor.
 3. Set the listening port to `80` (the public frontend), then under `Default route` choose `Route to farm` and select Farm A.
 4. Click `Create frontend` again, set the listening port to `8888` (the staging frontend), and route it to Farm B.
-
-{/* DRAFT: To screenshot - the Create Frontend editor showing the port field and the Route to farm option */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -175,7 +169,7 @@ Create the staging frontend by repeating the call with `port` set to `8888` and 
 </Tab>
 <Tab label="Terraform">
 
-The Terraform provider has no resource for frontends. Create and update frontends through the OVHcloud Control Panel or the OVHcloud API, as shown in the other tabs.
+Declare each frontend with the `ovh_iploadbalancing_http_frontend` resource, setting `port` and pointing `default_farm_id` at the correct farm. For a TCP or UDP service, use the `ovh_iploadbalancing_tcp_frontend` or `ovh_iploadbalancing_udp_frontend` resource instead. Create the public frontend on port `80` pointing at Farm A, and the staging frontend on port `8888` pointing at Farm B. Apply the configuration with the `ovh_iploadbalancing_refresh` resource.
 
 </Tab>
 </Tabs>
@@ -187,8 +181,6 @@ After creating the farms and frontends, apply the configuration so the Load Bala
 | Parameter | Required | Description | Example |
 |---|---|---|---|
 | `serviceName` | Yes | Your Load Balancer service ID. | `loadbalancer-abcdef0123456789` |
-
-{/* DRAFT: To screenshot - the confirmation dialog used to apply pending configuration changes */}
 
 :::info
 Changes to farms and frontends are staged until you apply them. Nothing reaches live traffic until the apply operation completes. This is what makes the later cutover atomic.
@@ -208,12 +200,10 @@ The cutover swaps two values:
 <Tabs>
 <Tab label="Control Panel">
 
-1. Select the `Frontends` tab.
+1. Select the `Frontends & Routing` tab.
 2. Open the public frontend and click `Edit Frontend`. Under `Default route`, change `Route to farm` to Farm B. Save.
 3. Open the staging frontend, click `Edit Frontend`, and change its `Route to farm` to Farm A. Save.
 4. Apply your pending changes. Public traffic on port `80` now reaches Farm B.
-
-{/* DRAFT: To screenshot - the Edit Frontend editor with the Route to farm value changed to the new production farm */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -249,7 +239,7 @@ Apply the change to switch production atomically:
 </Tab>
 <Tab label="Terraform">
 
-The cutover swaps each frontend's default farm, and the Terraform provider has no resource for frontends. Perform the swap and the apply through the OVHcloud Control Panel or the OVHcloud API, as shown in the other tabs.
+The cutover swaps each frontend's default farm. Change the `default_farm_id` argument on each `ovh_iploadbalancing_http_frontend` resource (or its `ovh_iploadbalancing_tcp_frontend` / `ovh_iploadbalancing_udp_frontend` equivalent) — point the public frontend at Farm B and the staging frontend at Farm A — then run `terraform apply`. Trigger the activation with the `ovh_iploadbalancing_refresh` resource, using its `keepers` argument to depend on the updated farm IDs so the refresh runs after the swap.
 
 </Tab>
 </Tabs>

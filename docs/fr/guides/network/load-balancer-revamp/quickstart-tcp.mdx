@@ -9,19 +9,19 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objectif
 
-Ce guide vous accompagne dans le déploiement complet d'un Load Balancer TCP. Vous allez créer une ferme de serveurs TCP, attacher vos serveurs backend, ajouter une sonde TCP, exposer le service via un frontend TCP, appliquer la configuration et vérifier que le trafic atteint vos backends. L'exemple cible un service TCP classique tel que SMTP (port 25) ou une base de données, mais le même déroulé s'applique à tout protocole basé sur TCP.
+Ce guide vous accompagne dans le déploiement complet d'un Load Balancer TCP. Vous allez créer une ferme de serveurs TCP, y attacher vos serveurs backend, ajouter une sonde TCP, exposer le service via un frontend TCP, appliquer la configuration et vérifier que le trafic atteint bien vos backends. L'exemple porte sur un service TCP classique comme SMTP (port 25) ou une base de données, mais le même déroulé s'applique à tout protocole reposant sur TCP.
 
-**Dans ce guide, vous allez apprendre à :**
+**Dans ce guide, vous allez apprendre à :**
 
 - Créer une ferme de serveurs TCP et attacher des serveurs backend.
-- Ajouter une sonde TCP afin que le trafic n'atteigne que les backends sains.
+- Ajouter une sonde TCP pour que le trafic n'atteigne que les backends sains.
 - Créer un frontend TCP qui expose le service à Internet.
 - Appliquer la configuration à chaque zone et vérifier le résultat.
 
 **Ce guide explique comment déployer un Load Balancer TCP de bout en bout et vérifier qu'il achemine le trafic vers vos backends.**
 
 :::warning
-L'ordre dans lequel vous créez les composants est important. La ferme de serveurs doit exister avant que vous puissiez lui attacher des serveurs, et la ferme doit exister avant que vous puissiez la définir comme ferme par défaut d'un frontend.
+L'ordre dans lequel vous créez les composants a son importance. La ferme de serveurs doit exister avant que vous puissiez lui attacher des serveurs ou la définir comme ferme par défaut d'un frontend.
 :::
 
 ## Prérequis
@@ -30,13 +30,13 @@ L'ordre dans lequel vous créez les composants est important. La ferme de serveu
 - Accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
 - Un service OVHcloud Load Balancer déjà commandé. Si vous n'en avez pas encore commandé, consultez le guide [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer).
 - Au moins un serveur backend accessible depuis votre service Load Balancer, à l'écoute sur le port TCP que vous comptez équilibrer (par exemple, le port 25 pour SMTP).
-- Pour le canal API : des identifiants de l'API OVHcloud. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
+- Pour le canal API : des identifiants de l'API OVHcloud. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
 
 ## Introduction
 
-Le OVHcloud Load Balancer répartit le trafic réseau entrant sur plusieurs serveurs backend. Chaque famille de protocole (HTTP, TCP et UDP) dispose de son propre ensemble indépendant de frontends, de fermes et de serveurs. Un Load Balancer TCP opère au niveau de la couche 4 et transmet les connexions TCP brutes sans inspecter le contenu applicatif, ce qui le rend adapté à des protocoles tels que SMTP, les connexions à des bases de données ou tout service non HTTP.
+L'OVHcloud Load Balancer répartit le trafic réseau entrant sur plusieurs serveurs backend. Chaque famille de protocole (HTTP, TCP et UDP) dispose de son propre ensemble indépendant de frontends, de fermes et de serveurs. Un Load Balancer TCP opère au niveau de la couche 4 : il transmet les connexions TCP brutes sans inspecter le contenu applicatif, ce qui convient à des protocoles comme SMTP, aux connexions à des bases de données ou à tout service non HTTP.
 
-Dans une configuration TCP, trois composants fonctionnent ensemble :
+Dans une configuration TCP, trois composants fonctionnent ensemble :
 
 - Une **ferme de serveurs** regroupe vos serveurs backend et applique un algorithme d'équilibrage.
 - Une **sonde** vérifie que chaque backend répond avant que le trafic ne l'atteigne.
@@ -44,7 +44,7 @@ Dans une configuration TCP, trois composants fonctionnent ensemble :
 
 ## En pratique
 
-**Sommaire :**
+**Sommaire :**
 
 - [Vue d'ensemble](#overview)
 - [Étape 1 — Créer une ferme de serveurs TCP](#step-1)
@@ -78,7 +78,7 @@ Si vous disposez de plusieurs zones, répétez l'étape d'application pour chaqu
 
 ### Étape 1 — Créer une ferme de serveurs TCP <a name="step-1"></a>
 
-La ferme de serveurs répartit le trafic entre vos serveurs backend. Créez-la en premier, avant d'attacher le moindre serveur.
+La ferme de serveurs répartit le trafic entre vos serveurs backend. Créez-la en premier, avant d'y attacher le moindre serveur.
 
 <Tabs>
 <Tab label="Espace client">
@@ -91,14 +91,12 @@ La ferme de serveurs répartit le trafic entre vos serveurs backend. Créez-la e
 6. Vous pouvez éventuellement sélectionner un algorithme d'équilibrage tel que `Round Robin`.
 7. Cliquez sur `Créer une ferme` pour confirmer.
 
-{/* DRAFT: To screenshot — capturer le formulaire Créer une ferme de serveurs avec le protocole TCP sélectionné */}
-
 La nouvelle ferme apparaît dans l'onglet `Fermes de serveurs`.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Créez une ferme de serveurs TCP avec l'appel suivant :
+Créez une ferme de serveurs TCP avec l'appel suivant :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
 
@@ -109,14 +107,14 @@ Créez une ferme de serveurs TCP avec l'appel suivant :
 | `port` (corps) | Non | Port backend par défaut. Reprend le port du frontend s'il est omis. | `25` |
 | `balance` (corps) | Non | Algorithme d'équilibrage. | `roundrobin` |
 
-Pour lister les fermes TCP existantes :
+Pour lister les fermes TCP existantes :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm"} />
 
 </Tab>
 <Tab label="Terraform">
 
-Utilisez la ressource `ovh_iploadbalancing_tcp_farm` pour déclarer une ferme de serveurs TCP :
+Utilisez la ressource `ovh_iploadbalancing_tcp_farm` pour déclarer une ferme de serveurs TCP :
 
 ```hcl
 resource "ovh_iploadbalancing_tcp_farm" "farm" {
@@ -130,7 +128,7 @@ resource "ovh_iploadbalancing_tcp_farm" "farm" {
 </Tab>
 </Tabs>
 
-Notez l'identifiant de la ferme renvoyé par l'API (`farmId`) ; vous en aurez besoin lors des étapes suivantes.
+Notez l'identifiant de la ferme renvoyé par l'API (`farmId`) ; vous en aurez besoin lors des étapes suivantes.
 
 ### Étape 2 — Attacher vos serveurs backend <a name="step-2"></a>
 
@@ -141,18 +139,16 @@ Ajoutez un ou plusieurs serveurs backend à la ferme que vous avez créée. Chaq
 
 1. Dans l'onglet `Fermes de serveurs`, cliquez sur la ferme que vous avez créée pour la déplier.
 2. Cliquez sur `Ajouter un serveur`.
-3. Renseignez les champs. Les champs obligatoires sont l'adresse IPv4 et le statut. Définissez le statut de sorte que le serveur soit actif et éligible à recevoir du trafic.
+3. Renseignez les champs. Les champs obligatoires sont l'adresse IPv4 et le statut. Réglez le statut pour que le serveur soit actif et puisse recevoir du trafic.
 4. Si votre backend doit connaître l'adresse IP d'origine du client, activez le protocole PROXY. Pour plus d'informations, consultez le guide [Configurer le protocole PROXY](/guides/network/load-balancer-revamp/configure-proxy-protocol).
 5. Cliquez sur `Ajouter un serveur` pour confirmer.
-
-{/* DRAFT: To screenshot — capturer le formulaire Ajouter un serveur */}
 
 Le serveur apparaît dans la liste des serveurs de la ferme.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Ajoutez un serveur à la ferme :
+Ajoutez un serveur à la ferme :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
 
@@ -165,14 +161,14 @@ Ajoutez un serveur à la ferme :
 | `port` (corps) | Non | Surcharge le port de la ferme pour ce serveur. | `25` |
 | `proxyProtocolVersion` (corps) | Non | Version du protocole PROXY, pour préserver l'IP source du client. | `v1` |
 
-Pour lister les serveurs d'une ferme :
+Pour lister les serveurs d'une ferme :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
 
 </Tab>
 <Tab label="Terraform">
 
-Utilisez la ressource `ovh_iploadbalancing_tcp_farm_server` pour attacher un serveur backend à la ferme :
+Utilisez la ressource `ovh_iploadbalancing_tcp_farm_server` pour attacher un serveur backend à la ferme :
 
 ```hcl
 resource "ovh_iploadbalancing_tcp_farm_server" "server" {
@@ -190,7 +186,7 @@ Répétez cette étape pour chaque serveur backend que vous souhaitez ajouter à
 
 ### Étape 3 — Ajouter une sonde TCP <a name="step-3"></a>
 
-Une sonde permet au Load Balancer de détecter les backends qui ne répondent pas et de cesser de leur envoyer du trafic. Sans sonde, le Load Balancer risque de transmettre des connexions à un serveur hors service. Vous configurez la sonde au niveau de la ferme.
+Une sonde permet au Load Balancer de détecter les backends qui ne répondent pas et de cesser de leur envoyer du trafic. Sans elle, le Load Balancer risque de transmettre des connexions à un serveur hors service. La sonde se configure au niveau de la ferme.
 
 <Tabs>
 <Tab label="Espace client">
@@ -199,12 +195,10 @@ Une sonde permet au Load Balancer de détecter les backends qui ne répondent pa
 2. Modifiez la ferme et configurez la section relative à la sonde. Pour un service TCP tel que SMTP, une sonde TCP sur le port du backend est suffisante.
 3. Enregistrez la ferme.
 
-{/* DRAFT: To screenshot — capturer la configuration de la sonde dans l'éditeur de ferme */}
-
 </Tab>
 <Tab label="API OVHcloud">
 
-La sonde fait partie de la configuration de la ferme. Mettez à jour la ferme pour définir la sonde :
+La sonde fait partie de la configuration de la ferme. Mettez à jour la ferme pour définir la sonde :
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}"} />
 
@@ -217,7 +211,7 @@ La sonde fait partie de la configuration de la ferme. Mettez à jour la ferme po
 </Tab>
 <Tab label="Terraform">
 
-La sonde est définie au sein de la ressource `ovh_iploadbalancing_tcp_farm`, via son bloc `probe` :
+La sonde est définie au sein de la ressource `ovh_iploadbalancing_tcp_farm`, via son bloc `probe` :
 
 ```hcl
 resource "ovh_iploadbalancing_tcp_farm" "farm" {
@@ -252,14 +246,12 @@ Le frontend expose votre service à Internet. Il écoute sur un port public et t
 6. Si vous avez routé des IP additionnelles vers votre service, vous pouvez rattacher le frontend à une ou plusieurs IP additionnelles spécifiques.
 7. Cliquez sur `Créer un frontend` pour confirmer.
 
-{/* DRAFT: To screenshot — capturer le formulaire Créer un frontend avec la ferme par défaut sélectionnée */}
-
 Le frontend apparaît dans l'onglet `Frontends`.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Créez un frontend TCP :
+Créez un frontend TCP :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
 
@@ -270,29 +262,27 @@ Créez un frontend TCP :
 | `port` (corps) | Oui | Port(s) public(s) sur lesquels le frontend écoute. | `25` |
 | `defaultFarmId` (corps) | Non | Identifiant de la ferme qui reçoit le trafic. | `12345` |
 
-Pour lister les frontends TCP existants :
+Pour lister les frontends TCP existants :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
 
 </Tab>
 <Tab label="Terraform">
 
-Il n'existe pas de ressource Terraform pour les frontends du Load Balancer. Créez le frontend TCP via l'API OVHcloud ou l'espace client, comme décrit dans les autres onglets.
+Créez le frontend TCP avec la ressource `ovh_iploadbalancing_tcp_frontend`. Vous pouvez également le créer via l'API OVHcloud ou l'espace client, comme décrit dans les autres onglets.
 
 </Tab>
 </Tabs>
 
 ### Étape 5 — Appliquer la configuration <a name="step-5"></a>
 
-Les modifications apportées à votre Load Balancer ne sont pas actives tant que vous ne les avez pas appliquées dans chaque zone configurée. Cela vous permet de préparer une configuration complète et de ne l'activer que lorsque vous êtes prêt. Si votre service s'étend sur plusieurs zones, appliquez la configuration à chacune d'elles.
+Les modifications apportées à votre Load Balancer ne sont actives qu'une fois appliquées dans chaque zone configurée. Vous pouvez ainsi préparer une configuration complète et ne l'activer que lorsque vous êtes prêt. Si votre service s'étend sur plusieurs zones, appliquez la configuration à chacune d'elles.
 
 <Tabs>
 <Tab label="Espace client">
 
 1. Revenez à la vue d'ensemble de votre service Load Balancer.
 2. Appliquez la configuration en attente pour chaque zone qui contient les composants que vous avez créés.
-
-{/* DRAFT: To screenshot — capturer l'action appliquer/rafraîchir sur la vue d'ensemble du service */}
 
 :::info
 La configuration ne devient visible pour vos utilisateurs qu'une fois qu'elle a été appliquée.
@@ -301,7 +291,7 @@ La configuration ne devient visible pour vos utilisateurs qu'une fois qu'elle a 
 </Tab>
 <Tab label="API OVHcloud">
 
-Appliquez (rafraîchissez) la configuration en attente :
+Appliquez (rafraîchissez) la configuration en attente :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
@@ -312,14 +302,14 @@ Appliquez (rafraîchissez) la configuration en attente :
 </Tab>
 <Tab label="Terraform">
 
-Il n'existe pas de ressource Terraform pour l'action d'application/rafraîchissement. Appliquez la configuration en attente via l'API OVHcloud ou l'espace client, comme décrit dans les autres onglets.
+Appliquez la configuration en attente avec la ressource `ovh_iploadbalancing_refresh` (arguments `service_name` et `keepers`). Vous pouvez également l'appliquer via l'API OVHcloud ou l'espace client, comme décrit dans les autres onglets.
 
 </Tab>
 </Tabs>
 
 ### Étape 6 — Vérifier le déploiement <a name="step-6"></a>
 
-Après l'application, confirmez que le Load Balancer accepte les connexions et les transmet à un backend sain. Les vérifications ci-dessous utilisent SMTP sur le port 25 comme exemple ; adaptez le port et l'outil client à votre protocole.
+Après l'application, confirmez que le Load Balancer accepte les connexions et les transmet à un backend sain. Les vérifications ci-dessous utilisent SMTP sur le port 25 comme exemple ; adaptez le port et l'outil client à votre protocole.
 
 | Vérification | Comment | Résultat attendu |
 |---|---|---|
@@ -328,7 +318,7 @@ Après l'application, confirmez que le Load Balancer accepte les connexions et l
 | Le trafic atteint les backends | Inspectez les journaux de connexion sur vos serveurs backend. | Les connexions entrantes en provenance du Load Balancer sont visibles. |
 | IP source préservée (si le protocole PROXY est activé) | Vérifiez que le backend enregistre la véritable IP du client. | L'IP d'origine du client apparaît dans les journaux du backend. |
 
-Pour un backend SMTP fonctionnant sous Postfix, activez la prise en charge du protocole PROXY afin que la véritable IP du client soit préservée. Ajoutez la ligne suivante à `main.cf` et redémarrez le démon Postfix :
+Pour un backend SMTP fonctionnant sous Postfix, activez la prise en charge du protocole PROXY afin que la véritable IP du client soit préservée. Ajoutez la ligne suivante à `main.cf` et redémarrez le démon Postfix :
 
 ```bash
 smtp_upstream_proxy_protocol = haproxy
@@ -342,7 +332,7 @@ Cette section répertorie les contraintes à garder à l'esprit pour un déploie
 |---|---|
 | Couche 4 uniquement | Un frontend TCP transmet les connexions brutes et n'inspecte ni ne route en fonction du contenu applicatif. Pour un routage basé sur le contenu, utilisez des frontends HTTP. |
 | Activation par zone | Un composant n'est actif qu'une fois la configuration appliquée à sa zone. |
-| Ordre des composants | Un serveur ne peut pas être attaché avant l'existence de sa ferme ; un frontend ne peut pas référencer une ferme qui n'existe pas encore. |
+| Ordre des composants | Un serveur ne peut pas être attaché avant l'existence de sa ferme ; un frontend ne peut pas référencer une ferme qui n'existe pas encore. |
 
 ### Résolution des problèmes <a name="troubleshooting"></a>
 
@@ -355,11 +345,11 @@ Le tableau ci-dessous couvre les problèmes les plus courants lors du déploieme
 | Le backend voit l'IP du Load Balancer au lieu de l'IP du client | Le protocole PROXY n'est pas activé, ou le backend ne le prend pas en charge. | Activez le protocole PROXY sur le serveur et configurez le backend pour qu'il l'accepte. Consultez le guide [Configurer le protocole PROXY](/guides/network/load-balancer-revamp/configure-proxy-protocol). |
 | Le frontend ne peut pas être créé avec une ferme par défaut | La ferme n'a pas été créée ou se trouve dans une zone différente. | Créez d'abord la ferme (étape 1) et assurez-vous que le frontend et la ferme par défaut sont cohérents. |
 
-Si le problème persiste après ces vérifications, rassemblez les journaux de connexion et le statut de la sonde pertinents, puis consultez le guide [Résolution des problèmes](/guides/network/load-balancer-revamp/troubleshooting) ou contactez le [support OVHcloud](https://help.ovhcloud.com/).
+Si le problème persiste après ces vérifications, rassemblez les journaux de connexion et le statut de la sonde concernés, puis consultez le guide [Résolution des problèmes](/guides/network/load-balancer-revamp/troubleshooting) ou contactez le [support OVHcloud](https://help.ovhcloud.com/).
 
 ## Aller plus loin
 
-- [Démarrage rapide : déployer un Load Balancer HTTP/HTTPS](/guides/network/load-balancer-revamp/quickstart-http-https)
+- [Démarrage rapide : déployer un Load Balancer HTTP/HTTPS](/guides/network/load-balancer-revamp/quickstart-http-https)
 - [Configurer SMTP sur un Load Balancer](/guides/network/load-balancer-revamp/configure-smtp)
 - [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes)
 

@@ -1,5 +1,5 @@
 ---
-title: Basic HTTP/HTTPS architecture
+title: Deploy a basic HTTP/HTTPS architecture on a Load Balancer
 description: "Learn the reference design for exposing a standard HTTP/HTTPS web application behind an OVHcloud Load Balancer service, from request flow to build order."
 lastUpdated: 2026-06-05
 ---
@@ -53,8 +53,6 @@ The design exposes a single web application through two frontends that share one
 Both frontends route to the same HTTP server farm, which balances traffic across one or more backend web servers. This keeps a single backend pool behind both entry points, so the application is served identically over HTTP and HTTPS.
 
 <img className="thumbnail" alt="Topology diagram" src="/images/network/load-balancer-revamp/architecture-http-https/fig-1.svg" loading="lazy" />
-
-{/* DRAFT: To screenshot - the Load Balancer service dashboard in the OVHcloud Control Panel showing the Server Farms and Frontends tabs */}
 
 ### Request flow
 
@@ -139,7 +137,7 @@ The same elements map to the OVHcloud API. The calls below list the objects of t
 |---|---|---|---|
 | `serviceName` | Yes | The identifier of your Load Balancer service. | `loadbalancer-a1b2c3d4...` |
 
-To manage this design as code, use the OVHcloud Terraform provider. It exposes the `ovh_iploadbalancing` service along with the `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server` resources for the farm and its backends. Frontends and applying the configuration are not available as Terraform resources; manage them through the API or the Control Panel.
+To manage this design as code, use the OVHcloud Terraform provider. It exposes the `ovh_iploadbalancing` service along with the `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server` resources for the farm and its backends. The HTTP and HTTPS frontends are managed with `ovh_iploadbalancing_http_frontend` (use the `ssl` and `default_ssl_id` arguments for the HTTPS frontend), and the staged configuration is applied with `ovh_iploadbalancing_refresh`. You can also apply the configuration through the API or the Control Panel.
 
 ## Considerations and limitations
 

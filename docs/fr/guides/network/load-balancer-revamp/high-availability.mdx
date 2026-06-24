@@ -18,11 +18,11 @@ Ce guide est conceptuel. Pour mettre ces principes en pratique, consultez le gui
 
 ## Vue d'ensemble
 
-Le Load Balancer OVHcloud répartit le trafic entrant sur un ensemble de serveurs backend tout en masquant la défaillance d'un serveur, d'une zone ou d'une région donnés. La haute disponibilité est assurée à travers plusieurs couches qui fonctionnent conjointement :
+Le Load Balancer OVHcloud répartit le trafic entrant sur un ensemble de serveurs backend tout en masquant la défaillance d'un serveur, d'une zone ou d'une région donnés. La haute disponibilité est assurée à travers plusieurs couches qui fonctionnent conjointement :
 
 - Au sein d'une même zone, le service lui-même s'exécute dans une configuration redondante afin que la perte d'un nœud n'interrompe pas le trafic.
-- À travers plusieurs zones, le service peut être déployé de sorte qu'une zone entière puisse tomber en panne sans mettre le service hors ligne.
-- À travers les régions, le routage Anycast dirige chaque client vers le point d'entrée sain le plus proche et redirige le trafic hors d'un emplacement défaillant.
+- Sur plusieurs zones, le service peut être déployé de sorte qu'une zone entière puisse tomber en panne sans mettre le service hors ligne.
+- Entre les régions, le routage Anycast dirige chaque client vers le point d'entrée sain le plus proche et réachemine le trafic hors d'un emplacement défaillant.
 
 La disponibilité dépend donc à la fois de la redondance qu'OVHcloud opère pour vous et de la topologie que vous choisissez lorsque vous commandez des zones et déclarez des frontends et des fermes de serveurs. La suite de ce guide décrit chaque couche ainsi que les décisions de conception qui affectent la résilience.
 
@@ -36,7 +36,7 @@ Cette section décrit les éléments constitutifs qui rendent le Load Balancer h
 
 ### Zones de disponibilité
 
-Une zone de disponibilité est un emplacement isolé dans lequel un service Load Balancer peut s'exécuter. La plupart des régions OVHcloud exposent une seule zone ; travailler avec plusieurs zones revient donc généralement à travailler avec plusieurs régions. OVHcloud déploie également des régions multi-zones de disponibilité (multi-AZ), où plusieurs zones coexistent au sein d'une même région et sont reliées par des liens à faible latence.
+Une zone de disponibilité est un emplacement isolé dans lequel un service Load Balancer peut s'exécuter. La plupart des régions OVHcloud exposent une seule zone ; utiliser plusieurs zones revient donc généralement à utiliser plusieurs régions. OVHcloud déploie également des régions multi-zones de disponibilité (multi-AZ), où plusieurs zones coexistent au sein d'une même région et sont reliées par des liens à faible latence.
 
 Lorsque vous commandez un service Load Balancer, vous choisissez une ou plusieurs zones, et vous pouvez commander des zones supplémentaires pour un service existant ultérieurement. Le déploiement sur plus d'une zone est le mécanisme principal permettant de survivre à la perte d'une zone ou d'une région.
 
@@ -52,11 +52,11 @@ Pour une description détaillée des zones et des régions, consultez le guide [
 
 Au sein d'une même zone, le service Load Balancer ne s'exécute pas sur une seule machine. OVHcloud opère le plan de données de façon redondante afin que la défaillance d'un nœud sous-jacent soit absorbée sans interruption du service. Cette redondance est gérée par OVHcloud et ne nécessite aucune configuration de votre part.
 
-La redondance intra-zone protège contre les défaillances au niveau des composants à l'intérieur d'une zone. Elle ne protège pas, à elle seule, contre la perte de la zone ou de la région entière ; cela nécessite une topologie multizone.
+La redondance intra-zone protège contre les défaillances au niveau des composants à l'intérieur d'une zone. Elle ne protège pas, à elle seule, contre la perte de la zone ou de la région entière ; cela nécessite une topologie multizone.
 
 ### Routage Anycast
 
-Le Load Balancer est accessible via une adresse IP Anycast. La même adresse IP est annoncée depuis chaque zone dans laquelle votre service est déployé, et le réseau achemine chaque client vers le point d'entrée topologiquement le plus proche. Cela produit deux avantages :
+Le Load Balancer est accessible via une adresse IP Anycast. La même adresse IP est annoncée depuis chaque zone dans laquelle votre service est déployé, et le réseau achemine chaque client vers le point d'entrée topologiquement le plus proche. Cela produit deux avantages :
 
 - La latence est réduite car les clients atteignent la zone la plus proche.
 - La disponibilité est accrue car, lorsqu'une zone cesse d'annoncer l'adresse, le réseau converge vers les zones restantes.
@@ -66,16 +66,16 @@ Le diagramme ci-dessous montre comment deux clients situés à des emplacements 
 <img className="thumbnail" alt="Routage Anycast — schéma" src="/images/network/load-balancer-revamp/high-availability/fig-2.fr.svg" loading="lazy" />
 
 :::info
-En raison de restrictions techniques, lorsqu'un Load Balancer est configuré avec deux zones dont l'une se trouve dans une région APAC et l'autre non, le trafic est acheminé en priorité par la zone non-APAC en premier, même lorsque le service est hors service dans cette zone. Ce comportement est spécifique aux configurations intercontinentales impliquant des zones APAC, et OVHcloud ne recommande pas de configurer un Load Balancer de cette manière.
+En raison de restrictions techniques, lorsqu'un Load Balancer est configuré avec deux zones dont l'une se trouve dans une région APAC et l'autre non, le trafic est acheminé en priorité par la zone non-APAC, même lorsque le service y est hors service. Ce comportement est spécifique aux configurations intercontinentales impliquant des zones APAC, et OVHcloud ne recommande pas de configurer un Load Balancer de cette manière.
 :::
 
 ### Sondes et failover
 
-Le failover est le processus consistant à retirer une cible non saine de la rotation et à envoyer son trafic ailleurs. Le Load Balancer vérifie en continu l'état de santé de chaque serveur backend d'une ferme à l'aide de sondes configurables. Lorsqu'un serveur échoue à sa sonde, le Load Balancer cesse de lui envoyer de nouvelles requêtes et répartit le trafic sur les serveurs sains restants de la ferme.
+Le failover consiste à retirer une cible non saine de la rotation et à rediriger son trafic ailleurs. Le Load Balancer vérifie en continu l'état de santé de chaque serveur backend d'une ferme à l'aide de sondes configurables. Lorsqu'un serveur échoue à sa sonde, le Load Balancer cesse de lui envoyer de nouvelles requêtes et répartit le trafic sur les serveurs sains restants de la ferme.
 
-Le failover opère à deux niveaux :
+Le failover opère à deux niveaux :
 
-- **Niveau backend.** Un serveur défaillant est retiré de sa ferme ; le frontend continue de servir le trafic à partir des serveurs survivants.
+- **Niveau backend.** Un serveur défaillant est retiré de sa ferme ; le frontend continue de servir le trafic à partir des serveurs survivants.
 - **Niveau zone.** Lorsqu'une zone devient indisponible, la convergence Anycast dirige les clients vers les points d'entrée qui annoncent encore l'adresse dans les autres zones.
 
 Les sondes sont essentielles à ce comportement. Sans sondes, le Load Balancer ne peut pas détecter un backend qui ne répond pas et peut continuer à lui envoyer du trafic. Pour les configurer, consultez le guide [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
@@ -84,9 +84,9 @@ Les sondes sont essentielles à ce comportement. Sans sondes, le Load Balancer n
 
 ### Anti-affinité entre zones
 
-L'anti-affinité est le principe consistant à placer des composants redondants dans des domaines de défaillance distincts afin qu'une seule panne ne puisse pas en mettre plus d'un hors service. Pour le Load Balancer, cela signifie répartir vos frontends et vos fermes de serveurs sur plusieurs zones plutôt que de les concentrer dans une seule.
+L'anti-affinité consiste à placer des composants redondants dans des domaines de défaillance distincts, de sorte qu'une seule panne ne puisse pas en mettre plusieurs hors service. Pour le Load Balancer, cela signifie répartir vos frontends et vos fermes de serveurs sur plusieurs zones plutôt que de les concentrer dans une seule.
 
-Pour bénéficier de la redondance au niveau des zones, déclarez un frontend dans chaque zone et rattachez-le à une ferme de serveurs dont les serveurs backend résident dans cette même zone. Cela permet à chaque zone de rester autonome : une requête qui arrive dans une zone est servie entièrement au sein de cette zone, de sorte que la perte d'une zone ne se propage pas aux autres.
+Pour bénéficier de la redondance au niveau des zones, déclarez un frontend dans chaque zone et rattachez-le à une ferme de serveurs dont les serveurs backend résident dans cette même zone. Cela permet à chaque zone de rester autonome : une requête qui arrive dans une zone est servie entièrement au sein de cette zone, de sorte que la perte d'une zone ne se propage pas aux autres.
 
 Lorsque vous souhaitez appliquer la même configuration à chaque zone souscrite sans la dupliquer, vous pouvez rattacher un frontend à la zone spéciale `ALL`. Cela déploie une configuration identique sur toutes les zones du service.
 
@@ -128,7 +128,7 @@ Les modifications apportées aux frontends et aux fermes ne prennent effet qu'un
 
 La topologie de redondance peut être inspectée et gérée via l'API OVHcloud et le provider Terraform OVHcloud. Utilisez l'automatisation pour provisionner des zones, des frontends et des fermes de manière cohérente entre les environnements et pour appliquer les modifications de configuration de façon reproductible.
 
-Pour examiner la topologie actuelle d'un service, récupérez ses frontends et fermes définis :
+Pour examiner la topologie actuelle d'un service, récupérez ses frontends et fermes définis :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedFrontends"} />
 
@@ -138,7 +138,7 @@ Pour examiner la topologie actuelle d'un service, récupérez ses frontends et f
 |---|---|---|
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. |
 
-Après avoir modifié des frontends ou des fermes, appliquez la configuration afin que la modification prenne effet sur l'ensemble des zones du service :
+Après avoir modifié des frontends ou des fermes, appliquez la configuration afin que la modification prenne effet sur l'ensemble des zones du service :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
@@ -146,7 +146,7 @@ Après avoir modifié des frontends ou des fermes, appliquez la configuration af
 |---|---|---|
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. |
 
-Pour les workflows d'infrastructure-as-code, le provider Terraform OVHcloud expose des ressources pour le service et ses fermes, telles que `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_tcp_farm`. Les frontends et l'opération d'application (refresh) ne sont pas exposés en tant que ressources Terraform ; gérez-les via l'API OVHcloud ou l'espace client.
+Pour les workflows d'infrastructure-as-code, le provider Terraform OVHcloud expose des ressources pour le service et ses fermes, telles que `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_tcp_farm`. Les frontends sont gérés avec `ovh_iploadbalancing_http_frontend`, `ovh_iploadbalancing_tcp_frontend` et `ovh_iploadbalancing_udp_frontend`, et l'opération d'application (refresh) avec `ovh_iploadbalancing_refresh`.
 
 Pour une vue d'ensemble plus large des surfaces d'automatisation, consultez le guide [Automatisation](/guides/network/load-balancer-revamp/automation).
 
@@ -156,7 +156,7 @@ La disponibilité du Load Balancer dépend de facteurs en partie gérés par OVH
 
 - La redondance intra-zone est gérée par OVHcloud et ne peut pas être configurée par le client.
 - La redondance au niveau des zones et des régions nécessite que vous souscriviez à plus d'une zone et que vous déclariez les frontends et les fermes en conséquence.
-- Le comportement du failover dépend de sondes correctement configurées ; des sondes mal configurées peuvent soit ne pas détecter les pannes, soit retirer prématurément des serveurs sains.
+- Le comportement du failover dépend de sondes correctement configurées ; des sondes mal configurées peuvent soit ne pas détecter les pannes, soit retirer prématurément des serveurs sains.
 - Les topologies intercontinentales impliquant des zones APAC ne basculent pas comme prévu et ne sont pas recommandées.
 
 ## Aller plus loin

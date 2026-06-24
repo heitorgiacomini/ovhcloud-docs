@@ -21,32 +21,28 @@ L'OVHcloud Load Balancer répartit le trafic entrant sur plusieurs serveurs back
 
 ## En pratique
 
-Cette section vous guide tout au long de la commande dans l'espace client : son démarrage, le choix de la taille et de la zone, la confirmation, puis la localisation du service livré.
+Cette section vous guide tout au long de la commande dans l'espace client : son démarrage, le choix de la taille et de la zone, la confirmation, puis la localisation du service livré.
 
 ### Étape 1 - Démarrer la commande
 
-Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et rendez-vous dans **Network** > **Load Balancer**.
+Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et rendez-vous dans **Réseau** > **Load Balancer**.
 
 Si vous ne disposez encore d'aucun service, la page `All Load Balancers` vous permet de démarrer une nouvelle commande. Cliquez sur le point d'entrée de commande pour ouvrir le tunnel.
 
-{/* DRAFT: To screenshot - capture the All Load Balancers page with the order entry point */}
-
 ### Étape 2 - Choisir la taille et la zone de disponibilité
 
-Le tunnel de commande vous guide dans la configuration de votre nouveau service. Sélectionnez les options qui correspondent à vos besoins.
+Le tunnel de commande vous accompagne dans la configuration de votre nouveau service. Sélectionnez les options qui correspondent à vos besoins.
 
 | Option | Rôle |
 |---|---|
 | Taille | Détermine la capacité du Load Balancer (le volume de connexions et de requêtes simultanées pris en charge). Choisissez la taille qui correspond au trafic que vous prévoyez. |
-| Zone de disponibilité | Détermine l'emplacement où le Load Balancer est déployé. Un déploiement mono-zone s'exécute dans une seule zone ; un déploiement multi-zone répartit le service sur plusieurs zones pour une meilleure résilience. |
+| Zone de disponibilité | Détermine l'emplacement où le Load Balancer est déployé. Un déploiement mono-zone s'exécute dans une seule zone ; un déploiement multi-zone répartit le service sur plusieurs zones pour une meilleure résilience. |
 
 Pour vous aider à choisir entre un déploiement mono-zone et un déploiement multi-zone, consultez [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones) et [Haute disponibilité](/guides/network/load-balancer-revamp/high-availability).
 
 :::info
 Les tailles exactes et leurs tarifs sont présentés dans le tunnel de commande.
 :::
-
-{/* DRAFT: To screenshot - capture the size and availability zone selection step in the order funnel */}
 
 ### Étape 3 - Confirmer et régler la commande
 
@@ -62,19 +58,15 @@ Après le paiement, le service est provisionné. La livraison n'est pas toujours
 Le Load Balancer est facturé comme un service. Sa résiliation ultérieure suit la procédure de résiliation décrite dans [Résilier un Load Balancer](/guides/network/load-balancer-revamp/cancel-load-balancer).
 :::
 
-{/* DRAFT: To screenshot - capture the order summary and confirmation step */}
-
 ### Étape 4 - Localiser votre nouveau service
 
 Une fois la commande livrée, le Load Balancer apparaît dans l'espace client.
 
 1. Rendez-vous dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
-2. Rendez-vous dans **Network** > **Load Balancer**.
+2. Rendez-vous dans **Réseau** > **Load Balancer**.
 3. Sélectionnez votre service dans la liste `All Load Balancers` pour ouvrir son tableau de bord.
 
 Depuis le tableau de bord du service, vous pouvez gérer la configuration via les onglets `Fermes`, `Frontends & routage`, `SSL`, `Réseau`, `Statistiques`, `Logs`, `Tâches` et `Quota`.
-
-{/* DRAFT: To screenshot - capture the delivered service in the All Load Balancers list */}
 
 Pour confirmer la présence du service et lire ses propriétés, vous pouvez également lister vos services Load Balancer via l'API OVHcloud.
 
@@ -88,7 +80,7 @@ Cet appel renvoie le nom de service de chaque Load Balancer de votre compte. Uti
 |---|---|---|---|
 | `serviceName` | Oui | L'identifiant unique de votre service Load Balancer. | `loadbalancer-abcdef1234567890` |
 
-L'API OVHcloud ne permet pas de commander un Load Balancer en un seul appel. La commande via l'API utilise les endpoints de commande et de panier, dans cet ordre :
+L'API OVHcloud ne permet pas de commander un Load Balancer en un seul appel. La commande via l'API utilise les endpoints de commande et de panier, dans cet ordre :
 
 <Api version="v1" section="/order" method="POST" route="/order/cart" />
 

@@ -71,9 +71,7 @@ If you do not yet have a Load Balancer, order one before configuring it. Skip th
 <Tab label="Control Panel">
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and navigate to **Network** > **Load Balancer**.
-2. Click `Order` and follow the ordering funnel to select your offer, region, and zone.
-
-{/* DRAFT: To screenshot - the Load Balancer ordering funnel in the Control Panel */}
+2. Click <code className="action">Order</code> and follow the ordering funnel to select your offer, region, and zone.
 
 For a detailed walkthrough of the ordering options, see [Order a Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer).
 
@@ -91,8 +89,6 @@ The `serviceName` returned (for example `loadbalancer-a1b2c3...`) is the identif
 
 Once the service is active, open it in the Control Panel. The configuration tabs are `Server Farms`, `Frontends`, `SSL Certificates`, `Subnet`, `Statistics`, `Logs`, `Tasks`, and `Quota`.
 
-{/* DRAFT: To screenshot - the Load Balancer dashboard showing the configuration tabs */}
-
 ### Step 2 — Create a server farm <a name="farm"></a>
 
 The server farm receives traffic from the frontends and distributes it across its backend servers. Create the HTTP farm first, because frontends and servers reference it.
@@ -101,12 +97,10 @@ The server farm receives traffic from the frontends and distributes it across it
 <Tab label="Control Panel">
 
 1. Open the `Server Farms` tab.
-2. Click `Create farm`.
+2. Click <code className="action">Create farm</code>.
 3. Fill in the fields. For a simple configuration, the `Protocol` and the datacentre are mandatory. Define a `Port` explicitly — typically port 80 for a web service. If no port is set, the Load Balancer reuses the frontend port, and health probes may not behave as expected.
 4. If you plan to add several servers, select a balancing algorithm (for example `Round Robin` or `Least Connections`) and configure a health probe so the Load Balancer can automatically remove an unresponsive server.
-5. Click `Create` to save the farm.
-
-{/* DRAFT: To screenshot - the Create Server Farm form with protocol and port filled in */}
+5. Click <code className="action">Create</code> to save the farm.
 
 The new farm appears in the list under the `Server Farms` tab.
 
@@ -139,12 +133,10 @@ A farm needs at least one backend server to handle requests. Add your web server
 <Tabs>
 <Tab label="Control Panel">
 
-1. In the `Server Farms` tab, click the farm to select it. The list of its servers appears below, along with the `Add server` button.
-2. Click `Add server`.
+1. In the `Server Farms` tab, click the farm to select it. The list of its servers appears below, along with the <code className="action">Add server</code> button.
+2. Click <code className="action">Add server</code>.
 3. Enter the server details. Only the `IPv4 Address` field is mandatory. If a server uses a different port from the farm default, you can override it here, though a uniform configuration is easier to maintain.
-4. Click `Create` to add the server.
-
-{/* DRAFT: To screenshot - the Add server form with an IPv4 address entered */}
+4. Click <code className="action">Create</code> to add the server.
 
 The server appears in the farm's server list under the `Server Farms` tab.
 
@@ -178,13 +170,11 @@ The frontend exposes your service on the Internet and forwards traffic to the fa
 <Tab label="Control Panel">
 
 1. Open the `Frontends` tab.
-2. Click `Create frontend`.
+2. Click <code className="action">Create frontend</code>.
 3. Fill in the fields. For a simple configuration, the `Protocol`, the `Port` (80 for standard HTTP), and the datacentre are mandatory. To listen on several ports, enter a comma-separated list or a range in the form `START_PORT-END_PORT`.
 4. Set the `Default route` to the farm you created so traffic is routed to it.
 5. If you have routed Additional IPs to the Load Balancer, you can attach the frontend to one or more of them.
-6. Click `Create` to save the frontend.
-
-{/* DRAFT: To screenshot - the Create Frontend form with port 80 and the default route set to the farm */}
+6. Click <code className="action">Create</code> to save the frontend.
 
 The frontend appears in the list under the `Frontends` tab.
 
@@ -223,11 +213,9 @@ Certificates configured on the service are automatically available to every fron
 <Tab label="Control Panel">
 
 1. Open the `SSL Certificates` tab.
-2. To import an existing certificate, click `Add Certificate` and provide the private key and certificate (both mandatory), then click `Create`.
+2. To import an existing certificate, click <code className="action">Add Certificate</code> and provide the private key and certificate (both mandatory), then click <code className="action">Create</code>.
 3. To order a managed certificate, start the Let's Encrypt ordering flow, enter your domain, confirm it points to the Load Balancer, and follow the validation emails you receive.
 4. When configuring the frontend in the next step, you can choose a TLS configuration profile such as `Modern (TLS 1.3)` or `Intermediate (TLS 1.2+)`.
-
-{/* DRAFT: To screenshot - the SSL Certificates tab showing the Add Certificate action */}
 
 The certificate appears in the list under the `SSL Certificates` tab once added or issued.
 
@@ -264,14 +252,12 @@ With a certificate available, create a second frontend that listens on port 443 
 <Tabs>
 <Tab label="Control Panel">
 
-1. Open the `Frontends` tab and click `Create frontend`.
+1. Open the `Frontends` tab and click <code className="action">Create frontend</code>.
 2. Set the `Port` to 443 and enable the SSL option so the frontend terminates HTTPS.
 3. Select the certificate under `TLS Certificate`.
 4. Set the `Default route` to the same farm used by the HTTP frontend.
 5. Optionally enable HSTS. With HSTS, browsers use HTTPS for every future visit, which protects against downgrade attacks.
-6. Click `Create` to save the frontend.
-
-{/* DRAFT: To screenshot - the Create Frontend form with port 443, SSL enabled, and a TLS certificate selected */}
+6. Click <code className="action">Create</code> to save the frontend.
 
 :::warning
 HSTS cannot be undone once browsers have recorded it. Enable it only after you have confirmed that HTTPS works correctly without side effects.
@@ -304,10 +290,8 @@ Configuration changes are not live until you apply (refresh) them in each zone o
 <Tab label="Control Panel">
 
 1. Return to the Load Balancer service home page.
-2. Click the `...` menu next to the service name and select the apply-configuration action.
+2. Click the <code className="action">...</code> menu next to the service name and select the apply-configuration action.
 3. Select the zones to deploy and confirm.
-
-{/* DRAFT: To screenshot - the apply-configuration action and the zone selection dialog */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -393,7 +377,7 @@ The table below lists the most common issues encountered during a first deployme
 | Backend marked down | Health probe misconfigured or backend not listening on the farm port | Confirm the farm `Port`, the backend port, and the probe settings. See [Configure health probes](/guides/network/load-balancer-revamp/configure-health-probes). |
 | 503 returned by the frontend | No active server in the farm, or wrong default route | Confirm the farm has at least one active server and the frontend's default route targets it. |
 
-For automation of this deployment, the OVHcloud Terraform provider exposes resources such as `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, and `ovh_iploadbalancing_http_route` to build farms, servers, and routes. Frontends and applying (refreshing) the configuration are not managed by Terraform — handle them through the OVHcloud API or the Control Panel. See the [automation guide](/guides/network/load-balancer-revamp/automation).
+For automation of this deployment, the OVHcloud Terraform provider exposes resources such as `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, and `ovh_iploadbalancing_http_route` to build farms, servers, and routes. Frontends are managed with `ovh_iploadbalancing_http_frontend`, and applying (refreshing) the configuration with `ovh_iploadbalancing_refresh`. See the [automation guide](/guides/network/load-balancer-revamp/automation).
 
 ## Go further
 

@@ -1,5 +1,5 @@
 ---
-title: FAQ
+title: Load Balancer FAQ
 description: Browse the most frequently asked questions about the OVHcloud Load Balancer, with direct answers and links to detailed configuration guides.
 lastUpdated: 2026-06-05
 ---
@@ -91,8 +91,6 @@ When you use the Load Balancer, clients do not connect directly to your servers.
 
 Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open your Load Balancer service, and read its outbound IPv4 information. These values are the source addresses to allow in your firewall.
 
-{/* DRAFT: To screenshot - capture the service General page showing the outbound IPv4 / NAT IP information */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -172,8 +170,6 @@ An Additional IP is a secondary IP address you can attach to your service in add
 
 In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the <code className="action">Frontends</code> tab and select the Additional IP in the advanced settings of your frontend.
 
-{/* DRAFT: To screenshot - capture the frontend creation form advanced settings showing the Additional IP selector */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -208,8 +204,6 @@ You can order a free SSL certificate for your service. The domain name must alre
 <Tab label="Control Panel">
 
 In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the <code className="action">SSL Certificates</code> tab and start the free certificate order. Enter the fully qualified domain name (FQDN), then confirm.
-
-{/* DRAFT: To screenshot - capture the SSL Certificates tab with the free certificate order form */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -302,7 +296,7 @@ Yes. Every configuration task is available through the OVHcloud API under the `/
 
 ### Is there a Terraform provider for the OVHcloud Load Balancer?
 
-Yes. The OVHcloud Terraform provider manages the service and its server farms, servers, and routes, with resources such as `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route`, their `tcp` and `udp` equivalents, and `ovh_iploadbalancing_vrack_network`. There is no Terraform resource for frontends or for applying changes: create frontends and apply your configuration through the OVHcloud API or the OVHcloud Control Panel. Refer to the [Automation](/guides/network/load-balancer-revamp/automation) guide for supported automation methods.
+Yes. The OVHcloud Terraform provider manages the service and its server farms, servers, frontends, and routes, with resources such as `ovh_iploadbalancing`, `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_frontend`, `ovh_iploadbalancing_http_route`, their `tcp` and `udp` equivalents, and `ovh_iploadbalancing_vrack_network`. You can also apply your pending configuration with the `ovh_iploadbalancing_refresh` resource. Refer to the [Automation](/guides/network/load-balancer-revamp/automation) guide for supported automation methods.
 
 ### How do I find the right API endpoint for a task?
 

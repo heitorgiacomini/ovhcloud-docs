@@ -1,5 +1,5 @@
 ---
-title: Configure HTTP headers
+title: Configure HTTP headers on a Load Balancer
 description: Configure and customise HTTP headers on your OVHcloud Load Balancer frontends to forward the real client IP, port, and protocol to your backend servers.
 lastUpdated: 2026-06-05
 ---
@@ -65,8 +65,6 @@ To configure your backend servers to trust the forwarded headers, you first need
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
 2. On the service dashboard, locate the section that lists the IPv4 output addresses of your Load Balancer.
-
-{/* DRAFT: To screenshot - the Load Balancer dashboard showing the IPv4 output addresses section */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -198,14 +196,12 @@ If a header you define already exists in the request, it is overwritten with you
 <Tab label="Control Panel">
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
-2. Select the `Frontends` tab.
-3. Select an existing HTTP frontend to edit, or click `Create Frontend` to add a new one.
+2. Select the <code className="action">Frontends</code> tab.
+3. Select an existing HTTP frontend to edit, or click <code className="action">Create frontend</code> to add a new one.
 4. In the editor, open the advanced settings and locate the HTTP header field.
 
-{/* DRAFT: To screenshot - the Edit Frontend editor showing the HTTP header field in the advanced settings */}
-
 5. Enter your headers. To configure several headers, separate them with commas and no spaces, for example: `X-Ip-Header %ci,X-Port-Header %cp`.
-6. Confirm the changes, then click `Apply changes` to deploy the configuration to the relevant zone.
+6. Confirm the changes, then click <code className="action">Apply changes</code> to deploy the configuration to the relevant zone.
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -243,7 +239,7 @@ Then apply the changes to the relevant zone:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not manage HTTP frontends, so custom headers cannot be set with Terraform. The provider exposes farms and servers (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`) and routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`), but frontend configuration and applying (refreshing) the configuration are available only through the OVHcloud Control Panel and the OVHcloud API.
+The OVHcloud Terraform provider manages HTTP frontends with the `ovh_iploadbalancing_http_frontend` resource, and custom headers are set through its `http_header` argument. The provider also exposes farms and servers (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`) and routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`), and the configuration is applied (refreshed) with the `ovh_iploadbalancing_refresh` resource. You can also apply the configuration through the OVHcloud Control Panel or the OVHcloud API.
 
 </Tab>
 </Tabs>

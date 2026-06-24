@@ -1,5 +1,5 @@
 ---
-title: Configure multiple zones
+title: Configure multiple Load Balancer zones
 description: Deploy the OVHcloud Load Balancer across multiple availability zones to increase reliability and reduce latency for your users.
 lastUpdated: 2026-06-05
 ---
@@ -36,7 +36,7 @@ There are two common multi-zone topologies:
 - **Multi-region.** Zones sit in different OVHcloud regions (for example `GRA` and `BHS`). This provides disaster recovery against a regional outage and worldwide entry points. You declare a frontend in each zone, each pointing to a server farm in the same zone, so you control which backend servers are used in which zone.
 - **Multi-AZ.** Several availability zones sit within the same region (for example Paris 3-AZ). This provides high availability and fault tolerance against a local outage, using low-latency connections between zones.
 
-<img className="thumbnail" alt="Introduction diagram" src="/images/network/load-balancer-revamp/configure-zones/fig-1.svg" loading="lazy" />
+<img className="thumbnail" alt="Diagram comparing multi-region and multi-AZ Load Balancer topologies" src="/images/network/load-balancer-revamp/configure-zones/fig-1.svg" loading="lazy" />
 
 > [!warning]
 > Due to technical restrictions, when a Load Balancer uses two zones where one is in an APAC region and the other is not, traffic is preferentially routed through the non-APAC zone first, even when the service is out of order in that zone. This behaviour is specific to cross-continent setups involving APAC zones. We do not recommend this configuration.
@@ -58,8 +58,6 @@ Adding a zone generates a purchase order that you must pay before the zone becom
 2. Open the zone management section of the service and start adding an availability zone.
 3. Select the zone or zones you want to order, then confirm.
 4. Pay the generated purchase order. The zone becomes available once the order is paid.
-
-{/* DRAFT: To screenshot — capture the availability-zone addition panel in the New Manager (zone selection + order confirmation) */}
 
 > [!INFO]
 > You can review the per-zone quota of your service in the `Quota` tab.
@@ -112,11 +110,9 @@ Once the zone order is finalised, associate it with a frontend so traffic can be
 <Tab label="Control Panel">
 
 1. In your Load Balancer service, open the `Frontends` tab.
-2. Click `Create Frontend` to add a new frontend, or open an existing frontend for editing.
+2. Click <code className="action">Create Frontend</code> to add a new frontend, or open an existing frontend for editing.
 3. Select the newly added zone for the frontend. To deploy the same configuration across every subscribed zone instead of one specific zone, select the special `ALL` zone, which avoids duplicating the configuration per zone.
 4. Save the frontend by confirming the create or edit dialog.
-
-{/* DRAFT: To screenshot — capture the Create Frontend dialog showing the zone selector and the ALL option */}
 
 > [!TIP]
 > Use the `ALL` zone when every zone shares the same routing logic. Use a specific zone when you need different backend servers per zone, as in a multi-region topology.
@@ -146,9 +142,7 @@ Frontend and farm changes are staged until you apply them, and the new zone does
 <Tabs>
 <Tab label="Control Panel">
 
-After saving the frontend, a banner indicates that the configuration is not yet applied. Click `Apply changes` in the banner to deploy the pending changes.
-
-{/* DRAFT: To screenshot — capture the pending-configuration banner with the Apply changes action */}
+After saving the frontend, a banner indicates that the configuration is not yet applied. Click <code className="action">Apply changes</code> in the banner to deploy the pending changes.
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -177,8 +171,6 @@ Each zone carries its own quota of frontends, farms and servers. Review a zone's
 
 Open the `Quota` tab of your Load Balancer service to see the resource usage and limits for each subscribed zone.
 
-{/* DRAFT: To screenshot — capture the Quota tab listing per-zone usage */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -199,7 +191,7 @@ Get the quota of a single zone:
 </Tabs>
 
 > [!TIP]
-> To manage this configuration as code, use the OVHcloud Terraform provider. The `ovh_iploadbalancing` resource manages the service, and dedicated resources such as `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_route` manage farms and routes. Frontends and applying pending changes are handled through the API or the Control Panel only.
+> To manage this configuration as code, use the OVHcloud Terraform provider. The `ovh_iploadbalancing` resource manages the service, and dedicated resources such as `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_route` manage farms and routes. Frontends are managed with `ovh_iploadbalancing_http_frontend` (and the `_tcp_frontend` / `_udp_frontend` variants), and pending changes are deployed with `ovh_iploadbalancing_refresh`.
 
 ## Go further
 

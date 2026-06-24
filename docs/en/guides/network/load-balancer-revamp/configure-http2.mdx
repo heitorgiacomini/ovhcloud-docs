@@ -1,5 +1,5 @@
 ---
-title: Configure HTTP/2
+title: Configure HTTP/2 on a Load Balancer
 description: Enable HTTP/2 on your OVHcloud Load Balancer frontends and learn when a TCP frontend is the right choice for HTTP/2 traffic.
 lastUpdated: 2026-06-05
 ---
@@ -70,8 +70,6 @@ This section routes HTTP/2 traffic across a TCP frontend. A TCP frontend forward
 > The order in which you create elements matters: configure the route before you attach a rule to it.
 
 This procedure uses the OVHcloud API. You can review the created elements afterwards from the `Frontends` and `Server farms` tabs of your Load Balancer in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
-
-{/* DRAFT: To screenshot - capture the Frontends tab of a Load Balancer showing a TCP frontend on port 443 */}
 
 #### Step 1 - Add a route
 

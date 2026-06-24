@@ -1,5 +1,5 @@
 ---
-title: Troubleshoot common issues
+title: Troubleshoot common Load Balancer issues
 description: Diagnose and fix common OVHcloud Load Balancer issues: servers reported DOWN, 503 errors, TLS failures, unapplied configuration, and routing problems.
 lastUpdated: 2026-06-05
 ---
@@ -66,9 +66,7 @@ Retrieve the detailed health status of the affected server. In the API, the resu
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
 
-Alternatively, in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the `Server Farms` tab, select the farm, and read the status on each server line. Click the status text, or the `...` button followed by `See status`, to open the detail view.
-
-{/* DRAFT: To screenshot — capture the Server Farms tab showing a server in DOWN state and the status detail panel */}
+Alternatively, in the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the `Server Farms` tab, select the farm, and read the status on each server line. Click the status text, or the <code className="action">...</code> button followed by <code className="action">See status</code>, to open the detail view.
 
 The status detail provides the following fields:
 
@@ -123,7 +121,7 @@ Check the global status of the service to confirm it is active:
 |---|---|
 | All servers DOWN | Restore at least one healthy server (see [Server reported DOWN](#server-down)). Confirm the probe passes. |
 | No matching route | In the `Frontends` tab, edit the frontend and set a `Default route` (or `Route to farm`) so unmatched traffic has a destination. See [Configure HTTP routes](/guides/network/load-balancer-revamp/configure-http-routes). |
-| Frontend points to an empty farm | Add at least one server to the farm in the `Server Farms` tab using `Add server`. |
+| Frontend points to an empty farm | Add at least one server to the farm in the `Server Farms` tab using <code className="action">Add server</code>. |
 
 After changing the configuration, apply it (see [Configuration not applied](#config-not-applied)) before testing again.
 
@@ -155,14 +153,12 @@ Interpret the state as follows:
 
 In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, the same information is available in the `SSL Certificates` tab.
 
-{/* DRAFT: To screenshot — capture the SSL Certificates tab listing certificate states */}
-
 **Resolution:**
 
 | Cause | Resolution |
 |---|---|
 | Domain does not point to the Load Balancer (`built_not_routed`) | Update your DNS so the domain resolves to the Load Balancer, then re-attempt validation. |
-| Expired or wrong certificate served | In the `SSL Certificates` tab, add or replace the certificate with `Add Certificate`, then attach it to the frontend. |
+| Expired or wrong certificate served | In the `SSL Certificates` tab, add or replace the certificate with <code className="action">Add Certificate</code>, then attach it to the frontend. |
 | Certificate present but not used | Edit the frontend in the `Frontends` tab and select the certificate under `TLS Certificate`. |
 | Handshake fails for older clients | Review the TLS configuration. `Modern (TLS 1.3)` rejects older clients; switch to `Intermediate (TLS 1.2+)` if you must support them. See [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates). |
 
@@ -188,8 +184,6 @@ Check the global status of the service. A status indicating a reload or pending 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
 
 You can also review the `Tasks` tab in the Control Panel to see the state of in-progress operations.
-
-{/* DRAFT: To screenshot — capture the Tasks tab showing a deployment in progress */}
 
 **Resolution:**
 

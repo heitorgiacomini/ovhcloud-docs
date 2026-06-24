@@ -1,5 +1,5 @@
 ---
-title: Configurer des certificats SSL/TLS
+title: Configurer des certificats SSL/TLS sur un Load Balancer
 description: Ajoutez des certificats personnalisés, commandez un certificat gratuit, choisissez un profil de chiffrement et associez le SSL/TLS à vos frontends.
 lastUpdated: 2026-06-05
 ---
@@ -10,9 +10,9 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Objectif
 
-L'OVHcloud Load Balancer peut terminer les connexions SSL/TLS au niveau du frontend, en déchiffrant le trafic entrant avant de le transmettre à vos serveurs backend. C'est ce que l'on appelle la terminaison SSL. Gérer la terminaison sur le Load Balancer réduit la charge de vos serveurs backend et centralise la gestion des certificats, ce qui simplifie la maintenance et les mises à jour de sécurité.
+L'OVHcloud Load Balancer peut terminer les connexions SSL/TLS au niveau du frontend, en déchiffrant le trafic entrant avant de le transmettre à vos serveurs backend. C'est ce que l'on appelle la terminaison SSL. Gérer la terminaison sur le Load Balancer allège vos serveurs backend et centralise la gestion des certificats, ce qui simplifie la maintenance et les mises à jour de sécurité.
 
-**Dans ce guide, vous apprendrez à :**
+**Dans ce guide, vous apprendrez à :**
 
 - Ajouter un certificat SSL/TLS personnalisé que vous possédez déjà.
 - Commander un certificat gratuit géré par OVHcloud.
@@ -23,16 +23,16 @@ L'OVHcloud Load Balancer peut terminer les connexions SSL/TLS au niveau du front
 
 - Un [OVHcloud Load Balancer](/links/network/load-balancer) dans votre compte OVHcloud.
 - Accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, ou des [identifiants de l'API OVHcloud](/guides/manage-and-operate/api/first-steps) pour la méthode API.
-- Pour la terminaison SSL : un frontend HTTPS. Reportez-vous au guide [Configurer des frontends](/guides/network/load-balancer-revamp/configure-frontends).
-- Pour un certificat gratuit : un nom de domaine qui résout déjà vers votre service Load Balancer.
+- Pour la terminaison SSL : un frontend HTTPS. Reportez-vous au guide [Configurer des frontends](/guides/network/load-balancer-revamp/configure-frontends).
+- Pour un certificat gratuit : un nom de domaine qui résout déjà vers votre service Load Balancer.
 
 ## Introduction
 
-Un certificat prouve l'identité de votre service auprès des clients et permet une communication chiffrée. Le Load Balancer prend en charge deux types de source de certificat : un **certificat personnalisé** que vous fournissez (certificat, clé privée et, éventuellement, chaîne de certificats), et un **certificat gratuit** qu'OVHcloud commande et renouvelle automatiquement pour un domaine pointant vers votre service. Une fois un certificat présent, vous sélectionnez un **profil de chiffrement** qui contrôle les versions de TLS et les suites de chiffrement négociées par le frontend.
+Un certificat prouve l'identité de votre service auprès des clients et permet une communication chiffrée. Le Load Balancer prend en charge deux types de source de certificat : un **certificat personnalisé** que vous fournissez (certificat, clé privée et, éventuellement, chaîne de certificats), et un **certificat gratuit** qu'OVHcloud commande et renouvelle automatiquement pour un domaine pointant vers votre service. Une fois un certificat en place, vous sélectionnez un **profil de chiffrement** qui détermine les versions de TLS et les suites de chiffrement négociées par le frontend.
 
 ## En pratique
 
-**Sommaire :**
+**Sommaire :**
 
 - [Vue d'ensemble](#overview)
 - [Ajouter un certificat personnalisé](#custom-certificate)
@@ -44,11 +44,11 @@ Un certificat prouve l'identité de votre service auprès des clients et permet 
 
 ### Vue d'ensemble <a name="overview"></a>
 
-La terminaison SSL s'inscrit dans le chemin de la requête de la manière suivante. Le client ouvre une connexion TLS vers le frontend, le Load Balancer déchiffre le trafic, et la requête est routée en clair (ou rechiffrée, selon votre configuration) vers la ferme de serveurs.
+Voici comment la terminaison SSL s'insère dans le chemin de la requête. Le client ouvre une connexion TLS vers le frontend, le Load Balancer déchiffre le trafic, puis la requête est routée en clair (ou rechiffrée, selon votre configuration) vers la ferme de serveurs.
 
 <img className="thumbnail" alt="Vue d'ensemble — schéma" src="/images/network/load-balancer-revamp/configure-ssl-certificates/fig-1.fr.svg" loading="lazy" />
 
-Deux profils de chiffrement sont disponibles :
+Deux profils de chiffrement sont disponibles :
 
 | Profil | Versions de TLS | Quand l'utiliser |
 |---|---|---|
@@ -71,10 +71,6 @@ Utilisez cette méthode lorsque vous disposez déjà d'un certificat émis par u
 5. Dans la fenêtre, collez le certificat, la clé privée et la chaîne de certificats dans leurs champs respectifs.
 6. Confirmez pour ajouter le certificat.
 
-{/* DRAFT: À capturer - l'onglet SSL avec le bouton Ajouter un certificat mis en évidence */}
-
-{/* DRAFT: À capturer - la fenêtre Ajouter un certificat affichant les champs certificat, clé et chaîne */}
-
 Une fois ajouté, une bannière vous invite à appliquer la configuration pour déployer la modification.
 
 </Tab>
@@ -91,14 +87,14 @@ Ajoutez le certificat en envoyant son contenu au point de terminaison SSL.
 | `key` (body) | Oui | La clé privée encodée en PEM. | `-----BEGIN PRIVATE KEY----- ...` |
 | `chain` (body) | Non | La chaîne intermédiaire encodée en PEM. | `-----BEGIN CERTIFICATE----- ...` |
 
-Appliquez la configuration pour déployer le certificat :
+Appliquez la configuration pour déployer le certificat :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
 </Tab>
 <Tab label="Terraform">
 
-Le provider Terraform OVHcloud n'expose pas de ressource pour les certificats SSL/TLS. Gérez les certificats depuis l'espace client OVHcloud ou via l'API OVHcloud. Le provider couvre en revanche d'autres objets Load Balancer associés, comme `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`.
+Gérez les certificats personnalisés (importés) avec la ressource `ovh_iploadbalancing_ssl`, qui importe le `certificate`, la `key` et la `chain` facultative que vous possédez déjà. Le provider couvre également d'autres objets Load Balancer associés, comme `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`. Après vos modifications Terraform, déployez la configuration en attente avec la ressource `ovh_iploadbalancing_refresh` (arguments `service_name` et `keepers`).
 
 </Tab>
 </Tabs>
@@ -116,8 +112,6 @@ Utilisez cette méthode pour laisser OVHcloud commander et gérer un certificat 
 4. Choisissez l'option de certificat gratuit et saisissez le nom de domaine complet (FQDN) à sécuriser.
 5. Confirmez pour lancer la commande.
 
-{/* DRAFT: À capturer - la fenêtre Ajouter un certificat avec l'option de certificat gratuit et le champ FQDN */}
-
 La commande s'exécute en tant que tâche en arrière-plan. Vous pouvez suivre sa progression dans l'onglet `Tâches`. Une fois terminée, le certificat est installé automatiquement sur votre Load Balancer.
 
 </Tab>
@@ -132,11 +126,11 @@ Commandez le certificat gratuit pour un domaine qui pointe déjà vers votre ser
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3...` |
 | `fqdn` (body) | Oui | Le nom de domaine complet à sécuriser. | `www.example.com` |
 
-Suivez l'avancement de la commande en listant les tâches. Vous pouvez filtrer sur le type d'action `orderFreeCertificate` :
+Suivez l'avancement de la commande en listant les tâches. Vous pouvez filtrer sur le type d'action `orderFreeCertificate` :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task"} />
 
-Récupérez le statut d'une tâche spécifique :
+Récupérez le statut d'une tâche spécifique :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task/\{id\}"} />
 
@@ -145,7 +139,7 @@ Une fois la tâche terminée, le certificat est installé automatiquement. Aucun
 </Tab>
 <Tab label="Terraform">
 
-Le provider Terraform OVHcloud n'expose pas de ressource pour les certificats gratuits. Commandez et renouvelez les certificats gratuits depuis l'espace client OVHcloud ou via l'API OVHcloud.
+Les certificats personnalisés (importés) sont gérés avec la ressource `ovh_iploadbalancing_ssl`. Cependant, cette ressource ne fait qu'importer un certificat, une clé et une chaîne que vous possédez déjà — le provider Terraform OVHcloud ne dispose d'aucune ressource pour *commander* un certificat gratuit. Commandez et renouvelez les certificats gratuits depuis l'espace client OVHcloud ou via l'API OVHcloud.
 
 </Tab>
 </Tabs>
@@ -164,14 +158,12 @@ Un certificat ne prend effet qu'une fois lié à un frontend HTTPS qui effectue 
 5. Définissez la route par défaut ou `Router vers une ferme` afin que le trafic déchiffré atteigne la bonne ferme de serveurs.
 6. Confirmez pour enregistrer le frontend.
 
-{/* DRAFT: À capturer - la fenêtre Créer un frontend affichant le protocole HTTPS et le champ Certificat TLS */}
-
 Une fois le frontend enregistré, une bannière vous invite à appliquer la configuration. Appliquez-la pour déployer la modification sur la zone appropriée.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Créez ou modifiez un frontend HTTPS avec la terminaison SSL activée. La terminaison SSL est contrôlée par le booléen `ssl` : définissez-le sur `true`, puis renseignez `defaultFarmId` ou `redirectLocation` avec les valeurs correspondantes.
+Créez ou modifiez un frontend HTTPS avec la terminaison SSL activée. La terminaison SSL est contrôlée par le booléen `ssl` : définissez-le sur `true`, puis renseignez `defaultFarmId` ou `redirectLocation` avec les valeurs correspondantes.
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
 
@@ -182,18 +174,18 @@ Créez ou modifiez un frontend HTTPS avec la terminaison SSL activée. La termin
 | `defaultFarmId` (body) | Non | La ferme de serveurs qui reçoit le trafic déchiffré. | `12345` |
 | `port` (body) | Non | Le port d'écoute du frontend. | `443` |
 
-Pour modifier un frontend existant à la place, utilisez le point de terminaison `PUT` correspondant :
+Pour modifier un frontend existant à la place, utilisez le point de terminaison `PUT` correspondant :
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
 
-Appliquez la configuration pour déployer la modification :
+Appliquez la configuration pour déployer la modification :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
 </Tab>
 <Tab label="Terraform">
 
-Le provider Terraform OVHcloud n'expose pas de ressource pour les frontends. Les frontends et la terminaison SSL se configurent depuis l'espace client OVHcloud ou via l'API OVHcloud. Une fois un frontend créé, vous pouvez gérer ses fermes de serveurs avec `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`.
+Les frontends sont gérés avec la ressource `ovh_iploadbalancing_http_frontend`. Activez la terminaison SSL en renseignant son argument `ssl` et associez le certificat avec `default_ssl_id` (la ressource prend également en charge `hsts`). Une fois un frontend créé, vous pouvez gérer ses fermes de serveurs avec `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`. Déployez la configuration en attente avec la ressource `ovh_iploadbalancing_refresh`.
 
 </Tab>
 </Tabs>
@@ -232,7 +224,7 @@ Le tableau ci-dessous couvre les problèmes les plus fréquemment rencontrés lo
 | Le certificat personnalisé est rejeté | Le certificat et la clé privée ne correspondent pas, ou la chaîne intermédiaire est manquante. | Vérifiez que la clé correspond au certificat et incluez la chaîne complète. |
 | Les clients plus anciens ne peuvent pas se connecter | Le profil de chiffrement est défini sur `Moderne (TLS 1.3)`. | Basculez le profil sur `Intermédiaire (TLS 1.2+)` et appliquez la configuration. |
 
-Pour inspecter un certificat ou confirmer son ajout, listez les certificats de votre service :
+Pour inspecter un certificat ou confirmer son ajout, listez les certificats de votre service :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
 
@@ -242,4 +234,4 @@ Pour inspecter un certificat ou confirmer son ajout, listez les certificats de v
 - [Configurer HTTP/2](/guides/network/load-balancer-revamp/configure-http2)
 - [Bonnes pratiques de sécurité](/guides/network/load-balancer-revamp/security-best-practices)
 
-Échangez avec notre [communauté d'utilisateurs](/links/community).
+Échangez avec notre [communauté d'utilisateurs](https://community.ovh.com/).

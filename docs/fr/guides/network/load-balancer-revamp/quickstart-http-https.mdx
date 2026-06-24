@@ -11,7 +11,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 Ce guide vous accompagne dans le déploiement de votre premier service HTTP/HTTPS sur l'OVHcloud Load Balancer, de zéro jusqu'à une configuration fonctionnelle. Vous commandez le service, vous construisez une ferme de serveurs avec des serveurs backend, vous créez les frontends qui exposent le service sur Internet, vous rattachez un certificat SSL/TLS pour le HTTPS, vous appliquez la configuration, puis vous faites pointer vos enregistrements DNS vers le Load Balancer et vous vérifiez que le trafic circule.
 
-**Dans ce guide, vous allez apprendre à :**
+**Dans ce guide, vous allez apprendre à :**
 
 - Commander un OVHcloud Load Balancer et le localiser dans l'espace client.
 - Créer une ferme de serveurs HTTP et y rattacher un ou plusieurs serveurs backend.
@@ -31,17 +31,17 @@ L'ordre dans lequel vous créez les éléments est important. Une ferme de serve
 - Une offre [OVHcloud Load Balancer](/links/network/load-balancer) (commandée à la première étape ci-dessous si vous n'en disposez pas)
 - Au moins un serveur backend joignable depuis le Load Balancer, identifié par son adresse IPv4
 - Un nom de domaine enregistré dont vous pouvez modifier la zone DNS (requis pour le HTTPS et pour l'étape de vérification)
-- Pour le canal API : des identifiants de l'API OVHcloud. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
+- Pour le canal API : des identifiants de l'API OVHcloud. Consultez le guide [Premiers pas avec l'API OVHcloud](/guides/manage-and-operate/api/first-steps).
 
 ## Introduction
 
-L'OVHcloud Load Balancer répartit le trafic entrant sur plusieurs serveurs backend, ce qui améliore la disponibilité et l'évolutivité de vos applications. Une configuration de Load Balancer repose sur quatre éléments : les fermes de serveurs (`farms`) (et les serveurs (`servers`) qu'elles contiennent), les frontends (`frontends`) qui exposent le service sur Internet, les routes (`routes`) qui relient les frontends aux fermes, et les certificats `SSL/TLS` qui chiffrent les connexions. Ce guide traite le cas le plus courant : la répartition du trafic web en HTTP et HTTPS. Pour une présentation conceptuelle, consultez [Comprendre l'OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer).
+L'OVHcloud Load Balancer répartit le trafic entrant sur plusieurs serveurs backend, ce qui améliore la disponibilité et l'évolutivité de vos applications. Une configuration de Load Balancer repose sur quatre éléments : les fermes de serveurs (`farms`) (et les serveurs (`servers`) qu'elles contiennent), les frontends (`frontends`) qui exposent le service sur Internet, les routes (`routes`) qui relient les frontends aux fermes, et les certificats `SSL/TLS` qui chiffrent les connexions. Ce guide traite le cas le plus courant : la répartition du trafic web en HTTP et HTTPS. Pour une présentation conceptuelle, consultez [Comprendre l'OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer).
 
 ## En pratique
 
 Cette section vous guide tout au long du déploiement complet, dans l'ordre. Chaque étape fournit des instructions à la fois pour l'espace client OVHcloud et pour l'API OVHcloud.
 
-**Sommaire :**
+**Sommaire :**
 
 - [Vue d'ensemble](#overview)
 - [Étape 1 — Commander le Load Balancer](#order)
@@ -70,17 +70,15 @@ Si vous ne disposez pas encore d'un Load Balancer, commandez-en un avant de le c
 <Tabs>
 <Tab label="Espace client">
 
-1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et accédez à **Network** > **Load Balancer**.
-2. Cliquez sur `Commander` et suivez le tunnel de commande pour sélectionner votre offre, votre région et votre zone.
-
-{/* DRAFT: À illustrer - le tunnel de commande du Load Balancer dans l'espace client */}
+1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et accédez à **Réseau** > **Load Balancer**.
+2. Cliquez sur <code className="action">Commander</code> et suivez le tunnel de commande pour sélectionner votre offre, votre région et votre zone.
 
 Pour une présentation détaillée des options de commande, consultez [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer).
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Listez les Load Balancers déjà rattachés à votre compte afin de confirmer le nom de service que vous utiliserez tout au long de ce guide :
+Listez les Load Balancers déjà rattachés à votre compte afin de confirmer le nom de service que vous utiliserez tout au long de ce guide :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing"} />
 
@@ -91,8 +89,6 @@ Le `serviceName` renvoyé (par exemple `loadbalancer-a1b2c3...`) est l'identifia
 
 Une fois le service actif, ouvrez-le dans l'espace client. Les onglets de configuration sont `Fermes`, `Frontends & routage`, `SSL`, `Réseau`, `Statistiques`, `Logs`, `Tâches` et `Quota`.
 
-{/* DRAFT: À illustrer - le tableau de bord du Load Balancer affichant les onglets de configuration */}
-
 ### Étape 2 — Créer une ferme de serveurs <a name="farm"></a>
 
 La ferme de serveurs reçoit le trafic des frontends et le répartit sur ses serveurs backend. Créez d'abord la ferme HTTP, car les frontends et les serveurs y font référence.
@@ -101,19 +97,17 @@ La ferme de serveurs reçoit le trafic des frontends et le répartit sur ses ser
 <Tab label="Espace client">
 
 1. Ouvrez l'onglet `Fermes`.
-2. Cliquez sur `Créer une ferme`.
+2. Cliquez sur <code className="action">Créer une ferme</code>.
 3. Renseignez les champs. Pour une configuration simple, le `Protocole` et le datacentre sont obligatoires. Définissez explicitement un `Port` — généralement le port 80 pour un service web. Si aucun port n'est défini, le Load Balancer réutilise le port du frontend, et les sondes peuvent ne pas se comporter comme prévu.
 4. Si vous prévoyez d'ajouter plusieurs serveurs, sélectionnez un algorithme d'équilibrage (par exemple `Round Robin` ou `Moins de connexions`) et configurez une sonde afin que le Load Balancer puisse retirer automatiquement un serveur qui ne répond pas.
-5. Cliquez sur `Créer une ferme` pour enregistrer la ferme.
-
-{/* DRAFT: À illustrer - le formulaire de création de ferme de serveurs avec le protocole et le port renseignés */}
+5. Cliquez sur <code className="action">Créer une ferme</code> pour enregistrer la ferme.
 
 La nouvelle ferme apparaît dans la liste de l'onglet `Fermes`.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Créez une ferme HTTP :
+Créez une ferme HTTP :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
 
@@ -125,7 +119,7 @@ Créez une ferme HTTP :
 | `balance` (body) | Non | Algorithme d'équilibrage. | `roundrobin` |
 | `displayName` (body) | Non | Nom lisible de la ferme. | `web-farm` |
 
-Listez les fermes HTTP existantes pour récupérer le `farmId` généré :
+Listez les fermes HTTP existantes pour récupérer le `farmId` généré :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
 
@@ -139,19 +133,17 @@ Une ferme a besoin d'au moins un serveur backend pour traiter les requêtes. Ajo
 <Tabs>
 <Tab label="Espace client">
 
-1. Dans l'onglet `Fermes`, cliquez sur la ferme pour la sélectionner. La liste de ses serveurs apparaît en dessous, accompagnée du bouton `Ajouter un serveur`.
-2. Cliquez sur `Ajouter un serveur`.
+1. Dans l'onglet `Fermes`, cliquez sur la ferme pour la sélectionner. La liste de ses serveurs apparaît en dessous, accompagnée du bouton <code className="action">Ajouter un serveur</code>.
+2. Cliquez sur <code className="action">Ajouter un serveur</code>.
 3. Saisissez les informations du serveur. Seul le champ `Adresse` est obligatoire. Si un serveur utilise un port différent de celui par défaut de la ferme, vous pouvez le surcharger ici, même si une configuration uniforme est plus facile à maintenir.
-4. Cliquez sur `Ajouter un serveur` pour ajouter le serveur.
-
-{/* DRAFT: À illustrer - le formulaire d'ajout de serveur avec une adresse IPv4 saisie */}
+4. Cliquez sur <code className="action">Ajouter un serveur</code> pour ajouter le serveur.
 
 Le serveur apparaît dans la liste des serveurs de la ferme, sous l'onglet `Fermes`.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Ajoutez un serveur à la ferme, en utilisant le `farmId` de l'étape précédente :
+Ajoutez un serveur à la ferme, en utilisant le `farmId` de l'étape précédente :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
 
@@ -163,7 +155,7 @@ Ajoutez un serveur à la ferme, en utilisant le `farmId` de l'étape précédent
 | `status` (body) | Oui | État opérationnel du serveur. | `active` |
 | `port` (body) | Non | Surcharge du port par serveur. | `8080` |
 
-Listez les serveurs de la ferme pour confirmer qu'ils ont bien été ajoutés :
+Listez les serveurs de la ferme pour confirmer qu'ils ont bien été ajoutés :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
 
@@ -178,20 +170,18 @@ Le frontend expose votre service sur Internet et transmet le trafic à la ferme.
 <Tab label="Espace client">
 
 1. Ouvrez l'onglet `Frontends & routage`.
-2. Cliquez sur `Créer un frontend`.
+2. Cliquez sur <code className="action">Créer un frontend</code>.
 3. Renseignez les champs. Pour une configuration simple, le `Protocole`, le `Port` (80 pour le HTTP standard) et le datacentre sont obligatoires. Pour écouter sur plusieurs ports, saisissez une liste séparée par des virgules ou une plage sous la forme `START_PORT-END_PORT`.
 4. Définissez la `Route par défaut` sur la ferme que vous avez créée afin que le trafic y soit acheminé.
 5. Si vous avez routé des IP additionnelles vers le Load Balancer, vous pouvez rattacher le frontend à une ou plusieurs d'entre elles.
-6. Cliquez sur `Créer un frontend` pour enregistrer le frontend.
-
-{/* DRAFT: À illustrer - le formulaire de création de frontend avec le port 80 et la route par défaut définie sur la ferme */}
+6. Cliquez sur <code className="action">Créer un frontend</code> pour enregistrer le frontend.
 
 Le frontend apparaît dans la liste de l'onglet `Frontends & routage`.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Créez un frontend HTTP :
+Créez un frontend HTTP :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
 
@@ -208,13 +198,13 @@ Créez un frontend HTTP :
 
 ### Étape 5 — Rattacher un certificat SSL/TLS <a name="certificate"></a>
 
-Pour servir du trafic en HTTPS, le Load Balancer a besoin d'un certificat SSL/TLS. Vous avez deux options, selon vos besoins et votre configuration existante :
+Pour servir du trafic en HTTPS, le Load Balancer a besoin d'un certificat SSL/TLS. Vous avez deux options, selon vos besoins et votre configuration existante :
 
 - **Importer un certificat existant** que vous avez commandé et gérez vous-même. Vous êtes responsable de son renouvellement avant son expiration et de sa mise à jour sur le Load Balancer.
 - **Commander un certificat géré par le Load Balancer** (Let's Encrypt), qui est validé, installé et renouvelé automatiquement.
 
 :::info
-Un certificat géré exige que le domaine pointe déjà vers le Load Balancer : les enregistrements `A` et `AAAA` de votre domaine doivent résoudre vers l'IPv4 et l'IPv6 du Load Balancer (ou l'une de ses IP additionnelles). Pour éviter toute interruption de service, déployez et testez d'abord la configuration HTTP sur le port 80, puis commandez le certificat géré. Si votre site est déjà en HTTPS ailleurs, importez votre certificat actuel, déployez et testez le frontend HTTPS, puis commandez un certificat géré pour le même domaine — il est pris en compte automatiquement avant l'expiration de l'ancien.
+Un certificat géré exige que le domaine pointe déjà vers le Load Balancer : les enregistrements `A` et `AAAA` de votre domaine doivent résoudre vers l'IPv4 et l'IPv6 du Load Balancer (ou l'une de ses IP additionnelles). Pour éviter toute interruption de service, déployez et testez d'abord la configuration HTTP sur le port 80, puis commandez le certificat géré. Si votre site est déjà en HTTPS ailleurs, importez votre certificat actuel, déployez et testez le frontend HTTPS, puis commandez un certificat géré pour le même domaine — il est pris en compte automatiquement avant l'expiration de l'ancien.
 :::
 
 Les certificats configurés sur le service sont automatiquement disponibles pour chaque frontend dont l'option SSL est activée.
@@ -223,18 +213,16 @@ Les certificats configurés sur le service sont automatiquement disponibles pour
 <Tab label="Espace client">
 
 1. Ouvrez l'onglet `SSL`.
-2. Pour importer un certificat existant, cliquez sur `Ajouter un certificat` et fournissez la clé privée et le certificat (les deux sont obligatoires), puis cliquez sur `Ajouter un certificat`.
+2. Pour importer un certificat existant, cliquez sur <code className="action">Ajouter un certificat</code> et fournissez la clé privée et le certificat (les deux sont obligatoires), puis cliquez sur <code className="action">Ajouter un certificat</code>.
 3. Pour commander un certificat géré, lancez le processus de commande Let's Encrypt, saisissez votre domaine, confirmez qu'il pointe vers le Load Balancer et suivez les e-mails de validation que vous recevez.
 4. Lors de la configuration du frontend à l'étape suivante, vous pouvez choisir un profil de configuration TLS tel que `Moderne (TLS 1.3)` ou `Intermédiaire (TLS 1.2+)`.
-
-{/* DRAFT: À illustrer - l'onglet Certificats SSL affichant l'action Ajouter un certificat */}
 
 Le certificat apparaît dans la liste de l'onglet `SSL` une fois ajouté ou émis.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Importez un certificat SSL/TLS existant :
+Importez un certificat SSL/TLS existant :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
 
@@ -246,11 +234,11 @@ Importez un certificat SSL/TLS existant :
 | `chain` (body) | Non | Chaîne de certificats intermédiaires. | `-----BEGIN CERTIFICATE-----...` |
 | `displayName` (body) | Non | Nom lisible du certificat. | `example-com` |
 
-Pour commander à la place un certificat géré (Let's Encrypt) :
+Pour commander à la place un certificat géré (Let's Encrypt) :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/freeCertificate"} />
 
-Listez les certificats configurés :
+Listez les certificats configurés :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/ssl"} />
 
@@ -264,14 +252,12 @@ Une fois un certificat disponible, créez un second frontend qui écoute sur le 
 <Tabs>
 <Tab label="Espace client">
 
-1. Ouvrez l'onglet `Frontends & routage` et cliquez sur `Créer un frontend`.
+1. Ouvrez l'onglet `Frontends & routage` et cliquez sur <code className="action">Créer un frontend</code>.
 2. Définissez le `Port` sur 443 et activez l'option SSL afin que le frontend termine le HTTPS.
 3. Sélectionnez le certificat sous `Certificat TLS`.
 4. Définissez la `Route par défaut` sur la même ferme que celle utilisée par le frontend HTTP.
-5. Activez éventuellement le HSTS. Avec le HSTS, les navigateurs utilisent le HTTPS pour chaque visite future, ce qui protège contre les attaques par rétrogradation.
-6. Cliquez sur `Créer un frontend` pour enregistrer le frontend.
-
-{/* DRAFT: À illustrer - le formulaire de création de frontend avec le port 443, le SSL activé et un certificat TLS sélectionné */}
+5. Activez éventuellement le HSTS. Les navigateurs utilisent alors le HTTPS pour chaque visite ultérieure, ce qui protège contre les attaques par rétrogradation.
+6. Cliquez sur <code className="action">Créer un frontend</code> pour enregistrer le frontend.
 
 :::warning
 Le HSTS ne peut pas être annulé une fois que les navigateurs l'ont enregistré. Ne l'activez qu'après avoir confirmé que le HTTPS fonctionne correctement, sans effets indésirables.
@@ -280,7 +266,7 @@ Le HSTS ne peut pas être annulé une fois que les navigateurs l'ont enregistré
 </Tab>
 <Tab label="API OVHcloud">
 
-Créez un frontend HTTPS avec le SSL activé :
+Créez un frontend HTTPS avec le SSL activé :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
 
@@ -298,21 +284,19 @@ Créez un frontend HTTPS avec le SSL activé :
 
 ### Étape 7 — Appliquer la configuration <a name="apply"></a>
 
-Les changements de configuration ne sont effectifs qu'une fois que vous les appliquez (rafraîchissez) dans chaque zone de votre service. Cela vous permet de préparer un changement complexe et de le déployer en une seule étape. Si votre service s'étend sur plusieurs zones, appliquez la configuration à chaque zone.
+Les changements de configuration ne sont effectifs qu'une fois appliqués (rafraîchis) dans chaque zone de votre service. Vous pouvez ainsi préparer un changement complexe et le déployer en une seule étape. Si votre service s'étend sur plusieurs zones, appliquez la configuration à chacune d'elles.
 
 <Tabs>
 <Tab label="Espace client">
 
 1. Revenez à la page d'accueil du service Load Balancer.
-2. Cliquez sur le menu `...` situé à côté du nom du service et sélectionnez `Appliquer les modifications`.
+2. Cliquez sur le menu <code className="action">...</code> situé à côté du nom du service et sélectionnez <code className="action">Appliquer les modifications</code>.
 3. Sélectionnez les zones à déployer et confirmez.
-
-{/* DRAFT: À illustrer - l'action d'application de la configuration et la boîte de dialogue de sélection des zones */}
 
 </Tab>
 <Tab label="API OVHcloud">
 
-Appliquez les changements de configuration en attente :
+Appliquez les changements de configuration en attente :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
@@ -321,7 +305,7 @@ Appliquez les changements de configuration en attente :
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-a1b2c3` |
 | `zone` (body) | Non | Limiter le rafraîchissement à une seule zone. | `gra` |
 
-Examinez ce qui va changer avant d'appliquer :
+Examinez ce qui va changer avant d'appliquer :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
 
@@ -332,11 +316,11 @@ Examinez ce qui va changer avant d'appliquer :
 
 Pour que les visiteurs atteignent votre service via le Load Balancer, votre domaine doit résoudre vers les adresses du Load Balancer. Mettez à jour la zone DNS de votre domaine afin que les enregistrements `A` et `AAAA` pointent vers l'IPv4 et l'IPv6 du Load Balancer (ou l'une de ses IP additionnelles).
 
-Retrouvez les adresses du Load Balancer dans le récapitulatif du service de l'espace client, ou via l'API :
+Retrouvez les adresses du Load Balancer dans le récapitulatif du service de l'espace client, ou via l'API :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}"} />
 
-Une modification typique d'un fichier de zone ressemble à ceci :
+Une modification typique d'un fichier de zone ressemble à ceci :
 
 ```text
 www.example.com.   3600   IN   A      203.0.113.50
@@ -347,7 +331,7 @@ www.example.com.   3600   IN   AAAA   2001:db8::50
 Abaissez le TTL de l'enregistrement quelques heures avant le changement afin que la bascule se propage rapidement. Augmentez-le à nouveau une fois le trafic confirmé.
 :::
 
-Les changements DNS peuvent mettre du temps à se propager. Vérifiez que les enregistrements ont bien été mis à jour avant de tester :
+Les changements DNS peuvent mettre du temps à se propager. Vérifiez que les enregistrements ont bien été mis à jour avant de tester :
 
 ```bash
 dig +short www.example.com A
@@ -388,12 +372,12 @@ Le tableau ci-dessous répertorie les problèmes les plus courants rencontrés l
 | Problème | Cause possible | Solution |
 |---|---|---|
 | Les changements n'apparaissent pas pour les visiteurs | Configuration non appliquée | Appliquez (rafraîchissez) la configuration dans chaque zone — voir l'[étape 7](#apply). |
-| Site inaccessible après le changement DNS | DNS pas encore propagé, ou enregistrements pointant ailleurs | Vérifiez avec `dig +short` ; abaissez le TTL et attendez la propagation. |
+| Site inaccessible après le changement DNS | DNS pas encore propagé, ou enregistrements pointant ailleurs | Vérifiez avec `dig +short` ; abaissez le TTL et attendez la propagation. |
 | La commande de certificat géré échoue | Le domaine ne résout pas vers le Load Balancer | Faites d'abord pointer les enregistrements `A` et `AAAA` vers le Load Balancer, puis commandez à nouveau. |
 | Backend marqué comme indisponible | Sonde mal configurée ou backend n'écoutant pas sur le port de la ferme | Vérifiez le `Port` de la ferme, le port du backend et les paramètres de la sonde. Consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes). |
 | 503 renvoyé par le frontend | Aucun serveur actif dans la ferme, ou mauvaise route par défaut | Vérifiez que la ferme dispose d'au moins un serveur actif et que la route par défaut du frontend la cible bien. |
 
-Pour automatiser ce déploiement, le provider Terraform OVHcloud expose des ressources telles que `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server` et `ovh_iploadbalancing_http_route` pour créer les fermes, les serveurs et les routes. Les frontends et l'application (rafraîchissement) de la configuration ne sont pas gérés par Terraform — réalisez ces opérations via l'API OVHcloud ou l'espace client. Consultez le [guide d'automatisation](/guides/network/load-balancer-revamp/automation).
+Pour automatiser ce déploiement, le provider Terraform OVHcloud expose des ressources telles que `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server` et `ovh_iploadbalancing_http_route` pour créer les fermes, les serveurs et les routes. Les frontends sont gérés avec `ovh_iploadbalancing_http_frontend`, et l'application (rafraîchissement) de la configuration avec `ovh_iploadbalancing_refresh`. Consultez le [guide d'automatisation](/guides/network/load-balancer-revamp/automation).
 
 ## Aller plus loin
 

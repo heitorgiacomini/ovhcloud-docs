@@ -64,8 +64,6 @@ In a multi-region deployment, zones are spread across separate geographic region
 
 To benefit from this model, define a frontend in each zone that points to a cluster in the same zone. You can then declare different backend servers per zone and control which backends serve which region.
 
-{/* DRAFT: To screenshot - conceptual diagram of a Load Balancer spanning two regions (GRA and BHS), each with its own frontend and cluster */}
-
 For example, with backends in Gravelines (GRA) and Beauharnois (BHS), you can order a service in the `GRA` and `BHS` zones and configure:
 
 - A frontend in the `GRA` zone with a default cluster in `GRA` containing the Gravelines servers.
@@ -74,8 +72,6 @@ For example, with backends in Gravelines (GRA) and Beauharnois (BHS), you can or
 ### Multi-AZ region
 
 In a multi-AZ deployment, the zones belong to the same region. OVHcloud is rolling out multi-AZ regions, starting with Paris 3-AZ (April 2024) and Milan 3-AZ (November 2025). This model provides high availability, fault tolerance against a local outage, and consistent performance within one geographic area, using low-latency inter-AZ links and Anycast distribution.
-
-{/* DRAFT: To screenshot - conceptual diagram of a Load Balancer spanning the zones of a single multi-AZ region */}
 
 | Model | Zones located in | Primary benefit | Trade-off |
 |---|---|---|---|

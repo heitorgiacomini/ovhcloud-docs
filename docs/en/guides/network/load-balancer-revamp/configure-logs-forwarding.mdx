@@ -1,5 +1,5 @@
 ---
-title: Configure logs forwarding
+title: Configure logs forwarding on a Load Balancer
 description: Forward TCP, HTTP and HTTPS access logs from your OVHcloud Load Balancer to Logs Data Platform using the OVHcloud API.
 lastUpdated: 2026-06-05
 ---
@@ -129,8 +129,6 @@ Identify the Logs Data Platform data stream that will receive your logs. You nee
 
 Retrieve the list of streams and the details of a specific stream from your Logs Data Platform account. These calls use the `/dbaas/logs` API section. Enter your LDP service name in the form `ldp-xx-xxxx` as the `serviceName`.
 
-{/* DRAFT: To verify — the /dbaas/logs API endpoints are not in the SOT cache; confirm exact paths and methods before publishing */}
-
 | Action | Endpoint | Method |
 |---|---|---|
 | List data streams | `/dbaas/logs/{serviceName}/output/graylog/stream` | GET |
@@ -211,8 +209,6 @@ Then get the details of a specific subscription:
 
 To retrieve the `subscriptionId` directly from the operation, you can also query the operation details with the `/dbaas/logs` section:
 
-{/* DRAFT: To verify — the /dbaas/logs operation endpoint is not in the SOT cache; confirm path and method before publishing */}
-
 | Action | Endpoint | Method |
 |---|---|---|
 | Get operation details | `/dbaas/logs/{serviceName}/operation/{operationId}` | GET |
@@ -235,8 +231,6 @@ After the logs are ingested into your Logs Data Platform data stream, you can qu
 :::tip
 The `Logs` tab on the Load Balancer page in the Control Panel lets you view recent activity for your service. For long-term storage, alerting, real-time WebSocket streaming, OpenSearch Dashboards and Grafana integration, use Logs Data Platform.
 :::
-
-{/* DRAFT: To screenshot — capture the `Logs` tab on the Load Balancer page in the OVHcloud Control Panel */}
 
 ### Manage and cancel a subscription <a name="manage"></a>
 

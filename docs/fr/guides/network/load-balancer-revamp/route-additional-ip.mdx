@@ -9,7 +9,7 @@ import ManagerLink from '@components/ManagerLink';
 
 ## Objectif
 
-Une Additional IP est une adresse IP que vous pouvez basculer d'un service OVHcloud à un autre. La router vers le Load Balancer OVHcloud déplace le trafic existant vers le Load Balancer sans changer votre adresse IP publique et sans attendre la propagation DNS.
+Une Additional IP est une adresse IP que vous pouvez basculer d'un service OVHcloud à un autre. La router vers le Load Balancer OVHcloud y achemine le trafic existant sans changer votre adresse IP publique ni attendre la propagation DNS.
 
 **Ce guide explique comment router une Additional IP vers le Load Balancer OVHcloud, soit pour l'ensemble du service, soit pour un seul frontend.**
 
@@ -23,19 +23,19 @@ Une Additional IP est une adresse IP que vous pouvez basculer d'un service OVHcl
 
 ## Introduction
 
-Vous pouvez router une Additional IP vers le Load Balancer OVHcloud de deux manières :
+Vous pouvez router une Additional IP vers le Load Balancer OVHcloud de deux manières :
 
 - La router vers l'**ensemble du service Load Balancer**, ce qui la rend disponible pour tous les frontends.
-- La router vers un **seul frontend**, de sorte qu'elle donne accès uniquement au service exposé par ce frontend. Vos autres frontends restent accessibles via l'adresse IP principale du Load Balancer.
+- La router vers un **seul frontend** : elle ne donne alors accès qu'au service exposé par ce frontend. Vos autres frontends restent accessibles via l'adresse IP principale du Load Balancer.
 
-Choisissez la portée qui correspond à votre migration : une IP à l'échelle du service pour remplacer une à une une adresse IP publique existante, ou une IP dédiée lorsque vous souhaitez qu'un frontend réponde sur sa propre adresse.
+Choisissez la portée qui correspond à votre migration : une IP à l'échelle du service pour remplacer à l'identique une adresse IP publique existante, ou une IP dédiée si vous voulez qu'un frontend réponde sur sa propre adresse.
 
 > [!INFO]
-> Après avoir modifié les Additional IPs associées au Load Balancer, vous devez appliquer la configuration. Pour que l'actualisation réussisse, les conditions suivantes doivent être réunies :
+> Après avoir modifié les Additional IPs associées au Load Balancer, vous devez appliquer la configuration. Pour que l'actualisation réussisse, les conditions suivantes doivent être réunies :
 >
-> - **Configuration du vRack :** si le Load Balancer se trouve dans un vRack, toutes les fermes de serveurs doivent également se trouver dans le vRack et le Load Balancer doit avoir son VLAN défini. Sinon, aucune ferme ne doit se trouver dans un vRack.
-> - **Validité des frontends :** au moins un frontend doit exister, et tous les frontends doivent être valides (activés ou désactivés). Chacun doit disposer d'une route valide avec des règles de routage, d'une redirection ou d'une ferme par défaut.
-> - **État de la configuration :** le Load Balancer ne doit pas déjà être en cours d'une autre actualisation. Un Load Balancer ne peut pas être actualisé plus d'une fois à la fois.
+> - **Configuration du vRack :** si le Load Balancer se trouve dans un vRack, toutes les fermes de serveurs doivent également se trouver dans le vRack et le Load Balancer doit avoir son VLAN défini. Sinon, aucune ferme ne doit se trouver dans un vRack.
+> - **Validité des frontends :** au moins un frontend doit exister, et tous les frontends doivent être valides (activés ou désactivés). Chacun doit disposer d'une route valide avec des règles de routage, d'une redirection ou d'une ferme par défaut.
+> - **État de la configuration :** le Load Balancer ne doit pas déjà être en cours d'actualisation. Une seule actualisation peut être traitée à la fois.
 
 ## En pratique
 
@@ -43,7 +43,7 @@ Choisissez la portée qui correspond à votre migration : une IP à l'échelle d
 
 Cette portée rend l'Additional IP disponible pour tous les frontends du Load Balancer. Routez l'IP via l'API OVHcloud, puis vérifiez l'association.
 
-Commencez par déplacer l'Additional IP vers le service Load Balancer :
+Commencez par déplacer l'Additional IP vers le service Load Balancer :
 
 <Api version="v1" section="/ip" method="POST" route={"/ip/\{ip\}/move"} />
 
@@ -55,7 +55,7 @@ Commencez par déplacer l'Additional IP vers le service Load Balancer :
 > [!INFO]
 > L'endpoint `/ip/{ip}/move` fait partie de la section d'API `/ip`. Le champ `to` du corps accepte le nom de service cible. Vous pouvez également récupérer la liste des services vers lesquels une IP peut être déplacée avec `GET /ip/{ip}/move`.
 
-Listez ensuite les Additional IPs déjà routées vers votre Load Balancer afin de confirmer l'association :
+Listez ensuite les Additional IPs déjà routées vers votre Load Balancer afin de confirmer l'association :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/failover"} />
 
@@ -67,25 +67,25 @@ Une fois l'association confirmée, appliquez la configuration comme décrit dans
 
 ### Router une Additional IP dédiée vers un seul frontend
 
-Cette portée rattache l'Additional IP à un seul frontend. L'IP donne alors accès exclusivement au service exposé par ce frontend, tandis que vos autres frontends restent accessibles via l'adresse IP principale du Load Balancer. Configurez une IP dédiée depuis l'API OVHcloud.
+Cette portée rattache l'Additional IP à un seul frontend. L'IP ne donne alors accès qu'au service exposé par ce frontend, tandis que vos autres frontends restent accessibles via l'adresse IP principale du Load Balancer. Configurez une IP dédiée depuis l'API OVHcloud.
 
 Définissez une ou plusieurs Additional IPs dédiées lorsque vous créez un frontend.
 
-- Protocole HTTP :
+- Protocole HTTP :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
 
-- Protocole TCP :
+- Protocole TCP :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend"} />
 
 Ou mettez à jour un frontend existant pour y rattacher les Additional IPs dédiées.
 
-- Protocole HTTP :
+- Protocole HTTP :
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/frontend/\{frontendId\}"} />
 
-- Protocole TCP :
+- Protocole TCP :
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/frontend/\{frontendId\}"} />
 
@@ -104,12 +104,10 @@ Une fois l'appel réussi, appliquez la configuration comme décrit dans [Appliqu
 
 <a name="apply-the-configuration"></a>
 
-Les modifications apportées aux Additional IPs restent en attente jusqu'à ce que vous appliquiez la configuration du Load Balancer. Vous pouvez l'appliquer depuis l'espace client de deux manières :
+Les modifications apportées aux Additional IPs restent en attente jusqu'à ce que vous appliquiez la configuration du Load Balancer. Vous pouvez l'appliquer depuis l'espace client de deux manières :
 
-- Depuis l'onglet `Général`, cliquez sur le bouton `...` à côté de votre Load Balancer et sélectionnez `Appliquer les modifications`.
-- Depuis le bandeau de rappel qui vous signale que la configuration n'a pas été appliquée, cliquez sur `Appliquer les modifications`.
-
-{/* DRAFT: À capturer - l'action Appliquer les modifications dans l'onglet Général */}
+- Depuis l'onglet `Général`, cliquez sur le bouton `...` à côté de votre Load Balancer et sélectionnez <code className="action">Appliquer les modifications</code>.
+- Depuis le bandeau de rappel qui vous signale que la configuration n'a pas été appliquée, cliquez sur <code className="action">Appliquer les modifications</code>.
 
 > [!WARNING]
 > La configuration n'est pas active tant qu'elle n'est pas appliquée. Si les conditions de l'introduction ne sont pas réunies, l'actualisation échoue et la configuration précédente reste en place.

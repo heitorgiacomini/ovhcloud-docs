@@ -1,5 +1,5 @@
 ---
-title: Configure session stickiness
+title: Configure session stickiness on a Load Balancer
 description: Configure session stickiness on an OVHcloud Load Balancer server farm using cookie or source IP persistence, via the Control Panel or API.
 lastUpdated: 2026-06-05
 ---
@@ -52,10 +52,8 @@ You can configure stickiness through the OVHcloud Control Panel or the OVHcloud 
 ### Edit the server farm
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and select your Load Balancer service.
-2. Open the <code className="action">Server Farms</code> tab.
+2. Open the <code className="action">Farms</code> tab.
 3. Locate the farm you want to configure, click the <code className="action">...</code> options button to its right, then select <code className="action">Edit</code>.
-
-{/* DRAFT: To screenshot - the Server Farms tab with the options menu open on a farm, showing the Edit entry */}
 
 ### Set the stickiness mode
 
@@ -66,18 +64,14 @@ You can configure stickiness through the OVHcloud Control Panel or the OVHcloud 
 The `Cookie` mode is only available on HTTP farms. For TCP farms, use `Source IP`.
 :::
 
-{/* DRAFT: To screenshot - the Advanced settings section of the farm editor showing the stickiness selector */}
-
 3. Confirm the change to save the farm settings.
 
 ### Apply the configuration
 
 The new stickiness setting is staged until you deploy it to the Load Balancer. Apply the configuration in one of these ways:
 
-- From the reminder banner indicating the configuration has not been applied, click <code className="action">Apply configuration</code>.
+- From the reminder banner indicating the configuration has not been applied, click <code className="action">Apply changes</code>.
 - From the service overview, click the <code className="action">...</code> options button of your Load Balancer, then select <code className="action">Apply configuration</code>.
-
-{/* DRAFT: To screenshot - the Apply configuration reminder banner */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -123,7 +117,7 @@ Deploy the staged changes to make the new stickiness setting active.
 
 Set the `stickiness` argument on the farm resource — `ovh_iploadbalancing_http_farm` for an HTTP farm, or `ovh_iploadbalancing_tcp_farm` for a TCP farm — then run `terraform apply` to update the farm.
 
-The Terraform provider has no resource for deploying (refreshing) the Load Balancer configuration. After applying the farm change, deploy it via the OVHcloud API call below or from the Control Panel.
+Deploy the staged configuration with the `ovh_iploadbalancing_refresh` resource (arguments `service_name` and `keepers`). After applying the farm change, you can also deploy it via the OVHcloud API call below or from the Control Panel.
 
 </Tab>
 </Tabs>

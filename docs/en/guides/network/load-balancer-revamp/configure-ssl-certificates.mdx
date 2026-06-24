@@ -1,5 +1,5 @@
 ---
-title: Configure SSL/TLS certificates
+title: Configure SSL/TLS certificates on a Load Balancer
 description: Add custom certificates, order a free certificate, choose a cipher profile, and attach SSL/TLS to your Load Balancer frontends.
 lastUpdated: 2026-06-05
 ---
@@ -52,7 +52,7 @@ Two cipher profiles are available:
 
 | Profile | TLS versions | When to use |
 |---|---|---|
-| `Modern (TLS 1.3)` | TLS 1.3 only | Modern clients only. Highest security, but older clients may fail to connect. |
+| `Modern: TLS 1.3 only` | TLS 1.3 only | Modern clients only. Highest security, but older clients may fail to connect. |
 | `Intermediate (TLS 1.2+)` | TLS 1.2 and above | General-purpose default. Broad client compatibility while excluding legacy protocols. |
 
 After any change to a certificate or a frontend, you must apply the configuration to deploy it to the relevant zone.
@@ -70,10 +70,6 @@ Use this method when you already hold a certificate issued by a certificate auth
 4. Click the `Add Certificate` button.
 5. In the window, paste the certificate, the private key, and the certificate chain into their respective fields.
 6. Confirm to add the certificate.
-
-{/* DRAFT: To screenshot - the SSL Certificates tab with the Add Certificate button highlighted */}
-
-{/* DRAFT: To screenshot - the Add Certificate window showing the certificate, key, and chain fields */}
 
 Once added, a banner prompts you to apply the configuration to deploy the change.
 
@@ -98,7 +94,7 @@ Apply the configuration to deploy the certificate:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for SSL/TLS certificates. Manage certificates through the OVHcloud Control Panel or the OVHcloud API. The provider does cover related Load Balancer objects such as `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server`.
+Manage custom (imported) certificates with the `ovh_iploadbalancing_ssl` resource, which uploads the `certificate`, `key`, and optional `chain` you already hold. The provider also covers related Load Balancer objects such as `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server`. After your Terraform changes, deploy the staged configuration with the `ovh_iploadbalancing_refresh` resource (arguments `service_name` and `keepers`).
 
 </Tab>
 </Tabs>
@@ -115,8 +111,6 @@ Use this method to let OVHcloud order and manage a certificate for a domain that
 3. Click the `Add Certificate` button.
 4. Choose the free certificate option and enter the fully qualified domain name (FQDN) to secure.
 5. Confirm to start the order.
-
-{/* DRAFT: To screenshot - the Add Certificate window with the free certificate option and FQDN field */}
 
 The order runs as a background task. You can follow its progress in the `Tasks` tab. Once complete, the certificate is installed on your Load Balancer automatically.
 
@@ -145,7 +139,7 @@ Once the task completes, the certificate is installed automatically. No `refresh
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for free certificates. Order and renew free certificates through the OVHcloud Control Panel or the OVHcloud API.
+Custom (imported) certificates are managed with the `ovh_iploadbalancing_ssl` resource. However, that resource only imports a certificate, key, and chain you already hold — the OVHcloud Terraform provider has no resource for *ordering* a free certificate. Order and renew free certificates through the OVHcloud Control Panel or the OVHcloud API.
 
 </Tab>
 </Tabs>
@@ -163,8 +157,6 @@ A certificate only takes effect once it is bound to an HTTPS frontend that perfo
 4. In the `TLS Certificate` field, select the certificate to use.
 5. Set the default route or `Route to farm` so that decrypted traffic reaches the correct server farm.
 6. Confirm to save the frontend.
-
-{/* DRAFT: To screenshot - the Create Frontend window showing the HTTPS protocol and TLS Certificate field */}
 
 Once the frontend is saved, a banner prompts you to apply the configuration. Apply it to deploy the change to the appropriate zone.
 
@@ -193,7 +185,7 @@ Apply the configuration to deploy the change:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for frontends. Frontends and SSL termination are configured through the OVHcloud Control Panel or the OVHcloud API. Once a frontend exists, you can manage its server farms with `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server`.
+Frontends are managed with the `ovh_iploadbalancing_http_frontend` resource. Enable SSL termination by setting its `ssl` argument and attach the certificate with `default_ssl_id` (the resource also supports `hsts`). Once a frontend exists, you can manage its server farms with `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server`. Deploy the staged configuration with the `ovh_iploadbalancing_refresh` resource.
 
 </Tab>
 </Tabs>
@@ -204,13 +196,13 @@ The cipher profile controls which TLS versions and cipher suites the frontend ne
 
 | Profile | Setting | Effect |
 |---|---|---|
-| `Modern (TLS 1.3)` | Restricts negotiation to TLS 1.3. | Strongest security. Clients that do not support TLS 1.3 cannot connect. |
+| `Modern: TLS 1.3 only` | Restricts negotiation to TLS 1.3. | Strongest security. Clients that do not support TLS 1.3 cannot connect. |
 | `Intermediate (TLS 1.2+)` | Allows TLS 1.2 and above. | Recommended default. Broad client support while excluding legacy protocols. |
 
 In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, select the cipher profile when adding or editing the certificate in the `SSL Certificates` tab. After changing the profile, apply the configuration to deploy it.
 
 > [!TIP]
-> Use `Intermediate (TLS 1.2+)` unless you control every client connecting to your service. Switching to `Modern (TLS 1.3)` can break connectivity for older browsers, libraries, and embedded clients.
+> Use `Intermediate (TLS 1.2+)` unless you control every client connecting to your service. Switching to `Modern: TLS 1.3 only` can break connectivity for older browsers, libraries, and embedded clients.
 
 ### Limitations <a name="limitations"></a>
 
@@ -230,7 +222,7 @@ The table below covers the most common problems encountered when configuring cer
 | Free certificate order fails or stays pending | The domain does not resolve to the Load Balancer. | Verify the DNS records point to your Load Balancer, then re-order. Check the `Tasks` tab or the task API for the error. |
 | Certificate not used by clients | The certificate is not attached to the frontend, or the configuration was not applied. | Attach the certificate to the HTTPS frontend, then apply the configuration. |
 | Custom certificate rejected | Mismatched certificate and private key, or a missing intermediate chain. | Confirm the key matches the certificate and include the full chain. |
-| Older clients cannot connect | The cipher profile is set to `Modern (TLS 1.3)`. | Switch the profile to `Intermediate (TLS 1.2+)` and apply the configuration. |
+| Older clients cannot connect | The cipher profile is set to `Modern: TLS 1.3 only`. | Switch the profile to `Intermediate (TLS 1.2+)` and apply the configuration. |
 
 To inspect a certificate or confirm it was added, list the certificates on your service:
 
@@ -242,4 +234,4 @@ To inspect a certificate or confirm it was added, list the certificates on your 
 - [Configure HTTP/2](/guides/network/load-balancer-revamp/configure-http2)
 - [Security best practices](/guides/network/load-balancer-revamp/security-best-practices)
 
-Join our [community of users](/links/community).
+Join our [community of users](https://community.ovh.com/).

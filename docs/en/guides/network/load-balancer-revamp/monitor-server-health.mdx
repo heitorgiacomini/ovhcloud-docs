@@ -1,5 +1,5 @@
 ---
-title: Monitor server health
+title: Monitor server health on a Load Balancer
 description: Monitor the health status of backend servers in your OVHcloud Load Balancer farms from the Control Panel and the OVHcloud API.
 lastUpdated: 2026-06-05
 ---
@@ -41,15 +41,11 @@ You can read server health status either visually in the Control Panel or progra
 <Tab label="Control Panel">
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
-2. Navigate to **Network** > **Load Balancer** and select your service.
-3. Open the `Server Farms` tab and select a farm.
+2. Open the <code className="action">Network</code> section, then select your Load Balancer service.
+3. Open the <code className="action">Server Farms</code> tab and select a farm.
 4. Review the status displayed on each server line.
 
-{/* DRAFT: To screenshot — Server Farms tab with a farm selected, showing the status column on each server line */}
-
-To view a server's health status details, click the status in the `Status` column.
-
-{/* DRAFT: To screenshot — server health status detail panel */}
+To view a server's health status details, click the status in the <code className="action">Status</code> column.
 
 > [!TIP]
 > If a server line shows a non-operational state, open its detail view to read the probe return code and the last check content before investigating the backend.
@@ -88,8 +84,6 @@ For a TCP farm:
 For a UDP farm:
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server"} />
-
-{/* DRAFT: To screenshot — API console response showing the serverState field */}
 
 </Tab>
 </Tabs>

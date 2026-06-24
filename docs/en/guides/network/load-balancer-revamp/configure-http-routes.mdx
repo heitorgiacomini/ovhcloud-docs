@@ -1,5 +1,5 @@
 ---
-title: Configure HTTP routes
+title: Configure HTTP routes on a Load Balancer
 description: Create HTTP routes with match rules and actions to dynamically direct, redirect, or reject traffic on your OVHcloud Load Balancer.
 lastUpdated: 2026-06-05
 ---
@@ -90,7 +90,6 @@ The three action types are:
 
 Before configuring anything, query the live list of supported actions and rules for your service. These calls return the valid field names, comparators, and expected value types. If a field is `null`, no value is expected; an invalid value returns a validation error.
 
-
 List the available actions:
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableRouteActions"} />
@@ -160,8 +159,6 @@ Then attach a rule to the route:
 | `subField` | No | Header name for `header` rules, or cookie name for `cookie` rules. |
 | `negate` | No | Inverts the comparator result. |
 | `pattern` | No | Comparator argument. |
-
-{/* DRAFT: To screenshot — capture the OVHcloud API console showing a POST /http/route call and its response containing the routeId */}
 
 > [!INFO]
 > You can create up to 50 routes per service and attach up to 5 rules per route.
@@ -285,15 +282,13 @@ Attach 2 rules to the same route:
 Routes and rules become active only after the configuration is applied (redeployed) to the relevant zone. Creating, modifying, or deleting a route or rule requires a redeployment.
 
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
-2. Click **Apply changes** to redeploy the pending configuration to the relevant zone.
-
-{/* DRAFT: To screenshot — capture the Control Panel screen used to apply the pending configuration to a zone */}
+2. Click <code className="action">Apply changes</code> to redeploy the pending configuration to the relevant zone.
 
 You can review the pending changes via the API before applying them:
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
 
-Routes and rules can also be managed declaratively with the OVHcloud Terraform provider, using the `ovh_iploadbalancing_http_route` and `ovh_iploadbalancing_http_route_rule` resources. Note that redeploying the configuration to a zone remains an API or Control Panel operation; there is no Terraform resource for it.
+Routes and rules can also be managed declaratively with the OVHcloud Terraform provider, using the `ovh_iploadbalancing_http_route` and `ovh_iploadbalancing_http_route_rule` resources. Redeploying the configuration to a zone is exposed as the `ovh_iploadbalancing_refresh` resource; you can also trigger it through the API or the Control Panel.
 
 ### API reference <a name="reference"></a>
 

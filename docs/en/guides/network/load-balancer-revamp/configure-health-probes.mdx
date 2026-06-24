@@ -1,5 +1,5 @@
 ---
-title: Configure health-check probes
+title: Configure health-check probes on a Load Balancer
 description: Configure health-check probes on your OVHcloud Load Balancer farms to detect failing servers and route traffic only to healthy backends.
 lastUpdated: 2026-06-05
 ---
@@ -68,20 +68,14 @@ You can configure a probe either through the OVHcloud Control Panel, when creati
 <Tabs>
 <Tab label="Control Panel">
 
-1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the `Network` section.
-2. Select your Load Balancer service, then open the `Server Farms` tab.
-3. Click `Create farm` to define a new farm, or open an existing farm to edit it.
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Network</code> section.
+2. Select your Load Balancer service, then open the <code className="action">Server Farms</code> tab.
+3. Click <code className="action">Create farm</code> to define a new farm, or open an existing farm to edit it.
 4. In the farm editor, expand the advanced settings to reveal the probe configuration.
-
-{/* DRAFT: To screenshot - the farm editor advanced settings section collapsed, showing where probe options live */}
 
 5. Select the probe type that matches your backend service (for example `tcp` or `http`).
 
-{/* DRAFT: To screenshot - the probe type selector expanded */}
-
 6. If the selected probe type allows it, configure the advanced probe settings (port, method, URL, comparator, pattern, interval).
-
-{/* DRAFT: To screenshot - the probe advanced settings dialog */}
 
 7. Confirm the farm settings to apply the configuration.
 
@@ -179,7 +173,7 @@ resource "ovh_iploadbalancing_http_farm_server" "server" {
 ```
 
 > [!INFO]
-> There is no Terraform resource for applying the pending configuration. After editing the farm or server resources, apply the staged changes through the OVHcloud API or the Control Panel, as described in the [Manage via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel) guide.
+> The pending configuration is applied with the `ovh_iploadbalancing_refresh` resource. After editing the farm or server resources, apply the staged changes with `ovh_iploadbalancing_refresh`, or through the OVHcloud API or the Control Panel, as described in the [Manage via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel) guide.
 
 </Tab>
 </Tabs>

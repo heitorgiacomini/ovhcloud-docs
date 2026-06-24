@@ -27,40 +27,34 @@ La résiliation d'un Load Balancer est irréversible une fois la suppression con
 
 ## Introduction
 
-Lorsque vous résiliez un Load Balancer, vous choisissez le moment où le service s'arrête : à la prochaine date de renouvellement (le service continue de fonctionner jusqu'à la fin de la période de facturation en cours) ou immédiatement. Dans les deux cas, la configuration est supprimée lorsque le service est résilié ; planifiez donc votre migration de trafic à l'avance.
+Lorsque vous résiliez un Load Balancer, vous choisissez le moment où le service s'arrête : à la prochaine date de renouvellement (le service continue de fonctionner jusqu'à la fin de la période de facturation en cours) ou immédiatement. Dans les deux cas, la configuration est supprimée lorsque le service est résilié ; planifiez donc votre migration de trafic à l'avance.
 
 Avant de résilier, vérifiez qu'aucun enregistrement DNS, aucune application et aucun service en amont ne dépend encore de l'adresse IP du Load Balancer. Pour comprendre la structure du service, consultez le guide [Présentation d'OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer).
 
 ## En pratique
 
-Vous pouvez résilier votre Load Balancer depuis l'espace client ou via l'API OVHcloud. Choisissez le canal qui correspond à votre méthode de travail.
+Vous pouvez résilier votre Load Balancer depuis l'espace client ou via l'API OVHcloud. Choisissez la méthode qui correspond à vos habitudes de travail.
 
 <Tabs>
 <Tab label="Espace client">
 
 1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
 2. Accédez à **Réseau** > **Load Balancer** et sélectionnez le service que vous souhaitez résilier.
-3. Ouvrez le menu des actions du service à l'aide du bouton `...`.
+3. Ouvrez le menu des actions du service à l'aide du bouton <code className="action">...</code>.
 
-{/* DRAFT: À capturer — afficher le tableau de bord du Load Balancer avec le menu d'actions `...` ouvert */}
+4. Sélectionnez l'action <code className="action">Résilier le service</code>.
 
-4. Sélectionnez l'action de résiliation du service.
-
-{/* DRAFT: À vérifier — confirmer le libellé exact de l'entrée de résiliation dans le menu d'actions du nouvel espace client (absent du cache SOT) */}
-
-5. Choisissez le moment où la résiliation prend effet :
+5. Choisissez le moment où la résiliation prend effet :
    - À la prochaine date de renouvellement — le Load Balancer continue de fonctionner jusqu'à la fin de la période en cours.
    - Immédiatement — le service est résilié dès que la demande est traitée.
 6. Lisez le récapitulatif de la résiliation, puis confirmez pour planifier la suppression.
-
-{/* DRAFT: À capturer — afficher la fenêtre de confirmation de la résiliation */}
 
 Le statut du Load Balancer change pour refléter la suppression planifiée. Vous pouvez consulter la demande depuis l'onglet `Tâches` du service.
 
 </Tab>
 <Tab label="API OVHcloud">
 
-La résiliation d'un service via l'API OVHcloud se déroule en deux étapes : vous demandez la résiliation, puis vous la confirmez à l'aide du jeton que vous recevez.
+La résiliation d'un service via l'API OVHcloud se déroule en deux étapes : vous demandez la résiliation, puis vous la confirmez à l'aide du jeton que vous recevez.
 
 1. Demandez la résiliation du service. Cet appel renvoie un jeton de confirmation, généralement envoyé par e-mail.
 

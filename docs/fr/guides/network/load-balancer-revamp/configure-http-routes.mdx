@@ -1,5 +1,5 @@
 ---
-title: Configurer des routes HTTP
+title: Configurer des routes HTTP sur un Load Balancer
 description: Créez des routes HTTP avec des règles de correspondance et des actions pour diriger, rediriger ou rejeter dynamiquement le trafic sur votre OVHcloud Load Balancer.
 lastUpdated: 2026-06-05
 ---
@@ -13,11 +13,11 @@ Par défaut, un frontend OVHcloud Load Balancer transmet tout le trafic entrant 
 
 Ce guide présente le modèle de routes, l'API qui l'expose et plusieurs scénarios de configuration concrets.
 
-**Dans ce guide, vous apprendrez à :**
+**Dans ce guide, vous apprendrez à :**
 
 - Comprendre comment les routes, les règles et les actions sont évaluées.
 - Créer une route HTTP et y attacher des règles de correspondance.
-- Appliquer des schémas courants : forcer le HTTPS, le routage par hôte virtuel, la réservation par IP et le routage par méthode.
+- Appliquer des schémas courants : forcer le HTTPS, le routage par hôte virtuel, la réservation par IP et le routage par méthode.
 
 :::warning
 La gestion des routes est disponible **uniquement via l'API OVHcloud**. L'<ManagerLink to="/">espace client OVHcloud</ManagerLink> ne permet pas de créer des routes. L'espace client sert à appliquer (redéployer) la configuration sur la zone concernée une fois les routes créées.
@@ -32,53 +32,53 @@ La gestion des routes est disponible **uniquement via l'API OVHcloud**. L'<Manag
 
 ## Introduction
 
-L'OVHcloud Load Balancer répartit le trafic entrant entre des serveurs backend regroupés en fermes, derrière des frontends qui écoutent sur un protocole et un port donnés. Une **route** ajoute une logique conditionnelle par-dessus ce mécanisme : une action exécutée lorsqu'une ou plusieurs conditions sont remplies. Les routes sont évaluées pour les protocoles **http** et **tcp** ; ce guide se concentre sur les routes HTTP, qui sont les plus expressives.
+L'OVHcloud Load Balancer répartit le trafic entrant entre des serveurs backend regroupés en fermes, derrière des frontends qui écoutent sur un protocole et un port donnés. Une **route** ajoute une logique conditionnelle par-dessus ce mécanisme : une action exécutée lorsqu'une ou plusieurs conditions sont remplies. Les routes sont évaluées pour les protocoles **http** et **tcp** ; ce guide se concentre sur les routes HTTP, qui sont les plus expressives.
 
 ## En pratique
 
-**Sommaire :**
+**Sommaire :**
 
-- [Vue d'ensemble : routes, règles et actions](#overview)
+- [Vue d'ensemble : routes, règles et actions](#overview)
 - [Règles et actions disponibles](#available)
 - [Créer une route et y attacher une règle](#create)
-- [Scénario A : forcer le HTTPS pour les pages de connexion](#scenario-a)
-- [Scénario B : router par domaine (hôte virtuel)](#scenario-b)
-- [Scénario C : réserver un frontend à un seul domaine](#scenario-c)
-- [Scénario D : router par URL et méthode HTTP](#scenario-d)
+- [Scénario A : forcer le HTTPS pour les pages de connexion](#scenario-a)
+- [Scénario B : router par domaine (hôte virtuel)](#scenario-b)
+- [Scénario C : réserver un frontend à un seul domaine](#scenario-c)
+- [Scénario D : router par URL et méthode HTTP](#scenario-d)
 - [Appliquer la configuration](#apply)
 - [Référence de l'API](#reference)
 - [Limitations](#limitations)
 - [Résolution des problèmes](#troubleshooting)
 
-### Vue d'ensemble : routes, règles et actions <a name="overview"></a>
+### Vue d'ensemble : routes, règles et actions <a name="overview"></a>
 
-Assimilez ce modèle avant de créer la moindre route.
+Familiarisez-vous avec ce modèle avant de créer votre première route.
 
-Une route se compose de deux parties :
+Une route se compose de deux parties :
 
 - **Des règles** — les conditions à évaluer (par exemple, *l'URL commence par `/wp-login`*).
 - **Une action** — ce qu'il faut faire lorsque toutes les règles sont remplies (par exemple, *rediriger vers la version HTTPS*).
 
-Un exemple concret : *SI l'URL commence par `/wp-login` ET que la connexion arrive sur un frontend HTTP, ALORS rediriger vers la version HTTPS de la page.* Les deux conditions sont des règles ; la redirection est l'action.
+Un exemple concret : *SI l'URL commence par `/wp-login` ET que la connexion arrive sur un frontend HTTP, ALORS rediriger vers la version HTTPS de la page.* Les deux conditions sont des règles ; la redirection est l'action.
 
-Toutes les actions sont **finales** : une fois les règles d'une route validées et son action exécutée, l'évaluation s'arrête.
+Toutes les actions sont **finales** : une fois les règles d'une route validées et son action exécutée, l'évaluation s'arrête.
 
-Gardez ces relations à l'esprit :
+Gardez ces relations à l'esprit :
 
 - Une route peut comporter plusieurs règles. **Toutes** les règles d'une route doivent correspondre pour que son action s'exécute.
 - Une route ne peut être attachée qu'à un seul frontend.
-- Un frontend peut comporter plusieurs routes ; leur ordre d'évaluation dépend du type et du poids.
+- Un frontend peut comporter plusieurs routes ; leur ordre d'évaluation dépend du type et du poids.
 
-Lorsqu'une requête arrive, les routes sont évaluées dans cet ordre :
+Lorsqu'une requête arrive, les routes sont évaluées dans cet ordre :
 
 1. D'abord les routes **reject** et **redirect**, puis les routes **farm**.
 2. Au sein de chaque catégorie, les routes sont évaluées par **ordre de poids croissant**.
 3. Si deux routes ont le même poids, la **route créée en premier** est évaluée en premier.
 4. Seule la **première action correspondante** est exécutée.
 
-<img className="thumbnail" alt="Vue d'ensemble : routes, règles et actions — schéma" src="/images/network/load-balancer-revamp/configure-http-routes/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d'ensemble : routes, règles et actions — schéma" src="/images/network/load-balancer-revamp/configure-http-routes/fig-1.fr.svg" loading="lazy" />
 
-Les trois types d'actions sont :
+Les trois types d'actions sont :
 
 | Action | Description |
 |---|---|
@@ -88,18 +88,17 @@ Les trois types d'actions sont :
 
 ### Règles et actions disponibles <a name="available"></a>
 
-Avant toute configuration, interrogez la liste à jour des actions et règles prises en charge pour votre service. Ces appels renvoient les noms de champs valides, les comparateurs et les types de valeurs attendus. Si un champ est `null`, aucune valeur n'est attendue ; une valeur invalide renvoie une erreur de validation.
+Avant toute configuration, interrogez la liste à jour des actions et règles prises en charge pour votre service. Ces appels renvoient les noms de champs valides, les comparateurs et les types de valeurs attendus. Si un champ est `null`, aucune valeur n'est attendue ; une valeur invalide renvoie une erreur de validation.
 
-
-Lister les actions disponibles :
+Lister les actions disponibles :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableRouteActions"} />
 
-Lister les règles de correspondance disponibles :
+Lister les règles de correspondance disponibles :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/availableRouteRules"} />
 
-Les valeurs du champ `field` d'une règle sur lesquelles vous pouvez établir une correspondance sont :
+Les valeurs du champ `field` d'une règle sur lesquelles vous pouvez établir une correspondance sont :
 
 | `field` | Signification | `hasSubField` |
 |---|---|---|
@@ -112,7 +111,7 @@ Les valeurs du champ `field` d'une règle sur lesquelles vous pouvez établir un
 | `header` | Un en-tête HTTP. `subField` correspond au nom de l'en-tête. | Oui |
 | `cookie` | Un cookie HTTP. `subField` correspond au nom du cookie. | Oui |
 
-Les comparateurs `match` sont :
+Les comparateurs `match` sont :
 
 | `match` | Signification |
 |---|---|
@@ -129,7 +128,7 @@ Les comparateurs `match` sont :
 
 ### Créer une route et y attacher une règle <a name="create"></a>
 
-Cette section couvre les deux appels sur lesquels reposent tous les scénarios : créer la route, puis attacher une règle. L'ensemble des opérations sur les routes et les règles est détaillé dans la [Référence de l'API](#reference).
+Cette section couvre les deux appels sur lesquels reposent tous les scénarios : créer la route, puis attacher une règle. L'ensemble des opérations sur les routes et les règles est détaillé dans la [Référence de l'API](#reference).
 
 Commencez par créer la route. Seul `action.type` est obligatoire.
 
@@ -147,7 +146,7 @@ Commencez par créer la route. Seul `action.type` est obligatoire.
 
 L'appel renvoie la route créée. Notez son `routeId` — vous en avez besoin pour attacher des règles.
 
-Attachez ensuite une règle à la route :
+Attachez ensuite une règle à la route :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule"} />
 
@@ -161,18 +160,16 @@ Attachez ensuite une règle à la route :
 | `negate` | Non | Inverse le résultat du comparateur. |
 | `pattern` | Non | Argument du comparateur. |
 
-{/* DRAFT: À capturer — la console API OVHcloud montrant un appel POST /http/route et sa réponse contenant le routeId */}
-
 > [!INFO]
 > Vous pouvez créer jusqu'à 50 routes par service et attacher jusqu'à 5 règles par route.
 
-### Scénario A : forcer le HTTPS pour les pages de connexion <a name="scenario-a"></a>
+### Scénario A : forcer le HTTPS pour les pages de connexion <a name="scenario-a"></a>
 
 Utilisez ce scénario pour migrer un site vers le HTTPS section par section, en commençant par les pages qui transmettent des identifiants. Par défaut, les URL de connexion WordPress commencent par `/wp-login`.
 
 Vous avez besoin d'une route avec une action `redirect` et d'une règle qui correspond aux URL commençant par `/wp-login`.
 
-Créez la route :
+Créez la route :
 
 | Champ | Valeur |
 |---|---|
@@ -183,7 +180,7 @@ Créez la route :
 | `action.status` | `302` pour une redirection temporaire, `301` pour une redirection permanente. |
 | `action.target` | `https://\${host}\${path}\${arguments}` pour conserver le même hôte, le même chemin et les mêmes arguments. |
 
-Attachez la règle :
+Attachez la règle :
 
 | Champ | Valeur |
 |---|---|
@@ -197,15 +194,15 @@ Attachez la règle :
 Pour ajouter une autre redirection, créez une route et une règle distinctes. Si vous ajoutez une seconde règle à la même route, **les deux** règles doivent correspondre. Par exemple, `startswith /wp-login` et `startswith /wp-admin` sur la même route ne peuvent jamais être vraies en même temps, si bien que la redirection ne se déclencherait jamais.
 :::
 
-La cible de la `redirect` peut contenir des variables : `protocol`, `domain`, `host`, `port`, `path` et `arguments`. Par exemple, `${protocol}://new.example.com\${path}\${arguments}` redirige vers un nouveau domaine tout en conservant le chemin et la chaîne de requête.
+La cible de la `redirect` peut contenir des variables : `protocol`, `domain`, `host`, `port`, `path` et `arguments`. Par exemple, `${protocol}://new.example.com\${path}\${arguments}` redirige vers un nouveau domaine tout en conservant le chemin et la chaîne de requête.
 
-### Scénario B : router par domaine (hôte virtuel) <a name="scenario-b"></a>
+### Scénario B : router par domaine (hôte virtuel) <a name="scenario-b"></a>
 
 Utilisez ce scénario pour héberger plusieurs sites derrière un seul frontend et choisir la ferme de serveurs en fonction de l'en-tête `Host`, à la manière des hôtes virtuels Apache.
 
-Vous avez besoin d'une route par hôte virtuel, chacune avec une action `farm` et une règle correspondant au domaine. Pour router `www.example.com` :
+Vous avez besoin d'une route par hôte virtuel, chacune avec une action `farm` et une règle correspondant au domaine. Pour router `www.example.com` :
 
-Créez la route :
+Créez la route :
 
 | Champ | Valeur |
 |---|---|
@@ -215,7 +212,7 @@ Créez la route :
 | `action.type` | `farm` |
 | `action.target` | Identifiant de la ferme vers laquelle diriger ce domaine. |
 
-Attachez la règle :
+Attachez la règle :
 
 | Champ | Valeur |
 |---|---|
@@ -225,13 +222,13 @@ Attachez la règle :
 | `negate` | `false` |
 | `pattern` | `www.example.com` |
 
-### Scénario C : réserver un frontend à un seul domaine <a name="scenario-c"></a>
+### Scénario C : réserver un frontend à un seul domaine <a name="scenario-c"></a>
 
 Utilisez ce scénario pour dédier une IP additionnelle et un frontend à un seul domaine et empêcher d'autres domaines d'atteindre son backend. Comme chaque certificat est disponible sur chaque frontend, un tiers qui pointerait son domaine vers votre IP atteindrait autrement votre ferme.
 
-Utilisez une route `reject` avec une règle qui correspond à tout hôte **autre que** le domaine autorisé (notez `negate: true`). Pour réserver un frontend à `www.example.com` :
+Utilisez une route `reject` avec une règle qui correspond à tout hôte **autre que** le domaine autorisé (notez `negate: true`). Pour réserver un frontend à `www.example.com` :
 
-Créez la route :
+Créez la route :
 
 | Champ | Valeur |
 |---|---|
@@ -241,7 +238,7 @@ Créez la route :
 | `action.type` | `reject` |
 | `action.status` | `403` |
 
-Attachez la règle :
+Attachez la règle :
 
 | Champ | Valeur |
 |---|---|
@@ -251,13 +248,13 @@ Attachez la règle :
 | `negate` | `true` |
 | `pattern` | `www.example.com` |
 
-### Scénario D : router par URL et méthode HTTP <a name="scenario-d"></a>
+### Scénario D : router par URL et méthode HTTP <a name="scenario-d"></a>
 
 Utilisez ce scénario pour envoyer des requêtes spécifiques vers une ferme dédiée, par exemple pour tenir à l'écart de votre ferme de production des requêtes analytiques `POST` gourmandes en données.
 
-Vous avez besoin d'une route avec une action `farm` et de **2** règles : une qui correspond à la méthode, une qui correspond au chemin. Les deux règles doivent correspondre.
+Vous avez besoin d'une route avec une action `farm` et de **2** règles : une qui correspond à la méthode, une qui correspond au chemin. Les deux règles doivent correspondre.
 
-Créez la route :
+Créez la route :
 
 | Champ | Valeur |
 |---|---|
@@ -267,7 +264,7 @@ Créez la route :
 | `action.type` | `farm` |
 | `action.target` | Identifiant de la ferme dédiée. |
 
-Attachez 2 règles à la même route :
+Attachez 2 règles à la même route :
 
 | Champ | Règle 1 (méthode) | Règle 2 (chemin) |
 |---|---|---|
@@ -285,59 +282,57 @@ Attachez 2 règles à la même route :
 Les routes et les règles ne deviennent actives qu'une fois la configuration appliquée (redéployée) sur la zone concernée. Créer, modifier ou supprimer une route ou une règle nécessite un redéploiement.
 
 1. Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez votre service Load Balancer.
-2. Cliquez sur **Appliquer les modifications** pour redéployer la configuration en attente sur la zone concernée.
+2. Cliquez sur <code className="action">Appliquer les modifications</code> pour redéployer la configuration en attente sur la zone concernée.
 
-{/* DRAFT: À capturer — l'écran de l'espace client utilisé pour appliquer la configuration en attente sur une zone */}
-
-Vous pouvez consulter les modifications en attente via l'API avant de les appliquer :
+Vous pouvez consulter les modifications en attente via l'API avant de les appliquer :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/pendingChanges"} />
 
-Les routes et les règles peuvent également être gérées de façon déclarative avec le provider Terraform OVHcloud, à l'aide des ressources `ovh_iploadbalancing_http_route` et `ovh_iploadbalancing_http_route_rule`. Notez que le redéploiement de la configuration sur une zone reste une opération à effectuer via l'API ou l'espace client ; il n'existe pas de ressource Terraform pour cela.
+Les routes et les règles peuvent également être gérées de façon déclarative avec le provider Terraform OVHcloud, à l'aide des ressources `ovh_iploadbalancing_http_route` et `ovh_iploadbalancing_http_route_rule`. Le redéploiement de la configuration sur une zone est exposé via la ressource `ovh_iploadbalancing_refresh` ; vous pouvez aussi le déclencher via l'API ou l'espace client.
 
 ### Référence de l'API <a name="reference"></a>
 
-Les routes TCP et HTTP se configurent de la même manière ; remplacez `http` par `tcp` dans les chemins pour le TCP. Certains champs sont spécifiques au HTTP.
+Les routes TCP et HTTP se configurent de la même manière ; remplacez `http` par `tcp` dans les chemins pour le TCP. Certains champs sont spécifiques au HTTP.
 
 #### Opérations sur les routes
 
-Lister les routes définies pour un service. La liste est renvoyée dans l'ordre d'évaluation et peut être filtrée par `frontendId` :
+Lister les routes définies pour un service. La liste est renvoyée dans l'ordre d'évaluation et peut être filtrée par `frontendId` :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route"} />
 
-Consulter les détails d'une route :
+Consulter les détails d'une route :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}"} />
 
-Modifier une route :
+Modifier une route :
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}"} />
 
-Supprimer une route. La suppression d'une route supprime également toutes ses règles, vous n'avez donc pas besoin de les retirer individuellement :
+Supprimer une route. La suppression d'une route supprime également toutes ses règles, vous n'avez donc pas besoin de les retirer individuellement :
 
 <Api version="v1" section="/ipLoadbalancing" method="DELETE" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}"} />
 
 #### Opérations sur les règles
 
-Lister les règles attachées à une route :
+Lister les règles attachées à une route :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule"} />
 
-Consulter les détails d'une règle :
+Consulter les détails d'une règle :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule/\{ruleId\}"} />
 
-Modifier une règle :
+Modifier une règle :
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule/\{ruleId\}"} />
 
-Supprimer une règle :
+Supprimer une règle :
 
 <Api version="v1" section="/ipLoadbalancing" method="DELETE" route={"/ipLoadbalancing/\{serviceName\}/http/route/\{routeId\}/rule/\{ruleId\}"} />
 
 #### Appels de découverte
 
-Lister toutes les routes (HTTP et TCP) avec leur identifiant, leur nom d'affichage et leur type. Cet appel est conçu pour simplifier l'auto-complétion :
+Lister toutes les routes (HTTP et TCP) avec leur identifiant, leur nom d'affichage et leur type. Cet appel est conçu pour simplifier l'auto-complétion :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/definedRoutes"} />
 
@@ -348,7 +343,7 @@ Lister toutes les routes (HTTP et TCP) avec leur identifiant, leur nom d'afficha
 | Canal | La gestion des routes et des règles est disponible uniquement via l'API OVHcloud. |
 | Routes par service | Jusqu'à 50 routes par service Load Balancer. |
 | Règles par route | Jusqu'à 5 règles par route. |
-| Finalité des actions | Toutes les actions sont finales ; la première action correspondante arrête l'évaluation. |
+| Finalité des actions | Toutes les actions sont finales ; la première action correspondante arrête l'évaluation. |
 | Longueur du `pattern` `source` | Le `pattern` de la règle `source` est limité à 255 caractères. |
 | Redéploiement requis | Les modifications ne prennent effet qu'après application de la configuration sur la zone. |
 | Dépendance à l'offre | La création de routes nécessite une offre Load Balancer compatible. Consultez le guide [Prérequis et limitations](/guides/network/load-balancer-revamp/prerequisites-and-limitations). |

@@ -46,8 +46,6 @@ To reach the management dashboard for an existing Load Balancer:
 2. Open the `Network` menu and select `Load Balancer`.
 3. Select your service from the list to open its dashboard.
 
-{/* DRAFT: To screenshot - capture the Load Balancer listing under Network > Load Balancer */}
-
 The dashboard opens on the `General` view, which summarises the service: status, attached IP addresses, availability zone, and the number of frontends, farms, and servers configured. The tabs across the top give access to each configurable area.
 
 To list your services through the OVHcloud API instead:
@@ -87,19 +85,13 @@ The `Server Farms` tab lists every backend farm. A farm groups the servers that 
 
 Available balancing algorithms are `Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, and `First Available`. Stickiness options are `None`, `Cookie`, and `Source IP`. These options are described in [Configure stickiness](/guides/network/load-balancer-revamp/configure-stickiness).
 
-{/* DRAFT: To screenshot - capture the Server Farms tab with one farm expanded */}
-
 #### Frontends
 
 The `Frontends` tab lists the listening endpoints. A frontend defines the protocol, the listening port, and the availability zone, then sends traffic to a `Default route` or `Route to farm`. Click <code className="action">Create frontend</code> to add one. For HTTPS frontends, attach a `TLS Certificate` from the SSL Certificates tab.
 
-{/* DRAFT: To screenshot - capture the Frontends tab */}
-
 #### SSL Certificates
 
 The `SSL Certificates` tab manages the certificates used for TLS termination. Click <code className="action">Add Certificate</code> to upload your own certificate, or order a free certificate. Set the TLS configuration profile to `Modern (TLS 1.3)` or `Intermediate (TLS 1.2+)`. See [Configure SSL certificates](/guides/network/load-balancer-revamp/configure-ssl-certificates).
-
-{/* DRAFT: To screenshot - capture the SSL Certificates tab */}
 
 #### Subnet
 
@@ -109,8 +101,6 @@ The `Subnet` tab manages the private subnets the Load Balancer uses to reach bac
 
 The `Statistics` tab displays traffic graphs for the service, such as concurrent connections and requests per minute. Use it to observe load patterns and confirm that traffic is reaching your farms.
 
-{/* DRAFT: To screenshot - capture the Statistics tab graphs */}
-
 #### Logs
 
 The `Logs` tab manages log forwarding. Create a subscription that streams Load Balancer logs to a destination such as Logs Data Platform. See [Configure logs forwarding](/guides/network/load-balancer-revamp/configure-logs-forwarding).
@@ -118,7 +108,6 @@ The `Logs` tab manages log forwarding. Create a subscription that streams Load B
 #### Tasks
 
 The `Tasks` tab lists the asynchronous operations the platform runs on your behalf, including each apply-configuration operation. Each task shows its status, so you can confirm whether a change has finished propagating.
-
 
 To list tasks through the OVHcloud API:
 
@@ -149,8 +138,6 @@ Before applying, review what is staged so you activate only the changes you inte
 
 A banner or indicator appears on the dashboard when changes are pending. Review the listed edits, then click <code className="action">Apply changes</code> to activate them.
 
-{/* DRAFT: To screenshot - capture the pending-changes banner / apply prompt on the dashboard */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -174,8 +161,6 @@ Applying pushes every pending change to the active configuration in one operatio
 
 When changes are pending, the dashboard offers an <code className="action">Apply changes</code> action. Confirm it to activate the staged configuration. The operation runs as a task you can follow in the `Tasks` tab.
 
-{/* DRAFT: To screenshot - capture the apply confirmation dialog */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -190,7 +175,7 @@ Apply all pending changes with a single call:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider can declare the staged objects — for example `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route`, and `ovh_iploadbalancing_tcp_farm`. There is no Terraform resource that applies a pending configuration: trigger the apply with the `POST /ipLoadbalancing/\{serviceName\}/refresh` API call (or from the Control Panel) after Terraform has created or updated the resources.
+The OVHcloud Terraform provider can declare the staged objects — for example `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_http_farm_server`, `ovh_iploadbalancing_http_route`, and `ovh_iploadbalancing_tcp_farm`. To apply the pending configuration from Terraform, use the `ovh_iploadbalancing_refresh` resource — or trigger the apply with the `POST /ipLoadbalancing/\{serviceName\}/refresh` API call (or from the Control Panel) after Terraform has created or updated the resources.
 
 </Tab>
 </Tabs>

@@ -1,5 +1,5 @@
 ---
-title: What is OVHcloud Load Balancer
+title: What is the OVHcloud Load Balancer
 description: Understand what the OVHcloud Load Balancer is, how HTTP, TCP, and UDP balancing differ, its core components, and when to use the service.
 lastUpdated: 2026-06-05
 ---
@@ -23,8 +23,6 @@ The service is built on established open-source technologies and exposes a publi
 
 <img className="thumbnail" alt="Overview diagram" src="/images/network/load-balancer-revamp/what-is-load-balancer/fig-1.svg" loading="lazy" />
 
-{/* DRAFT: To screenshot - capture the Load Balancer dashboard in the Control Panel showing the General view */}
-
 ## Key concepts
 
 The Load Balancer is configured by combining a small set of objects. Understanding each one and how they relate is the foundation for every configuration task.
@@ -33,13 +31,13 @@ The Load Balancer is configured by combining a small set of objects. Understandi
 
 A frontend defines how traffic enters the Load Balancer. It specifies the entry protocol (HTTP, HTTPS, TCP, or UDP) and the port the Load Balancer listens on. Each frontend is attached to a default server farm, which receives the traffic unless a route directs it elsewhere. For HTTPS frontends, you also associate an SSL/TLS certificate. Frontends and farms are protocol-specific: a UDP frontend pairs only with a UDP farm, just as a TCP frontend pairs with a TCP farm.
 
-In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, frontends are managed from the `Frontends` tab.
+In the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, frontends are managed from the `Frontends & routing` tab.
 
 ### Server farm
 
 A server farm (also called a farm) is the pool of backend servers that receive balanced traffic. The farm defines the balancing algorithm, the health probe used to detect unresponsive servers, and the stickiness behaviour that keeps a client bound to the same server when required. A frontend forwards traffic to a farm; the farm decides which individual server handles each connection.
 
-Farms are managed from the `Server Farms` tab.
+Farms are managed from the `Farms` tab.
 
 ### Server
 
@@ -51,7 +49,7 @@ A route is a rule that directs HTTP traffic to a specific farm based on conditio
 
 ### Zone
 
-A zone is the geographic location where a Load Balancer instance is deployed. The Load Balancer can operate across multiple zones, and its public IP is announced on the OVHcloud Anycast network so that clients reach the nearest healthy instance. Zones are managed from the `Subnet` tab.
+A zone is the geographic location where a Load Balancer instance is deployed. The Load Balancer can operate across multiple zones, and its public IP is announced on the OVHcloud Anycast network so that clients reach the nearest healthy instance. Zones are managed from the `Network` tab.
 
 <img className="thumbnail" alt="Zone diagram" src="/images/network/load-balancer-revamp/what-is-load-balancer/fig-2.svg" loading="lazy" />
 

@@ -1,5 +1,5 @@
 ---
-title: Configure server farms and balancing methods
+title: Configure server farms on a Load Balancer
 description: Create and edit OVHcloud Load Balancer server farms, add backend servers, set weights and backups, and choose a balancing method.
 lastUpdated: 2026-06-05
 ---
@@ -81,13 +81,9 @@ Create an HTTP farm to balance HTTP/HTTPS traffic, a TCP farm to balance raw TCP
 1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service.
 2. Select the `Server Farms` tab.
 3. Click `Create farm`. The `Create Server Farm` form opens.
-4. Select the farm type (HTTP, TCP, or UDP), the zone, and the port used to contact the backend servers.
+4. Select the farm type (the **Protocol** field) (HTTP, TCP, or UDP), the zone, and the port used to contact the backend servers.
 5. Enter a display name for the farm and select the balancing method.
-6. Confirm to create the farm.
-
-{/* DRAFT: To screenshot - Server Farms tab with the Create farm button */}
-
-{/* DRAFT: To screenshot - Create Server Farm form showing type, zone, port, name and balancing method fields */}
+6. Click <code className="action">Create Farm</code> to create the farm.
 
 After creating the farm, [apply the configuration](#apply) for it to take effect.
 
@@ -152,10 +148,6 @@ Once a farm exists, add the backend servers that receive traffic. Each server is
 5. Confirm to add the server.
 6. Repeat for each backend server, then [apply the configuration](#apply).
 
-{/* DRAFT: To screenshot - farm editor with the Add server button */}
-
-{/* DRAFT: To screenshot - Add server form showing address, port, weight and backup fields */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -217,8 +209,6 @@ You can set the balancing method when you create the farm and change it at any t
 1. In the `Server Farms` tab, locate the farm and open it for editing.
 2. In the advanced settings, select the balancing method from the list (`Round Robin`, `Least Connections`, `Source Hash`, `URI Hash`, or `First Available`).
 3. Save the change, then [apply the configuration](#apply).
-
-{/* DRAFT: To screenshot - farm advanced settings showing the balancing method selector */}
 
 :::info
 `URI Hash` is available for HTTP farms only. It does not appear for TCP farms. The balancing method (`balance` field) applies to HTTP and TCP farms; UDP farms do not expose a balancing-method selector.
@@ -312,8 +302,6 @@ Changes to farms and servers are staged until you apply them. Applying deploys t
 
 After saving your changes, click `Apply changes` in the banner that appears in the service interface.
 
-{/* DRAFT: To screenshot - the apply-configuration banner shown after staging changes */}
-
 :::info
 You can review the changes waiting to be applied before deploying them. The set of staged changes is available from the service.
 :::
@@ -337,7 +325,7 @@ To review the staged changes before applying them, use:
 </Tab>
 <Tab label="Terraform">
 
-The Terraform provider has no resource for the apply/refresh action. After `terraform apply` creates or updates the farm and server resources (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm`, and their `_server` resources), deploy the staged configuration to the zone with the API call above or the `Apply changes` banner in the Control Panel.
+The Terraform provider exposes the apply/refresh action as the `ovh_iploadbalancing_refresh` resource. After `terraform apply` creates or updates the farm and server resources (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm`, and their `_server` resources), deploy the staged configuration to the zone with `ovh_iploadbalancing_refresh`, the API call above, or the `Apply changes` banner in the Control Panel.
 
 </Tab>
 </Tabs>

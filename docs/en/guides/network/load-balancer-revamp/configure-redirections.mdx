@@ -1,5 +1,5 @@
 ---
-title: Configure redirections
+title: Configure redirections on a Load Balancer
 description: Configure HTTP redirections such as HTTP to HTTPS on your OVHcloud Load Balancer frontend, via the Control Panel or the OVHcloud API.
 lastUpdated: 2026-06-05
 ---
@@ -44,20 +44,16 @@ You can configure a redirection on a new frontend during creation, or on an exis
 <Tabs>
 <Tab label="Control Panel">
 
-1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the `Network` section, then `Load Balancer`.
-2. Select your Load Balancer service, then open the `Frontends` tab.
-3. To create a new frontend, click `Create frontend`. To modify an existing one, open the actions menu to the right of the frontend and select `Edit`.
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Network</code> section, then <code className="action">Load Balancer</code>.
+2. Select your Load Balancer service, then open the <code className="action">Frontends</code> tab.
+3. To create a new frontend, click <code className="action">Create frontend</code>. To modify an existing one, open the actions menu to the right of the frontend and select <code className="action">Edit</code>.
 4. Select the `HTTP` or `HTTPS` protocol for the frontend. A redirection can only be set on HTTP or HTTPS frontends.
 5. Complete the standard frontend settings. You do not need to set a default farm, because traffic is redirected rather than forwarded.
-6. In the advanced settings, enter the destination URL in the redirect location field. {/* DRAFT: To verify — confirm the exact label of the redirect location field in the new Manager frontend editor */}
+6. Under `Default route`, select the <code className="action">Redirect to URL</code> option and enter the destination URL.
 
-{/* DRAFT: To screenshot — capture the frontend editor advanced settings with the redirect location field filled in */}
+7. Confirm the frontend by clicking <code className="action">Create Frontend</code> or <code className="action">Save changes</code>, depending on whether you are creating or modifying.
 
-7. Confirm the frontend by clicking `Create frontend` or `Edit Frontend`, depending on whether you are creating or modifying.
-
-Apply the pending configuration by clicking `Apply changes` so the redirection becomes active.
-
-{/* DRAFT: To screenshot — capture the banner or action used to apply the pending configuration */}
+Apply the pending configuration by clicking <code className="action">Apply changes</code> so the redirection becomes active.
 
 For details on applying changes, see the [Manage your Load Balancer via the Control Panel](/guides/network/load-balancer-revamp/manage-via-control-panel) guide.
 
@@ -100,9 +96,9 @@ The redirection becomes active once the configuration is applied.
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for HTTP frontends or for applying configuration changes. Redirections, which are set through a frontend's `redirectLocation` property, must therefore be configured via the OVHcloud API or the Control Panel.
+The OVHcloud Terraform provider configures redirections through the `redirect_location` argument of the `ovh_iploadbalancing_http_frontend` resource. After changing a frontend, apply the pending configuration with the `ovh_iploadbalancing_refresh` resource.
 
-The provider does cover related Load Balancer objects such as the service (`ovh_iploadbalancing`), server farms (`ovh_iploadbalancing_http_farm`), and HTTP routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`). For redirections specifically, use the OVHcloud API or Control Panel tabs above.
+The provider also covers related Load Balancer objects such as the service (`ovh_iploadbalancing`), server farms (`ovh_iploadbalancing_http_farm`), and HTTP routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`).
 
 </Tab>
 </Tabs>

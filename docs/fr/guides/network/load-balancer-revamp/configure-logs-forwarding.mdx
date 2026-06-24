@@ -1,5 +1,5 @@
 ---
-title: Configurer le transfert des logs
+title: Configurer le transfert des logs sur un Load Balancer
 description: Transférez les logs d'accès TCP, HTTP et HTTPS de votre OVHcloud Load Balancer vers Logs Data Platform à l'aide de l'API OVHcloud.
 lastUpdated: 2026-06-05
 ---
@@ -11,7 +11,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 Ce guide explique comment activer le transfert des logs depuis votre OVHcloud Load Balancer vers Logs Data Platform (LDP). Une fois le transfert activé, les logs d'accès générés par vos listeners TCP, HTTP et HTTPS sont ingérés dans un flux de données Logs Data Platform, où vous pouvez les stocker, les interroger et les visualiser.
 
-**Dans ce guide, vous apprendrez à :**
+**Dans ce guide, vous apprendrez à :**
 
 - Préparer votre Load Balancer en rafraîchissant sa configuration afin que le format de logging soit à jour.
 - Récupérer le flux de données cible de votre compte Logs Data Platform.
@@ -39,7 +39,7 @@ Si vous ne connaissez pas bien la configuration d'un flux de données Logs Data 
 
 L'OVHcloud Load Balancer repose sur [HAProxy](https://en.wikipedia.org/wiki/HAProxy), le composant open source utilisé pour la répartition de charge. Les logs d'accès transférés vers Logs Data Platform sont produits par HAProxy. Logs Data Platform (LDP) est une plateforme de gestion de logs entièrement managée et exploitée par OVHcloud, qui vous permet d'ingérer, de stocker, d'archiver, d'interroger et de visualiser des logs à travers un flux de données.
 
-Le transfert des logs ingère les logs d'un service OVHcloud dans un flux de données LDP au sein du même compte OVHcloud. Vous l'activez service par service. Lorsque vous activez le transfert pour un Load Balancer vers un flux de données, un *abonnement* est créé et rattaché à ce flux en vue de sa gestion ultérieure.
+Le transfert des logs ingère les logs d'un service OVHcloud dans un flux de données LDP au sein du même compte OVHcloud. Il s'active service par service. Lorsque vous activez le transfert d'un Load Balancer vers un flux de données, un *abonnement* est créé et rattaché à ce flux pour sa gestion ultérieure.
 
 L'activation du transfert est gratuite. Vous êtes facturé pour votre utilisation de Logs Data Platform selon la grille tarifaire standard. Pour en savoir plus, consultez la [tarification de Logs Data Platform](/guides/manage-and-operate/observability/logs-data-platform/getting-started-quick-start) et la [page du service LDP](/links/manage-operate/ldp).
 
@@ -47,7 +47,7 @@ L'activation du transfert est gratuite. Vous êtes facturé pour votre utilisati
 
 Cette section explique le fonctionnement du transfert des logs, la structure des logs transférés, puis vous guide pas à pas dans l'activation, la vérification et la gestion d'un abonnement.
 
-**Sommaire :**
+**Sommaire :**
 
 - [Fonctionnement du transfert](#how-it-works)
 - [Référence du contenu des logs](#log-content)
@@ -71,7 +71,7 @@ Le transfert est activé par Load Balancer et par type de log (`tcp` ou `http`).
 | Flux de données | Une partition logique des logs dans un compte LDP. Il s'agit de l'unité utilisée pour définir la rétention, l'archivage, le streaming en direct, les droits d'accès et les politiques d'alerte. |
 | Transfert des logs | La fonctionnalité qui ingère les logs du Load Balancer dans un flux de données LDP. Activée service par service. |
 | Abonnement | L'objet créé lorsque le transfert est activé. Il rattache les logs du Load Balancer à un flux de données donné et sert à sa gestion ultérieure. |
-| Type de log | La catégorie de logs à transférer : `tcp` ou `http`. Récupérée via l'endpoint d'API dédié au type de log. |
+| Type de log | La catégorie de logs à transférer : `tcp` ou `http`. Récupérée via l'endpoint d'API dédié au type de log. |
 
 ### Référence du contenu des logs <a name="log-content"></a>
 
@@ -94,7 +94,7 @@ Les champs décrits ci-dessous sont présents dans les logs transférés. Le pre
 | `backend_source_port_int` | Le port source utilisé par le Load Balancer pour se connecter à vos serveurs backend. | Entier |
 | `server_ip` | L'adresse IP du serveur backend connecté à votre Load Balancer. | IP |
 | `server_port_int` | Le port TCP du serveur backend connecté à votre Load Balancer. | Entier |
-| `termination_state` | L'indicateur de fin de session : 2 lettres pour TCP, 4 lettres pour HTTP. Consultez la [documentation HAProxy](https://docs.haproxy.org/2.6/configuration.html#8.5). | Chaîne de caractères (par exemple `----`) |
+| `termination_state` | L'indicateur de fin de session : 2 lettres pour TCP, 4 lettres pour HTTP. Consultez la [documentation HAProxy](https://docs.haproxy.org/2.6/configuration.html#8.5). | Chaîne de caractères (par exemple `----`) |
 | `bytes_read_int` | La taille, en octets, de la réponse envoyée par le Load Balancer au client. | Entier |
 | `bytes_uploaded_int` | La taille, en octets, de la requête envoyée par le client au Load Balancer. | Entier |
 | `time_duration_int` | La durée, en millisecondes, de la session TCP au moment où la requête a été effectuée. | Entier |
@@ -115,7 +115,7 @@ Vous avez besoin du `serviceName`, qui est le nom interne de votre Load Balancer
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route="/ipLoadbalancing" />
 
-Appliquez ensuite la configuration :
+Appliquez ensuite la configuration :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
@@ -128,8 +128,6 @@ Appliquez ensuite la configuration :
 Identifiez le flux de données Logs Data Platform qui recevra vos logs. Vous avez besoin de son `streamId` pour créer l'abonnement à l'étape suivante.
 
 Récupérez la liste des flux et les détails d'un flux spécifique depuis votre compte Logs Data Platform. Ces appels utilisent la section d'API `/dbaas/logs`. Indiquez le nom de votre service LDP sous la forme `ldp-xx-xxxx` comme `serviceName`.
-
-{/* DRAFT: À vérifier — les endpoints d'API /dbaas/logs ne figurent pas dans le cache SOT ; confirmez les chemins et méthodes exacts avant publication */}
 
 | Action | Endpoint | Méthode |
 |---|---|---|
@@ -146,21 +144,21 @@ Notez la valeur du `streamId` (par exemple `18d602ec-af40-4000-8e59-41ecc8c23f80
 
 Créez un abonnement qui relie les logs de votre Load Balancer au flux de données cible. C'est cet appel qui active le transfert.
 
-Tout d'abord, listez les types de logs disponibles pour votre Load Balancer afin de choisir la bonne valeur de `kind` :
+Tout d'abord, listez les types de logs disponibles pour votre Load Balancer afin de choisir la bonne valeur de `kind` :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/log/kind"} />
 
-Créez ensuite l'abonnement :
+Créez ensuite l'abonnement :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/log/subscription"} />
 
 | Paramètre | Requis | Description | Exemple |
 |---|---|---|---|
 | `serviceName` | Oui | Le nom interne de votre Load Balancer. | `loadbalancer-xxxxxxxxxxxxxxxxxxxx` |
-| `kind` (corps) | Oui | Le type de log à transférer : `http` ou `tcp`. | `http` |
+| `kind` (corps) | Oui | Le type de log à transférer : `http` ou `tcp`. | `http` |
 | `streamId` (corps) | Oui | Le flux de données LDP cible qui recevra les logs. | `18d602ec-af40-4000-8e59-41ecc8c23f80` |
 
-**Exemple de corps de requête :**
+**Exemple de corps de requête :**
 
 ```json
 {
@@ -169,7 +167,7 @@ Créez ensuite l'abonnement :
 }
 ```
 
-**Exemple de réponse :**
+**Exemple de réponse :**
 
 ```json
 {
@@ -184,15 +182,15 @@ La réponse renvoie un `operationId`. Vous l'utilisez à l'étape suivante pour 
 
 Confirmez que l'abonnement a bien été créé et que le transfert est actif.
 
-Une fois l'opération terminée, listez les abonnements de votre Load Balancer pour récupérer le `subscriptionId` :
+Une fois l'opération terminée, listez les abonnements de votre Load Balancer pour récupérer le `subscriptionId` :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/log/subscription"} />
 
-Obtenez ensuite les détails d'un abonnement spécifique :
+Obtenez ensuite les détails d'un abonnement spécifique :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/log/subscription/\{subscriptionId\}"} />
 
-**Exemple de réponse :**
+**Exemple de réponse :**
 
 ```json
 {
@@ -209,9 +207,7 @@ Obtenez ensuite les détails d'un abonnement spécifique :
 }
 ```
 
-Pour récupérer le `subscriptionId` directement depuis l'opération, vous pouvez également interroger les détails de l'opération avec la section `/dbaas/logs` :
-
-{/* DRAFT: À vérifier — l'endpoint d'opération /dbaas/logs ne figure pas dans le cache SOT ; confirmez le chemin et la méthode avant publication */}
+Pour récupérer le `subscriptionId` directement depuis l'opération, vous pouvez également interroger les détails de l'opération avec la section `/dbaas/logs` :
 
 | Action | Endpoint | Méthode |
 |---|---|---|
@@ -236,8 +232,6 @@ Une fois les logs ingérés dans votre flux de données Logs Data Platform, vous
 L'onglet `Logs` sur la page du Load Balancer dans l'espace client vous permet de visualiser l'activité récente de votre service. Pour le stockage à long terme, les alertes, le streaming WebSocket en temps réel, OpenSearch Dashboards et l'intégration Grafana, utilisez Logs Data Platform.
 :::
 
-{/* DRAFT: To screenshot — capture the `Logs` tab on the Load Balancer page in the OVHcloud Control Panel */}
-
 ### Gérer et résilier un abonnement <a name="manage"></a>
 
 Vous pouvez résilier le transfert à tout moment en supprimant l'abonnement. Après suppression, le flux de données ne reçoit plus de nouveaux logs du Load Balancer.
@@ -246,7 +240,7 @@ Vous pouvez résilier le transfert à tout moment en supprimant l'abonnement. Ap
 La suppression d'un abonnement arrête le transfert des nouveaux logs. Elle ne supprime pas les logs déjà stockés avant la résiliation. Les données stockées dans un flux de logs sont immuables, à moins que vous ne supprimiez l'intégralité du flux.
 :::
 
-Supprimez l'abonnement avec l'appel suivant :
+Supprimez l'abonnement avec l'appel suivant :
 
 <Api version="v1" section="/ipLoadbalancing" method="DELETE" route={"/ipLoadbalancing/\{serviceName\}/log/subscription/\{subscriptionId\}"} />
 
@@ -255,7 +249,7 @@ Supprimez l'abonnement avec l'appel suivant :
 | `serviceName` | Oui | Le nom interne de votre Load Balancer. | `loadbalancer-xxxxxxxxxxxxxxxxxxxx` |
 | `subscriptionId` | Oui | L'identifiant de l'abonnement à supprimer. | `19717204-2e10-4000-8c42-d7b11c9ce680` |
 
-Les abonnements de transfert des logs se gèrent uniquement via l'API OVHcloud. Le provider Terraform OVHcloud permet de gérer les fermes, les serveurs et les routes du Load Balancer (par exemple `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`), mais il ne propose pas de ressource pour les abonnements aux logs : utilisez donc les appels d'API ci-dessus pour les créer et les supprimer.
+Les abonnements de transfert des logs se gèrent uniquement via l'API OVHcloud. Le provider Terraform OVHcloud permet de gérer les fermes, les serveurs et les routes du Load Balancer (par exemple `ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`), mais il ne propose pas de ressource pour les abonnements aux logs : utilisez donc les appels d'API ci-dessus pour les créer et les supprimer.
 
 ### Limites <a name="limitations"></a>
 
@@ -280,7 +274,7 @@ Cette section couvre les problèmes les plus courants lors de la mise en place d
 | Seule une partie du trafic est journalisée | Les listeners UDP ne sont pas transférés. | N'attendez des logs que pour les listeners `tcp`, `http` et `https`. |
 | Impossible de trouver le `serviceName` | Le nom interne du Load Balancer est incertain. | Récupérez-le depuis l'espace client ou avec l'appel `GET /ipLoadbalancing` de l'[Étape 1](#step-1). |
 
-Si les étapes ci-dessus ne résolvent pas le problème :
+Si les étapes ci-dessus ne résolvent pas le problème :
 
 1. Rassemblez l'`operationId`, le `subscriptionId`, le `serviceName` et le `streamId` concernés.
 2. Contactez le [support OVHcloud](https://help.ovhcloud.com/) et fournissez les informations de diagnostic collectées ci-dessus.

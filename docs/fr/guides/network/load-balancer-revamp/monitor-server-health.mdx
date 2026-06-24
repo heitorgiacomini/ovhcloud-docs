@@ -1,5 +1,5 @@
 ---
-title: Surveiller la santé des serveurs
+title: Surveiller la santé des serveurs sur un Load Balancer
 description: Surveillez l'état de santé des serveurs backend de vos fermes OVHcloud Load Balancer depuis l'espace client et l'API OVHcloud.
 lastUpdated: 2026-06-05
 ---
@@ -14,7 +14,7 @@ L'OVHcloud Load Balancer vérifie en permanence l'état de chaque serveur backen
 
 **Ce guide explique comment consulter l'état de santé de chaque serveur backend, à la fois dans l'espace client OVHcloud et via l'API OVHcloud.**
 
-L'état de santé est utile lorsqu'un serveur quitte une ferme sans votre intervention : vous pouvez identifier le serveur concerné ainsi que la raison signalée par la sonde.
+L'état de santé est utile lorsqu'un serveur quitte une ferme sans votre intervention : vous pouvez identifier le serveur concerné ainsi que la raison signalée par la sonde.
 
 ## Prérequis
 
@@ -28,7 +28,7 @@ L'état de santé est utile lorsqu'un serveur quitte une ferme sans votre interv
 
 ## Introduction
 
-L'état de santé reflète le résultat de la sonde définie sur la ferme. Sans sonde, le Load Balancer ne peut pas évaluer l'état des serveurs : le statut rapporté n'est donc pas pertinent.
+L'état de santé reflète le résultat de la sonde définie sur la ferme. Sans sonde, le Load Balancer ne peut pas évaluer l'état des serveurs : le statut affiché n'est donc pas significatif.
 
 > [!INFO]
 > Pour obtenir des vérifications d'état de serveur valides, vous devez disposer d'une sonde configurée sur votre ferme ainsi que de serveurs backend autorisant l'accès à cette sonde. Pour plus de détails, consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
@@ -41,15 +41,11 @@ Vous pouvez consulter l'état de santé des serveurs soit visuellement dans l'es
 <Tab label="Espace client">
 
 1. Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>.
-2. Accédez à **Network** > **Load Balancer** et sélectionnez votre service.
-3. Ouvrez l'onglet `Fermes de serveurs` et sélectionnez une ferme.
+2. Ouvrez la section <code className="action">Réseau</code>, puis sélectionnez votre service Load Balancer.
+3. Ouvrez l'onglet <code className="action">Fermes de serveurs</code> et sélectionnez une ferme.
 4. Consultez le statut affiché sur la ligne de chaque serveur.
 
-{/* DRAFT: Capture d'écran à réaliser — onglet Fermes de serveurs avec une ferme sélectionnée, montrant la colonne de statut sur la ligne de chaque serveur */}
-
-Pour afficher le détail de l'état de santé d'un serveur, cliquez sur le statut dans la colonne `Statut`.
-
-{/* DRAFT: Capture d'écran à réaliser — panneau de détail de l'état de santé du serveur */}
+Pour afficher le détail de l'état de santé d'un serveur, cliquez sur le statut dans la colonne <code className="action">Statut</code>.
 
 > [!TIP]
 > Si la ligne d'un serveur affiche un état non opérationnel, ouvrez sa vue détaillée pour consulter le code de retour de la sonde ainsi que le contenu de la dernière vérification avant d'investiguer le backend.
@@ -59,15 +55,15 @@ Pour afficher le détail de l'état de santé d'un serveur, cliquez sur le statu
 
 L'état de santé du serveur est renvoyé dans le champ `serverState` de l'objet serveur. Utilisez le point de terminaison correspondant au type de ferme (HTTP, TCP ou UDP).
 
-Pour une ferme HTTP :
+Pour une ferme HTTP :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server/\{serverId\}"} />
 
-Pour une ferme TCP :
+Pour une ferme TCP :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
 
-Pour une ferme UDP :
+Pour une ferme UDP :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server/\{serverId\}"} />
 
@@ -77,19 +73,17 @@ Pour une ferme UDP :
 | `farmId` | Oui | L'identifiant de la ferme à laquelle appartient le serveur. | `12345` |
 | `serverId` | Oui | L'identifiant du serveur backend à inspecter. | `67890` |
 
-Pour lister au préalable les serveurs d'une ferme et récupérer chaque `serverId`, appelez le point de terminaison de liste correspondant au type de ferme. Pour une ferme HTTP :
+Pour lister au préalable les serveurs d'une ferme et récupérer chaque `serverId`, appelez le point de terminaison de liste correspondant au type de ferme. Pour une ferme HTTP :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
 
-Pour une ferme TCP :
+Pour une ferme TCP :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server"} />
 
-Pour une ferme UDP :
+Pour une ferme UDP :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/udp/farm/\{farmId\}/server"} />
-
-{/* DRAFT: Capture d'écran à réaliser — réponse de la console API affichant le champ serverState */}
 
 </Tab>
 </Tabs>

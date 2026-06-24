@@ -1,5 +1,5 @@
 ---
-title: Configure ProxyProtocol
+title: Configure ProxyProtocol on a Load Balancer
 description: Enable ProxyProtocol on your OVHcloud Load Balancer to preserve the real client IP for TCP backends, and configure your servers to trust it.
 lastUpdated: 2026-06-05
 ---
@@ -70,8 +70,6 @@ To configure trust on your backend servers, you need the list of outbound IP add
 2. Select your Load Balancer service.
 3. Note the outbound IPv4 addresses shown on the service dashboard.
 
-{/* DRAFT: To screenshot — capture the Load Balancer dashboard showing the outbound IPv4 addresses */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -98,8 +96,6 @@ Enable a ProxyProtocol mode on the target server. The corresponding server prope
 3. Open the farm that contains the target server, then edit that server.
 4. Set the `ProxyProtocol version` to `v1`, `v2`, `v2-ssl`, or `v2-ssl-cn`.
 5. Save the server, then click `Apply changes` to deploy the configuration.
-
-{/* DRAFT: To screenshot — capture the server edit panel showing the ProxyProtocol mode selector */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -139,7 +135,7 @@ resource "ovh_iploadbalancing_tcp_farm_server" "backend" {
 ```
 
 > [!INFO]
-> There is no Terraform resource that applies (refreshes) a pending configuration. After Terraform updates the server, apply the change through the OVHcloud API (`POST /ipLoadbalancing/\{serviceName\}/refresh`) or the `Apply changes` action in the Control Panel.
+> The pending configuration is applied (refreshed) with the `ovh_iploadbalancing_refresh` resource. After Terraform updates the server, apply the change with `ovh_iploadbalancing_refresh`, the OVHcloud API (`POST /ipLoadbalancing/\{serviceName\}/refresh`), or the `Apply changes` action in the Control Panel.
 
 </Tab>
 </Tabs>

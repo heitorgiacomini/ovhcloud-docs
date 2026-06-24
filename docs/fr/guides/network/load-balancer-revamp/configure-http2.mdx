@@ -1,5 +1,5 @@
 ---
-title: Configurer HTTP/2
+title: Configurer HTTP/2 sur un Load Balancer
 description: Activez HTTP/2 sur les frontends de votre OVHcloud Load Balancer et identifiez quand un frontend TCP convient au trafic HTTP/2.
 lastUpdated: 2026-06-05
 ---
@@ -27,18 +27,18 @@ HTTP/2 améliore les performances des applications web grâce au multiplexage, �
 
 ## Introduction
 
-Un frontend TCP opère au niveau de la couche 4 (la couche de transport). Le Load Balancer établit une connexion TCP entre le client et un serveur backend sans inspecter les données HTTP/2 contenues dans le flux. Le traitement reste ainsi minimal et la latence faible, mais il ne peut pas réaliser d'optimisations applicatives telles que le routage basé sur le contenu ou la manipulation des en-têtes HTTP.
+Un frontend TCP opère au niveau de la couche 4 (la couche de transport). Le Load Balancer établit une connexion TCP entre le client et un serveur backend sans inspecter les données HTTP/2 contenues dans le flux. Le traitement reste ainsi minimal et la latence faible, mais aucune optimisation applicative n'est possible, comme le routage basé sur le contenu ou la manipulation des en-têtes HTTP.
 
 Les frontends HTTP et TLS opèrent au niveau de la couche 7 (la couche applicative). Ils décodent les trames HTTP/2 avant de se connecter à un serveur backend, ce qui permet la terminaison SSL/TLS, le routage basé sur le contenu, la modification des requêtes et des réponses, ainsi que le multiplexage HTTP/2.
 
-Utilisez un **frontend TCP** lorsque :
+Utilisez un **frontend TCP** lorsque :
 
 - Vous répartissez la charge de services non HTTP (bases de données, applications TCP personnalisées, SSH).
 - Vous exigez des performances maximales et une latence minimale.
 - Vos serveurs backend gèrent déjà la terminaison SSL/TLS.
 - Vous n'avez pas besoin de fonctionnalités applicatives telles que le routage basé sur le contenu ou la manipulation des en-têtes HTTP.
 
-Utilisez un **frontend HTTP ou TLS** lorsque :
+Utilisez un **frontend HTTP ou TLS** lorsque :
 
 - Vous répartissez principalement la charge de trafic web.
 - Vous souhaitez bénéficier des gains de performances de HTTP/2 entre le client et le Load Balancer.
@@ -64,14 +64,12 @@ Une fois le rafraîchissement terminé, HTTP/2 est actif sur vos frontends HTTP 
 
 ### Configurer un frontend TCP pour HTTP/2
 
-Cette section permet de router le trafic HTTP/2 via un frontend TCP. Un frontend TCP transmet le flux chiffré vers le backend : vos serveurs backend doivent donc assurer la terminaison TLS et répondre en HTTP/2.
+Cette section permet de router le trafic HTTP/2 via un frontend TCP. Un frontend TCP transmet le flux chiffré vers le backend : vos serveurs backend doivent donc assurer la terminaison TLS et répondre en HTTP/2.
 
 > [!WARNING]
-> L'ordre dans lequel vous créez les composants est important : configurez la route avant de lui attacher une règle.
+> L'ordre dans lequel vous créez les composants est important : configurez la route avant de lui attacher une règle.
 
 Cette procédure utilise l'API OVHcloud. Vous pouvez ensuite consulter les composants créés depuis les onglets `Frontends` et `Fermes de serveurs` de votre Load Balancer dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
-
-{/* DRAFT: To screenshot - capturer l'onglet Frontends d'un Load Balancer affichant un frontend TCP sur le port 443 */}
 
 #### Étape 1 - Ajouter une route
 

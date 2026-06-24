@@ -1,5 +1,5 @@
 ---
-title: Resilient multi-zone architecture
+title: Deploy a resilient multi-zone architecture on a Load Balancer
 description: Understand a resilient multi-zone reference design for the OVHcloud Load Balancer, including topology, traffic distribution, and failover behaviour.
 lastUpdated: 2026-06-05
 ---
@@ -69,8 +69,6 @@ The diagram below shows a two-zone reference design spanning the Gravelines (`GR
 
 <img className="thumbnail" alt="Reference topology diagram" src="/images/network/load-balancer-revamp/architecture-resilient-multi-zone/fig-1.svg" loading="lazy" />
 
-{/* DRAFT: To screenshot - capture the Frontends tab in the Control Panel showing one frontend per zone */}
-
 The table below maps each component of the reference topology to its role in the design.
 
 | Component | Per zone | Role |
@@ -119,8 +117,6 @@ Building the reference topology follows three stages. For the detailed procedure
 Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open your Load Balancer service. Use the `Server Farms` tab to create one farm per zone with the `Create farm` button, then the `Frontends` tab to create one frontend per zone with the `Create frontend` button. In the frontend editor, set the zone (or `ALL`) and the `Default route` to the matching farm.
 
 After any change, apply the configuration to deploy it to the zones.
-
-{/* DRAFT: To screenshot - capture the frontend editor showing the zone field set to a specific zone */}
 
 #### Via the OVHcloud API
 
@@ -173,7 +169,7 @@ You can also inspect the current state of the service and its zones:
 > [!INFO]
 > The `GET /ipLoadbalancing/availableZones` endpoint is deprecated. To discover the zones associated with a service and their quotas, use the `quota` endpoints above and the service properties on `GET /ipLoadbalancing/{serviceName}`.
 
-For an automated, repeatable deployment of this topology, refer to [Automation](/guides/network/load-balancer-revamp/automation). The OVHcloud Terraform provider can manage the service and its farms and servers (for example `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server`). Frontends and applying the configuration are handled through the API or the Control Panel, not Terraform.
+For an automated, repeatable deployment of this topology, refer to [Automation](/guides/network/load-balancer-revamp/automation). The OVHcloud Terraform provider can manage the service, its farms and servers (for example `ovh_iploadbalancing_http_farm` and `ovh_iploadbalancing_http_farm_server`), the per-zone frontends (`ovh_iploadbalancing_http_frontend`, `ovh_iploadbalancing_tcp_frontend`, `ovh_iploadbalancing_udp_frontend`), and applying the staged configuration with `ovh_iploadbalancing_refresh`. You can still apply the configuration through the API or the Control Panel instead.
 
 ### Considerations and limitations <a name="considerations-and-limitations"></a>
 

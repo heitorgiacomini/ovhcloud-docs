@@ -1,5 +1,5 @@
 ---
-title: Configure frontends
+title: Configure frontends on a Load Balancer
 description: Create and edit HTTP, TCP, and UDP frontends on OVHcloud Load Balancer, set protocol, ports, zones, default routing to a farm, and attach TLS.
 lastUpdated: 2026-06-05
 ---
@@ -95,9 +95,7 @@ This section creates an HTTP frontend that listens on port 80 and routes all tra
 4. Select the zone, or all zones, where the frontend should be exposed.
 5. Under `Default route`, select `Route to farm` and choose the HTTP server farm that should receive the traffic.
 6. Optionally, enter a name and configure the advanced options (Additional IP, source IP restriction).
-7. Confirm to create the frontend.
-
-{/* DRAFT: To screenshot - the Create Frontend form with protocol HTTP, port 80, and the Default route / Route to farm selector */}
+7. Click <code className="action">Create Frontend</code> to create the frontend.
 
 The new frontend appears in the list under the `Frontends` tab.
 
@@ -128,7 +126,7 @@ To list existing HTTP frontends:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for frontends. The provider manages the service (`ovh_iploadbalancing`), farms (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm`), farm servers, and routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`, `ovh_iploadbalancing_tcp_route`). Create HTTP frontends through the OVHcloud API or the Control Panel, as shown in the other tabs.
+The OVHcloud Terraform provider manages HTTP frontends with the `ovh_iploadbalancing_http_frontend` resource. It also manages the service (`ovh_iploadbalancing`), farms (`ovh_iploadbalancing_http_farm`, `ovh_iploadbalancing_tcp_farm`, `ovh_iploadbalancing_udp_farm`), farm servers, and routes (`ovh_iploadbalancing_http_route`, `ovh_iploadbalancing_http_route_rule`, `ovh_iploadbalancing_tcp_route`). After creating the frontend, apply the staged configuration with the `ovh_iploadbalancing_refresh` resource. You can also create HTTP frontends through the OVHcloud API or the Control Panel, as shown in the other tabs.
 
 </Tab>
 </Tabs>
@@ -153,9 +151,7 @@ This section creates a TCP frontend for non-HTTP workloads. TCP frontends operat
 3. Select the zone, or all zones, where the frontend should be exposed.
 4. Under `Default route`, select `Route to farm` and choose the TCP server farm.
 5. Optionally, enter a name and configure the advanced options.
-6. Confirm to create the frontend.
-
-{/* DRAFT: To screenshot - the Create Frontend form with protocol TCP and a TCP farm selected as default route */}
+6. Click <code className="action">Create Frontend</code> to create the frontend.
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -180,7 +176,7 @@ To list existing TCP frontends:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for frontends. It manages the TCP farm (`ovh_iploadbalancing_tcp_farm`), its servers (`ovh_iploadbalancing_tcp_farm_server`), and TCP routes (`ovh_iploadbalancing_tcp_route`), but TCP frontends must be created through the OVHcloud API or the Control Panel, as shown in the other tabs.
+The OVHcloud Terraform provider manages TCP frontends with the `ovh_iploadbalancing_tcp_frontend` resource. It also manages the TCP farm (`ovh_iploadbalancing_tcp_farm`), its servers (`ovh_iploadbalancing_tcp_farm_server`), and TCP routes (`ovh_iploadbalancing_tcp_route`). After creating the frontend, apply the staged configuration with the `ovh_iploadbalancing_refresh` resource. You can also create TCP frontends through the OVHcloud API or the Control Panel, as shown in the other tabs.
 
 </Tab>
 </Tabs>
@@ -205,9 +201,7 @@ This section creates a UDP frontend for datagram-based workloads such as DNS, Vo
 3. Select the zone, or all zones, where the frontend should be exposed.
 4. Under `Default route`, select `Route to farm` and choose the UDP server farm.
 5. Optionally, enter a name and configure the advanced options.
-6. Confirm to create the frontend.
-
-{/* DRAFT: To screenshot - the Create Frontend form with protocol UDP and a UDP farm selected as default route */}
+6. Click <code className="action">Create Frontend</code> to create the frontend.
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -231,7 +225,7 @@ To list existing UDP frontends:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for frontends. It manages the UDP farm (`ovh_iploadbalancing_udp_farm`) and its servers (`ovh_iploadbalancing_udp_farm_server`), but UDP frontends must be created through the OVHcloud API or the Control Panel, as shown in the other tabs.
+The OVHcloud Terraform provider manages UDP frontends with the `ovh_iploadbalancing_udp_frontend` resource. It also manages the UDP farm (`ovh_iploadbalancing_udp_farm`) and its servers (`ovh_iploadbalancing_udp_farm_server`). After creating the frontend, apply the staged configuration with the `ovh_iploadbalancing_refresh` resource. You can also create UDP frontends through the OVHcloud API or the Control Panel, as shown in the other tabs.
 
 </Tab>
 </Tabs>
@@ -254,8 +248,6 @@ Editing a frontend lets you change its protocol, port, exposure zone, default fa
 1. In the `Frontends` tab, select the frontend and open the `Edit Frontend` form.
 2. Update the protocol, port, zone, `Default route`, or `TLS Certificate` as needed.
 3. Confirm to save the changes.
-
-{/* DRAFT: To screenshot - the Edit Frontend form highlighting the editable fields */}
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -283,7 +275,7 @@ To delete a frontend, use the `DELETE` method on the same path:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for frontends, so frontends cannot be edited with Terraform. Use the OVHcloud API or the Control Panel for frontend changes. The provider does manage related elements such as farms (`ovh_iploadbalancing_http_farm`) and routes (`ovh_iploadbalancing_http_route`).
+Edit a frontend with the matching resource: `ovh_iploadbalancing_http_frontend`, `ovh_iploadbalancing_tcp_frontend`, or `ovh_iploadbalancing_udp_frontend`. Update the relevant arguments, then apply the staged configuration with the `ovh_iploadbalancing_refresh` resource. The provider also manages related elements such as farms (`ovh_iploadbalancing_http_farm`) and routes (`ovh_iploadbalancing_http_route`). You can also edit frontends through the OVHcloud API or the Control Panel.
 
 </Tab>
 </Tabs>
@@ -309,8 +301,6 @@ The procedure is:
 3. In the `TLS Certificate` field, select the certificate to present to clients.
 4. Confirm to save the changes.
 
-{/* DRAFT: To screenshot - the Edit Frontend form with HTTPS selected and the TLS Certificate field */}
-
 </Tab>
 <Tab label="OVHcloud API">
 
@@ -331,7 +321,7 @@ Enable TLS on the frontend by setting `ssl` to `true` when modifying it:
 </Tab>
 <Tab label="Terraform">
 
-The OVHcloud Terraform provider does not expose a resource for frontends or for TLS termination on a frontend. Enable TLS and select the certificate through the OVHcloud API or the Control Panel.
+Enable TLS termination on the `ovh_iploadbalancing_http_frontend` (or `ovh_iploadbalancing_tcp_frontend`) resource with its `ssl` argument, and select the certificate to present with the `default_ssl_id` argument. The certificate itself is imported with `ovh_iploadbalancing_ssl` (`certificate`, `chain`, `key`). After the change, apply the staged configuration with the `ovh_iploadbalancing_refresh` resource. You can also enable TLS and select the certificate through the OVHcloud API or the Control Panel.
 
 </Tab>
 </Tabs>
@@ -346,8 +336,6 @@ Frontend changes are not live until you apply the configuration in each zone whe
 1. Return to the home page of your Load Balancer service.
 2. Open the actions menu next to the service name and click `Apply changes`.
 3. Select the zones to deploy, then confirm.
-
-{/* DRAFT: To screenshot - the apply-configuration action and the zone selection dialog */}
 
 </Tab>
 <Tab label="OVHcloud API">

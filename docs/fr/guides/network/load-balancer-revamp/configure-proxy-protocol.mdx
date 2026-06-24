@@ -1,5 +1,5 @@
 ---
-title: Configurer le ProxyProtocol
+title: Configurer le ProxyProtocol sur un Load Balancer
 description: Activez le ProxyProtocol sur votre OVHcloud Load Balancer pour conserver l'IP réelle du client sur vos backends TCP, et configurez vos serveurs pour l'accepter.
 lastUpdated: 2026-06-05
 ---
@@ -22,27 +22,27 @@ L'OVHcloud Load Balancer agit comme un proxy entre vos clients et vos serveurs b
 - Un accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>
 - Un OVHcloud Load Balancer disposant d'un frontend TCP fonctionnel et d'une ferme de serveurs — consultez le guide [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms)
 - Un serveur backend exécutant un logiciel qui prend en charge le ProxyProtocol (par exemple Nginx, Apache ou HAProxy)
-- Être familiarisé avec les frontends et les fermes de serveurs — consultez le guide [Quickstart : TCP](/guides/network/load-balancer-revamp/quickstart-tcp)
+- Être familiarisé avec les frontends et les fermes de serveurs — consultez le guide [Quickstart : TCP](/guides/network/load-balancer-revamp/quickstart-tcp)
 
 > [!warning]
-> Les champs du ProxyProtocol peuvent être falsifiés par un client malveillant : ne leur faites donc confiance que lorsqu'ils proviennent d'une source de confiance. Restreignez l'analyse du ProxyProtocol sur vos serveurs backend aux adresses IP de sortie de votre OVHcloud Load Balancer, comme décrit dans la section [Configurer votre serveur backend pour qu'il accepte le ProxyProtocol](#trust-proxyprotocol) ci-dessous.
+> Les champs du ProxyProtocol peuvent être falsifiés par un client malveillant : ne leur faites donc confiance que lorsqu'ils proviennent d'une source de confiance. Restreignez l'analyse du ProxyProtocol sur vos serveurs backend aux adresses IP de sortie de votre OVHcloud Load Balancer, comme décrit dans la section [Configurer votre serveur backend pour qu'il accepte le ProxyProtocol](#trust-proxyprotocol) ci-dessous.
 
 ## Introduction
 
-Le ProxyProtocol a été développé par l'équipe [HAProxy](https://www.haproxy.org/) comme l'équivalent TCP des en-têtes HTTP tels que `X-Forwarded-For`. Lorsqu'il est activé pour un serveur backend, le Load Balancer ajoute un en-tête qui contient au minimum :
+Le ProxyProtocol a été développé par l'équipe [HAProxy](https://www.haproxy.org/) comme l'équivalent TCP des en-têtes HTTP tels que `X-Forwarded-For`. Lorsqu'il est activé pour un serveur backend, le Load Balancer ajoute un en-tête qui contient au minimum :
 
 - Le protocole de couche 4 utilisé (`TCP4` pour l'IPv4 ou `TCP6` pour l'IPv6).
 - L'adresse source IPv4 ou IPv6.
 - Le port source.
 
-Étant donné que l'en-tête modifie le début du flux TCP, le serveur backend doit être configuré pour s'y attendre et l'analyser. Le protocole existe en deux versions :
+Comme l'en-tête modifie le début du flux TCP, le serveur backend doit être configuré pour s'y attendre et l'analyser. Le protocole existe en deux versions :
 
 | Version | Format | Remarques |
 |---|---|---|
 | Version 1 | Texte | La plus largement prise en charge. Suffisante pour la plupart des cas d'usage. |
 | Version 2 | Binaire | Plus rapide à analyser. Peut également transporter des informations SSL/TLS ainsi que le Common Name du certificat. |
 
-Votre OVHcloud Load Balancer prend en charge quatre modes de ProxyProtocol :
+Votre OVHcloud Load Balancer prend en charge quatre modes de ProxyProtocol :
 
 | Mode | Description |
 |---|---|
@@ -57,11 +57,11 @@ Pour la spécification complète, reportez-vous à la [spécification du ProxyPr
 
 ## En pratique
 
-L'activation du ProxyProtocol comporte deux parties. Tout d'abord, activez le mode ProxyProtocol sur le serveur backend dans votre OVHcloud Load Balancer. Ensuite, configurez ce serveur backend pour qu'il accepte et analyse l'en-tête.
+L'activation du ProxyProtocol se fait en deux temps. Activez d'abord le mode ProxyProtocol sur le serveur backend dans votre OVHcloud Load Balancer, puis configurez ce serveur backend pour qu'il accepte et analyse l'en-tête.
 
 ### Trouver les adresses IP de sortie de votre Load Balancer
 
-Pour configurer la confiance sur vos serveurs backend, vous avez besoin de la liste des adresses IP de sortie de votre OVHcloud Load Balancer. Récupérez-les avant de commencer.
+Pour paramétrer la confiance sur vos serveurs backend, il vous faut la liste des adresses IP de sortie de votre OVHcloud Load Balancer. Récupérez-les avant de commencer.
 
 <Tabs>
 <Tab label="Espace client">
@@ -70,12 +70,10 @@ Pour configurer la confiance sur vos serveurs backend, vous avez besoin de la li
 2. Sélectionnez votre service Load Balancer.
 3. Notez les adresses IPv4 de sortie affichées sur le tableau de bord du service.
 
-{/* DRAFT: À capturer — le tableau de bord du Load Balancer affichant les adresses IPv4 de sortie */}
-
 </Tab>
 <Tab label="API OVHcloud">
 
-Listez les sous-réseaux d'IP NAT utilisés par votre service :
+Listez les sous-réseaux d'IP NAT utilisés par votre service :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/natIp"} />
 
@@ -99,12 +97,10 @@ Activez un mode ProxyProtocol sur le serveur cible. La propriété de serveur co
 4. Définissez la `ProxyProtocol version` sur `v1`, `v2`, `v2-ssl` ou `v2-ssl-cn`.
 5. Enregistrez le serveur, puis cliquez sur `Appliquer les modifications` pour déployer la configuration.
 
-{/* DRAFT: À capturer — le panneau d'édition du serveur affichant le sélecteur de mode ProxyProtocol */}
-
 </Tab>
 <Tab label="API OVHcloud">
 
-Modifiez le serveur backend pour définir le mode ProxyProtocol. Utilisez l'endpoint de ferme TCP pour un frontend TCP :
+Modifiez le serveur backend pour définir le mode ProxyProtocol. Utilisez l'endpoint de ferme TCP pour un frontend TCP :
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/tcp/farm/\{farmId\}/server/\{serverId\}"} />
 
@@ -113,9 +109,9 @@ Modifiez le serveur backend pour définir le mode ProxyProtocol. Utilisez l'endp
 | `serviceName` | Oui | Le nom de votre service OVHcloud Load Balancer. | `loadbalancer-a1b2c3d4` |
 | `farmId` | Oui | L'ID de la ferme contenant le serveur. | `12345` |
 | `serverId` | Oui | L'ID du serveur à modifier. | `67890` |
-| `proxyProtocolVersion` (body) | Non | Mode ProxyProtocol : `v1`, `v2`, `v2-ssl` ou `v2-ssl-cn`. | `v1` |
+| `proxyProtocolVersion` (body) | Non | Mode ProxyProtocol : `v1`, `v2`, `v2-ssl` ou `v2-ssl-cn`. | `v1` |
 
-Appliquez ensuite la configuration pour rendre la modification effective :
+Appliquez ensuite la configuration pour rendre la modification effective :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
@@ -126,7 +122,7 @@ Appliquez ensuite la configuration pour rendre la modification effective :
 </Tab>
 <Tab label="Terraform">
 
-Définissez le mode ProxyProtocol sur un serveur backend TCP via la ressource `ovh_iploadbalancing_tcp_farm_server`, à l'aide de son argument `proxy_protocol_version` :
+Définissez le mode ProxyProtocol sur un serveur backend TCP via la ressource `ovh_iploadbalancing_tcp_farm_server`, à l'aide de son argument `proxy_protocol_version` :
 
 ```hcl
 resource "ovh_iploadbalancing_tcp_farm_server" "backend" {
@@ -139,7 +135,7 @@ resource "ovh_iploadbalancing_tcp_farm_server" "backend" {
 ```
 
 > [!INFO]
-> Il n'existe pas de ressource Terraform permettant d'appliquer (rafraîchir) une configuration en attente. Une fois le serveur mis à jour par Terraform, appliquez la modification via l'API OVHcloud (`POST /ipLoadbalancing/\{serviceName\}/refresh`) ou l'action `Appliquer les modifications` dans l'espace client.
+> La configuration en attente s'applique (se rafraîchit) avec la ressource `ovh_iploadbalancing_refresh`. Une fois le serveur mis à jour par Terraform, appliquez la modification avec `ovh_iploadbalancing_refresh`, l'API OVHcloud (`POST /ipLoadbalancing/\{serviceName\}/refresh`) ou l'action `Appliquer les modifications` dans l'espace client.
 
 </Tab>
 </Tabs>
@@ -172,7 +168,7 @@ server {
 }
 ```
 
-Rechargez la configuration :
+Rechargez la configuration :
 
 ```bash
 service nginx reload
@@ -184,7 +180,7 @@ Pour plus d'informations, reportez-vous à la [documentation Nginx sur le ProxyP
 
 Apache prend en charge le ProxyProtocol via le module `mod_remoteip`, qui gère également les en-têtes `X-Forwarded-For` et vous permet de contrôler les adresses auxquelles le ProxyProtocol s'applique.
 
-Avant d'activer le ProxyProtocol, restreignez les connexions aux adresses de sortie de votre OVHcloud Load Balancer avec `iptables` :
+Avant d'activer le ProxyProtocol, restreignez les connexions aux adresses de sortie de votre OVHcloud Load Balancer avec `iptables` :
 
 ```bash
 # Trust connections from your Load Balancer outbound addresses only
@@ -192,7 +188,7 @@ iptables -A INPUT -s 10.108.0.0/14 -p tcp --dport 80 -j ACCEPT
 iptables -A INPUT                  -p tcp --dport 80 -j DROP
 ```
 
-Configurez l'hôte virtuel pour activer le ProxyProtocol :
+Configurez l'hôte virtuel pour activer le ProxyProtocol :
 
 ```apache
 <VirtualHost *:80>
@@ -201,7 +197,7 @@ Configurez l'hôte virtuel pour activer le ProxyProtocol :
 </VirtualHost>
 ```
 
-Remplacez `%h` par `%a` dans les directives `LogFormat` afin que les journaux enregistrent l'adresse réelle du client. Activez ensuite le module et redémarrez Apache :
+Remplacez `%h` par `%a` dans les directives `LogFormat` afin que les journaux enregistrent l'adresse réelle du client. Activez ensuite le module et redémarrez Apache :
 
 ```bash
 # Enable the remoteip module
@@ -215,17 +211,17 @@ Pour plus d'informations, reportez-vous à la [documentation de mod_remoteip](ht
 
 #### HAProxy
 
-Le ProxyProtocol a été conçu par l'équipe HAProxy, qui le gère donc parfaitement. Un modèle courant consiste à placer une instance HAProxy locale devant un logiciel qui ne prend pas en charge le ProxyProtocol (comme MySQL ou PostgreSQL) afin de récupérer et de journaliser l'adresse IP du client.
+Le ProxyProtocol a été conçu par l'équipe HAProxy, qui le gère donc parfaitement. Un schéma courant consiste à placer une instance HAProxy locale devant un logiciel qui ne prend pas en charge le ProxyProtocol (comme MySQL ou PostgreSQL), afin de récupérer et de journaliser l'adresse IP du client.
 
 L'exemple suivant écoute sur le port TCP 3306 pour MySQL. Il s'agit d'un point de départ, et non d'une configuration complète.
 
-Installez HAProxy :
+Installez HAProxy :
 
 ```bash
 sudo apt install haproxy
 ```
 
-Configurez le proxy local :
+Configurez le proxy local :
 
 ```text
 listen mysql
@@ -241,7 +237,7 @@ listen mysql
     server mysql 127.0.0.1:3316 check
 ```
 
-Rechargez la configuration :
+Rechargez la configuration :
 
 ```bash
 service haproxy reload

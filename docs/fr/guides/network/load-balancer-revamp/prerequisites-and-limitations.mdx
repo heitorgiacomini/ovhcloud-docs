@@ -20,7 +20,7 @@ Avant de pouvoir configurer la répartition du trafic, les éléments suivants d
 - L'accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> avec les droits suffisants pour gérer le service.
 - Un service Load Balancer OVHcloud commandé et actif sur votre compte. Consultez le guide [Commander un Load Balancer](/guides/network/load-balancer-revamp/order-load-balancer).
 - Au moins une ressource backend sur laquelle répartir le trafic — par exemple un serveur dédié, un Virtual Private Server (VPS) ou une instance Public Cloud.
-- Une accessibilité réseau entre le Load Balancer et vos backends, soit via le réseau public (avec une IP additionnelle), soit via un réseau privé (vRack).
+- Une accessibilité réseau entre le Load Balancer et vos backends, soit via le réseau public (avec une Additional IP), soit via un réseau privé (vRack).
 
 > [!INFO]
 > Le Load Balancer répartit le trafic mais n'héberge pas vos applications. Vous restez responsable du provisionnement, de la sécurisation et de la maintenance des serveurs backend vers lesquels il achemine le trafic. OVHcloud met à votre disposition des services dont vous êtes responsable de la configuration et de la gestion.
@@ -36,10 +36,10 @@ Le Load Balancer achemine plusieurs types de trafic, chacun étant traité par u
 | SSL / TLS (TCP) | L4 (transport) | Services TCP avec terminaison TLS au niveau du Load Balancer | HAProxy |
 | UDP | L4 (transport) | Services transportés via UDP | Nginx |
 
-Deux conséquences découlent de cette répartition et contraignent votre architecture :
+Cette répartition a deux conséquences qui pèsent sur votre architecture :
 
 - Les fonctionnalités de couche 7 (routes HTTP, réécriture d'en-têtes, redirections HTTP, ACL) sont disponibles **uniquement sur les frontends et les fermes HTTP/HTTPS**. Le trafic TCP et UDP est acheminé sans traitement de couche applicative.
-- Un frontend ne peut router que vers une ferme de type correspondant. Un frontend HTTP route vers une ferme HTTP ; un frontend TCP route vers une ferme TCP. Vous ne pouvez pas mélanger les types de ferme et de frontend sur une même route.
+- Un frontend ne peut router que vers une ferme de type correspondant. Un frontend HTTP route vers une ferme HTTP ; un frontend TCP route vers une ferme TCP. Vous ne pouvez pas mélanger les types de ferme et de frontend sur une même route.
 
 Pour la configuration propre à chaque protocole, consultez les guides [Configurer les frontends](/guides/network/load-balancer-revamp/configure-frontends) et [Configurer les fermes de serveurs](/guides/network/load-balancer-revamp/configure-server-farms).
 
@@ -73,22 +73,22 @@ Le Load Balancer applique des quotas sur le nombre d'objets que vous pouvez cré
 |---|---|---|---|
 | `serviceName` | Oui | L'identifiant unique de votre service Load Balancer. | `loadbalancer-abcd1234` |
 
-Pour inspecter le quota d'une seule zone de disponibilité, utilisez l'endpoint à portée de zone :
+Pour inspecter le quota d'une seule zone de disponibilité, utilisez l'endpoint à portée de zone :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/quota/\{zone\}"} />
 
 Les quotas s'appliquent aux fermes de serveurs, aux frontends, aux serveurs par ferme, aux routes HTTP et aux certificats SSL. Comme ces limites dépendent du plan associé à votre service, consultez les valeurs en temps réel renvoyées par ces appels ou affichées dans l'onglet `Quota` plutôt que de vous fier à une valeur figée.
 
 > [!TIP]
-> Les quotas sont contrôlés au moment où la configuration est appliquée. Une modification qui dépasserait un quota est rejetée lors de son déploiement, et non lors de sa rédaction.
+> Les quotas sont contrôlés au moment où la configuration est appliquée. Une modification qui dépasserait un quota est rejetée lors de son déploiement, et non au moment où vous la définissez.
 
 ## Contraintes connues
 
-Au-delà des quotas numériques, plusieurs contraintes de conception s'appliquent à chaque Load Balancer, quel que soit le plan. Tenez-en compte lors de la planification pour éviter d'avoir à retravailler votre configuration par la suite.
+Outre les quotas numériques, plusieurs contraintes de conception s'appliquent à chaque Load Balancer, quel que soit le plan. Tenez-en compte dès la planification pour éviter d'avoir à retravailler votre configuration par la suite.
 
 ### La configuration est appliquée, pas immédiatement active
 
-Les modifications que vous effectuez dans l'espace client ou via l'API sont mises en attente sous forme de changements en attente et ne prennent effet que lorsque vous les appliquez. Jusque-là, la configuration en cours d'exécution reste inchangée.
+Les modifications que vous effectuez dans l'espace client ou via l'API sont mises en attente et ne prennent effet que lorsque vous les appliquez. Jusque-là, la configuration en cours d'exécution reste inchangée.
 
 - Dans l'espace client, déployez vos changements en attente depuis la zone `Tâches` de votre service.
 - Via l'API, listez les changements en attente, puis appliquez-les.
@@ -105,12 +105,12 @@ Les modifications que vous effectuez dans l'espace client ou via l'API sont mise
 
 ### Réseau
 
-- Les backends doivent être accessibles depuis le Load Balancer. Les backends publics nécessitent une IP additionnelle ; les backends privés nécessitent une connectivité [vRack](/guides/network/load-balancer-revamp/configure-vrack).
+- Les backends doivent être accessibles depuis le Load Balancer. Les backends publics nécessitent une Additional IP ; les backends privés nécessitent une connectivité [vRack](/guides/network/load-balancer-revamp/configure-vrack).
 - Les objets sont créés au sein d'une zone de disponibilité, et les quotas sont comptabilisés par zone. Consultez le guide [Disponibilité et zones](/guides/network/load-balancer-revamp/availability-and-zones).
 
 ### Sondes
 
-Une ferme dépourvue de sonde configurée ne peut pas détecter les backends qui ne répondent pas ; le trafic risque donc d'être envoyé vers un serveur hors service. Configurez une sonde sur chaque ferme de production. Consultez le guide [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
+Une ferme dépourvue de sonde configurée ne peut pas détecter les backends qui ne répondent pas ; le trafic risque donc d'être envoyé vers un serveur hors service. Configurez une sonde sur chaque ferme de production. Consultez le guide [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes).
 
 ### Automatisation
 

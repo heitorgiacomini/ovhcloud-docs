@@ -1,5 +1,5 @@
 ---
-title: Configurer la persistance de session
+title: Configurer la persistance de session sur un Load Balancer
 description: Configurez la persistance de session sur une ferme de serveurs OVHcloud Load Balancer via cookie ou IP source, depuis l'espace client ou l'API.
 lastUpdated: 2026-06-05
 ---
@@ -24,15 +24,15 @@ La persistance de session (également appelée stickiness) achemine les requête
 
 L'OVHcloud Load Balancer répartit le trafic entrant entre les serveurs backend d'une ferme selon un algorithme d'équilibrage. Par défaut, une requête peut être dirigée vers n'importe quel serveur de la ferme. La persistance de session modifie ce comportement en associant un client à un serveur unique pendant toute la durée de sa session.
 
-La persistance de session se configure par ferme, au niveau de la couche applicative. Trois modes sont disponibles :
+La persistance de session se configure par ferme, au niveau de la couche applicative. Trois modes sont disponibles :
 
 | Mode | Libellé dans l'espace client | Comportement |
 |---|---|---|
 | Aucune | `Aucune` | Aucune persistance. Chaque requête est équilibrée indépendamment selon l'algorithme de la ferme. |
 | Cookie | `Cookie` | Le Load Balancer insère un cookie de session qui rattache la session HTTP à un serveur unique. Disponible uniquement sur les fermes HTTP. |
-| IP source | `IP Source` | Un hachage de l'adresse IP source du client est utilisé pour acheminer systématiquement chaque client vers le même serveur. Disponible sur les fermes HTTP et TCP. |
+| IP source | `IP Source` | Le Load Balancer hache l'adresse IP source du client pour acheminer systématiquement chaque client vers le même serveur. Disponible sur les fermes HTTP et TCP. |
 
-Les événements suivants entraînent un rééquilibrage du trafic, susceptible de rompre les associations de persistance existantes :
+Les événements suivants entraînent un rééquilibrage du trafic, susceptible de rompre les associations de persistance existantes :
 
 - Le poids configuré d'un serveur change.
 - Un serveur de la ferme est réactivé.
@@ -55,8 +55,6 @@ Vous pouvez configurer la persistance de session depuis l'espace client OVHcloud
 2. Ouvrez l'onglet <code className="action">Fermes</code>.
 3. Repérez la ferme à configurer, cliquez sur le bouton d'options <code className="action">...</code> situé à sa droite, puis sélectionnez <code className="action">Modifier</code>.
 
-{/* DRAFT: À capturer - l'onglet Fermes de serveurs avec le menu d'options ouvert sur une ferme, affichant l'entrée Modifier */}
-
 ### Définir le mode de persistance
 
 1. Dans l'éditeur de ferme, ouvrez la section <code className="action">Paramètres avancés</code>.
@@ -66,25 +64,21 @@ Vous pouvez configurer la persistance de session depuis l'espace client OVHcloud
 Le mode `Cookie` n'est disponible que sur les fermes HTTP. Pour les fermes TCP, utilisez `IP Source`.
 :::
 
-{/* DRAFT: À capturer - la section Paramètres avancés de l'éditeur de ferme affichant le sélecteur de persistance */}
-
 3. Confirmez la modification pour enregistrer les paramètres de la ferme.
 
 ### Appliquer la configuration
 
-Le nouveau paramètre de persistance reste en attente jusqu'à son déploiement sur le Load Balancer. Appliquez la configuration de l'une des manières suivantes :
+Le nouveau paramètre de persistance reste en attente jusqu'à son déploiement sur le Load Balancer. Appliquez la configuration de l'une des manières suivantes :
 
 - Depuis la bannière de rappel indiquant que la configuration n'a pas été appliquée, cliquez sur <code className="action">Appliquer les modifications</code>.
-- Depuis la vue d'ensemble du service, cliquez sur le bouton d'options <code className="action">...</code> de votre Load Balancer, puis sélectionnez <code className="action">Appliquer les modifications</code>.
-
-{/* DRAFT: À capturer - la bannière de rappel Appliquer les modifications */}
+- Depuis la vue d'ensemble du service, cliquez sur le bouton d'options <code className="action">...</code> de votre Load Balancer, puis sélectionnez <code className="action">Application de la configuration</code>.
 
 </Tab>
 <Tab label="API OVHcloud">
 
 ### Récupérer les détails de la ferme
 
-Utilisez l'appel suivant pour consulter les propriétés actuelles d'une ferme, notamment sa valeur `stickiness`. L'exemple utilise une ferme HTTP ; pour une ferme TCP, remplacez `http` par `tcp` dans la route.
+Utilisez l'appel suivant pour consulter les propriétés actuelles d'une ferme, notamment sa valeur `stickiness`. L'exemple utilise une ferme HTTP ; pour une ferme TCP, remplacez `http` par `tcp` dans la route.
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
 
@@ -97,7 +91,7 @@ La réponse inclut le champ `stickiness`, qui contient la méthode de suivi des 
 
 ### Modifier le mode de persistance
 
-Mettez à jour le champ `stickiness` de la ferme avec l'une des valeurs disponibles : `none`, `cookie` ou `sourceIp`.
+Mettez à jour le champ `stickiness` de la ferme avec l'une des valeurs disponibles : `none`, `cookie` ou `sourceIp`.
 
 <Api version="v1" section="/ipLoadbalancing" method="PUT" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}"} />
 
@@ -123,7 +117,7 @@ Déployez les modifications en attente pour rendre le nouveau paramètre de pers
 
 Définissez l'argument `stickiness` sur la ressource de la ferme — `ovh_iploadbalancing_http_farm` pour une ferme HTTP, ou `ovh_iploadbalancing_tcp_farm` pour une ferme TCP — puis exécutez `terraform apply` pour mettre à jour la ferme.
 
-Le provider Terraform ne dispose d'aucune ressource permettant de déployer (rafraîchir) la configuration du Load Balancer. Après avoir appliqué la modification de la ferme, déployez-la via l'appel API OVHcloud ci-dessous ou depuis l'espace client.
+Déployez la configuration en attente avec la ressource `ovh_iploadbalancing_refresh` (arguments `service_name` et `keepers`). Après avoir appliqué la modification de la ferme, vous pouvez également la déployer via l'appel API OVHcloud ci-dessous ou depuis l'espace client.
 
 </Tab>
 </Tabs>

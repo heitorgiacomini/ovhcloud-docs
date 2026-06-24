@@ -1,5 +1,5 @@
 ---
-title: Configure SMTP
+title: Configure SMTP on a Load Balancer
 description: Set up a TCP service on your OVHcloud Load Balancer to distribute SMTP traffic across multiple mail servers using port 25.
 lastUpdated: 2026-06-05
 ---
@@ -43,16 +43,14 @@ The server farm groups your backend mail servers and manages how traffic is bala
 <Tabs>
 <Tab label="Control Panel">
 
-1. Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open **Network** > **Load Balancer**, then select your service.
-2. Open the `Server Farms` tab and click `Create farm`.
+1. Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Network</code> section, then <code className="action">Load Balancer</code>, and select your service.
+2. Open the <code className="action">Server Farms</code> tab and click <code className="action">Create farm</code>.
 3. In the `Create Server Farm` form, select **TCP** as the protocol.
 4. Set the **Port** to `25` and select the **Zone** of your service. Both fields are mandatory. If you leave the port empty, the farm reuses the port of the associated frontend.
 5. Optionally, attach an SMTP health probe so the Load Balancer monitors your mail servers' availability.
-6. Click `Create farm` to confirm.
+6. Click <code className="action">Create farm</code> to confirm.
 
-{/* DRAFT: To screenshot - the Create Server Farm form with TCP protocol and port 25 */}
-
-The new farm appears in the list under the `Server Farms` tab.
+The new farm appears in the list under the <code className="action">Server Farms</code> tab.
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -88,17 +86,15 @@ Declare each backend SMTP server as a member of the TCP farm.
 <Tabs>
 <Tab label="Control Panel">
 
-1. In the `Server Farms` tab, click the farm you created to display its servers.
-2. Click `Add server`.
+1. In the <code className="action">Server Farms</code> tab, click the farm you created to display its servers.
+2. Click <code className="action">Add server</code>.
 3. Enter the **IPv4 address** of the backend server, set its **Status**, and select the **ProxyProtocol version**. These fields are mandatory.
 4. Leave the server **Port** empty to inherit the port defined on the farm. Set a port only in advanced cases, as it overrides the farm port for this server.
-5. Click `Add server` to confirm.
+5. Click <code className="action">Add server</code> to confirm.
 
 :::warning
 Set the **ProxyProtocol version** to `v1` so that your SMTP service can retrieve the real source IP of incoming connections. Postfix is compatible with the PROXY protocol.
 :::
-
-{/* DRAFT: To screenshot - the Add server form with the ProxyProtocol version field */}
 
 The server appears in the server list below the farm.
 
@@ -137,16 +133,14 @@ The frontend exposes your SMTP service to the Internet and forwards incoming tra
 <Tabs>
 <Tab label="Control Panel">
 
-1. Open the `Frontends` tab and click `Create frontend`.
+1. Open the <code className="action">Frontends</code> tab and click <code className="action">Create frontend</code>.
 2. In the `Create Frontend` form, select **TCP** as the protocol.
 3. Set the **Port** to `25` for a standard SMTP service and select the **Zone**. To expose several ports, enter a comma-separated list (`25,587`) or a range in the `<start_port>-<end_port>` format.
 4. Select the farm created in Step 1 as the **Default farm**.
 5. If you routed Additional IPs to your Load Balancer, you can attach the frontend to one or more specific Additional IPs.
-6. Click `Create frontend` to confirm.
+6. Click <code className="action">Create frontend</code> to confirm.
 
-{/* DRAFT: To screenshot - the Create Frontend form with TCP protocol, port 25 and the default farm */}
-
-The frontend appears in the list under the `Frontends` tab.
+The frontend appears in the list under the <code className="action">Frontends</code> tab.
 
 </Tab>
 <Tab label="OVHcloud API">
@@ -184,10 +178,8 @@ Your changes are staged until you apply them to each zone configured for the ser
 
 Return to the Load Balancer service overview and apply the pending changes to each zone concerned. The configuration becomes visible to your users only once applied.
 
-{/* DRAFT: To screenshot - the service overview showing the apply-changes action per zone */}
-
 :::info
-Use the `Apply changes` button to validate the pending configuration on each zone.
+Use the <code className="action">Apply changes</code> button to validate the pending configuration on each zone.
 :::
 
 </Tab>
@@ -227,8 +219,6 @@ telnet <load-balancer-ip> 25
 ```
 
 A successful connection returns the SMTP banner of one of your backend mail servers.
-
-{/* DRAFT: To screenshot - a successful SMTP connection through the Load Balancer via telnet */}
 
 ## Go further
 

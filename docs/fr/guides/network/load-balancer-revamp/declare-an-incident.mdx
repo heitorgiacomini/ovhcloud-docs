@@ -1,5 +1,5 @@
 ---
-title: Déclarer un incident
+title: Déclarer un incident sur un Load Balancer
 description: Signalez un incident OVHcloud Load Balancer au support, rassemblez les informations de diagnostic utiles et suivez le ticket jusqu'à sa résolution.
 lastUpdated: 2026-06-05
 ---
@@ -10,7 +10,7 @@ import Api from '@components/Api';
 
 Ce guide explique comment signaler un incident affectant votre OVHcloud Load Balancer au support OVHcloud et comment effectuer un suivi jusqu'à sa résolution. Il aborde les informations à rassembler avant d'ouvrir un ticket, les canaux disponibles et la manière de suivre l'avancement.
 
-Avant de déclarer un incident, vérifiez que le problème n'est pas un problème de configuration que vous pouvez résoudre vous-même. La plupart des problèmes de serveur, de routage et de certificat se règlent au sein de votre propre configuration. Consultez d'abord [Résoudre les problèmes sur OVHcloud Load Balancer](/guides/network/load-balancer-revamp/troubleshooting).
+Avant de déclarer un incident, assurez-vous qu'il ne s'agit pas d'un problème de configuration que vous pouvez résoudre vous-même. La plupart des problèmes de serveur, de routage et de certificat se règlent directement dans votre configuration. Consultez d'abord [Résoudre les problèmes sur OVHcloud Load Balancer](/guides/network/load-balancer-revamp/troubleshooting).
 
 **Ce guide vous explique comment déclarer un incident OVHcloud Load Balancer au support et effectuer un suivi jusqu'à sa résolution.**
 
@@ -28,12 +28,12 @@ Avant de déclarer un incident, vérifiez que le problème n'est pas un problèm
 
 Un incident est une interruption ou une dégradation imprévue du service. Pour le Load Balancer, cela signifie généralement que le service est injoignable, qu'il renvoie des erreurs qui ne proviennent pas de vos backends, ou qu'il se comporte de manière incohérente d'une zone de disponibilité à l'autre malgré une configuration correcte et appliquée.
 
-OVHcloud distingue deux situations :
+OVHcloud distingue deux situations :
 
 - Un **incident de service** affectant l'infrastructure OVHcloud. Ces incidents sont suivis et publiés sur la page de statut OVHcloud.
 - Un **incident propre à votre service** qui nécessite une investigation par les équipes du support.
 
-Les étapes ci-dessous vous aident à identifier la situation qui s'applique, à rassembler les bons éléments et à ouvrir une demande de suivi.
+Les étapes ci-dessous vous aident à identifier la situation concernée, à rassembler les bons éléments et à ouvrir une demande de suivi.
 
 ## En pratique
 
@@ -51,11 +51,11 @@ Avant d'ouvrir un ticket, vérifiez si OVHcloud a déjà signalé un incident af
 
 Vérifiez que le symptôme n'est pas dû à un changement préparé mais non appliqué, ou à une sonde défaillante.
 
-Vérifiez le statut global du service :
+Vérifiez le statut global du service :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
 
-Examinez les opérations récentes sur le service. Une tâche en attente ou en échec peut expliquer un changement « sans effet » :
+Examinez les opérations récentes sur le service. Une tâche en attente ou en échec peut expliquer un changement « sans effet » :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/task"} />
 
@@ -64,8 +64,6 @@ Examinez les opérations récentes sur le service. Une tâche en attente ou en �
 | `serviceName` | Oui | Le nom de votre service Load Balancer. | `loadbalancer-a1b2c3d4` |
 
 Dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, ouvrez votre Load Balancer et sélectionnez l'onglet `Tâches` pour examiner les opérations en cours et récentes.
-
-{/* DRAFT: À illustrer — capturer l'onglet Tâches affichant l'historique des opérations */}
 
 Pour le déroulé complet du diagnostic, consultez [Résoudre les problèmes sur OVHcloud Load Balancer](/guides/network/load-balancer-revamp/troubleshooting). Si le problème persiste après ces vérifications, passez à la déclaration d'un incident.
 
@@ -92,8 +90,6 @@ Ouvrez une demande d'assistance via la plateforme d'aide OVHcloud et joignez les
 3. Sélectionnez le service affecté (votre Load Balancer) et la catégorie d'incident.
 4. Fournissez un résumé clair, l'impact, l'heure de début et les informations de diagnostic de l'étape 3.
 5. Soumettez la demande et notez la référence du ticket renvoyée.
-
-{/* DRAFT: À illustrer — capturer le formulaire de création de demande d'assistance dans l'espace client */}
 
 > [!INFO]
 > Les canaux de support exacts et les délais de réponse dépendent de votre niveau de support.

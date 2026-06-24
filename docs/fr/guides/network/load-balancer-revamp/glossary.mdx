@@ -6,7 +6,7 @@ lastUpdated: 2026-06-05
 
 ## Objectif
 
-Ce guide définit le vocabulaire employé dans l'ensemble de la documentation de l'OVHcloud Load Balancer. Consultez-le chaque fois qu'un terme rencontré dans un autre guide vous est inconnu, afin que des concepts comme les frontends, les fermes, les sondes et la persistance gardent une signification cohérente tout au long de votre travail de configuration.
+Ce guide définit le vocabulaire employé dans l'ensemble de la documentation de l'OVHcloud Load Balancer. Consultez-le chaque fois qu'un terme rencontré dans un autre guide vous est inconnu, afin que des concepts comme les frontends, les fermes, les sondes et la persistance gardent une signification cohérente d'un bout à l'autre de votre configuration.
 
 L'OVHcloud Load Balancer est un service entièrement managé qui répartit le trafic entrant entre plusieurs serveurs ou applications backend. Pour une description complète du service, consultez le guide [Qu'est-ce que l'OVHcloud Load Balancer](/guides/network/load-balancer-revamp/what-is-load-balancer).
 
@@ -14,22 +14,20 @@ L'OVHcloud Load Balancer est un service entièrement managé qui répartit le tr
 
 ## Comment les termes s'articulent entre eux
 
-La plupart des termes du Load Balancer décrivent l'une de trois choses : un objet que vous configurez (frontend, ferme, serveur), un comportement que vous appliquez au trafic (méthode d'équilibrage, persistance, route, sonde) ou une propriété de la plateforme sous-jacente (zone, anycast, vRack, terminaison SSL). Le schéma ci-dessous montre comment ces objets de configuration s'enchaînent à mesure que le trafic circule d'un client vers un serveur backend.
+La plupart des termes du Load Balancer relèvent de l'une de trois catégories : un objet que vous configurez (frontend, ferme, serveur), un comportement que vous appliquez au trafic (méthode d'équilibrage, persistance, route, sonde) ou une propriété de la plateforme sous-jacente (zone, anycast, vRack, terminaison SSL). Le schéma ci-dessous montre comment ces objets de configuration s'enchaînent à mesure que le trafic circule d'un client vers un serveur backend.
 
 <img className="thumbnail" alt="Comment les termes s'articulent entre eux — schéma" src="/images/network/load-balancer-revamp/glossary/fig-1.fr.svg" loading="lazy" />
 
-{/* DRAFT: To screenshot - capture the Load Balancer dashboard in the Control Panel showing the Server Farms and Frontends tabs to anchor the glossary visually */}
-
 ## Glossaire
 
-Le tableau ci-dessous définit chaque terme clé. La colonne « Espace client » indique le libellé exact affiché dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, lorsqu'il en existe un.
+Le tableau ci-dessous définit chaque terme clé. La colonne « Espace client » indique le libellé exact affiché dans l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, lorsqu'il en existe un.
 
 | Terme | Définition | Référence dans l'espace client |
 |---|---|---|
 | Frontend | Le point d'entrée du Load Balancer. Un frontend définit le protocole sur lequel il écoute (HTTP, HTTPS, TCP ou UDP) ainsi que le port d'écoute auquel les clients se connectent. Chaque frontend transmet le trafic à une ou plusieurs fermes de serveurs. | Onglet `Frontends` |
 | Ferme de serveurs | Un groupe logique de serveurs backend qui reçoivent le trafic d'un frontend. La ferme porte la méthode d'équilibrage, la sonde et le paramètre de persistance qui s'appliquent à ses membres. Également appelée ferme. | Onglet `Fermes de serveurs` |
 | Serveur | Une instance backend unique enregistrée au sein d'une ferme. Elle traite le trafic applicatif entrant et sortant. Un serveur peut être un serveur dédié, un Virtual Private Server (VPS), une instance Public Cloud ou toute adresse IP joignable. | `Ajouter un serveur` |
-| Sonde | Le contrôle de santé que le Load Balancer exécute sur chaque serveur d'une ferme. Il vérifie périodiquement qu'un serveur répond ; les serveurs qui échouent à la sonde sont retirés de la rotation jusqu'à leur rétablissement. | Configurée par ferme |
+| Sonde | Le contrôle de santé que le Load Balancer exécute sur chaque serveur d'une ferme. Il vérifie périodiquement qu'un serveur répond ; les serveurs qui échouent à la sonde sont retirés de la rotation jusqu'à leur rétablissement. | Configurée par ferme |
 | Méthode d'équilibrage | L'algorithme qui détermine quel serveur d'une ferme reçoit la requête suivante. Les méthodes disponibles sont Round Robin (par défaut), Moins de connexions, Hash Source, Hash URI et Premier disponible. | `Round Robin`, `Moins de connexions`, `Hash Source`, `Hash URI`, `Premier disponible` |
 | Persistance | Le mécanisme qui maintient un client lié au même serveur au fil des requêtes successives, également appelé persistance de session. Les options disponibles sont Aucune, Cookie et IP Source. | `Aucune`, `Cookie`, `IP Source` |
 | Route | Une règle rattachée à un frontend qui détermine quelle ferme reçoit une requête en fonction de conditions telles que le chemin de l'URL ou les en-têtes HTTP. Un frontend possède toujours une route par défaut et peut comporter des routes conditionnelles supplémentaires. | `Route par défaut`, `Router vers une ferme` |
@@ -37,7 +35,7 @@ Le tableau ci-dessous définit chaque terme clé. La colonne « Espace client »
 | Anycast | La technique réseau par laquelle une même adresse IP est annoncée simultanément depuis plusieurs emplacements. L'OVHcloud Load Balancer s'appuie sur un réseau anycast afin que les clients atteignent le point d'entrée sain le plus proche, ce qui améliore la latence et le basculement. | Propriété de la plateforme |
 | vRack | Le réseau privé OVHcloud qui relie vos services. Un Load Balancer rattaché à un vRack peut atteindre les serveurs backend via un adressage privé plutôt que par l'Internet public. | Onglet `Sous-réseau` |
 | Terminaison SSL | Le Load Balancer déchiffre le trafic HTTPS (TLS) entrant au niveau du frontend, puis le transmet à la ferme. Terminer le TLS au niveau du Load Balancer centralise la gestion des certificats et décharge le chiffrement de vos serveurs backend. | Onglet `Certificats SSL`, `Certificat TLS` |
-| Additional IP | Une adresse IP qui peut être routée vers votre Load Balancer afin d'étendre l'ensemble des adresses qu'il dessert. Ce terme remplace l'ancienne « IP failover ». | Configurée par service |
+| Additional IP | Une adresse IP qui peut être routée vers votre Load Balancer afin d'étendre l'ensemble des adresses qu'il dessert. Ce terme remplace l'ancienne « IP failover ». | Configurée par service |
 
 ## Termes associés
 
@@ -48,7 +46,7 @@ Quelques termes complémentaires apparaissent régulièrement dans les guides du
 | serviceName | L'identifiant unique de votre service Load Balancer. Il s'agit de la valeur utilisée dans chaque appel à l'API OVHcloud et affichée dans l'espace client. |
 | Appliquer la configuration | L'action qui pousse vos modifications enregistrées vers le Load Balancer actif. Les modifications restent en attente jusqu'à ce que vous les appliquiez, après quoi elles prennent effet sur le service en cours d'exécution. |
 | Mode maintenance | Un état dans lequel vous pouvez placer une ferme ou un serveur afin qu'il cesse de recevoir du trafic pendant la maintenance, puis rejoigne la rotation une fois la maintenance terminée. |
-| Layer 4 / Layer 7 | Les couches réseau auxquelles opère un frontend. Les frontends TCP et UDP fonctionnent en Layer 4 (transport) ; les frontends HTTP et HTTPS fonctionnent en Layer 7 (application), ce qui permet des conditions de route sur les URL et les en-têtes. |
+| Layer 4 / Layer 7 | Les couches réseau auxquelles opère un frontend. Les frontends TCP et UDP fonctionnent en Layer 4 (transport) ; les frontends HTTP et HTTPS fonctionnent en Layer 7 (application), ce qui permet des conditions de route sur les URL et les en-têtes. |
 
 ## Points à considérer et limitations
 

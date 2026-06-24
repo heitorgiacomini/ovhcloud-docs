@@ -1,5 +1,5 @@
 ---
-title: Architecture résiliente multizone
+title: Déployer une architecture résiliente multizone sur un Load Balancer
 description: Découvrez une architecture de référence résiliente multizone pour l'OVHcloud Load Balancer : topologie, distribution du trafic et bascule en cas de panne.
 lastUpdated: 2026-06-05
 ---
@@ -11,9 +11,9 @@ import ManagerLink from '@components/ManagerLink';
 
 Ce guide présente une architecture de référence pour déployer l'OVHcloud Load Balancer sur plusieurs zones de disponibilité afin de construire un service résilient et tolérant aux pannes. Il explique la topologie, la manière dont le trafic est distribué entre les zones et le comportement du service lorsqu'une zone devient indisponible.
 
-**Dans ce guide, vous découvrirez :**
+**Dans ce guide, vous découvrirez :**
 
-- Les deux modèles de déploiement multizone : multirégion et multi-Availability Zone (multi-AZ).
+- Les deux modèles de déploiement multizone : multirégion et multi-Availability Zone (multi-AZ).
 - Une topologie de référence combinant des frontends, des fermes de serveurs et des serveurs backend par zone.
 - La manière dont le trafic est acheminé entre les zones via le réseau Anycast.
 - Le comportement de bascule lorsqu'une zone est hors service.
@@ -40,7 +40,7 @@ Déployer le Load Balancer sur plusieurs zones augmente la fiabilité si une zon
 
 Cette section décrit les deux modèles de déploiement multizone, la topologie de référence, le mécanisme de distribution du trafic et le comportement de bascule.
 
-**Sommaire :**
+**Sommaire :**
 
 - [Modèles de déploiement](#deployment-models)
 - [Topologie de référence](#reference-topology)
@@ -51,11 +51,11 @@ Cette section décrit les deux modèles de déploiement multizone, la topologie 
 
 ### Modèles de déploiement <a name="deployment-models"></a>
 
-Vous pouvez répartir un service OVHcloud Load Balancer sur plusieurs zones de deux manières. Le modèle que vous choisissez dépend de votre priorité : la reprise après une panne régionale étendue ou la haute disponibilité au sein d'une seule région.
+Vous pouvez répartir un service OVHcloud Load Balancer sur plusieurs zones de deux manières. Le choix du modèle dépend de votre priorité : la reprise après une panne régionale étendue ou la haute disponibilité au sein d'une seule région.
 
 | Modèle | Portée | Avantage principal | Cas d'usage type |
 |---|---|---|---|
-| Multirégion | Zones situées dans différentes régions OVHcloud (par exemple `GRA` et `BHS`). La plupart des régions disposent d'une seule zone de disponibilité, donc travailler avec plusieurs zones revient généralement à travailler avec plusieurs régions. | Reprise après sinistre face à une panne régionale étendue, ainsi que des points d'entrée mondiaux qui réduisent la latence en acheminant les utilisateurs vers les serveurs backend les plus proches. | Utilisateurs répartis géographiquement ; reprise après la perte d'une région entière. |
+| Multirégion | Zones situées dans différentes régions OVHcloud (par exemple `GRA` et `BHS`). La plupart des régions disposent d'une seule zone de disponibilité, donc travailler avec plusieurs zones revient généralement à travailler avec plusieurs régions. | Reprise après sinistre face à une panne régionale étendue, ainsi que des points d'entrée mondiaux qui réduisent la latence en acheminant les utilisateurs vers les serveurs backend les plus proches. | Utilisateurs répartis géographiquement ; reprise après la perte d'une région entière. |
 | Multi-AZ | Plusieurs zones de disponibilité au sein d'une même région (par exemple Paris 3-AZ ou Milan 3-AZ). | Haute disponibilité et tolérance aux pannes face à une panne locale, grâce à des connexions à faible latence entre les zones. | Résilience au sein d'une région sans latence interrégionale. |
 
 > [!INFO]
@@ -63,13 +63,11 @@ Vous pouvez répartir un service OVHcloud Load Balancer sur plusieurs zones de d
 
 ### Topologie de référence <a name="reference-topology"></a>
 
-Dans une architecture résiliente multizone, chaque zone héberge un frontend qui pointe vers une ferme de serveurs située dans la même zone, et chaque ferme contient des serveurs backend situés à proximité de cette zone. Cela maintient le trafic local à une zone en conditions normales et isole l'impact de la défaillance d'une zone.
+Dans une architecture résiliente multizone, chaque zone héberge un frontend qui pointe vers une ferme de serveurs située dans la même zone, et chaque ferme contient des serveurs backend situés à proximité de cette zone. En conditions normales, le trafic reste ainsi local à chaque zone, ce qui isole l'impact de la défaillance d'une zone.
 
 Le schéma ci-dessous illustre une architecture de référence à deux zones couvrant les régions de Gravelines (`GRA`) et de Beauharnois (`BHS`).
 
 <img className="thumbnail" alt="Topologie de référence — schéma" src="/images/network/load-balancer-revamp/architecture-resilient-multi-zone/fig-1.fr.svg" loading="lazy" />
-
-{/* DRAFT: À illustrer - capturer l'onglet Frontends de l'espace client montrant un frontend par zone */}
 
 Le tableau ci-dessous associe chaque composant de la topologie de référence à son rôle dans l'architecture.
 
@@ -86,10 +84,10 @@ Le tableau ci-dessous associe chaque composant de la topologie de référence à
 
 L'OVHcloud Load Balancer s'appuie sur un réseau Anycast. Une requête entrant depuis une région donnée est dirigée vers la zone la plus proche, où le frontend local la transmet à la ferme de serveurs de la même zone, et la ferme l'équilibre entre les serveurs backend.
 
-Cette architecture atteint deux objectifs à la fois :
+Cette architecture atteint deux objectifs à la fois :
 
-- **Latence réduite :** les utilisateurs atteignent le point d'entrée le plus proche et les serveurs backend les plus proches.
-- **Localité :** en conditions normales, le trafic reste au sein d'une seule zone, ce qui réduit au minimum les dépendances entre zones.
+- **Latence réduite :** les utilisateurs atteignent le point d'entrée le plus proche et les serveurs backend les plus proches.
+- **Localité :** en conditions normales, le trafic reste au sein d'une seule zone, ce qui réduit au minimum les dépendances entre zones.
 
 Pour un routage basé sur l'état de santé au sein d'une ferme, configurez des sondes afin que le trafic ne soit pas transmis aux serveurs backend qui ne répondent pas. Consultez [Configurer les sondes](/guides/network/load-balancer-revamp/configure-health-probes) et [Surveiller l'état de santé des serveurs](/guides/network/load-balancer-revamp/monitor-server-health).
 
@@ -108,7 +106,7 @@ Lorsqu'une zone devient indisponible, le réseau Anycast cesse d'y diriger le tr
 
 ### Approche de configuration <a name="configuration-approach"></a>
 
-La construction de la topologie de référence se déroule en trois étapes. Pour la procédure détaillée, consultez [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones) ; le résumé ci-dessous indique où chaque étape se situe dans l'espace client et dans l'API.
+La construction de la topologie de référence se déroule en trois étapes. Pour la procédure détaillée, consultez [Configurer les zones](/guides/network/load-balancer-revamp/configure-zones) ; le résumé ci-dessous indique où chaque étape se situe dans l'espace client et dans l'API.
 
 1. **Commandez les zones supplémentaires.** Ajoutez les zones dont vous avez besoin à votre service Load Balancer existant.
 2. **Créez une ferme de serveurs par zone.** Chaque ferme contient les serveurs backend situés à proximité de sa zone.
@@ -120,13 +118,11 @@ Connectez-vous à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink> et 
 
 Après toute modification, appliquez la configuration pour la déployer sur les zones.
 
-{/* DRAFT: À illustrer - capturer l'éditeur de frontend montrant le champ de zone défini sur une zone spécifique */}
-
 #### Via l'API OVHcloud
 
 Les endpoints ci-dessous créent des fermes et des frontends par zone et déploient la configuration. Le champ `zone` d'un frontend détermine la zone dans laquelle il est déployé (utilisez `all` pour la zone spéciale `ALL`).
 
-Créez une ferme de serveurs pour le service HTTP :
+Créez une ferme de serveurs pour le service HTTP :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm"} />
 
@@ -135,7 +131,7 @@ Créez une ferme de serveurs pour le service HTTP :
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. | `loadbalancer-abcdef0123456789` |
 | `zone` (corps) | Oui | La zone dans laquelle la ferme est créée. | `gra` |
 
-Ajoutez un serveur backend à la ferme :
+Ajoutez un serveur backend à la ferme :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/farm/\{farmId\}/server"} />
 
@@ -145,7 +141,7 @@ Ajoutez un serveur backend à la ferme :
 | `farmId` | Oui | L'identifiant de votre ferme de serveurs. | `77212` |
 | `address` (corps) | Oui | L'adresse IPv4 du serveur backend. | `10.10.1.100` |
 
-Créez un frontend associé à une zone :
+Créez un frontend associé à une zone :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/http/frontend"} />
 
@@ -156,7 +152,7 @@ Créez un frontend associé à une zone :
 | `port` (corps) | Oui | Le port exposé aux clients. | `80` |
 | `zone` (corps) | Oui | La zone dans laquelle le frontend est déployé (`all` pour toutes les zones). | `gra` |
 
-Appliquez la configuration pour déployer toutes les modifications en attente :
+Appliquez la configuration pour déployer toutes les modifications en attente :
 
 <Api version="v1" section="/ipLoadbalancing" method="POST" route={"/ipLoadbalancing/\{serviceName\}/refresh"} />
 
@@ -164,7 +160,7 @@ Appliquez la configuration pour déployer toutes les modifications en attente :
 |---|---|---|
 | `serviceName` | Oui | L'identifiant de votre service Load Balancer. |
 
-Vous pouvez également inspecter l'état actuel du service et de ses zones :
+Vous pouvez également inspecter l'état actuel du service et de ses zones :
 
 <Api version="v1" section="/ipLoadbalancing" method="GET" route={"/ipLoadbalancing/\{serviceName\}/status"} />
 
@@ -173,7 +169,7 @@ Vous pouvez également inspecter l'état actuel du service et de ses zones :
 > [!INFO]
 > L'endpoint `GET /ipLoadbalancing/availableZones` est déprécié. Pour découvrir les zones associées à un service et leurs quotas, utilisez les endpoints `quota` ci-dessus ainsi que les propriétés du service sur `GET /ipLoadbalancing/{serviceName}`.
 
-Pour un déploiement automatisé et reproductible de cette topologie, consultez [Automatisation](/guides/network/load-balancer-revamp/automation). Le provider Terraform OVHcloud permet de gérer le service ainsi que ses fermes et ses serveurs (par exemple `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`). Les frontends et l'application de la configuration s'effectuent via l'API ou l'espace client, et non via Terraform.
+Pour un déploiement automatisé et reproductible de cette topologie, consultez [Automatisation](/guides/network/load-balancer-revamp/automation). Le provider Terraform OVHcloud permet de gérer le service, ses fermes et ses serveurs (par exemple `ovh_iploadbalancing_http_farm` et `ovh_iploadbalancing_http_farm_server`), les frontends par zone (`ovh_iploadbalancing_http_frontend`, `ovh_iploadbalancing_tcp_frontend`, `ovh_iploadbalancing_udp_frontend`), ainsi que l'application de la configuration en attente avec `ovh_iploadbalancing_refresh`. Vous pouvez aussi appliquer la configuration via l'API ou l'espace client.
 
 ### Points d'attention et limites <a name="considerations-and-limitations"></a>
 
