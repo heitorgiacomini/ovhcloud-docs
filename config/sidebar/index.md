@@ -1832,7 +1832,7 @@
                 + [Installing Grav manually](web-cloud/web-hosting/cms-manual-installation-grav)
                 + [Installing Typo3 manually](web-cloud/web-hosting/cms-manual-installation-typo3)
                 + [Installing SPIP manually](web-cloud/web-hosting/cms-manual-installation-spip)
-        + [Security](web-cloud-hosting-security)
+        + [Security](web-cloud-hosting-security){landing=web-cloud/web-hosting/landing-page-security}
             + [Optimising the security of your website](web-cloud/web-hosting/secure-your-website)
             + [Activating the application firewall](web-cloud/web-hosting/multisites-activating-application-firewall)
             + [Managing SSL certificates on a Web Hosting plan](web-cloud/web-hosting/ssl-on-webhosting)
@@ -1842,7 +1842,7 @@
             + [Web Hosting - Activating an EV SSL certificate](web-cloud/web-hosting/ssl-ev)
             + [Web Hosting - Installing a custom SSL certificate](web-cloud/web-hosting/ssl-custom)
             + [Avoiding the common pitfalls of making your website secure with SSL](web-cloud/web-hosting/ssl-avoid-common-pitfalls-of-making-website-secure)
-        + [Troubleshooting](web-cloud-hosting-troubleshooting)
+        + [Troubleshooting](web-cloud-hosting-troubleshooting){landing=web-cloud/web-hosting/landing-page-diagnostic}
             + [Use cases - What to do if your Website is hacked](web-cloud/web-hosting/cms-what-to-do-if-your-site-is-hacked)
             + [Information - HTTP2 rapid reset vulnerability](web-cloud/web-hosting/info-http2-rapidreset)
             + [What do I do if my website is down?](web-cloud/web-hosting/diagnostic-website-not-accessible)
@@ -2005,6 +2005,7 @@
                 + [Configuring an Exchange account on Android via the Gmail app](web-cloud/email-and-collaborative-solutions/microsoft-exchange/how-to-configure-android)
             + [Troubleshooting](web-cloud-email-collaborative-solutions-microsoft-exchange-troubleshooting)
                 + [Using Exchange error diagnostics](web-cloud/email-and-collaborative-solutions/microsoft-exchange/diagnostic-advanced)
+                + [Exchange - Outlook sign-in prompts to Office 365](web-cloud/email-and-collaborative-solutions/microsoft-exchange/outlook-connecting-to-office-365)
                 + [Exchange - How to manage logs](web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-manage-logs)
         + [Microsoft Office](web-cloud-email-collaborative-solutions-microsoft-office)
             + [Managing a group of Microsoft 365 OVHcloud licences](web-cloud/email-and-collaborative-solutions/microsoft-office/office365-csp1)
