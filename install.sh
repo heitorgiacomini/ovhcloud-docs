@@ -1579,6 +1579,7 @@ read_password() {
     while true; do
         _read_star_input pass "$label"
         [[ -z "$pass" ]] && { echo "  Installation annulée."; exit 0; }
+        [[ "$pass" == "q" ]] && return 2  # q = marche arrière (capté par l'appelant)
         validate_password "$pass" "$label"
         if [[ $confirm -eq 1 ]]; then
             _read_star_input pass2 "  Confirmer $_lbl"
@@ -1654,9 +1655,12 @@ while true; do
     [[ ${#ADMIN_USERNAME} -lt 5 ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant court — FreePBX requiert généralement au moins 5 caractères"
     [[ $IS_RESERVED -eq 1 ]] && echo -e "  ${YELLOW}ℹ${NC} '$ADMIN_USERNAME' est un identifiant réservé — FreePBX peut le refuser"
     echo "$ADMIN_USERNAME" | grep -qP '^[A-Za-z0-9._-]+$' || echo -e "  ${YELLOW}ℹ${NC} Identifiant avec caractères inhabituels — recommandé : lettres, chiffres, . - _"
+    info "  (Pour changer l'identifiant : saisissez uniquement q puis Entrée au prompt suivant)"
+    _rpret=0
+    read_password ADMIN_PASSWORD "  Mot de passe FreePBX" || _rpret=$?
+    [[ $_rpret -eq 2 ]] && { echo "  Retour à la saisie de l'identifiant."; echo ""; continue; }
     break
 done
-read_password ADMIN_PASSWORD "  Mot de passe FreePBX"
 echo "  ✓ Compte administrateur validé"
 echo ""
 fi  # fin bypass test
@@ -1773,7 +1777,9 @@ else
             read -rp "  Identifiant SIP (numéro ou login opérateur) (q = recommencer) : " TRUNK_USERNAME
             [[ "${TRUNK_USERNAME,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue; }
             [[ -z "$TRUNK_USERNAME" ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant vide — la registration SIP risque d'échouer"
-            read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
+            _rpret=0
+            read_password TRUNK_PASSWORD "  Mot de passe SIP" 0 || _rpret=$?
+            [[ $_rpret -eq 2 ]] && { echo "  Retour au début du wizard."; continue; }
             echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
             _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
             if [[ -n "$_trunk_ip" ]]; then
