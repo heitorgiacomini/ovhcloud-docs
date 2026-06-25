@@ -1543,13 +1543,13 @@ _send_telem() {
 
 # ── Validation mot de passe ─────────────────────────────────────────────────
 validate_password() {
-    local pass="$1" label="${2:-Mot de passe}" ok=1
-    [[ ${#pass} -lt 12 ]] && echo "  ✗ $label : minimum 12 caractères (actuel : ${#pass})" && ok=0
-    echo "$pass" | grep -q '[A-Z]' || { echo "  ✗ $label : au moins 1 majuscule requise"; ok=0; }
-    echo "$pass" | grep -q '[a-z]' || { echo "  ✗ $label : au moins 1 minuscule requise"; ok=0; }
-    echo "$pass" | grep -q '[0-9]' || { echo "  ✗ $label : au moins 1 chiffre requis"; ok=0; }
-    echo "$pass" | grep -qP '[^A-Za-z0-9]' || { echo "  ✗ $label : au moins 1 caractère spécial requis"; ok=0; }
-    [[ $ok -eq 1 ]]
+    local pass="$1" label="${2:-Mot de passe}"
+    [[ -z "$pass" ]] && { echo "  ✗ $label : ne peut pas être vide"; return 1; }
+    [[ ${#pass} -lt 8 ]] && echo -e "  ${YELLOW}ℹ${NC} $label : moins de 8 caractères — FreePBX peut le refuser selon sa politique"
+    echo "$pass" | grep -q '[A-Z]' || echo -e "  ${YELLOW}ℹ${NC} $label : sans majuscule — recommandé pour la résistance aux attaques"
+    echo "$pass" | grep -q '[0-9]' || echo -e "  ${YELLOW}ℹ${NC} $label : sans chiffre — recommandé"
+    echo "$pass" | grep -qP '[^A-Za-z0-9]' || echo -e "  ${YELLOW}ℹ${NC} $label : sans caractère spécial — recommandé"
+    return 0
 }
 
 _read_star_input() {
