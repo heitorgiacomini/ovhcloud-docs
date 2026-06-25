@@ -1554,7 +1554,9 @@ validate_password() {
 
 _read_star_input() {
     # Saisie masquée avec affichage d'étoiles — gère backspace
+    # stty sane avant chaque appel : évite que le mode -s se bloque après un mauvais doublon
     local varname="$1" prompt="$2" password="" char
+    stty sane 2>/dev/null || true
     printf "%s : " "$prompt"
     while IFS= read -r -s -n1 char; do
         case "$char" in
@@ -1572,12 +1574,17 @@ _read_star_input() {
 
 read_password() {
     local varname="$1" label="$2" confirm="${3:-1}" pass pass2
+    local _lbl="${label#"${label%%[! ]*}"}"  # label sans espaces de tête pour le prompt confirmation
     while true; do
         _read_star_input pass "$label"
-        validate_password "$pass" "$label" || continue
+        [[ -z "$pass" ]] && { echo "  Installation annulée."; exit 0; }
+        validate_password "$pass" "$label"
         if [[ $confirm -eq 1 ]]; then
-            _read_star_input pass2 "Confirmer $label"
-            [[ "$pass" == "$pass2" ]] || { echo "  ✗ Mots de passe différents"; continue; }
+            _read_star_input pass2 "  Confirmer $_lbl"
+            if [[ "$pass" != "$pass2" ]]; then
+                echo "  ✗ Mots de passe différents — saisissez à nouveau"
+                continue
+            fi
         fi
         printf -v "$varname" '%s' "$pass"
         break
@@ -1603,6 +1610,8 @@ read_ext_password() {
 # ════════════════════════════════════════════════════════════════════════════
 # WIZARD — Saisie paramètres (V1.9 CRA)
 # ════════════════════════════════════════════════════════════════════════════
+while true; do
+MANAGEMENT_IP=""
 echo ""
 echo "╔══════════════════════════════════════════╗"
 echo "║  FreePBX Factory V1.9 CRA — Installateur ║"
@@ -1631,15 +1640,19 @@ if [[ -n "${FACTORY_TEST_ADMIN:-}" && -n "${FACTORY_TEST_PASS:-}" ]]; then
 else
 RESERVED_LOGINS="admin root administrator freepbx asterisk"
 while true; do
-    read -rp "  Identifiant de connexion FreePBX (min. 8 caractères, ex: ipbx-admin) : " ADMIN_USERNAME
+    read -rp "  Identifiant de connexion FreePBX : " ADMIN_USERNAME
     [[ -z "$ADMIN_USERNAME" ]] && { echo "  Installation annulée."; exit 0; }
+    case "$ADMIN_USERNAME" in
+        *"'"*|*'"'*|*";"*|*"<"*|*">"*|*"&"*|*'`'*)
+            echo "  ✗ Caractères interdits dans l'identifiant — saisissez à nouveau"; continue ;;
+    esac
     ADMIN_LOWER="${ADMIN_USERNAME,,}"
     IS_RESERVED=0
     for r in $RESERVED_LOGINS; do [[ "$ADMIN_LOWER" == "$r" ]] && IS_RESERVED=1 && break; done
-    if [[ ${#ADMIN_USERNAME} -ge 8 ]] && echo "$ADMIN_USERNAME" | grep -qP '^[A-Za-z0-9._-]+$' && [[ $IS_RESERVED -eq 0 ]]; then
-        break
-    fi
-    echo "  ✗ Identifiant invalide — minimum 8 caractères, alphanum+._-, noms réservés interdits (admin, root, administrator, freepbx, asterisk)"
+    [[ ${#ADMIN_USERNAME} -lt 5 ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant court — FreePBX requiert généralement au moins 5 caractères"
+    [[ $IS_RESERVED -eq 1 ]] && echo -e "  ${YELLOW}ℹ${NC} '$ADMIN_USERNAME' est un identifiant réservé — FreePBX peut le refuser"
+    echo "$ADMIN_USERNAME" | grep -qP '^[A-Za-z0-9._-]+$' || echo -e "  ${YELLOW}ℹ${NC} Identifiant avec caractères inhabituels — recommandé : lettres, chiffres, . - _"
+    break
 done
 read_password ADMIN_PASSWORD "  Mot de passe FreePBX"
 echo "  ✓ Compte administrateur validé"
@@ -1672,7 +1685,7 @@ else
     info "  l'installation avant de connecter de vrais postes."
     info "  [Entrée] = non (désactivé)"
     read -rp "  Créer 3 postes de démonstration ? [o/N/q] : " KIT_RESP
-    [[ "${KIT_RESP,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
+    if [[ "${KIT_RESP,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
 fi
 
 if [[ "${KIT_RESP,,}" == "o" ]]; then
@@ -1740,25 +1753,26 @@ else
     info "    - votre mot de passe SIP (différent du mot de passe espace client OVHcloud)"
     info "  [Entrée] = non (désactivé)"
     read -rp "  Connecter une ligne opérateur SIP ? [o/N/q] : " TRUNK_RESP
-    [[ "${TRUNK_RESP,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
+    if [[ "${TRUNK_RESP,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
     if [[ "${TRUNK_RESP,,}" == "o" ]]; then
         TRUNK_ENABLED="oui"
-        while true; do
-            read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net) : " TRUNK_REGISTRAR
-            [[ -z "$TRUNK_REGISTRAR" || "${TRUNK_REGISTRAR,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
-            [[ "$TRUNK_REGISTRAR" =~ \. ]] && break
-            echo "  ✗ Format invalide — attendu : un nom de domaine (ex: siptrunk.ovh.net)"
-        done
-        read -rp "  Identifiant SIP (numéro ou login opérateur) : " TRUNK_USERNAME
-        read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
-        echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
-        _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
-        if [[ -n "$_trunk_ip" ]]; then
-            EXTRA_IGNOREIP="$_trunk_ip"
-            echo "  → IP opérateur résolue : $EXTRA_IGNOREIP (autorisée dans fail2ban)"
+        read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net), vide pour ignorer : " TRUNK_REGISTRAR
+        if [[ -z "$TRUNK_REGISTRAR" ]]; then
+            TRUNK_ENABLED="non"; echo "  → Ligne opérateur ignorée"
         else
-            read -rp "  IP de l'opérateur SIP à autoriser (optionnel) : " EXTRA_IGNOREIP
-            [[ -n "$EXTRA_IGNOREIP" ]] && echo "  → Autorisée : $EXTRA_IGNOREIP"
+            [[ "$TRUNK_REGISTRAR" =~ \. ]] || echo -e "  ${YELLOW}ℹ${NC} Format inhabituel — vérifiez l'adresse du serveur SIP de votre opérateur"
+            read -rp "  Identifiant SIP (numéro ou login opérateur) : " TRUNK_USERNAME
+            [[ -z "$TRUNK_USERNAME" ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant vide — la registration SIP risque d'échouer"
+            read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
+            echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
+            _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
+            if [[ -n "$_trunk_ip" ]]; then
+                EXTRA_IGNOREIP="$_trunk_ip"
+                echo "  → IP opérateur résolue : $EXTRA_IGNOREIP (autorisée dans fail2ban)"
+            else
+                read -rp "  IP de l'opérateur SIP à autoriser (optionnel) : " EXTRA_IGNOREIP
+                [[ -n "$EXTRA_IGNOREIP" ]] && echo "  → Autorisée : $EXTRA_IGNOREIP"
+            fi
         fi
     else
         echo "  → Ligne opérateur désactivée"
@@ -1793,8 +1807,8 @@ if [[ -n "$TLS_DOMAIN_ARG" ]]; then
     echo "  ✓ Sous-domaine : $TLS_DOMAIN (pré-sélectionné par le wizard)"
     echo "  ℹ  Enregistrement attendu : A  $TLS_DOMAIN  →  $VPS_IP"
 else
-    read -rp "  Sous-domaine HTTPS (ex: pbx.mon-entreprise.fr), Entrée pour ignorer, q pour annuler : " TLS_DOMAIN
-    [[ "${TLS_DOMAIN,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
+    read -rp "  Sous-domaine HTTPS (ex: pbx.mon-entreprise.fr), Entrée pour ignorer, q pour recommencer : " TLS_DOMAIN
+    if [[ "${TLS_DOMAIN,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
     if [[ -n "$TLS_DOMAIN" ]]; then
         echo "  ✓ Sous-domaine : $TLS_DOMAIN"
         echo "  ℹ  Enregistrement attendu : A  $TLS_DOMAIN  →  $VPS_IP"
@@ -1813,8 +1827,15 @@ ADMIN_SHA512=$(env _P="$ADMIN_PASSWORD" python3 -c "import hashlib,os; print(has
 # Management IP = IP du poste déployeur (détectée par launch.py/launch.sh)
 if [[ -n "$MANAGEMENT_IP_ARG" ]]; then
     MANAGEMENT_IP="$MANAGEMENT_IP_ARG"
-    ok "  IP de gestion  : $MANAGEMENT_IP (détectée automatiquement)"
-else
+    info "  IP de gestion détectée par le lanceur : $MANAGEMENT_IP"
+    read -rp "  Confirmer ? [O/n/q] : " _CONFIRM_MGT
+    if [[ "${_CONFIRM_MGT,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
+    if [[ "${_CONFIRM_MGT,,}" == "n" ]]; then
+        MANAGEMENT_IP=""
+        MANAGEMENT_IP_ARG=""
+    fi
+fi
+if [[ -z "$MANAGEMENT_IP" ]]; then
     # Détection automatique de l'IP source de la connexion SSH active
     _DETECTED_IP=""
     if [[ -n "${SSH_CLIENT:-}" ]]; then
@@ -1836,7 +1857,7 @@ else
         info "  Un sous-réseau /24 sera autorisé : ${_DETECTED_IP%.*}.0/24"
         info "  (absorbe les variations d'IP dynamique au sein de votre connexion)"
         read -rp "  Confirmer ? [O/n/q] : " _CONFIRM
-        [[ "${_CONFIRM,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
+        if [[ "${_CONFIRM,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
         if [[ "${_CONFIRM,,}" != "n" ]]; then
             MANAGEMENT_IP="${_DETECTED_IP%.*}.0/24"
             echo "  → IP de gestion : $MANAGEMENT_IP"
@@ -1921,9 +1942,16 @@ info "  Le script continue automatiquement. Pour reprendre la session :"
 info "    ssh -p $SSH_PORT debian@<ADRESSE_IP_SERVEUR>"
 info "    sudo tmux attach -t factory"
 info ""
-info "  [Entrée] = annuler"
-read -rp "  Lancer le déploiement ? [o/N] : " CONFIRM
-[[ "${CONFIRM,,}" == "o" ]] || { echo "  Annulé."; exit 0; }
+info "  [Entrée]/N = annuler  |  r = recommencer depuis le début"
+read -rp "  Lancer le déploiement ? [o/N/r] : " CONFIRM
+if [[ "${CONFIRM,,}" == "r" ]]; then
+    echo ""; echo "  --- Retour au début du wizard ---"; echo ""; continue
+elif [[ "${CONFIRM,,}" != "o" ]]; then
+    echo "  Annulé."; exit 0
+fi
+break
+done  # fin wizard
+
 INSTALL_START=$(date +%s)
 
 # ── Ping démarrage anonyme (automatique, silencieux) ────────────────────────
