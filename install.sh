@@ -1889,7 +1889,7 @@ if [[ -z "$MANAGEMENT_IP" ]]; then
         _DETECTED_IP="${SSH_CONNECTION%% *}"
     fi
     if [[ -z "$_DETECTED_IP" ]]; then
-        _DETECTED_IP=$(who am i 2>/dev/null | grep -oP '\(\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+        _DETECTED_IP=$(who am i 2>/dev/null | grep -oP '\(\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
     fi
     if [[ -z "$_DETECTED_IP" ]]; then
         _DETECTED_IP=$(ss -tn state established 'sport = :22' 2>/dev/null \
