@@ -55,20 +55,20 @@ TLS_DOMAIN_ARG="${TLS_DOMAIN_ARG:-}"
 if [[ -n "$KIT_STARTER_ARG" ]]; then
     case "${KIT_STARTER_ARG,,}" in
         oui|non|yes|no|1|0) ;;
-        *) echo "Erreur : --kit-starter='$KIT_STARTER_ARG' invalide. Valeurs acceptées : oui, non." >&2; exit 1;;
+        *) echo -e "\033[0;31m[ERR]\033[0m --kit-starter='$KIT_STARTER_ARG' invalide. Valeurs acceptées : oui, non." >&2; exit 1;;
     esac
 fi
 
 # trunk-enabled=oui : registrar et username obligatoires
 if [[ "${TRUNK_ENABLED_ARG,,}" =~ ^(oui|yes|1)$ ]]; then
-    [[ -z "$TRUNK_REGISTRAR_ARG" ]] && { echo "Erreur : --trunk-enabled=oui requiert --trunk-registrar=<serveur-sip>" >&2; exit 1; }
-    [[ -z "$TRUNK_USERNAME_ARG"  ]] && { echo "Erreur : --trunk-enabled=oui requiert --trunk-username=<login-sip>" >&2; exit 1; }
+    [[ -z "$TRUNK_REGISTRAR_ARG" ]] && { echo -e "\033[0;31m[ERR]\033[0m --trunk-enabled=oui requiert --trunk-registrar=<serveur-sip>" >&2; exit 1; }
+    [[ -z "$TRUNK_USERNAME_ARG"  ]] && { echo -e "\033[0;31m[ERR]\033[0m --trunk-enabled=oui requiert --trunk-username=<login-sip>" >&2; exit 1; }
 fi
 
 # tls-domain : format FQDN minimal (lettres, chiffres, tirets, points ; au moins un point)
 if [[ -n "$TLS_DOMAIN_ARG" ]]; then
     if ! [[ "$TLS_DOMAIN_ARG" =~ ^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)+$ ]]; then
-        echo "Erreur : --tls-domain='$TLS_DOMAIN_ARG' n'est pas un nom de domaine valide (ex: pbx.mon-entreprise.fr)" >&2
+        echo -e "\033[0;31m[ERR]\033[0m --tls-domain='$TLS_DOMAIN_ARG' invalide. Exemple attendu : pbx.mon-entreprise.fr" >&2
         exit 1
     fi
 fi
@@ -317,10 +317,14 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Attente démarrage Asterisk via PM2..."
 RETRY=0
 until fwconsole pm2 --list 2>/dev/null | grep -q 'online'; do
     RETRY=$((RETRY+1))
-    if [[ $RETRY -ge 24 ]]; then
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERREUR : PM2 online non atteint après 120s"
+    if [[ $RETRY -ge 60 ]]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] AVERTISSEMENT : PM2 online non atteint après 300s — Asterisk lent à démarrer"
         fwconsole pm2 --list 2>/dev/null || true
-        exit 1
+        echo "  → Vérifier après déploiement : sudo fwconsole pm2 --list"
+        break
+    fi
+    if (( RETRY % 6 == 0 )); then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Attente Asterisk... $((RETRY * 5))s / 300s max"
     fi
     sleep 5
 done
@@ -558,14 +562,15 @@ OVERLAYEOF
 
 systemctl enable fail2ban
 # restart requis (pas reload) pour créer les chaînes iptables — E24
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Démarrage fail2ban et création des chaînes iptables..."
 systemctl restart fail2ban
-sleep 3
+sleep 5
 
 # Validation actions iptables (E23)
 ACTIONS=$(fail2ban-client get ssh-iptables actions 2>/dev/null || echo "")
 if echo "$ACTIONS" | grep -q "No actions"; then
-    echo "[ERREUR E23] fail2ban ssh-iptables : aucune action iptables — vérifier l'overlay"
-    exit 1
+    echo "[AVERTISSEMENT E23] fail2ban ssh-iptables : aucune action iptables — vérifier l'overlay"
+    echo "  → sudo fail2ban-client get ssh-iptables actions"
 fi
 
 fail2ban-client status
@@ -627,7 +632,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 06_POST_RESTORE ==="
 # ── Fix endpoint (E3) ────────────────────────────────────
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fix endpoint..."
 fwconsole ma install endpoint -f 2>&1 | tail -3
-fwconsole reload 2>&1 | tail -3
+fwconsole reload 2>&1 | tail -3 || true
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ENDPOINT_OK"
 
 # ── UFW garde post-reload (E15) ──────────────────────────
@@ -744,7 +749,7 @@ if [[ -n "$EXT1_NUMBER" ]]; then
     insert_extension "$EXT1_NUMBER" "$EXT1_NAME" "$EXT1_PASS"
     insert_extension "$EXT2_NUMBER" "$EXT2_NAME" "$EXT2_PASS"
     insert_extension "$EXT3_NUMBER" "$EXT3_NAME" "$EXT3_PASS"
-    fwconsole reload 2>&1 | tail -3
+    fwconsole reload 2>&1 | tail -3 || true
     ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] EXTENSIONS_OK"
 else
@@ -752,7 +757,7 @@ else
 fi
 
 # ── fwconsole reload final ────────────────────────────────
-fwconsole reload 2>&1 | tail -3
+fwconsole reload 2>&1 | tail -3 || true
 ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
 
 # ── Trunk SIP (optionnel, E22) ────────────────────────────
@@ -797,7 +802,7 @@ INSERT INTO pjsip (id, keyword, data, flags) VALUES
   (@tid, 'maxchans',                 '',                    0),
   (@tid, 'routedisplay',             'on',                  0);
 TRUNKEOF
-    fwconsole reload 2>&1 | tail -3
+    fwconsole reload 2>&1 | tail -3 || true
     ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] TRUNK_OK : $TRUNK_NAME ($TRUNK_REGISTRAR)"
 else
@@ -853,7 +858,7 @@ a2enconf freepbx-security-headers -q 2>/dev/null || true
 sed -i 's/Options Indexes FollowSymLinks/Options FollowSymLinks/' \
     /etc/apache2/apache2.conf 2>/dev/null || true
 
-systemctl reload apache2
+systemctl reload apache2 2>/dev/null || echo "[AVERTISSEMENT] Apache non actif au moment du reload — headers appliqués au prochain démarrage"
 
 HEADERS=$(curl -sI http://localhost/admin/ 2>/dev/null)
 echo "X-Frame-Options    : $(echo "$HEADERS" | grep -i 'X-Frame-Options' || echo 'ABSENT')"
@@ -1298,6 +1303,7 @@ cat > "$_PHASES_TMP/15_tls.sh" <<'__FPBXPHASE_15_TLS_SH__'
 #
 # Prérequis : Apache doit être démarré (phase 09 + validation GUI déjà faites)
 # Argument  : $1 = FQDN (ex: pbx.mon-entreprise.fr)
+RED='\033[0;31m'; YELLOW='\033[1;33m'; GREEN='\033[0;32m'; NC='\033[0m'
 
 set -euo pipefail
 LOG=/var/log/freepbx-factory/deploy-phase-15-tls.log
@@ -1328,22 +1334,35 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y certbot -q
 a2enmod rewrite ssl -q 2>/dev/null || true
 
 # ServerName dans le vhost HTTP par défaut (requis pour certbot --webroot)
-if ! grep -q "^    ServerName" /etc/apache2/sites-available/000-default.conf 2>/dev/null; then
+if ! grep -q "ServerName" /etc/apache2/sites-available/000-default.conf 2>/dev/null; then
     sed -i "s|ServerAdmin webmaster@localhost|ServerName $TLS_DOMAIN\n\tServerAdmin webmaster@localhost|" \
         /etc/apache2/sites-available/000-default.conf
     echo "[INFO] ServerName $TLS_DOMAIN ajouté à 000-default.conf"
 fi
-systemctl reload apache2
+systemctl reload apache2 || true
 
 # ── 3. Certificat Let's Encrypt (webroot — pas de plugin Apache) ──────────────
 # --webroot : certbot dépose /.well-known/acme-challenge/ dans /var/www/html
 # Apache sert le challenge sur port 80 — aucune manipulation de vhost
-certbot certonly \
+if ! certbot certonly \
     --webroot -w /var/www/html \
     -d "$TLS_DOMAIN" \
     --non-interactive \
     --agree-tos \
-    --register-unsafely-without-email
+    --register-unsafely-without-email; then
+    echo -e "${YELLOW}╔══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║  AVERTISSEMENT — Certificat TLS non obtenu               ║${NC}"
+    echo -e "${YELLOW}╠══════════════════════════════════════════════════════════╣${NC}"
+    echo -e "${YELLOW}║  Domaine  : $TLS_DOMAIN${NC}"
+    echo -e "${YELLOW}║  Causes   : DNS non propagé, rate limit LE, port 80 NAT  ║${NC}"
+    echo -e "${YELLOW}║  Action   : Apache arrêté — GUI inaccessible              ║${NC}"
+    echo -e "${YELLOW}║  Reprise  : sudo certbot certonly --webroot \\              ║${NC}"
+    echo -e "${YELLOW}║             -w /var/www/html -d $TLS_DOMAIN${NC}"
+    echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
+    systemctl stop apache2 2>/dev/null || true
+    systemctl disable apache2 2>/dev/null || true
+    exit 0
+fi
 
 CERT_DIR="/etc/letsencrypt/live/$TLS_DOMAIN"
 echo "[INFO] Certificat obtenu : $CERT_DIR/fullchain.pem"
@@ -1501,7 +1520,7 @@ if [[ -z "${FACTORY_IN_TMUX:-}" ]]; then
     _FWD_ARGS="${MANAGEMENT_IP_ARG:+--management-ip=$MANAGEMENT_IP_ARG} ${KIT_STARTER_ARG:+--kit-starter=$KIT_STARTER_ARG} ${TRUNK_ENABLED_ARG:+--trunk-enabled=$TRUNK_ENABLED_ARG} ${TRUNK_REGISTRAR_ARG:+--trunk-registrar=$TRUNK_REGISTRAR_ARG} ${TRUNK_USERNAME_ARG:+--trunk-username=$TRUNK_USERNAME_ARG} ${TLS_DOMAIN_ARG:+--tls-domain=$TLS_DOMAIN_ARG}"
     _FWD_ENV="FACTORY_IN_TMUX=1${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
     tmux new-session -d -s factory -x 220 -y 50 \
-        "eval export $_FWD_ENV; bash $0 $_FWD_ARGS; echo ''; echo '-- Installation terminée — Appuyer sur Entrée --'; read"
+        "eval export $_FWD_ENV; bash $0 $_FWD_ARGS; echo ''; if [[ -f /tmp/fpbx_deploy_done ]]; then echo '-- Déploiement terminé — Appuyer sur Entrée --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) — Appuyer sur Entrée --'; fi; read"
     tmux attach-session -t factory
     exit 0
 fi
@@ -1702,7 +1721,7 @@ if [[ -n "$TRUNK_ENABLED_ARG" ]]; then
             read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
         fi
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
-        _trunk_ip=$(getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
+        _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
         if [[ -n "$_trunk_ip" ]]; then
             EXTRA_IGNOREIP="$_trunk_ip"
             echo "  → IP opérateur résolue : $EXTRA_IGNOREIP (autorisée dans fail2ban)"
@@ -1733,7 +1752,7 @@ else
         read -rp "  Identifiant SIP (numéro ou login opérateur) : " TRUNK_USERNAME
         read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
-        _trunk_ip=$(getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
+        _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
         if [[ -n "$_trunk_ip" ]]; then
             EXTRA_IGNOREIP="$_trunk_ip"
             echo "  → IP opérateur résolue : $EXTRA_IGNOREIP (autorisée dans fail2ban)"
@@ -1796,25 +1815,59 @@ if [[ -n "$MANAGEMENT_IP_ARG" ]]; then
     MANAGEMENT_IP="$MANAGEMENT_IP_ARG"
     ok "  IP de gestion  : $MANAGEMENT_IP (détectée automatiquement)"
 else
-    # Fallback : saisie manuelle si lancé sans le launcher
+    # Détection automatique de l'IP source de la connexion SSH active
+    _DETECTED_IP=""
+    if [[ -n "${SSH_CLIENT:-}" ]]; then
+        _DETECTED_IP="${SSH_CLIENT%% *}"
+    elif [[ -n "${SSH_CONNECTION:-}" ]]; then
+        _DETECTED_IP="${SSH_CONNECTION%% *}"
+    fi
+    if [[ -z "$_DETECTED_IP" ]]; then
+        _DETECTED_IP=$(who am i 2>/dev/null | grep -oP '\(\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    fi
+    if [[ -z "$_DETECTED_IP" ]]; then
+        _DETECTED_IP=$(ss -tn state established 'sport = :22' 2>/dev/null \
+            | awk 'NR>1 {split($5,a,":"); print a[1]}' | head -1)
+    fi
+
     echo ""
-    info "  Saisissez l'adresse IP de votre poste (visible avec : curl ifconfig.me)"
-    info "  Laisser vide = accès SSH non restreint (non recommandé)"
-    while true; do
-        read -rp "  Votre IP publique (ex: A.B.C.D) : " _MGMT_RAW
-        if [[ -z "$_MGMT_RAW" ]]; then
-            MANAGEMENT_IP="0.0.0.0/0"
-            warn "  ⚠ Accès SSH non restreint"
-            break
-        elif echo "$_MGMT_RAW" | grep -qP '^\d+\.\d+\.\d+\.\d+$'; then
-            MANAGEMENT_IP=$(echo "$_MGMT_RAW" | sed 's/\.[0-9]*$/.0\/24/')
-            echo "  → Sous-réseau : $MANAGEMENT_IP"; break
-        elif echo "$_MGMT_RAW" | grep -qP '^\d+\.\d+\.\d+\.\d+/\d+$'; then
-            MANAGEMENT_IP="$_MGMT_RAW"; break
+    if [[ -n "$_DETECTED_IP" ]]; then
+        info "  IP détectée : $_DETECTED_IP (adresse source de votre connexion SSH)"
+        info "  Un sous-réseau /24 sera autorisé : ${_DETECTED_IP%.*}.0/24"
+        info "  (absorbe les variations d'IP dynamique au sein de votre connexion)"
+        read -rp "  Confirmer ? [O/n/q] : " _CONFIRM
+        [[ "${_CONFIRM,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
+        if [[ "${_CONFIRM,,}" != "n" ]]; then
+            MANAGEMENT_IP="${_DETECTED_IP%.*}.0/24"
+            echo "  → IP de gestion : $MANAGEMENT_IP"
         else
-            echo "  ✗ Format invalide — ex: A.B.C.D ou A.B.C.0/24"
+            _DETECTED_IP=""
         fi
-    done
+    fi
+
+    if [[ -z "$_DETECTED_IP" ]]; then
+        info "  Saisissez l'IP publique de VOTRE connexion internet — celle vue par ce"
+        info "  serveur quand vous initiez une connexion SSH. Pas l'IP du serveur."
+        info "  Pour la connaître :"
+        info "    Navigateur : https://ifconfig.ovh  ou  https://api.ipify.org"
+        info "    Terminal   : curl ifconfig.me  (sur votre poste, pas ce serveur)"
+        info "  Laisser vide = accès SSH non restreint (non recommandé)"
+        while true; do
+            read -rp "  Votre IP publique (ex: A.B.C.D) : " _MGMT_RAW
+            if [[ -z "$_MGMT_RAW" ]]; then
+                MANAGEMENT_IP="0.0.0.0/0"
+                warn "  ⚠ Accès SSH non restreint"
+                break
+            elif echo "$_MGMT_RAW" | grep -qP '^\d+\.\d+\.\d+\.\d+$'; then
+                MANAGEMENT_IP=$(echo "$_MGMT_RAW" | sed 's/\.[0-9]*$/.0\/24/')
+                echo "  → Sous-réseau : $MANAGEMENT_IP"; break
+            elif echo "$_MGMT_RAW" | grep -qP '^\d+\.\d+\.\d+\.\d+/\d+$'; then
+                MANAGEMENT_IP="$_MGMT_RAW"; break
+            else
+                echo "  ✗ Format invalide — ex: A.B.C.D ou A.B.C.0/24"
+            fi
+        done
+    fi
 fi
 TRUNK_NAME=""
 [[ -n "$TRUNK_REGISTRAR" ]] && TRUNK_NAME="trunk-$(echo "$TRUNK_REGISTRAR" | awk -F'.' '{print $(NF-1)}')"
@@ -2032,7 +2085,7 @@ log "=== PHASE 15 — TLS/HTTPS ==="
 # ── Vérification DNS avant certbot ──────────────────────────────────────────
 if [[ -n "$TLS_DOMAIN" ]]; then
     log "Vérification DNS : $TLS_DOMAIN"
-    _DNS_IP=$(getent hosts "$TLS_DOMAIN" 2>/dev/null | awk '{print $1}' | head -1)
+    _DNS_IP=$(timeout 3 getent hosts "$TLS_DOMAIN" 2>/dev/null | awk '{print $1}' | head -1)
     if [[ -z "$_DNS_IP" ]]; then
         warn "DNS : $TLS_DOMAIN ne se résout pas."
         warn "  IP de ce serveur     : $VPS_IP"
@@ -2071,8 +2124,8 @@ if [[ -n "$TLS_DOMAIN" ]] && systemctl is-active apache2 >/dev/null 2>&1; then
     ok "15_tls — HTTPS actif — https://$TLS_DOMAIN/admin/"
     GUI_URL="https://$TLS_DOMAIN/admin/"
 else
-    ok "15_tls — Apache arrêté — GUI inaccessible jusqu'à configuration TLS"
-    GUI_URL="désactivée (Apache arrêté — aucun accès web sans configuration HTTPS)"
+    warn "15_tls — Apache arrêté — GUI inaccessible jusqu'à configuration TLS"
+    GUI_URL="désactivée (Apache arrêté — HTTPS requis)"
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -2080,7 +2133,7 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== POST-CHECK ==="
-echo '--- Asterisk socket ---'
+echo -e "${CYAN}--- Asterisk socket ---${NC}"
 if [[ ! -e /var/run/asterisk/asterisk.ctl ]]; then
     warn "Socket Asterisk absent (graceful restart post-fwconsole reload) — relance..."
     systemctl restart asterisk
@@ -2089,21 +2142,21 @@ if [[ ! -e /var/run/asterisk/asterisk.ctl ]]; then
 else
     ok "Asterisk opérationnel"
 fi
-echo '--- Services PM2 ---'
+echo -e "${CYAN}--- Services PM2 ---${NC}"
 fwconsole pm2 --list 2>/dev/null || echo "PM2 check — voir fwconsole pm2 --list"
-echo '--- GUI ---'
+echo -e "${CYAN}--- GUI ---${NC}"
 curl -s -o /dev/null -w 'HTTP GUI: %{http_code}\n' http://localhost/admin/ 2>/dev/null || true
-echo '--- Ports sensibles TCP ---'
+echo -e "${CYAN}--- Ports sensibles TCP ---${NC}"
 ss -tlnp | grep -E ':1720|:3306' && echo 'ATTENTION port exposé' || echo 'Ports 1720/3306 : fermés OK'
-echo '--- Ports sensibles UDP ---'
+echo -e "${CYAN}--- Ports sensibles UDP ---${NC}"
 ss -ulnp | grep -E ':69 |:5353 ' && echo 'ATTENTION port UDP exposé' || echo 'Ports 69/5353 : fermés OK'
-echo '--- Shell asterisk ---'
+echo -e "${CYAN}--- Shell asterisk ---${NC}"
 getent passwd asterisk | cut -d: -f7
-echo '--- fail2ban ---'
+echo -e "${CYAN}--- fail2ban ---${NC}"
 fail2ban-client get ssh-iptables bantime 2>/dev/null || echo "fail2ban : vérifier manuellement"
-echo '--- UFW ---'
+echo -e "${CYAN}--- UFW ---${NC}"
 ufw status | head -10
-echo '--- Conformité CRA+NIS2 ---'
+echo -e "${CYAN}--- Conformité CRA+NIS2 ---${NC}"
 if [[ -f /etc/freepbx-factory/compliance-report.json ]]; then
     python3 -c "
 import json
@@ -2332,7 +2385,7 @@ ok "║   FreePBX Factory V1.9 — DÉPLOYÉ ✓      ║"
 ok "╠══════════════════════════════════════════╣"
 ok "║ Admin    : $ADMIN_USERNAME"
 ok "║ SSH port : $SSH_PORT — restreint à $MANAGEMENT_IP"
-ok "║ URL GUI  : HTTPS requis (configurer TLS)"
+ok "║ URL GUI  : $GUI_URL"
 ok "║ Rapport  : $REPORT_FILE"
 ok "║ Journal  : $SESSION_LOG"
 ok "╚══════════════════════════════════════════╝"
@@ -2341,6 +2394,8 @@ warn "═══ INFORMATIONS À CONSERVER ════════════�
 warn "Port SSH     : $SSH_PORT"
 warn "Reconnexion  : ssh -p $SSH_PORT debian@${VPS_IP}"
 warn "Admin FreePBX   : $ADMIN_USERNAME"
+warn "URL GUI      : $GUI_URL"
 warn "Rapport      : $REPORT_FILE"
 warn "Journal      : $SESSION_LOG"
 warn "══════════════════════════════════════════════"
+touch /tmp/fpbx_deploy_done 2>/dev/null || true
