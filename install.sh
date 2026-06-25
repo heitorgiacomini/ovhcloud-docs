@@ -77,7 +77,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # @@BUNDLE_INJECT_START@@
 _PHASES_TMP="$(mktemp -d /tmp/fpbx-phases-XXXXXX)"
 trap 'rm -rf "$_PHASES_TMP" 2>/dev/null' EXIT
-trap 'stty sane 2>/dev/null; echo ""; echo "  Installation interrompue."; exit 130' INT TERM HUP
+trap 'stty sane 2>/dev/null; echo ""; echo "  Installation interrompue."; exit 130' INT TERM
 
 cat > "$_PHASES_TMP/00_cleanup.sh" <<'__FPBXPHASE_00_CLEANUP_SH__'
 #!/bin/bash
@@ -1529,7 +1529,7 @@ if [[ -z "${FACTORY_IN_TMUX:-}" ]]; then
     _FWD_ARGS="${MANAGEMENT_IP_ARG:+--management-ip=$MANAGEMENT_IP_ARG} ${KIT_STARTER_ARG:+--kit-starter=$KIT_STARTER_ARG} ${TRUNK_ENABLED_ARG:+--trunk-enabled=$TRUNK_ENABLED_ARG} ${TRUNK_REGISTRAR_ARG:+--trunk-registrar=$TRUNK_REGISTRAR_ARG} ${TRUNK_USERNAME_ARG:+--trunk-username=$TRUNK_USERNAME_ARG} ${TLS_DOMAIN_ARG:+--tls-domain=$TLS_DOMAIN_ARG}"
     _FWD_ENV="FACTORY_IN_TMUX=1${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
     tmux new-session -d -s factory -x 220 -y 50 \
-        "eval export $_FWD_ENV; bash $0 $_FWD_ARGS; echo ''; if [[ -f /tmp/fpbx_deploy_done ]]; then echo '-- Déploiement terminé — Appuyer sur Entrée --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) — Appuyer sur Entrée --'; fi; read"
+        "eval export $_FWD_ENV; bash $0 $_FWD_ARGS; echo ''; if [ -f /tmp/fpbx_deploy_done ]; then echo '-- Déploiement terminé — Appuyer sur Entrée --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) — Appuyer sur Entrée --'; fi; read"
     tmux attach-session -t factory
     exit 0
 fi
@@ -1621,10 +1621,18 @@ read_ext_password() {
 # ════════════════════════════════════════════════════════════════════════════
 while true; do
 MANAGEMENT_IP=""
+# Port SSH généré au plus tôt — sauvegardé et affiché avant les questions
+SSH_PORT=$(shuf -i 10000-49151 -n 1 2>/dev/null \
+    || python3 -c "import random; print(random.randint(10000,49151))")
+echo "$SSH_PORT" > /root/freepbx-factory-ssh-port.txt
+chmod 600 /root/freepbx-factory-ssh-port.txt
+tmux rename-window "FreePBX Factory | SSH: ${SSH_PORT}" 2>/dev/null || true
+
 echo ""
 echo "╔══════════════════════════════════════════╗"
 echo "║  FreePBX Factory V1.9 Installateur       ║"
 echo "╚══════════════════════════════════════════╝"
+echo -e "${YELLOW}  Port SSH : ${SSH_PORT}  — notez-le maintenant${NC}"
 echo ""
 
 # Windows Terminal envoie une réponse ESC[>0;10;1c (Secondary Device Attributes)
@@ -1632,13 +1640,9 @@ echo ""
 # On draine stdin avant d'entrer dans le wizard.
 while IFS= read -r -t 0.1 -n 512 _da_discard 2>/dev/null; do :; done || true
 
-info "  Ce wizard pose 4 questions. Les options sont facultatives et peuvent"
-info "  être configurées à tout moment après l'installation."
+info "  Les options sont facultatives et configurables après le déploiement."
 echo ""
-info "  Navigation :"
-info "    q           = recommencer depuis la 1ère question, à tout moment"
-info "    Entrée vide = annuler l'installation (au login ou au mot de passe)"
-info "    r           = recommencer depuis le début (à la confirmation finale)"
+info "  Tapez q à tout moment pour recommencer depuis le début."
 echo ""
 
 # ── Axe 1 : Compte admin GUI ─────────────────────────────────────────────────
@@ -1686,8 +1690,7 @@ echo ""
 # ── Axe 2 + 3 : Kit starter + Trunk SIP ─────────────────────────────────────
 info "▶ 2/4 : Postes téléphoniques et ligne opérateur (optionnels)"
 echo ""
-info "  Les deux options ci-dessous sont désactivées par défaut."
-info "  Elles peuvent aussi être configurées manuellement dans FreePBX après le déploiement."
+info "  Les options peuvent aussi être configurées manuellement dans FreePBX après le déploiement."
 echo ""
 KIT_STARTER="non"
 EXT1_NUMBER="" EXT1_NAME="Poste 1"  EXT1_PASS=""
@@ -1725,7 +1728,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
-            read -rp "  Nom du poste $i [${default_name}] (q = recommencer) : " name
+            read -rp "  Nom du poste $i [${default_name}] (q = recommencer, entrée = accepter par défaut) : " name
             if [[ "${name,,}" == "q" ]]; then
                 echo "  Retour au début du wizard."; continue 2
             elif [[ -n "$name" ]]; then
@@ -1926,12 +1929,6 @@ fi
 TRUNK_NAME=""
 [[ -n "$TRUNK_REGISTRAR" ]] && TRUNK_NAME="trunk-$(echo "$TRUNK_REGISTRAR" | awk -F'.' '{print $(NF-1)}')"
 TRUNK_CALLERID="$TRUNK_USERNAME"
-SSH_PORT=$(shuf -i 10000-49151 -n 1)
-# Sauvegarde immédiate du port — accessible même si la session tmux se ferme
-echo "$SSH_PORT" > /root/freepbx-factory-ssh-port.txt
-chmod 600 /root/freepbx-factory-ssh-port.txt
-# Titre tmux mis à jour immédiatement — visible même après déconnexion SSH
-tmux rename-window "FreePBX Factory | SSH: ${SSH_PORT}" 2>/dev/null || true
 
 echo "╔══════════════════════════════════════════╗"
 echo "║   Récapitulatif avant déploiement        ║"
@@ -1987,6 +1984,13 @@ break
 done  # fin wizard
 
 INSTALL_START=$(date +%s)
+
+echo ""
+echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
+echo -e "${GREEN}║  Déploiement lancé — 20 à 40 minutes                    ║${NC}"
+echo -e "${GREEN}║  Journal : $SESSION_LOG${NC}"
+echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
+echo ""
 
 # ── Ping démarrage anonyme (automatique, silencieux) ────────────────────────
 _send_telem "{\"event\":\"deploy_start\",\"version\":\"${SCRIPT_VERSION}\",\"os\":\"${_OS_ID}\",\"id\":\"${DEPLOY_ID}\"}"
