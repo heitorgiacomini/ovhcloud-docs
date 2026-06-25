@@ -1624,6 +1624,9 @@ echo ""
 # On draine stdin avant d'entrer dans le wizard.
 while IFS= read -r -t 0.1 -n 512 _da_discard 2>/dev/null; do :; done || true
 
+info "  Navigation : q = recommencer depuis le début  |  Entrée vide = annuler"
+echo ""
+
 # ── Axe 1 : Compte admin GUI ─────────────────────────────────────────────────
 info "▶ 1/4 — Compte administrateur FreePBX"
 echo ""
