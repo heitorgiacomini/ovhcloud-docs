@@ -614,13 +614,13 @@ TRUNK_PASSWORD="${6:-}"
 TRUNK_NAME="${7:-trunk-ovh}"
 TRUNK_CALLERID="${8:-$TRUNK_USERNAME}"
 EXT1_NUMBER="${9:-}"
-EXT1_NAME="${10:-Standard}"
+EXT1_NAME="${10:-Poste 1}"
 EXT1_PASS="${11:-}"
 EXT2_NUMBER="${12:-}"
-EXT2_NAME="${13:-Mobile}"
+EXT2_NAME="${13:-Poste 2}"
 EXT2_PASS="${14:-}"
 EXT3_NUMBER="${15:-}"
-EXT3_NAME="${16:-WebRTC}"
+EXT3_NAME="${16:-Poste 3}"
 EXT3_PASS="${17:-}"
 
 gen_pass() {
@@ -1593,7 +1593,6 @@ read_password() {
 
 read_ext_password() {
     local varname="$1" ext="$2" pass
-    info "  [Entrée] = génération automatique sécurisée"
     while true; do
         _read_star_input pass "  Mot de passe du poste $ext"
         if [[ -z "$pass" ]]; then
@@ -1669,9 +1668,9 @@ info "  Les deux options ci-dessous sont désactivées par défaut."
 info "  Elles peuvent aussi être configurées manuellement dans FreePBX après le déploiement."
 echo ""
 KIT_STARTER="non"
-EXT1_NUMBER="" EXT1_NAME="Standard"  EXT1_PASS=""
-EXT2_NUMBER="" EXT2_NAME="Mobile"    EXT2_PASS=""
-EXT3_NUMBER="" EXT3_NAME="WebRTC"    EXT3_PASS=""
+EXT1_NUMBER="" EXT1_NAME="Poste 1"  EXT1_PASS=""
+EXT2_NUMBER="" EXT2_NAME="Poste 2"  EXT2_PASS=""
+EXT3_NUMBER="" EXT3_NAME="Poste 3"  EXT3_PASS=""
 
 if [[ -n "$KIT_STARTER_ARG" ]]; then
     # Pré-sélection wizard — pas de question interactive
@@ -1680,9 +1679,8 @@ if [[ -n "$KIT_STARTER_ARG" ]]; then
     KIT_RESP="${KIT_STARTER_ARG,,}"
     [[ "$KIT_STARTER" == "oui" ]] && KIT_RESP="o" || KIT_RESP="n"
 else
-    info "  Kit de démonstration : 3 postes SIP préconfigurés (Standard / Mobile / WebRTC)"
-    info "  avec des numéros à 5 chiffres attribués automatiquement. Utile pour tester"
-    info "  l'installation avant de connecter de vrais postes."
+    info "  Kit de démarrage : 3 postes SIP préconfigurés (Poste 1 / Poste 2 / Poste 3)"
+    info "  avec des numéros à 5 chiffres attribués automatiquement."
     info "  [Entrée] = non (désactivé)"
     read -rp "  Créer 3 postes de démonstration ? [o/N/q] : " KIT_RESP
     if [[ "${KIT_RESP,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
@@ -1705,8 +1703,13 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
+            info "  [Entrée] = génération automatique sécurisée pour le mot de passe"
             read -rp "  Nom du poste $i [${default_name}] : " name
-            [[ -n "$name" ]] && printf -v "$varname" '%s' "$name"
+            if [[ -n "$name" ]]; then
+                printf -v "$varname" '%s' "$name"
+            else
+                echo "  → ${default_name}"
+            fi
             read_ext_password "$varpass" "${!extnum}"
         fi
     done
