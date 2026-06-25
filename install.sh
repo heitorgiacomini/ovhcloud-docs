@@ -1526,13 +1526,19 @@ if [[ -z "${FACTORY_IN_TMUX:-}" ]]; then
     echo -e "${CYAN}╚══════════════════════════════════════════════════════╝${NC}"
     echo ""
     # Transmettre TOUS les arguments du wizard à la session tmux (sinon perdus)
+    _SCRIPT_PATH="$(realpath "$0" 2>/dev/null || readlink -f "$0" 2>/dev/null || echo "$0")"
     _FWD_ARGS="${MANAGEMENT_IP_ARG:+--management-ip=$MANAGEMENT_IP_ARG} ${KIT_STARTER_ARG:+--kit-starter=$KIT_STARTER_ARG} ${TRUNK_ENABLED_ARG:+--trunk-enabled=$TRUNK_ENABLED_ARG} ${TRUNK_REGISTRAR_ARG:+--trunk-registrar=$TRUNK_REGISTRAR_ARG} ${TRUNK_USERNAME_ARG:+--trunk-username=$TRUNK_USERNAME_ARG} ${TLS_DOMAIN_ARG:+--tls-domain=$TLS_DOMAIN_ARG}"
-    _FWD_ENV="FACTORY_IN_TMUX=1${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
+    # Préfixe env inline POSIX — évite eval export (fragile si $SHELL=dash) ; $0 résolu en absolu
+    _FWD_ENV_PREFIX="FACTORY_IN_TMUX=1${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
     tmux new-session -d -s factory -x 220 -y 50 \
-        "eval export $_FWD_ENV; bash $0 $_FWD_ARGS; echo ''; if [ -f /tmp/fpbx_deploy_done ]; then echo '-- Déploiement terminé — Appuyer sur Entrée --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) — Appuyer sur Entrée --'; fi; read"
+        "$_FWD_ENV_PREFIX bash '$_SCRIPT_PATH' $_FWD_ARGS; echo ''; if [ -f /tmp/fpbx_deploy_done ]; then echo '-- Déploiement terminé — Appuyer sur Entrée --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) — Appuyer sur Entrée --'; fi; read _unused"
     tmux attach-session -t factory
     exit 0
 fi
+
+# ── Bootstrap log tmux — trace d'entrée (diagnostic [exited]) ───────────────
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] tmux-bootstrap OK — FACTORY_IN_TMUX=${FACTORY_IN_TMUX:-unset} — $0" \
+    >> /var/log/freepbx-factory/tmux-bootstrap.log 2>/dev/null || true
 
 # ── Identifiant anonyme de déploiement ──────────────────────────────────────
 # Généré une seule fois à l'entrée dans tmux — non transmis sans accord explicite
@@ -1633,6 +1639,8 @@ echo "╔═══════════════════════�
 echo "║  FreePBX Factory V1.9 Installateur       ║"
 echo "╚══════════════════════════════════════════╝"
 echo -e "${YELLOW}  Port SSH : ${SSH_PORT}  — notez-le maintenant${NC}"
+echo -e "${YELLOW}  Il sera nécessaire pour vous reconnecter après l'installation.${NC}"
+echo -e "${YELLOW}  ssh -p ${SSH_PORT} debian@<IP_DU_SERVEUR>${NC}"
 echo ""
 
 # Windows Terminal envoie une réponse ESC[>0;10;1c (Secondary Device Attributes)
@@ -1795,6 +1803,8 @@ else
             read -rp "  Identifiant SIP (numéro ou login opérateur) (q = recommencer) : " TRUNK_USERNAME
             [[ "${TRUNK_USERNAME,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue; }
             [[ -z "$TRUNK_USERNAME" ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant vide — la registration SIP risque d'échouer"
+            info "  Saisissez le mot de passe de votre service SIP"
+            info "  (OVHcloud : espace client → Téléphonie → votre trunk → Mot de passe SIP)"
             _rpret=0
             read_password TRUNK_PASSWORD "  Mot de passe SIP" 0 || _rpret=$?
             [[ $_rpret -eq 2 ]] && { echo "  Retour au début du wizard."; continue; }
@@ -1835,7 +1845,7 @@ info "  IP de ce serveur     : $VPS_IP"
 info "  Enregistrement requis : A  <votre-domaine>  →  $VPS_IP"
 info "  Pour vérifier depuis votre poste : nslookup <votre-domaine>"
 info ""
-info "  [Entrée] = ignorer (interface web désactivée en fin d'installation)"
+info "  [Entrée] = ne pas configurer HTTPS maintenant"
 TLS_DOMAIN=""
 if [[ -n "$TLS_DOMAIN_ARG" ]]; then
     TLS_DOMAIN="$TLS_DOMAIN_ARG"
