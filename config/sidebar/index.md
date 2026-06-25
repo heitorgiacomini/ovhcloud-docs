@@ -1797,7 +1797,7 @@
             + [Migrating your website and emails to OVHcloud](web-cloud/web-hosting/hosting-migrating-to-ovh)
             + [Migrate your Xara website to OVHcloud](web-cloud/web-hosting/migrate-xara-website-to-ovh)
             + [Migrate your WordPress website to OVHcloud](web-cloud/web-hosting/migrate-wordpress-website-to-ovh)
-        + [Tutorials](products/web-cloud-hosting-tutorials)
+        + [Tutorials](products/web-cloud-hosting-tutorials){landing=web-cloud/web-hosting/landing-page-tutorials}
             + [Tutorial - Creating your personal webpage at OVHcloud](web-cloud/web-hosting/create-your-personal-webpage)
             + [Use cases - How to change the domain of an existing website](web-cloud/web-hosting/how-to-change-the-domain-name-of-an-existing-website)
             + [Tutorial - Installation and configuration of Cecil, a static site generator (SSG) in PHP](web-cloud/web-hosting/static-website-installation-cecil)
@@ -1817,7 +1817,7 @@
                 + [Installer Etherpad sur son hébergement Cloud Web](web-cloud/web-hosting/install-etherpad)
                 + [Comment installer Django CMS sur son hébergement Cloud Web](web-cloud/web-hosting/install-django-cms-on-cloud-web)
                 + [Installer Camaleon CMS sur son hébergement Cloud Web](web-cloud/web-hosting/install-camaleon)
-            + [Redirection and authentication](web-cloud-hosting-tutorials-redirection-and-authentication)
+            + [Redirection and authentication](web-cloud-hosting-tutorials-redirection-and-authentication){landing=web-cloud/web-hosting/landing-page-redirection-authentication}
                 + [Protecting your website's administration interface with a .htaccess file](web-cloud/web-hosting/htaccess-protect-directory-by-password)
                 + [Tutorial - Rewrite the URL for accessing your website using mod_rewrite via the .htaccess file](web-cloud/web-hosting/htaccess-url-rewriting-using-mod-rewrite)
                 + [Blocking a specific IP address from accessing your website](web-cloud/web-hosting/htaccess-how-to-block-a-specific-ip-address-from-accessing-your-website)
