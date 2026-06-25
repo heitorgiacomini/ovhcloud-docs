@@ -76,7 +76,8 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # @@BUNDLE_INJECT_START@@
 _PHASES_TMP="$(mktemp -d /tmp/fpbx-phases-XXXXXX)"
-trap 'rm -rf "$_PHASES_TMP"' EXIT INT TERM HUP
+trap 'rm -rf "$_PHASES_TMP" 2>/dev/null' EXIT
+trap 'stty sane 2>/dev/null; echo ""; echo "  Installation interrompue."; exit 130' INT TERM HUP
 
 cat > "$_PHASES_TMP/00_cleanup.sh" <<'__FPBXPHASE_00_CLEANUP_SH__'
 #!/bin/bash
@@ -1629,6 +1630,7 @@ info "  Ce compte permet d'accéder à l'interface de configuration FreePBX."
 info "  Choisissez un identifiant et un mot de passe robustes : ils ne peuvent"
 info "  pas être récupérés automatiquement après le déploiement."
 info "  Laissez le champ vide et appuyez sur Entrée pour annuler l'installation."
+info "  Saisissez q pour recommencer depuis le début du wizard."
 echo ""
 # FACTORY_TEST_ADMIN / FACTORY_TEST_PASS : bypass test-only (jamais en prod)
 if [[ -n "${FACTORY_TEST_ADMIN:-}" && -n "${FACTORY_TEST_PASS:-}" ]]; then
@@ -1641,6 +1643,7 @@ RESERVED_LOGINS="admin root administrator freepbx asterisk"
 while true; do
     read -rp "  Identifiant de connexion FreePBX : " ADMIN_USERNAME
     [[ -z "$ADMIN_USERNAME" ]] && { echo "  Installation annulée."; exit 0; }
+    [[ "${ADMIN_USERNAME,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue 2; }
     case "$ADMIN_USERNAME" in
         *"'"*|*'"'*|*";"*|*"<"*|*">"*|*"&"*|*'`'*)
             echo "  ✗ Caractères interdits dans l'identifiant — saisissez à nouveau"; continue ;;
@@ -1703,9 +1706,11 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
-            info "  [Entrée] = génération automatique sécurisée pour le mot de passe"
+            info "  [Entrée] = génération automatique sécurisée pour le mot de passe  |  q = recommencer"
             read -rp "  Nom du poste $i [${default_name}] : " name
-            if [[ -n "$name" ]]; then
+            if [[ "${name,,}" == "q" ]]; then
+                echo "  Retour au début du wizard."; continue 2
+            elif [[ -n "$name" ]]; then
                 printf -v "$varname" '%s' "$name"
             else
                 echo "  → ${default_name}"
@@ -1759,12 +1764,14 @@ else
     if [[ "${TRUNK_RESP,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
     if [[ "${TRUNK_RESP,,}" == "o" ]]; then
         TRUNK_ENABLED="oui"
-        read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net), vide pour ignorer : " TRUNK_REGISTRAR
+        read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net), vide pour ignorer (q = recommencer) : " TRUNK_REGISTRAR
+        [[ "${TRUNK_REGISTRAR,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue; }
         if [[ -z "$TRUNK_REGISTRAR" ]]; then
             TRUNK_ENABLED="non"; echo "  → Ligne opérateur ignorée"
         else
             [[ "$TRUNK_REGISTRAR" =~ \. ]] || echo -e "  ${YELLOW}ℹ${NC} Format inhabituel — vérifiez l'adresse du serveur SIP de votre opérateur"
-            read -rp "  Identifiant SIP (numéro ou login opérateur) : " TRUNK_USERNAME
+            read -rp "  Identifiant SIP (numéro ou login opérateur) (q = recommencer) : " TRUNK_USERNAME
+            [[ "${TRUNK_USERNAME,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue; }
             [[ -z "$TRUNK_USERNAME" ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant vide — la registration SIP risque d'échouer"
             read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
             echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
@@ -1773,7 +1780,8 @@ else
                 EXTRA_IGNOREIP="$_trunk_ip"
                 echo "  → IP opérateur résolue : $EXTRA_IGNOREIP (autorisée dans fail2ban)"
             else
-                read -rp "  IP de l'opérateur SIP à autoriser (optionnel) : " EXTRA_IGNOREIP
+                read -rp "  IP de l'opérateur SIP à autoriser (optionnel, q = recommencer) : " EXTRA_IGNOREIP
+                [[ "${EXTRA_IGNOREIP,,}" == "q" ]] && { EXTRA_IGNOREIP=""; echo "  Retour au début du wizard."; continue; }
                 [[ -n "$EXTRA_IGNOREIP" ]] && echo "  → Autorisée : $EXTRA_IGNOREIP"
             fi
         fi
@@ -1877,7 +1885,8 @@ if [[ -z "$MANAGEMENT_IP" ]]; then
         info "    Terminal   : curl ifconfig.me  (sur votre poste, pas ce serveur)"
         info "  Laisser vide = accès SSH non restreint (non recommandé)"
         while true; do
-            read -rp "  Votre IP publique (ex: A.B.C.D) : " _MGMT_RAW
+            read -rp "  Votre IP publique (ex: A.B.C.D) (q = recommencer) : " _MGMT_RAW
+            [[ "${_MGMT_RAW,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue 2; }
             if [[ -z "$_MGMT_RAW" ]]; then
                 MANAGEMENT_IP="0.0.0.0/0"
                 warn "  ⚠ Accès SSH non restreint"
