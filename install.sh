@@ -1945,11 +1945,12 @@ info "  Le script continue automatiquement. Pour reprendre la session :"
 info "    ssh -p $SSH_PORT debian@<ADRESSE_IP_SERVEUR>"
 info "    sudo tmux attach -t factory"
 info ""
-info "  [Entrée]/N = annuler  |  r = recommencer depuis le début"
-read -rp "  Lancer le déploiement ? [o/N/r] : " CONFIRM
+info "  [Entrée]/O = lancer  |  n = annuler  |  r = recommencer depuis le début"
+stty sane 2>/dev/null || true
+read -rp "  Lancer le déploiement ? [O/n/r] : " CONFIRM
 if [[ "${CONFIRM,,}" == "r" ]]; then
     echo ""; echo "  --- Retour au début du wizard ---"; echo ""; continue
-elif [[ "${CONFIRM,,}" != "o" ]]; then
+elif [[ -n "${CONFIRM}" && "${CONFIRM,,}" != "o" ]]; then
     echo "  Annulé."; exit 0
 fi
 break
