@@ -1352,13 +1352,21 @@ if ! certbot certonly \
     --agree-tos \
     --register-unsafely-without-email; then
     echo -e "${YELLOW}╔══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}║  AVERTISSEMENT — Certificat TLS non obtenu               ║${NC}"
+    echo -e "${YELLOW}║  Certificat HTTPS non obtenu                             ║${NC}"
     echo -e "${YELLOW}╠══════════════════════════════════════════════════════════╣${NC}"
-    echo -e "${YELLOW}║  Domaine  : $TLS_DOMAIN${NC}"
-    echo -e "${YELLOW}║  Causes   : DNS non propagé, rate limit LE, port 80 NAT  ║${NC}"
-    echo -e "${YELLOW}║  Action   : Apache arrêté — GUI inaccessible              ║${NC}"
-    echo -e "${YELLOW}║  Reprise  : sudo certbot certonly --webroot \\              ║${NC}"
-    echo -e "${YELLOW}║             -w /var/www/html -d $TLS_DOMAIN${NC}"
+    echo -e "${YELLOW}║  Domaine : $TLS_DOMAIN${NC}"
+    echo -e "${YELLOW}║                                                           ║${NC}"
+    echo -e "${YELLOW}║  FreePBX est installé et opérationnel.                   ║${NC}"
+    echo -e "${YELLOW}║  Seul l'accès HTTPS n'a pas pu être activé.              ║${NC}"
+    echo -e "${YELLOW}║                                                           ║${NC}"
+    echo -e "${YELLOW}║  Causes probables :                                       ║${NC}"
+    echo -e "${YELLOW}║    - DNS pas encore propagé (attendre 15 min à 48h)      ║${NC}"
+    echo -e "${YELLOW}║    - Port 80 inaccessible depuis Internet                 ║${NC}"
+    echo -e "${YELLOW}║    - Limite quotidienne Let's Encrypt dépassée            ║${NC}"
+    echo -e "${YELLOW}║                                                           ║${NC}"
+    echo -e "${YELLOW}║  Apache a été arrêté. Pour relancer HTTPS plus tard :    ║${NC}"
+    echo -e "${YELLOW}║    sudo certbot certonly --webroot                        ║${NC}"
+    echo -e "${YELLOW}║         -w /var/www/html -d $TLS_DOMAIN${NC}"
     echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
     systemctl stop apache2 2>/dev/null || true
     systemctl disable apache2 2>/dev/null || true
@@ -1615,7 +1623,7 @@ while true; do
 MANAGEMENT_IP=""
 echo ""
 echo "╔══════════════════════════════════════════╗"
-echo "║  FreePBX Factory V1.9 CRA — Installateur ║"
+echo "║  FreePBX Factory V1.9 Installateur       ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
@@ -1624,17 +1632,21 @@ echo ""
 # On draine stdin avant d'entrer dans le wizard.
 while IFS= read -r -t 0.1 -n 512 _da_discard 2>/dev/null; do :; done || true
 
-info "  Navigation : q = recommencer depuis le début  |  Entrée vide = annuler"
+info "  Ce wizard pose 4 questions. Les options sont facultatives et peuvent"
+info "  être configurées à tout moment après l'installation."
+echo ""
+info "  Navigation :"
+info "    q           = recommencer depuis la 1ère question, à tout moment"
+info "    Entrée vide = annuler l'installation (au login ou au mot de passe)"
+info "    r           = recommencer depuis le début (à la confirmation finale)"
 echo ""
 
 # ── Axe 1 : Compte admin GUI ─────────────────────────────────────────────────
-info "▶ 1/4 — Compte administrateur FreePBX"
+info "▶ 1/4 : Compte administrateur FreePBX"
 echo ""
-info "  Ce compte permet d'accéder à l'interface de configuration FreePBX."
+info "  Ce compte vous permet d'accéder à l'interface de configuration FreePBX."
 info "  Choisissez un identifiant et un mot de passe robustes : ils ne peuvent"
 info "  pas être récupérés automatiquement après le déploiement."
-info "  Laissez le champ vide et appuyez sur Entrée pour annuler l'installation."
-info "  Saisissez q pour recommencer depuis le début du wizard."
 echo ""
 # FACTORY_TEST_ADMIN / FACTORY_TEST_PASS : bypass test-only (jamais en prod)
 if [[ -n "${FACTORY_TEST_ADMIN:-}" && -n "${FACTORY_TEST_PASS:-}" ]]; then
@@ -1645,7 +1657,7 @@ if [[ -n "${FACTORY_TEST_ADMIN:-}" && -n "${FACTORY_TEST_PASS:-}" ]]; then
 else
 RESERVED_LOGINS="admin root administrator freepbx asterisk"
 while true; do
-    read -rp "  Identifiant de connexion FreePBX : " ADMIN_USERNAME
+    read -rp "  Identifiant de connexion FreePBX (q = recommencer) : " ADMIN_USERNAME
     [[ -z "$ADMIN_USERNAME" ]] && { echo "  Installation annulée."; exit 0; }
     [[ "${ADMIN_USERNAME,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue 2; }
     case "$ADMIN_USERNAME" in
@@ -1672,7 +1684,7 @@ SSH_ENABLED="oui"  # SSH actif — port aléatoire + clé OVHcloud choisie à la
 echo ""
 
 # ── Axe 2 + 3 : Kit starter + Trunk SIP ─────────────────────────────────────
-info "▶ 2/4 — Postes téléphoniques et ligne opérateur (optionnels)"
+info "▶ 2/4 : Postes téléphoniques et ligne opérateur (optionnels)"
 echo ""
 info "  Les deux options ci-dessous sont désactivées par défaut."
 info "  Elles peuvent aussi être configurées manuellement dans FreePBX après le déploiement."
@@ -1713,8 +1725,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
-            info "  [Entrée] = génération automatique sécurisée pour le mot de passe  |  q = recommencer"
-            read -rp "  Nom du poste $i [${default_name}] : " name
+            read -rp "  Nom du poste $i [${default_name}] (q = recommencer) : " name
             if [[ "${name,,}" == "q" ]]; then
                 echo "  Retour au début du wizard."; continue 2
             elif [[ -n "$name" ]]; then
@@ -1722,6 +1733,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
             else
                 echo "  → ${default_name}"
             fi
+            info "  [Entrée] = génération automatique sécurisée"
             read_ext_password "$varpass" "${!extnum}"
         fi
     done
@@ -1806,7 +1818,7 @@ VPS_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1)
 [[ -z "$VPS_IP" ]] && VPS_IP="<IP_VPS>"
 
 # ── TLS HTTPS ─────────────────────────────────────────────────────────────────
-info "▶ 3/4 — Accès HTTPS à l'interface d'administration (optionnel)"
+info "▶ 3/4 : Accès HTTPS à l'interface d'administration (optionnel)"
 info ""
 info "  Sans nom de domaine : l'interface FreePBX reste inaccessible à la fin de"
 info "  l'installation (Apache arrêté par sécurité). Elle peut être démarrée"
@@ -1840,7 +1852,7 @@ fi
 echo ""
 
 # ── Récapitulatif ─────────────────────────────────────────────────────────────
-info "▶ 4/4 — Récapitulatif"
+info "▶ 4/4 : Récapitulatif"
 # Passage par variable d'environnement — évite la casse si le mot de passe contient '
 ADMIN_SHA1=$(env _P="$ADMIN_PASSWORD" python3 -c "import hashlib,os; print(hashlib.sha1(os.environ['_P'].encode()).hexdigest())")
 ADMIN_SHA512=$(env _P="$ADMIN_PASSWORD" python3 -c "import hashlib,os; print(hashlib.sha512(os.environ['_P'].encode()).hexdigest())")
