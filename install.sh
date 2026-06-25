@@ -1473,7 +1473,7 @@ for _pkg in wget curl tmux ca-certificates; do
     command -v "$_pkg" &>/dev/null || _MISSING+=("$_pkg")
 done
 if [[ ${#_MISSING[@]} -gt 0 ]]; then
-    echo "Installation des dépendances manquantes : ${_MISSING[*]}"
+    echo "Préparation de l'environnement..."
     apt-get update -qq && apt-get install -y "${_MISSING[@]}" -qq \
         || warn "Certaines dépendances n'ont pas pu être installées — vérifier la connectivité réseau"
 fi
@@ -1601,6 +1601,7 @@ echo ""
 info "  Ce compte permet d'accéder à l'interface de configuration FreePBX."
 info "  Choisissez un identifiant et un mot de passe robustes : ils ne peuvent"
 info "  pas être récupérés automatiquement après le déploiement."
+info "  Laissez le champ vide et appuyez sur Entrée pour annuler l'installation."
 echo ""
 # FACTORY_TEST_ADMIN / FACTORY_TEST_PASS : bypass test-only (jamais en prod)
 if [[ -n "${FACTORY_TEST_ADMIN:-}" && -n "${FACTORY_TEST_PASS:-}" ]]; then
@@ -1612,6 +1613,7 @@ else
 RESERVED_LOGINS="admin root administrator freepbx asterisk"
 while true; do
     read -rp "  Identifiant de connexion FreePBX (min. 8 caractères, ex: ipbx-admin) : " ADMIN_USERNAME
+    [[ -z "$ADMIN_USERNAME" ]] && { echo "  Installation annulée."; exit 0; }
     ADMIN_LOWER="${ADMIN_USERNAME,,}"
     IS_RESERVED=0
     for r in $RESERVED_LOGINS; do [[ "$ADMIN_LOWER" == "$r" ]] && IS_RESERVED=1 && break; done
@@ -1650,7 +1652,8 @@ else
     info "  avec des numéros à 5 chiffres attribués automatiquement. Utile pour tester"
     info "  l'installation avant de connecter de vrais postes."
     info "  [Entrée] = non (désactivé)"
-    read -rp "  Créer 3 postes de démonstration ? [o/N] : " KIT_RESP
+    read -rp "  Créer 3 postes de démonstration ? [o/N/q] : " KIT_RESP
+    [[ "${KIT_RESP,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
 fi
 
 if [[ "${KIT_RESP,,}" == "o" ]]; then
@@ -1717,10 +1720,16 @@ else
     info "    - votre identifiant SIP (numéro ou login opérateur)"
     info "    - votre mot de passe SIP (différent du mot de passe espace client OVHcloud)"
     info "  [Entrée] = non (désactivé)"
-    read -rp "  Connecter une ligne opérateur SIP ? [o/N] : " TRUNK_RESP
+    read -rp "  Connecter une ligne opérateur SIP ? [o/N/q] : " TRUNK_RESP
+    [[ "${TRUNK_RESP,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
     if [[ "${TRUNK_RESP,,}" == "o" ]]; then
         TRUNK_ENABLED="oui"
-        read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net) : " TRUNK_REGISTRAR
+        while true; do
+            read -rp "  Serveur SIP opérateur (ex: siptrunk.ovh.net) : " TRUNK_REGISTRAR
+            [[ -z "$TRUNK_REGISTRAR" || "${TRUNK_REGISTRAR,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
+            [[ "$TRUNK_REGISTRAR" =~ \. ]] && break
+            echo "  ✗ Format invalide — attendu : un nom de domaine (ex: siptrunk.ovh.net)"
+        done
         read -rp "  Identifiant SIP (numéro ou login opérateur) : " TRUNK_USERNAME
         read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
@@ -1765,7 +1774,8 @@ if [[ -n "$TLS_DOMAIN_ARG" ]]; then
     echo "  ✓ Sous-domaine : $TLS_DOMAIN (pré-sélectionné par le wizard)"
     echo "  ℹ  Enregistrement attendu : A  $TLS_DOMAIN  →  $VPS_IP"
 else
-    read -rp "  Sous-domaine HTTPS (ex: pbx.mon-entreprise.fr) ou Entrée pour ignorer : " TLS_DOMAIN
+    read -rp "  Sous-domaine HTTPS (ex: pbx.mon-entreprise.fr), Entrée pour ignorer, q pour annuler : " TLS_DOMAIN
+    [[ "${TLS_DOMAIN,,}" == "q" ]] && { echo "  Installation annulée."; exit 0; }
     if [[ -n "$TLS_DOMAIN" ]]; then
         echo "  ✓ Sous-domaine : $TLS_DOMAIN"
         echo "  ℹ  Enregistrement attendu : A  $TLS_DOMAIN  →  $VPS_IP"
@@ -2031,8 +2041,11 @@ if [[ -n "$TLS_DOMAIN" ]]; then
         if [[ -n "$TLS_DOMAIN_ARG" ]]; then
             warn "  Mode non interactif : l'installation continue malgré l'avertissement DNS."
         else
-            read -t 60 -rp "  Continuer quand même ? Saisissez 'oui' pour confirmer (60s) : " _DNS_CONFIRM || _DNS_CONFIRM="non"
-            [[ "${_DNS_CONFIRM,,}" == "oui" ]] || err "Installation annulée — configurer le DNS puis relancer avec --tls-domain=$TLS_DOMAIN"
+            read -t 60 -rp "  Continuer avec TLS ? Saisissez 'oui' pour confirmer (60s, Entrée = ignorer TLS) : " _DNS_CONFIRM || _DNS_CONFIRM="non"
+            if [[ "${_DNS_CONFIRM,,}" != "oui" ]]; then
+                warn "  TLS ignoré — l'installation continue sans HTTPS."
+                TLS_DOMAIN=""
+            fi
         fi
     elif [[ "$_DNS_IP" != "$VPS_IP" ]]; then
         warn "DNS : $TLS_DOMAIN pointe vers $_DNS_IP, ce serveur est $VPS_IP."
@@ -2041,8 +2054,11 @@ if [[ -n "$TLS_DOMAIN" ]]; then
         if [[ -n "$TLS_DOMAIN_ARG" ]]; then
             warn "  Mode non interactif : l'installation continue malgré l'avertissement DNS."
         else
-            read -t 60 -rp "  Continuer quand même ? Saisissez 'oui' pour confirmer (60s) : " _DNS_CONFIRM || _DNS_CONFIRM="non"
-            [[ "${_DNS_CONFIRM,,}" == "oui" ]] || err "Installation annulée — corriger le DNS puis relancer avec --tls-domain=$TLS_DOMAIN"
+            read -t 60 -rp "  Continuer avec TLS ? Saisissez 'oui' pour confirmer (60s, Entrée = ignorer TLS) : " _DNS_CONFIRM || _DNS_CONFIRM="non"
+            if [[ "${_DNS_CONFIRM,,}" != "oui" ]]; then
+                warn "  TLS ignoré — l'installation continue sans HTTPS."
+                TLS_DOMAIN=""
+            fi
         fi
     else
         ok "DNS : $TLS_DOMAIN → $_DNS_IP (correspond à l'IP de ce serveur)"
@@ -2051,7 +2067,7 @@ fi
 
 export TLS_DOMAIN
 run_phase "$PHASES_DIR/15_tls.sh" "$TLS_DOMAIN"
-if [[ -n "$TLS_DOMAIN" ]]; then
+if [[ -n "$TLS_DOMAIN" ]] && systemctl is-active apache2 >/dev/null 2>&1; then
     ok "15_tls — HTTPS actif — https://$TLS_DOMAIN/admin/"
     GUI_URL="https://$TLS_DOMAIN/admin/"
 else
