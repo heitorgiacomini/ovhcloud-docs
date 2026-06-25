@@ -1,5 +1,5 @@
 #!/bin/bash
-# install.sh — FreePBX Factory V1.8 CRA — Installateur on-VPS
+# install.sh — FreePBX Factory V1.9 CRA — Installateur on-VPS
 #
 # S'exécute DIRECTEMENT sur le VPS cible (Debian 12 neuf).
 # Pas de machine de déploiement intermédiaire, pas de connexion SSH sortante.
@@ -50,6 +50,29 @@ TRUNK_REGISTRAR_ARG="${TRUNK_REGISTRAR_ARG:-}"
 TRUNK_USERNAME_ARG="${TRUNK_USERNAME_ARG:-}"
 TLS_DOMAIN_ARG="${TLS_DOMAIN_ARG:-}"
 
+# ── Validation des options CLI ───────────────────────────────────────────────
+# kit-starter : valeur attendue parmi oui/non/yes/no/1/0
+if [[ -n "$KIT_STARTER_ARG" ]]; then
+    case "${KIT_STARTER_ARG,,}" in
+        oui|non|yes|no|1|0) ;;
+        *) echo "Erreur : --kit-starter='$KIT_STARTER_ARG' invalide. Valeurs acceptées : oui, non." >&2; exit 1;;
+    esac
+fi
+
+# trunk-enabled=oui : registrar et username obligatoires
+if [[ "${TRUNK_ENABLED_ARG,,}" =~ ^(oui|yes|1)$ ]]; then
+    [[ -z "$TRUNK_REGISTRAR_ARG" ]] && { echo "Erreur : --trunk-enabled=oui requiert --trunk-registrar=<serveur-sip>" >&2; exit 1; }
+    [[ -z "$TRUNK_USERNAME_ARG"  ]] && { echo "Erreur : --trunk-enabled=oui requiert --trunk-username=<login-sip>" >&2; exit 1; }
+fi
+
+# tls-domain : format FQDN minimal (lettres, chiffres, tirets, points ; au moins un point)
+if [[ -n "$TLS_DOMAIN_ARG" ]]; then
+    if ! [[ "$TLS_DOMAIN_ARG" =~ ^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)+$ ]]; then
+        echo "Erreur : --tls-domain='$TLS_DOMAIN_ARG' n'est pas un nom de domaine valide (ex: pbx.mon-entreprise.fr)" >&2
+        exit 1
+    fi
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # @@BUNDLE_INJECT_START@@
 _PHASES_TMP="$(mktemp -d /tmp/fpbx-phases-XXXXXX)"
@@ -60,7 +83,8 @@ cat > "$_PHASES_TMP/00_cleanup.sh" <<'__FPBXPHASE_00_CLEANUP_SH__'
 # 00_cleanup.sh — Purge Node.js/npm et dépôts NodeSource (E1)
 # Exécuté localement sur le VPS
 set -euo pipefail
-LOG=/tmp/deploy-phase-00-cleanup.log
+LOG=/var/log/freepbx-factory/deploy-phase-00-cleanup.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 00_CLEANUP ==="
@@ -90,7 +114,8 @@ cat > "$_PHASES_TMP/00_hardening.sh" <<'__FPBXPHASE_00_HARDENING_SH__'
 #   Ex :  sudo bash /tmp/00_hardening.sh A.B.C.0/24 2222
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-00-hardening.log
+LOG=/var/log/freepbx-factory/deploy-phase-00-hardening.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 MANAGEMENT_IP="${1:?Argument 1 requis : management_ip (ex: A.B.C.0/24)}"
@@ -230,7 +255,8 @@ cat > "$_PHASES_TMP/01_install.sh" <<'__FPBXPHASE_01_INSTALL_SH__'
 # Usage : sudo bash /tmp/01_install.sh
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-01-install.log
+LOG=/var/log/freepbx-factory/deploy-phase-01-install.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 01_INSTALL ==="
@@ -266,7 +292,7 @@ __FPBXPHASE_01_INSTALL_SH__
 chmod +x "$_PHASES_TMP/01_install.sh"
 
 cat > "$_PHASES_TMP/02_asterisk.sh" <<'__FPBXPHASE_02_ASTERISK_SH__'
-﻿#!/bin/bash
+#!/bin/bash
 # 02_asterisk.sh — Activation Asterisk + désactivation modules legacy
 #
 # E2  : Asterisk SysV sur Debian 12 — is-active non fiable → validation PM2
@@ -276,7 +302,8 @@ cat > "$_PHASES_TMP/02_asterisk.sh" <<'__FPBXPHASE_02_ASTERISK_SH__'
 # Usage : sudo bash /tmp/02_asterisk.sh
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-02-asterisk.log
+LOG=/var/log/freepbx-factory/deploy-phase-02-asterisk.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 02_ASTERISK ==="
@@ -346,7 +373,8 @@ cat > "$_PHASES_TMP/03_firewall.sh" <<'__FPBXPHASE_03_FIREWALL_SH__'
 # Usage : sudo bash /tmp/03_firewall.sh <management_ip> [ssh_port]
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-03-firewall.log
+LOG=/var/log/freepbx-factory/deploy-phase-03-firewall.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 MANAGEMENT_IP="${1:?Argument 1 requis : management_ip}"
@@ -397,7 +425,8 @@ cat > "$_PHASES_TMP/04_fail2ban.sh" <<'__FPBXPHASE_04_FAIL2BAN_SH__'
 # Usage : sudo bash 04_fail2ban.sh <management_ip> <ssh_port> [extra_ignoreip]
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-04-fail2ban.log
+LOG=/var/log/freepbx-factory/deploy-phase-04-fail2ban.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 MANAGEMENT_IP="${1:?Argument 1 requis : management_ip}"
@@ -544,46 +573,6 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === FAIL2BAN_COMPLETE (7 jails) ==="
 __FPBXPHASE_04_FAIL2BAN_SH__
 chmod +x "$_PHASES_TMP/04_fail2ban.sh"
 
-cat > "$_PHASES_TMP/05_restore.sh" <<'__FPBXPHASE_05_RESTORE_SH__'
-#!/bin/bash
-# 05_restore.sh — Restore backup template FreePBX
-#
-# E5 : le restore DOIT être lancé comme utilisateur asterisk
-# E4 : succès détecté via "finished" dans stdout (pas rc==0)
-#
-# Usage : sudo bash /tmp/05_restore.sh <fichier_backup.tar.gz>
-#   Le fichier doit être dans /home/asterisk/
-
-set -euo pipefail
-LOG=/tmp/deploy-phase-05-restore.log
-exec > >(tee -a "$LOG") 2>&1
-
-BACKUP_FILE="${1:?Argument 1 requis : nom du fichier backup}"
-BACKUP_PATH="/home/asterisk/${BACKUP_FILE}"
-
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 05_RESTORE ==="
-echo "  Fichier : $BACKUP_PATH"
-
-[[ -f "$BACKUP_PATH" ]] || { echo "[ERREUR] Fichier introuvable : $BACKUP_PATH"; exit 1; }
-
-chown asterisk:asterisk "$BACKUP_PATH"
-
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Lancement restore (utilisateur asterisk — E5)..."
-RESTORE_OUT=$(sudo -u asterisk fwconsole backup --restore "$BACKUP_PATH" 2>&1)
-echo "$RESTORE_OUT"
-
-# E4 : vérifier "finished" dans stdout plutôt que rc
-if echo "$RESTORE_OUT" | grep -qi "finished"; then
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] RESTORE_OK"
-else
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] RESTORE_WARNING — 'finished' non trouvé dans stdout"
-    echo "  Vérifier manuellement l'état du restore"
-fi
-
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] === RESTORE_COMPLETE ==="
-__FPBXPHASE_05_RESTORE_SH__
-chmod +x "$_PHASES_TMP/05_restore.sh"
-
 cat > "$_PHASES_TMP/06_post_restore.sh" <<'__FPBXPHASE_06_POST_RESTORE_SH__'
 #!/bin/bash
 # 06_post_restore.sh — Fix endpoint + admin + extensions + trunk post-restore
@@ -607,7 +596,8 @@ cat > "$_PHASES_TMP/06_post_restore.sh" <<'__FPBXPHASE_06_POST_RESTORE_SH__'
 #           [ext3_number (auto-généré par deploy.sh)] [ext3_name] [ext3_pass]
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-06-post-restore.log
+LOG=/var/log/freepbx-factory/deploy-phase-06-post-restore.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 ADMIN_USERNAME="${1:?Argument 1 requis : admin_username}"
@@ -834,7 +824,8 @@ cat > "$_PHASES_TMP/09_apache_hardening.sh" <<'__FPBXPHASE_09_APACHE_HARDENING_S
 # Équivalent de 09_apache_hardening.yml (playbook Ansible)
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-09-apache.log
+LOG=/var/log/freepbx-factory/deploy-phase-09-apache-hardening.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 09_APACHE_HARDENING ==="
@@ -881,7 +872,8 @@ cat > "$_PHASES_TMP/10_mariadb_hardening.sh" <<'__FPBXPHASE_10_MARIADB_HARDENING
 # Suppression comptes anonymes, base test, bind=127.0.0.1
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-10-mariadb.log
+LOG=/var/log/freepbx-factory/deploy-phase-10-mariadb-hardening.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 10_MARIADB_HARDENING ==="
@@ -912,7 +904,7 @@ __FPBXPHASE_10_MARIADB_HARDENING_SH__
 chmod +x "$_PHASES_TMP/10_mariadb_hardening.sh"
 
 cat > "$_PHASES_TMP/11_services_hardening.sh" <<'__FPBXPHASE_11_SERVICES_HARDENING_SH__'
-﻿#!/bin/bash
+#!/bin/bash
 # 11_services_hardening.sh — Désactivation services inutiles post-FreePBX
 #
 # Découverts lors de l'audit sécurité 04/05/2026 :
@@ -923,7 +915,8 @@ cat > "$_PHASES_TMP/11_services_hardening.sh" <<'__FPBXPHASE_11_SERVICES_HARDENI
 # Usage : sudo bash /tmp/11_services_hardening.sh
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-11-services.log
+LOG=/var/log/freepbx-factory/deploy-phase-11-services-hardening.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 11_SERVICES_HARDENING ==="
@@ -1016,7 +1009,8 @@ cat > "$_PHASES_TMP/12_sbom.sh" <<'__FPBXPHASE_12_SBOM_SH__'
 # Usage : sudo bash 12_sbom.sh
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-12-sbom.log
+LOG=/var/log/freepbx-factory/deploy-phase-12-sbom.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 12_SBOM (CRA Annex II) ==="
@@ -1050,7 +1044,7 @@ sbom = {
     "specVersion": "1.4",
     "metadata": {
         "timestamp": datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
-        "component": {"name": "freepbx-factory", "version": "1.8", "supplier": "OVHcloud"}
+        "component": {"name": "freepbx-factory", "version": "1.9", "supplier": "OVHcloud"}
     },
     "components": [
         {"type": "application", "name": "FreePBX",  "version": run("fwconsole --version 2>/dev/null | awk '{print $NF}'")},
@@ -1100,7 +1094,8 @@ cat > "$_PHASES_TMP/13_post_checks.sh" <<'__FPBXPHASE_13_POST_CHECKS_SH__'
 # Usage : sudo bash 13_post_checks.sh <ssh_port>
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-13-post-checks.log
+LOG=/var/log/freepbx-factory/deploy-phase-13-post-checks.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 SSH_PORT="${1:?Argument 1 requis : ssh_port}"
@@ -1233,7 +1228,8 @@ cat > "$_PHASES_TMP/14_auditd.sh" <<'__FPBXPHASE_14_AUDITD_SH__'
 # Les journaux auditd sont dans /var/log/audit/audit.log
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-14-auditd.log
+LOG=/var/log/freepbx-factory/deploy-phase-14-auditd.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 14_AUDITD (NIS2 Art. 21b) ==="
@@ -1304,7 +1300,8 @@ cat > "$_PHASES_TMP/15_tls.sh" <<'__FPBXPHASE_15_TLS_SH__'
 # Argument  : $1 = FQDN (ex: pbx.mon-entreprise.fr)
 
 set -euo pipefail
-LOG=/tmp/deploy-phase-15-tls.log
+LOG=/var/log/freepbx-factory/deploy-phase-15-tls.log
+touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 TLS_DOMAIN="${TLS_DOMAIN:-${1:-}}"
@@ -1439,13 +1436,50 @@ err()  { echo -e "${RED}[ERR]${NC} $*" | tee -a "$SESSION_LOG"; exit 1; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $*" | tee -a "$SESSION_LOG"; }
 info() { echo -e "${CYAN}$*${NC}"; }
 
+run_phase() {
+    local script="$1"; shift
+    local phase_name
+    phase_name=$(basename "$script" .sh | tr '_' '-')
+    local phase_log="/var/log/freepbx-factory/deploy-phase-${phase_name}.log"
+    if ! bash "$script" "$@"; then
+        echo ""
+        warn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        warn "ÉCHEC : $(basename "$script")"
+        if [[ -f "$phase_log" ]]; then
+            warn "Dernières lignes du log :"
+            echo "────────────────────────────────────────────────────"
+            tail -n 10 "$phase_log"
+            echo "────────────────────────────────────────────────────"
+            warn "Log complet : $phase_log"
+        fi
+        warn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        err "Installation interrompue. Corriger l'erreur ci-dessus et relancer."
+    fi
+}
+
+# ── Répertoire de logs persistants ──────────────────────────────────────────
+mkdir -p /var/log/freepbx-factory
+chmod 700 /var/log/freepbx-factory
+
 # ── Pré-checks ──────────────────────────────────────────────────────────────
 [[ $EUID -eq 0 ]] || err "Doit être exécuté en root : sudo bash $0"
 [[ -f /etc/debian_version ]] || err "Système non supporté — Debian 12 requis"
 DEB_VER=$(cut -d. -f1 /etc/debian_version)
 [[ "$DEB_VER" == "12" ]] || warn "Version Debian détectée : $DEB_VER (Debian 12 recommandée)"
+
+# ── Bootstrap : dépendances minimales ───────────────────────────────────────
+_MISSING=()
+for _pkg in wget curl tmux ca-certificates; do
+    command -v "$_pkg" &>/dev/null || _MISSING+=("$_pkg")
+done
+if [[ ${#_MISSING[@]} -gt 0 ]]; then
+    echo "Installation des dépendances manquantes : ${_MISSING[*]}"
+    apt-get update -qq && apt-get install -y "${_MISSING[@]}" -qq \
+        || warn "Certaines dépendances n'ont pas pu être installées — vérifier la connectivité réseau"
+fi
+
 [[ -f "$PHASES_DIR/00_cleanup.sh" ]] || err "Scripts de phase introuvables dans $PHASES_DIR"
-command -v wget &>/dev/null || err "wget requis — installer avec : apt-get install -y wget"
+command -v wget &>/dev/null || err "wget introuvable après installation — vérifier la connectivité réseau"
 command -v fwconsole &>/dev/null && err "FreePBX déjà installé — ce script est à usage unique."
 
 # ── tmux : démarrage en session persistante ─────────────────────────────────
@@ -1548,11 +1582,11 @@ read_ext_password() {
 }
 
 # ════════════════════════════════════════════════════════════════════════════
-# WIZARD — Saisie paramètres (V1.8 CRA)
+# WIZARD — Saisie paramètres (V1.9 CRA)
 # ════════════════════════════════════════════════════════════════════════════
 echo ""
 echo "╔══════════════════════════════════════════╗"
-echo "║  FreePBX Factory V1.8 CRA — Installateur ║"
+echo "║  FreePBX Factory V1.9 CRA — Installateur ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
@@ -1704,6 +1738,11 @@ else
 fi
 echo ""
 
+# Détection anticipée de l'IP du VPS (nécessaire pour le wizard TLS)
+VPS_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1)
+[[ -z "$VPS_IP" ]] && VPS_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+[[ -z "$VPS_IP" ]] && VPS_IP="<IP_VPS>"
+
 # ── TLS HTTPS ─────────────────────────────────────────────────────────────────
 info "▶ 3/4 — Accès HTTPS à l'interface d'administration (optionnel)"
 info ""
@@ -1713,16 +1752,27 @@ info "  ponctuellement en HTTP si nécessaire, sous votre responsabilité."
 info ""
 info "  Avec un sous-domaine : le script configure automatiquement un certificat"
 info "  HTTPS (Let's Encrypt). L'enregistrement DNS de type A doit pointer vers"
-info "  l'adresse IP de ce serveur avant de lancer l'installation."
+info "  l'adresse IP de ce serveur AVANT de lancer l'installation."
+info ""
+info "  IP de ce serveur     : $VPS_IP"
+info "  Enregistrement requis : A  <votre-domaine>  →  $VPS_IP"
+info "  Pour vérifier depuis votre poste : nslookup <votre-domaine>"
 info ""
 info "  [Entrée] = ignorer (interface web désactivée en fin d'installation)"
 TLS_DOMAIN=""
 if [[ -n "$TLS_DOMAIN_ARG" ]]; then
     TLS_DOMAIN="$TLS_DOMAIN_ARG"
     echo "  ✓ Sous-domaine : $TLS_DOMAIN (pré-sélectionné par le wizard)"
+    echo "  ℹ  Enregistrement attendu : A  $TLS_DOMAIN  →  $VPS_IP"
 else
     read -rp "  Sous-domaine HTTPS (ex: pbx.mon-entreprise.fr) ou Entrée pour ignorer : " TLS_DOMAIN
-    [[ -n "$TLS_DOMAIN" ]] && echo "  ✓ Sous-domaine : $TLS_DOMAIN" || echo "  → Interface web désactivée en fin d'installation"
+    if [[ -n "$TLS_DOMAIN" ]]; then
+        echo "  ✓ Sous-domaine : $TLS_DOMAIN"
+        echo "  ℹ  Enregistrement attendu : A  $TLS_DOMAIN  →  $VPS_IP"
+        echo "  ℹ  Pour vérifier depuis votre poste : nslookup $TLS_DOMAIN"
+    else
+        echo "  → Interface web désactivée en fin d'installation"
+    fi
 fi
 echo ""
 
@@ -1788,7 +1838,7 @@ echo -e "${YELLOW}║  puis : sudo tmux attach -t factory      ║${NC}"
 echo -e "${YELLOW}╚══════════════════════════════════════════╝${NC}"
 echo ""
 
-log "====== PARAMÈTRES V1.8 CRA ======"
+log "====== PARAMÈTRES V1.9 CRA ======"
 log "admin_username  : $ADMIN_USERNAME"
 log "management_ip   : $MANAGEMENT_IP"
 log "ssh_port        : $SSH_PORT"
@@ -1821,7 +1871,7 @@ _send_telem "{\"event\":\"deploy_start\",\"version\":\"${SCRIPT_VERSION}\",\"os\
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 00 — Cleanup ==="
-bash "$PHASES_DIR/00_cleanup.sh"
+run_phase "$PHASES_DIR/00_cleanup.sh"
 ok "00_cleanup"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1843,7 +1893,7 @@ echo -e "${YELLOW}    sudo tmux attach -t factory                     ${NC}"
 echo -e "${YELLOW}══════════════════════════════════════════════════${NC}"
 echo ""
 read -rp "  Port $SSH_PORT noté ? Appuyez sur Entrée pour continuer... "
-bash "$PHASES_DIR/00_hardening.sh" "$MANAGEMENT_IP" "$SSH_PORT"
+run_phase "$PHASES_DIR/00_hardening.sh" "$MANAGEMENT_IP" "$SSH_PORT"
 ok "00_hardening — SSH actif sur port $SSH_PORT"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1852,11 +1902,11 @@ ok "00_hardening — SSH actif sur port $SSH_PORT"
 log ""
 log "=== PHASE 01 — Installation FreePBX (20-40 min) ==="
 echo ""
-echo -e "${CYAN}  Installation de FreePBX en cours — durée estimée : 20 à 40 minutes.${NC}"
-echo -e "${CYAN}  Le terminal reste silencieux pendant cette phase — c'est normal.${NC}"
-echo -e "${CYAN}  Ne fermez pas cette fenêtre.${NC}"
+echo -e "${CYAN}  Cette phase peut prendre 20 à 40 minutes. Certains messages${NC}"
+echo -e "${CYAN}  peuvent rester affichés plusieurs minutes sans évoluer, c'est normal.${NC}"
+echo -e "${CYAN}  Ne fermez pas cette fenêtre et ne coupez pas la connexion SSH.${NC}"
 echo ""
-bash "$PHASES_DIR/01_install.sh"
+run_phase "$PHASES_DIR/01_install.sh"
 ok "01_install"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1864,7 +1914,7 @@ ok "01_install"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 02 — Asterisk + modules ==="
-bash "$PHASES_DIR/02_asterisk.sh"
+run_phase "$PHASES_DIR/02_asterisk.sh"
 ok "02_asterisk"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1872,7 +1922,7 @@ ok "02_asterisk"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 03 — Firewall ==="
-bash "$PHASES_DIR/03_firewall.sh" "$MANAGEMENT_IP" "$SSH_PORT"
+run_phase "$PHASES_DIR/03_firewall.sh" "$MANAGEMENT_IP" "$SSH_PORT"
 ok "03_firewall"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1880,22 +1930,15 @@ ok "03_firewall"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 04 — fail2ban ==="
-bash "$PHASES_DIR/04_fail2ban.sh" "$MANAGEMENT_IP" "$SSH_PORT" "${EXTRA_IGNOREIP:-}"
+run_phase "$PHASES_DIR/04_fail2ban.sh" "$MANAGEMENT_IP" "$SSH_PORT" "${EXTRA_IGNOREIP:-}"
 ok "04_fail2ban"
 
 # ════════════════════════════════════════════════════════════════════════════
-# PHASE 05 — (supprimée — V1.9 CRA) — plus de restore template
-# Extensions et trunk créés en SQL natif (06_post_restore.sh) — cf. test 09/06/2026
-# Les clés TLS partagées du template sont remplacées par Let's Encrypt (15_tls.sh)
-# ════════════════════════════════════════════════════════════════════════════
-ok "05_restore"
-
-# ════════════════════════════════════════════════════════════════════════════
-# PHASE 06 — Post-restore (endpoint + admin + extensions + trunk)
+# PHASE 06 — Configuration FreePBX (endpoint + admin + extensions + trunk)
 # ════════════════════════════════════════════════════════════════════════════
 log ""
-log "=== PHASE 06 — Post-restore ==="
-bash "$PHASES_DIR/06_post_restore.sh" \
+log "=== PHASE 06 — Configuration FreePBX ==="
+run_phase "$PHASES_DIR/06_post_restore.sh" \
     "$ADMIN_USERNAME" "$ADMIN_SHA1" "$ADMIN_SHA512" \
     "$TRUNK_REGISTRAR" "$TRUNK_USERNAME" "$TRUNK_PASSWORD" \
     "$TRUNK_NAME" "$TRUNK_CALLERID" \
@@ -1909,7 +1952,7 @@ ok "06_post_restore"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 09 — Apache hardening ==="
-bash "$PHASES_DIR/09_apache_hardening.sh"
+run_phase "$PHASES_DIR/09_apache_hardening.sh"
 ok "09_apache_hardening"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1917,7 +1960,7 @@ ok "09_apache_hardening"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 10 — MariaDB hardening ==="
-bash "$PHASES_DIR/10_mariadb_hardening.sh"
+run_phase "$PHASES_DIR/10_mariadb_hardening.sh"
 ok "10_mariadb_hardening"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1925,7 +1968,7 @@ ok "10_mariadb_hardening"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 11 — Services hardening ==="
-bash "$PHASES_DIR/11_services_hardening.sh"
+run_phase "$PHASES_DIR/11_services_hardening.sh"
 ok "11_services_hardening"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1933,7 +1976,7 @@ ok "11_services_hardening"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 14 — auditd ==="
-bash "$PHASES_DIR/14_auditd.sh"
+run_phase "$PHASES_DIR/14_auditd.sh"
 ok "14_auditd"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1941,7 +1984,7 @@ ok "14_auditd"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 12 — SBOM CycloneDX ==="
-bash "$PHASES_DIR/12_sbom.sh"
+run_phase "$PHASES_DIR/12_sbom.sh"
 ok "12_sbom"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1949,30 +1992,23 @@ ok "12_sbom"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 13 — Contrôles conformité CRA + NIS2 ==="
-bash "$PHASES_DIR/13_post_checks.sh" "$SSH_PORT"
+run_phase "$PHASES_DIR/13_post_checks.sh" "$SSH_PORT"
 ok "13_post_checks"
 
 # ════════════════════════════════════════════════════════════════════════════
-# Détection IP principale du VPS (pour rapport + softphones)
-# ════════════════════════════════════════════════════════════════════════════
-VPS_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1)
-[[ -z "$VPS_IP" ]] && VPS_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
-[[ -z "$VPS_IP" ]] && VPS_IP="<IP_VPS>"
-
-# ════════════════════════════════════════════════════════════════════════════
-# Validation compte admin GUI (Apache temporairement actif)
+# Vérification locale de disponibilité GUI (Apache temporairement actif)
 # ════════════════════════════════════════════════════════════════════════════
 log ""
-log "=== Validation compte admin GUI ==="
+log "=== Vérification locale de disponibilité GUI ==="
 systemctl start apache2 2>/dev/null || true
 sleep 2
 _GUI_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost/admin/index.php \
     --data-urlencode "username=$ADMIN_USERNAME" \
     --data-urlencode "password=$ADMIN_PASSWORD" 2>/dev/null || echo "000")
 if [[ "$_GUI_CODE" =~ ^(200|302)$ ]]; then
-    ok "Validation GUI : HTTP $_GUI_CODE — compte $ADMIN_USERNAME opérationnel"
+    ok "Disponibilité GUI : Apache répond localement (HTTP $_GUI_CODE) — authentification à vérifier depuis votre navigateur"
 else
-    warn "Validation GUI : HTTP $_GUI_CODE — vérifier manuellement après activation TLS"
+    warn "Disponibilité GUI : Apache ne répond pas (HTTP $_GUI_CODE) — vérifier manuellement après activation TLS"
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1982,12 +2018,45 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 15 — TLS/HTTPS ==="
+
+# ── Vérification DNS avant certbot ──────────────────────────────────────────
+if [[ -n "$TLS_DOMAIN" ]]; then
+    log "Vérification DNS : $TLS_DOMAIN"
+    _DNS_IP=$(getent hosts "$TLS_DOMAIN" 2>/dev/null | awk '{print $1}' | head -1)
+    if [[ -z "$_DNS_IP" ]]; then
+        warn "DNS : $TLS_DOMAIN ne se résout pas."
+        warn "  IP de ce serveur     : $VPS_IP"
+        warn "  Enregistrement requis : A  $TLS_DOMAIN  →  $VPS_IP"
+        warn "  Let's Encrypt va échouer si le DNS n'est pas propagé."
+        if [[ -n "$TLS_DOMAIN_ARG" ]]; then
+            warn "  Mode non interactif : l'installation continue malgré l'avertissement DNS."
+        else
+            read -t 60 -rp "  Continuer quand même ? Saisissez 'oui' pour confirmer (60s) : " _DNS_CONFIRM || _DNS_CONFIRM="non"
+            [[ "${_DNS_CONFIRM,,}" == "oui" ]] || err "Installation annulée — configurer le DNS puis relancer avec --tls-domain=$TLS_DOMAIN"
+        fi
+    elif [[ "$_DNS_IP" != "$VPS_IP" ]]; then
+        warn "DNS : $TLS_DOMAIN pointe vers $_DNS_IP, ce serveur est $VPS_IP."
+        warn "  Let's Encrypt échouera si le domaine ne pointe pas vers ce serveur."
+        warn "  (Un CDN ou proxy peut légitimement différer — vérifiez si c'est votre cas.)"
+        if [[ -n "$TLS_DOMAIN_ARG" ]]; then
+            warn "  Mode non interactif : l'installation continue malgré l'avertissement DNS."
+        else
+            read -t 60 -rp "  Continuer quand même ? Saisissez 'oui' pour confirmer (60s) : " _DNS_CONFIRM || _DNS_CONFIRM="non"
+            [[ "${_DNS_CONFIRM,,}" == "oui" ]] || err "Installation annulée — corriger le DNS puis relancer avec --tls-domain=$TLS_DOMAIN"
+        fi
+    else
+        ok "DNS : $TLS_DOMAIN → $_DNS_IP (correspond à l'IP de ce serveur)"
+    fi
+fi
+
 export TLS_DOMAIN
-bash "$PHASES_DIR/15_tls.sh" "$TLS_DOMAIN"
+run_phase "$PHASES_DIR/15_tls.sh" "$TLS_DOMAIN"
 if [[ -n "$TLS_DOMAIN" ]]; then
     ok "15_tls — HTTPS actif — https://$TLS_DOMAIN/admin/"
+    GUI_URL="https://$TLS_DOMAIN/admin/"
 else
     ok "15_tls — Apache arrêté — GUI inaccessible jusqu'à configuration TLS"
+    GUI_URL="désactivée (Apache arrêté — aucun accès web sans configuration HTTPS)"
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -2045,7 +2114,7 @@ _ext_info="désactivé" ; [[ "$KIT_STARTER" == "oui" ]] && _ext_info="$EXT1_NUMB
 
 cat > "$REPORT_FILE" << REPORTEOF
 ═══════════════════════════════════════════════════════════
-  RAPPORT DE LIVRAISON — FreePBX Factory V1.8 CRA
+  RAPPORT DE LIVRAISON — FreePBX Factory V1.9 CRA
   Date       : ${DEPLOY_DATE}
 ═══════════════════════════════════════════════════════════
 
@@ -2054,7 +2123,7 @@ ACCÈS
   Port SSH   : ${SSH_PORT}  (clé ED25519 uniquement)
   IP autorisée SSH : ${MANAGEMENT_IP}
   IP VPS     : ${VPS_IP}
-  GUI        : $(if [[ -n "${TLS_DOMAIN}" ]]; then echo "https://${TLS_DOMAIN}/admin/"; else echo "http://${VPS_IP}/admin/  (HTTPS requis — TLS non activé)"; fi)
+  GUI        : ${GUI_URL}
   Reconnexion: ssh -p ${SSH_PORT} debian@${VPS_IP}
 
 OPTIONS DÉPLOYÉES
@@ -2107,11 +2176,15 @@ KIT STARTER — CONFIGURATION SOFTPHONES
     Compte SIP   : ${EXT3_NUMBER}
     Mot de passe : ${EXT3_PASS}
 
-ACCÈS GUI TEMPORAIRE (HTTP — non sécurisé)
-  Démarrer Apache  : sudo systemctl start apache2
-  URL admin        : http://${VPS_IP}/admin/
-  Arrêter Apache   : sudo systemctl stop apache2
-  ⚠ HTTP uniquement — TLS non configuré — accès via IP publique uniquement
+ACCÈS INTERFACE
+  URL admin : ${GUI_URL}
+$(if [[ -z "${TLS_DOMAIN}" ]]; then
+echo "  Accès HTTP ponctuel (sous votre responsabilité) :"
+echo "    Démarrer : sudo systemctl start apache2"
+echo "    URL      : http://${VPS_IP}/admin/"
+echo "    Arrêter  : sudo systemctl stop apache2"
+echo "  Attention : HTTP non sécurisé — à utiliser uniquement pour configuration initiale."
+fi)
 
 ═══════════════════════════════════════════════════════════
 KIT_REPORT_EOF
@@ -2193,21 +2266,19 @@ if [[ "$KIT_STARTER" == "oui" ]]; then
     echo -e "${YELLOW}   KIT STARTER — VÉRIFICATION & SOFTPHONES${NC}"
     echo -e "${YELLOW}══════════════════════════════════════════════════════${NC}"
     echo ""
-    echo -e "${RED}  ⚠  HTTP uniquement — non chiffré — TLS non configuré${NC}"
-    echo -e "${RED}  ⚠  Arrêtez Apache immédiatement après vérification${NC}"
-    echo ""
-    echo -e "  ${CYAN}── 1. DÉMARRER APACHE (ponctuel) ─────────────────────${NC}"
-    echo    "     sudo systemctl start apache2"
-    echo ""
-    echo -e "  ${CYAN}── 2. ACCÉDER À L'INTERFACE FREEPBX ─────────────────${NC}"
-    echo    "     URL   : http://${VPS_IP}/admin/"
+    echo -e "  ${CYAN}── 1. ACCÉDER À L'INTERFACE FREEPBX ─────────────────${NC}"
+    echo    "     URL   : ${GUI_URL}"
     echo    "     Login : ${ADMIN_USERNAME}"
-    echo -e "     ${YELLOW}⚠ Accessible via IP publique uniquement (pas depuis le LAN du VPS)${NC}"
+    if [[ -z "$TLS_DOMAIN" ]]; then
+        echo ""
+        echo -e "  ${YELLOW}  Interface web désactivée (Apache arrêté par sécurité).${NC}"
+        echo -e "  ${YELLOW}  Pour un accès ponctuel sous votre responsabilité :${NC}"
+        echo    "     sudo systemctl start apache2"
+        echo    "     URL HTTP : http://${VPS_IP}/admin/"
+        echo    "     sudo systemctl stop apache2  (arrêter après vérification)"
+    fi
     echo    "     Vérifier : Applications → Extensions"
     echo    "     Extensions attendues : ${EXT1_NUMBER} / ${EXT2_NUMBER} / ${EXT3_NUMBER}"
-    echo ""
-    echo -e "  ${CYAN}── 3. ARRÊTER APACHE ─────────────────────────────────${NC}"
-    echo    "     sudo systemctl stop apache2"
     echo ""
     echo -e "  ${CYAN}── 4. VÉRIFIER LES ENREGISTREMENTS ASTERISK ──────────${NC}"
     echo    "     sudo asterisk -rx 'pjsip show endpoints'"
@@ -2241,7 +2312,7 @@ fi
 echo ""
 echo ""
 ok "╔══════════════════════════════════════════╗"
-ok "║   FreePBX Factory V1.8 — DÉPLOYÉ ✓      ║"
+ok "║   FreePBX Factory V1.9 — DÉPLOYÉ ✓      ║"
 ok "╠══════════════════════════════════════════╣"
 ok "║ Admin    : $ADMIN_USERNAME"
 ok "║ SSH port : $SSH_PORT — restreint à $MANAGEMENT_IP"
