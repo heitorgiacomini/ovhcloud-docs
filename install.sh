@@ -387,9 +387,11 @@ SSH_PORT="${2:-2222}"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 03_FIREWALL ==="
 
-# Désactiver le firewall FreePBX (incompatible avec UFW)
-fwconsole firewall --disable 2>/dev/null || true
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_FW_DISABLED"
+# Désactiver le module firewall FreePBX (empêche les conflits iptables avec UFW)
+# fwconsole ma disable : neutralise le module au niveau registre — plus fort que --disable
+# qui ne fait que stopper les règles actives mais laisse le module se réactiver au reload
+fwconsole ma disable firewall 2>/dev/null || true
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_FW_MODULE_DISABLED"
 
 # Réinstaller UFW (supprimé par l'installateur — E15)
 apt-get install -y ufw 2>&1 | tail -2
@@ -745,6 +747,19 @@ EXTEOF
     echo "  MOT DE PASSE EXT $num : ${pass}"
 }
 
+# Sync AstDB — séparé de insert_extension() pour garantir que le CLI Asterisk
+# est stable (évite la race CLI juste après fwconsole reload endpoint)
+sync_astdb() {
+    local num="$1"
+    [[ -z "$num" ]] && return
+    asterisk -rx "database put DEVICE ${num}/dial PJSIP/${num}"   >/dev/null 2>&1 || true
+    asterisk -rx "database put DEVICE ${num}/tech pjsip"          >/dev/null 2>&1 || true
+    asterisk -rx "database put DEVICE ${num}/type fixed"          >/dev/null 2>&1 || true
+    asterisk -rx "database put DEVICE ${num}/user ${num}"         >/dev/null 2>&1 || true
+    asterisk -rx "database put DEVICE ${num}/default_user ${num}" >/dev/null 2>&1 || true
+    asterisk -rx "database put AMPUSER ${num}/device ${num}"      >/dev/null 2>&1 || true
+}
+
 if [[ -n "$EXT1_NUMBER" ]]; then
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Kit starter — INSERT extensions (template V3)..."
     insert_extension "$EXT1_NUMBER" "$EXT1_NAME" "$EXT1_PASS"
@@ -752,7 +767,15 @@ if [[ -n "$EXT1_NUMBER" ]]; then
     insert_extension "$EXT3_NUMBER" "$EXT3_NAME" "$EXT3_PASS"
     fwconsole reload 2>&1 | tail -3 || true
     ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] EXTENSIONS_OK"
+    # Sync AstDB APRÈS reload — CLI stable, dialparties.agi peut résoudre les extensions
+    sync_astdb "$EXT1_NUMBER"
+    sync_astdb "$EXT2_NUMBER"
+    sync_astdb "$EXT3_NUMBER"
+    _astdb_count=$(asterisk -rx 'database show DEVICE' 2>/dev/null | grep -c '/dial' || echo 0)
+    if [[ "$_astdb_count" -lt 1 ]]; then
+        echo "  [WARN] AstDB DEVICE vide — appels entrants risquent d'être non fonctionnels (Asterisk instable ?)"
+    fi
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] EXTENSIONS_OK (AstDB dial: ${_astdb_count}/3)"
 else
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Kit starter désactivé — aucune extension créée"
 fi
@@ -816,7 +839,7 @@ if [[ -n "$EXT1_NUMBER" && -n "$EXT2_NUMBER" && -n "$EXT3_NUMBER" ]]; then
     mysql -u root asterisk << RGEOF
 DELETE FROM ringgroups WHERE grpnum='600';
 INSERT INTO ringgroups (grpnum, strategy, grptime, grplist, description, rvolume)
-  VALUES ('600', 'ringall', 30, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}-', 'Kit Demo', '');
+  VALUES ('600', 'ringall', 30, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}', 'Kit Demo', '');
 RGEOF
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] RINGGROUP_OK"
 fi
