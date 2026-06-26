@@ -810,6 +810,56 @@ else
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Pas de trunk configuré"
 fi
 
+# ── Ring group kit starter (sonnerie simultanée 3 postes) ─
+if [[ -n "$EXT1_NUMBER" && -n "$EXT2_NUMBER" && -n "$EXT3_NUMBER" ]]; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Ring group 600 (ringall : ${EXT1_NUMBER}/${EXT2_NUMBER}/${EXT3_NUMBER})..."
+    mysql -u root asterisk << RGEOF
+DELETE FROM ringgroups WHERE grpnum='600';
+INSERT INTO ringgroups (grpnum, strategy, grptime, grplist, description, rvolume)
+  VALUES ('600', 'ringall', 30, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}-', 'Kit Demo', '');
+RGEOF
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] RINGGROUP_OK"
+fi
+
+# ── Routes sortante + entrante (trunk requis) ─────────────
+if [[ -n "$TRUNK_REGISTRAR" && -n "$TRUNK_USERNAME" && -n "$TRUNK_PASSWORD" ]]; then
+    TRUNK_DB_ID=$(mysql -u root asterisk -sNe "SELECT trunkid FROM trunks WHERE name='${TRUNK_NAME}' LIMIT 1;" 2>/dev/null || true)
+    if [[ -n "$TRUNK_DB_ID" ]]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] Route sortante (trunk_id=${TRUNK_DB_ID}, pattern X.)..."
+        mysql -u root asterisk << RTEOF
+SET @del_id = (SELECT route_id FROM outbound_routes WHERE name='Route-Sortante' LIMIT 1);
+DELETE FROM outbound_route_patterns WHERE route_id = @del_id AND @del_id IS NOT NULL;
+DELETE FROM outbound_route_trunks   WHERE route_id = @del_id AND @del_id IS NOT NULL;
+DELETE FROM outbound_routes WHERE name='Route-Sortante';
+INSERT INTO outbound_routes (name, outcid, outcid_mode, emergency_route, intracompany_route, mohclass, time_mode, notification_on)
+  VALUES ('Route-Sortante', '', '', 'no', 'no', 'default', '', 'call');
+SET @route_id = LAST_INSERT_ID();
+INSERT INTO outbound_route_patterns (route_id, match_pattern_prefix, match_pattern_pass, match_cid, prepend_digits)
+  VALUES (@route_id, '', 'X.', '', '');
+INSERT INTO outbound_route_trunks (route_id, trunk_id, seq)
+  VALUES (@route_id, ${TRUNK_DB_ID}, 0);
+RTEOF
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] OUTBOUND_ROUTE_OK"
+
+        if [[ -n "$EXT1_NUMBER" ]]; then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] Route entrante → ext-group,600,1..."
+            mysql -u root asterisk << INEOF
+DELETE FROM incoming WHERE extension='' AND cidnum='';
+INSERT INTO incoming (cidnum, extension, destination, mohclass, description)
+  VALUES ('', '', 'ext-group,600,1', 'default', 'Appels entrants kit demo');
+INEOF
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] INBOUND_ROUTE_OK"
+        fi
+    else
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARN : trunk_id introuvable — routes non créées"
+    fi
+fi
+
+# ── Reload dialplan avec toutes les routes ────────────────
+fwconsole reload 2>&1 | tail -3 || true
+ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] ROUTES_DIALPLAN_OK"
+
 # ── chan_ooh323 + chan_iax2 : désactivation (E11) ─────────
 asterisk -rx 'module unload chan_ooh323.so' 2>/dev/null || true
 grep -q 'chan_ooh323.so' /etc/asterisk/modules.conf || \
