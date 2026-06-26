@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026.06.26
+
+### Features
+- **opcp:** add product landing page, replace overview (#297)
+- **messaging/sms:** replace SMS overview with a product landing page (#290)
+- add Web Hosting Getting started landing page with zone-gated EU offers (#287)
+
+### Fixes
+- gate Cloud Web guides to EU in Web Hosting Configuration landing (#288)
+- **iam:** include OVHcloud in PAT guide tab labels (en/fr/pl) (#292)
+
+### Documentation
+- 89 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.25
 
 ### Features
