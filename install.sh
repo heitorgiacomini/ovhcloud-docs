@@ -700,7 +700,7 @@ INSERT INTO sip (id, keyword, data, flags) VALUES
   ('${num}','defaultuser',          '',                              4),
   ('${num}','device_state_busy_at', '0',                            38),
   ('${num}','dial',                 'PJSIP/${num}',                 18),
-  ('${num}','direct_media',         'yes',                          34),
+  ('${num}','direct_media',         'no',                           34),
   ('${num}','disallow',             'all',                          16),
   ('${num}','dtmfmode',             'rfc4733',                       3),
   ('${num}','force_rport',          'yes',                          25),
@@ -838,6 +838,9 @@ INSERT INTO outbound_route_patterns (route_id, match_pattern_prefix, match_patte
   VALUES (@route_id, '', 'X.', '', '');
 INSERT INTO outbound_route_trunks (route_id, trunk_id, seq)
   VALUES (@route_id, ${TRUNK_DB_ID}, 0);
+INSERT INTO outbound_route_sequence (route_id, seq)
+  VALUES (@route_id, 1)
+  ON DUPLICATE KEY UPDATE seq=1;
 RTEOF
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] OUTBOUND_ROUTE_OK"
 
@@ -1663,11 +1666,12 @@ read_ext_password() {
         _read_star_input pass "  Mot de passe du poste $ext"
         if [[ -z "$pass" ]]; then
             # head -c 512 ferme stdin de tr proprement — évite SIGPIPE avec set -o pipefail
-            pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9!@#%^&*-_' | cut -c1-20)
+            pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9!#^&*._-' | cut -c1-20)
             echo "  → Généré : $pass"
             printf -v "$varname" '%s' "$pass"
             break
         fi
+        echo "$pass" | grep -qE '[%@]' && echo -e "  ${YELLOW}ℹ${NC} Extension $ext : les caractères % et @ sont déconseillés dans un mot de passe SIP (risque d'échec d'authentification)"
         validate_password "$pass" "Extension $ext" && printf -v "$varname" '%s' "$pass" && break
     done
 }
@@ -1782,7 +1786,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
         varname="EXT${i}_NAME"; varpass="EXT${i}_PASS"; extnum="EXT${i}_NUMBER"
         default_name="${!varname}"
         if [[ -n "${FACTORY_TEST_ADMIN:-}" ]]; then
-            local_pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9!@#%^*-_' | cut -c1-20)
+            local_pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9!#^*._-' | cut -c1-20)
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
