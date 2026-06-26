@@ -723,7 +723,7 @@ INSERT INTO sip (id, keyword, data, flags) VALUES
   ('${num}','namedpickupgroup',     '',                             15),
   ('${num}','outbound_auth',        'yes',                          45),
   ('${num}','outbound_proxy',       '',                             44),
-  ('${num}','qualifyfreq',          '60',                            9),
+  ('${num}','qualifyfreq',          '0',                             9),
   ('${num}','refer_blind_progress', 'yes',                          37),
   ('${num}','remove_existing',      'yes',                          21),
   ('${num}','rewrite_contact',      'yes',                          24),
