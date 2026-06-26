@@ -387,10 +387,10 @@ SSH_PORT="${2:-2222}"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 03_FIREWALL ==="
 
-# Désactiver le module firewall FreePBX (empêche les conflits iptables avec UFW)
-# fwconsole ma disable : neutralise le module au niveau registre — plus fort que --disable
-# qui ne fait que stopper les règles actives mais laisse le module se réactiver au reload
-fwconsole ma disable firewall 2>/dev/null || true
+# Stopper le firewall FreePBX (empêche les conflits iptables avec UFW)
+# fwconsole firewall stop : arrête les règles iptables du module — fonctionne même si
+# sysadmin dépend du module firewall (contrairement à "ma disable" qui échoue silencieusement)
+fwconsole firewall stop 2>/dev/null || true
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_FW_MODULE_DISABLED"
 
 # Réinstaller UFW (supprimé par l'installateur — E15)
@@ -883,6 +883,7 @@ fi
 
 # ── Reload dialplan avec toutes les routes ────────────────
 fwconsole reload 2>&1 | tail -3 || true
+fwconsole firewall stop 2>/dev/null || true
 ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ROUTES_DIALPLAN_OK"
 
