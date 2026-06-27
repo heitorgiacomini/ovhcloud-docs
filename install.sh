@@ -1683,7 +1683,8 @@ if [[ -z "${FACTORY_IN_TMUX:-}" ]]; then
     _SCRIPT_PATH="$(realpath "$0" 2>/dev/null || readlink -f "$0" 2>/dev/null || echo "$0")"
     _FWD_ARGS="${MANAGEMENT_IP_ARG:+--management-ip=$MANAGEMENT_IP_ARG} ${KIT_STARTER_ARG:+--kit-starter=$KIT_STARTER_ARG} ${TRUNK_ENABLED_ARG:+--trunk-enabled=$TRUNK_ENABLED_ARG} ${TRUNK_REGISTRAR_ARG:+--trunk-registrar=$TRUNK_REGISTRAR_ARG} ${TRUNK_USERNAME_ARG:+--trunk-username=$TRUNK_USERNAME_ARG} ${TLS_DOMAIN_ARG:+--tls-domain=$TLS_DOMAIN_ARG}"
     # Préfixe env inline POSIX — évite eval export (fragile si $SHELL=dash) ; $0 résolu en absolu
-    _FWD_ENV_PREFIX="FACTORY_IN_TMUX=1${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
+    # SSH_CLIENT / SSH_CONNECTION transmis pour que la détection IP de gestion fonctionne dans tmux
+    _FWD_ENV_PREFIX="FACTORY_IN_TMUX=1${SSH_CLIENT:+ SSH_CLIENT='${SSH_CLIENT}'}${SSH_CONNECTION:+ SSH_CONNECTION='${SSH_CONNECTION}'}${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
     tmux new-session -d -s factory -x 220 -y 50 \
         "$_FWD_ENV_PREFIX bash '$_SCRIPT_PATH' $_FWD_ARGS; echo ''; if [ -f /tmp/fpbx_deploy_done ]; then echo '-- Déploiement terminé — Appuyer sur Entrée --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) — Appuyer sur Entrée --'; fi; read _unused"
     tmux attach-session -t factory
@@ -2073,6 +2074,9 @@ if [[ -z "$MANAGEMENT_IP" ]]; then
         info "  IP détectée : $_DETECTED_IP (adresse source de votre connexion SSH)"
         info "  Un sous-réseau /24 sera autorisé : ${_DETECTED_IP%.*}.0/24"
         info "  (absorbe les variations d'IP dynamique au sein de votre connexion)"
+        info "  Pour vérifier depuis un autre onglet ou navigateur :"
+        info "    Navigateur : https://ifconfig.ovh  ou  https://api.ipify.org"
+        info "    Terminal local (pas ce serveur) : curl ifconfig.me"
         read -rp "  Confirmer ? [O/n/q] : " _CONFIRM
         if [[ "${_CONFIRM,,}" == "q" ]]; then echo "  Retour au début du wizard."; continue; fi
         if [[ "${_CONFIRM,,}" != "n" ]]; then
@@ -2431,6 +2435,8 @@ fi
 REPORT_FILE="/root/freepbx-factory-delivery-report.txt"
 DEPLOY_DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 _ext_info="désactivé" ; [[ "$KIT_STARTER" == "oui" ]] && _ext_info="$EXT1_NUMBER / $EXT2_NUMBER / $EXT3_NUMBER"
+# Registrar SIP pour les softphones : domaine si TLS actif, sinon IP du serveur
+_SIP_SERVER="${TLS_DOMAIN:-$VPS_IP}"
 
 cat > "$REPORT_FILE" << REPORTEOF
 ═══════════════════════════════════════════════════════════
@@ -2440,15 +2446,22 @@ cat > "$REPORT_FILE" << REPORTEOF
 
 ACCÈS
   Admin FreePBX : ${ADMIN_USERNAME}  (mot de passe défini au wizard)
-  Port SSH   : ${SSH_PORT}  (clé ED25519 uniquement)
+  Port SSH      : ${SSH_PORT}  (clé ED25519 uniquement)
   IP autorisée SSH : ${MANAGEMENT_IP}
-  IP VPS     : ${VPS_IP}
-  GUI        : ${GUI_URL}
-  Reconnexion: ssh -p ${SSH_PORT} debian@${VPS_IP}
+  IP VPS        : ${VPS_IP}
+  Interface GUI : ${GUI_URL}
+  Reconnexion SSH : ssh -p ${SSH_PORT} debian@${VPS_IP}
+$([ -n "${TLS_DOMAIN}" ] && printf "\nDOMAINE ACTIF : %s\n  Accès GUI HTTPS   : https://%s/admin/\n  Registrar SIP     : %s  (port 5060 UDP)\n  (utiliser ce domaine dans vos softphones à la place de l'IP)" "${TLS_DOMAIN}" "${TLS_DOMAIN}" "${TLS_DOMAIN}")
+
+REGISTRAR SIP POUR LES SOFTPHONES
+  Protocole   : PJSIP  —  port 5060 (UDP)
+  Serveur SIP : ${_SIP_SERVER}
+  (${TLS_DOMAIN:+domaine HTTPS actif — utiliser le domaine, pas l'IP}${TLS_DOMAIN:-IP du serveur — si un domaine est configuré ultérieurement, l'utiliser à la place})
 
 OPTIONS DÉPLOYÉES
   Kit starter : ${KIT_STARTER}  (extensions : ${_ext_info})
-  Trunk SIP   : ${TRUNK_REGISTRAR:-désactivé}
+  Trunk SIP   : ${TRUNK_REGISTRAR:-désactivé}$([ -n "${TRUNK_USERNAME}" ] && echo "
+  Identifiant SIP : ${TRUNK_USERNAME}")
   HTTPS/TLS   : ${TLS_DOMAIN:-non activé}
   SSH activé  : ${SSH_ENABLED}
 
@@ -2468,6 +2481,14 @@ RAPPORTS DE CONFORMITÉ
   Rapport CRA+NIS2 : /etc/freepbx-factory/compliance-report.json
   SBOM CycloneDX   : /etc/freepbx-factory/sbom.json
 
+COMMANDES DE VÉRIFICATION POST-DÉPLOIEMENT
+  Services PM2   : sudo fwconsole pm2 --list
+  Extensions SIP : sudo asterisk -rx 'pjsip show endpoints'
+  Trunk SIP      : sudo asterisk -rx 'pjsip show registrations'
+  Pare-feu UFW   : sudo ufw status numbered
+  fail2ban       : sudo fail2ban-client status
+  Conformité     : sudo cat /etc/freepbx-factory/compliance-report.json
+
 CONFORMITÉ CRA EU 2024/2847
   Axe 1 — Credentials admin : choisis par le client au wizard (non stockés)
   Axe 2 — Kit starter       : ${KIT_STARTER} — extensions optionnelles (5+ chiffres)
@@ -2476,9 +2497,6 @@ CONFORMITÉ CRA EU 2024/2847
 
 ═══════════════════════════════════════════════════════════
 REPORTEOF
-
-# R1 — Serveur SIP : domaine si TLS configuré (registrar softphone = FQDN), sinon IP
-_SIP_SERVER="${TLS_DOMAIN:-$VPS_IP}"
 
 if [[ "$KIT_STARTER" == "oui" ]]; then
     cat >> "$REPORT_FILE" << KIT_REPORT_EOF
@@ -2517,6 +2535,23 @@ VÉRIFICATION SOFTPHONES
 KIT_REPORT_EOF
 fi
 chmod 600 "$REPORT_FILE"
+
+# Statut trunk SIP au moment de la livraison — ajouté au rapport fichier
+if [[ "$TRUNK_ENABLED" == "oui" && -n "$TRUNK_REGISTRAR" ]]; then
+    _reg_live=$(asterisk -rx 'pjsip show registrations' 2>/dev/null \
+        | grep -iE "Registered|Failed|Unregistered|NoAuth" | head -1 \
+        | grep -oiE "Registered|Failed|Unregistered|NoAuth" || echo "inconnu")
+    {
+        echo ""
+        echo "ÉTAT TRUNK SIP AU DÉPLOIEMENT"
+        echo "  Trunk     : ${TRUNK_REGISTRAR} (identifiant : ${TRUNK_USERNAME})"
+        echo "  Statut    : ${_reg_live}"
+        echo "  Vérifier  : sudo asterisk -rx 'pjsip show registrations'"
+        echo ""
+        echo "═══════════════════════════════════════════════════════════"
+    } >> "$REPORT_FILE"
+fi
+
 log "Rapport de livraison : $REPORT_FILE"
 
 # ════════════════════════════════════════════════════════════════════════════
