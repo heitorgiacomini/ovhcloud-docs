@@ -279,11 +279,27 @@ chmod +x /tmp/sng_freepbx_debian_install.sh
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] INSTALL_SCRIPT_DOWNLOADED"
 
 # Installation FreePBX (20-40 min)
-# --nointeractive : pas de questions
 # Note E15 : l'installateur supprime UFW — sera réinstallé par 03_firewall.sh
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Lancement installation FreePBX (20-40 min)..."
-DEBIAN_FRONTEND=noninteractive bash /tmp/sng_freepbx_debian_install.sh 2>&1
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_INSTALL_DONE"
+FREEPBX_EXIT=0
+DEBIAN_FRONTEND=noninteractive bash /tmp/sng_freepbx_debian_install.sh 2>&1 || FREEPBX_EXIT=$?
+
+if [[ $FREEPBX_EXIT -ne 0 ]]; then
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [WARN] Installateur Sangoma exit $FREEPBX_EXIT — diagnostic..."
+    # Cas fréquent : FreePBX est installé mais fwconsole ma refreshsignatures
+    # a échoué sur un fichier GPG corrompu côté miroir Sangoma (erreur réseau/miroir).
+    # Si fwconsole répond, FreePBX est fonctionnel — on relance refreshsignatures --force.
+    if command -v fwconsole &>/dev/null && fwconsole --version &>/dev/null 2>&1; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] FreePBX installé malgré exit $FREEPBX_EXIT — récupération signatures..."
+        fwconsole ma refreshsignatures --force 2>&1 || true
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_INSTALL_RECOVERED"
+    else
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [ERR] FreePBX non installé (fwconsole absent) — abandon"
+        exit 1
+    fi
+else
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_INSTALL_DONE"
+fi
 
 # Vérification post-install
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Vérification post-install..."
@@ -1552,9 +1568,49 @@ touch "$SESSION_LOG" && chmod 600 "$SESSION_LOG"
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 log()  { echo -e "[$(date '+%H:%M:%S')] $*" | tee -a "$SESSION_LOG"; }
 ok()   { echo -e "${GREEN}[OK]${NC} $*" | tee -a "$SESSION_LOG"; }
-err()  { echo -e "${RED}[ERR]${NC} $*" | tee -a "$SESSION_LOG"; exit 1; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $*" | tee -a "$SESSION_LOG"; }
 info() { echo -e "${CYAN}$*${NC}"; }
+
+# Affiche un encadré de reprise en main et maintient la session tmux ouverte.
+# Appelé à chaque échec — ne masque pas l'erreur, facilite la reconnexion.
+show_recovery_panel() {
+    local phase="${1:-inconnu}"
+    local phase_log="${2:-}"
+    echo ""
+    echo -e "${RED}╔══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${RED}║  DÉPLOIEMENT INTERROMPU                                  ║${NC}"
+    echo -e "${RED}║  Phase : ${phase}${NC}"
+    echo -e "${RED}╠══════════════════════════════════════════════════════════╣${NC}"
+    if [[ -n "$phase_log" && -f "$phase_log" ]]; then
+        echo -e "${RED}║  Dernières lignes du log :${NC}"
+        tail -n 8 "$phase_log" | while IFS= read -r line; do
+            echo -e "${RED}║  ${NC}  $line"
+        done
+        echo -e "${RED}║${NC}"
+        echo -e "${RED}║  Log complet : $phase_log${NC}"
+        echo -e "${RED}║${NC}"
+    fi
+    echo -e "${RED}║  Pour reprendre la main sur ce serveur :${NC}"
+    if [[ -n "${SSH_PORT:-}" && -n "${VPS_IP:-}" ]]; then
+        echo -e "${RED}║    ssh -p ${SSH_PORT} debian@${VPS_IP}${NC}"
+    elif [[ -f /root/freepbx-factory-ssh-port.txt ]]; then
+        echo -e "${RED}║    ssh -p $(cat /root/freepbx-factory-ssh-port.txt) debian@<IP_VPS>${NC}"
+    else
+        echo -e "${RED}║    ssh debian@<IP_VPS>  (port SSH : voir /etc/ssh/sshd_config)${NC}"
+    fi
+    echo -e "${RED}║${NC}"
+    echo -e "${RED}║  Journal d'installation : ${SESSION_LOG}${NC}"
+    echo -e "${RED}╚══════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    # Maintient la session tmux ouverte — sans ça, tmux se ferme et l'erreur disparaît
+    read -rp "  Appuyez sur Entrée pour fermer cette session... " _ 2>/dev/null || true
+}
+
+err() {
+    echo -e "${RED}[ERR]${NC} $*" | tee -a "$SESSION_LOG"
+    show_recovery_panel "pré-installation" ""
+    exit 1
+}
 
 run_phase() {
     local script="$1"; shift
@@ -1562,18 +1618,8 @@ run_phase() {
     phase_name=$(basename "$script" .sh | tr '_' '-')
     local phase_log="/var/log/freepbx-factory/deploy-phase-${phase_name}.log"
     if ! bash "$script" "$@"; then
-        echo ""
-        warn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        warn "ÉCHEC : $(basename "$script")"
-        if [[ -f "$phase_log" ]]; then
-            warn "Dernières lignes du log :"
-            echo "────────────────────────────────────────────────────"
-            tail -n 10 "$phase_log"
-            echo "────────────────────────────────────────────────────"
-            warn "Log complet : $phase_log"
-        fi
-        warn "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        err "Installation interrompue. Corriger l'erreur ci-dessus et relancer."
+        show_recovery_panel "$phase_name" "$phase_log"
+        exit 1
     fi
 }
 
