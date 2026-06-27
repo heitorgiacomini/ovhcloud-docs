@@ -330,6 +330,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 02_ASTERISK ==="
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Upgrade Node.js → 20 (requis par UCP)..."
 npm install -g n 2>&1 | tail -2
 n 20 2>&1 | tail -3
+hash -r 2>/dev/null || true  # force le shell à redécouvrir node/npm après n (sinon node 18 encore en cache PATH)
 NODE_VER=$(node --version 2>/dev/null || /usr/local/bin/node --version 2>/dev/null || echo "inconnu")
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] NODE_OK — $NODE_VER"
 
@@ -1796,6 +1797,13 @@ echo -e "${YELLOW}  Port SSH : ${SSH_PORT}  — notez-le maintenant${NC}"
 echo -e "${YELLOW}  Il sera nécessaire pour vous reconnecter après l'installation.${NC}"
 echo -e "${YELLOW}  ssh -p ${SSH_PORT} debian@<IP_DU_SERVEUR>${NC}"
 echo ""
+echo -e "${YELLOW}  ⚠  Nouveau déploiement ? Utilisez un terminal neuf — un terminal${NC}"
+echo -e "${YELLOW}     réutilisé (même session ou onglet) peut perturber la saisie${NC}"
+echo -e "${YELLOW}     (backspace non fonctionnel, caractères parasites).${NC}"
+echo ""
+echo -e "  La sécurité appliquée par ce script est un point de départ."
+echo -e "  La maintenance et la conformité restent sous votre responsabilité."
+echo ""
 
 # Windows Terminal envoie une réponse ESC[>0;10;1c (Secondary Device Attributes)
 # au démarrage de bash — elle atterrit dans stdin et pollue le premier read.
@@ -1822,6 +1830,10 @@ if [[ -n "${FACTORY_TEST_ADMIN:-}" && -n "${FACTORY_TEST_PASS:-}" ]]; then
     echo ""
 else
 RESERVED_LOGINS="admin root administrator freepbx asterisk"
+info "  Identifiant  : 5+ caractères, lettres / chiffres / . - _ uniquement"
+info "  Noms refusés : admin root administrator freepbx asterisk"
+info "  Mot de passe : 12+ caractères avec minuscules, majuscules, chiffres et symboles"
+echo ""
 while true; do
     read -rp "  Identifiant de connexion FreePBX (q = recommencer) : " ADMIN_USERNAME
     [[ -z "$ADMIN_USERNAME" ]] && { echo "  Installation annulée."; exit 0; }
@@ -1959,6 +1971,8 @@ else
             [[ -z "$TRUNK_USERNAME" ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant vide — la registration SIP risque d'échouer"
             info "  Saisissez le mot de passe de votre service SIP"
             info "  (OVHcloud : espace client → Téléphonie → votre trunk → Mot de passe SIP)"
+            echo -e "  ${YELLOW}  Ce mot de passe est différent du mot de passe de l'espace client.${NC}"
+            echo -e "  ${YELLOW}  Il doit correspondre exactement à celui fourni par votre opérateur.${NC}"
             _rpret=0
             read_password TRUNK_PASSWORD "  Mot de passe SIP" 0 || _rpret=$?
             [[ $_rpret -eq 2 ]] && { echo "  Retour au début du wizard."; continue; }
@@ -1994,6 +2008,8 @@ info ""
 info "  Avec un sous-domaine : le script configure automatiquement un certificat"
 info "  HTTPS (Let's Encrypt). L'enregistrement DNS de type A doit pointer vers"
 info "  l'adresse IP de ce serveur AVANT de lancer l'installation."
+echo -e "  ${YELLOW}  ⚠  DNS requis avant installation : l'enregistrement A doit déjà${NC}"
+echo -e "  ${YELLOW}     pointer vers l'IP ci-dessous — Let's Encrypt échouera sinon.${NC}"
 info ""
 info "  IP de ce serveur     : $VPS_IP"
 info "  Enregistrement requis : A  <votre-domaine>  →  $VPS_IP"
@@ -2072,6 +2088,8 @@ if [[ -z "$MANAGEMENT_IP" ]]; then
         info "    Navigateur : https://ifconfig.ovh  ou  https://api.ipify.org"
         info "    Terminal   : curl ifconfig.me  (sur votre poste, pas ce serveur)"
         info "  Laisser vide = accès SSH non restreint (non recommandé)"
+        echo -e "  ${YELLOW}  ⚠  Si votre IP change après le déploiement et que l'accès SSH est${NC}"
+        echo -e "  ${YELLOW}     perdu, utilisez la console KVM OVHcloud pour corriger la règle UFW.${NC}"
         while true; do
             read -rp "  Votre IP publique (ex: A.B.C.D) (q = recommencer) : " _MGMT_RAW
             [[ "${_MGMT_RAW,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue 2; }
@@ -2355,6 +2373,7 @@ if [[ -n "$TLS_DOMAIN" ]] && systemctl is-active apache2 >/dev/null 2>&1; then
     GUI_URL="https://$TLS_DOMAIN/admin/"
 else
     warn "15_tls — Apache arrêté — GUI inaccessible jusqu'à configuration TLS"
+    [[ -n "$TLS_DOMAIN" ]] && warn "  Pour réessayer TLS : sudo certbot --apache -d $TLS_DOMAIN && sudo systemctl start apache2"
     GUI_URL="désactivée (Apache arrêté — HTTPS requis)"
 fi
 
@@ -2456,11 +2475,14 @@ CONFORMITÉ CRA EU 2024/2847
 ═══════════════════════════════════════════════════════════
 REPORTEOF
 
+# R1 — Serveur SIP : domaine si TLS configuré (registrar softphone = FQDN), sinon IP
+_SIP_SERVER="${TLS_DOMAIN:-$VPS_IP}"
+
 if [[ "$KIT_STARTER" == "oui" ]]; then
     cat >> "$REPORT_FILE" << KIT_REPORT_EOF
 
 KIT STARTER — CONFIGURATION SOFTPHONES
-  Serveur SIP : ${VPS_IP}
+  Serveur SIP : ${_SIP_SERVER}
   Port SIP    : 5060 (UDP / PJSIP)
 
   Extension ${EXT1_NUMBER} — ${EXT1_NAME}
@@ -2484,6 +2506,10 @@ echo "    URL      : http://${VPS_IP}/admin/"
 echo "    Arrêter  : sudo systemctl stop apache2"
 echo "  Attention : HTTP non sécurisé — à utiliser uniquement pour configuration initiale."
 fi)
+
+VÉRIFICATION SOFTPHONES
+  État des extensions : sudo asterisk -rx 'pjsip show endpoints'
+  (statut Avail = softphone enregistré, Unavail = non connecté)
 
 ═══════════════════════════════════════════════════════════
 KIT_REPORT_EOF
@@ -2585,9 +2611,9 @@ if [[ "$KIT_STARTER" == "oui" ]]; then
     echo ""
     echo -e "${GREEN}  ── CONFIGURATION SOFTPHONES ──────────────────────────${NC}"
     echo    "  Protocole  : PJSIP"
-    echo    "  Serveur SIP: ${VPS_IP}"
+    echo    "  Serveur SIP: ${_SIP_SERVER}"
     echo    "  Port SIP   : 5060 (UDP)"
-    echo    "  Domaine    : ${VPS_IP}"
+    echo    "  Domaine    : ${_SIP_SERVER}"
     echo ""
     echo -e "${GREEN}  Ext ${EXT1_NUMBER} — ${EXT1_NAME}${NC}"
     echo    "    Compte SIP   : ${EXT1_NUMBER}"
@@ -2608,6 +2634,27 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 # RÉSULTAT FINAL
 # ════════════════════════════════════════════════════════════════════════════
+
+# R5 — Score conformité dans le résumé
+_COMPLIANCE_SCORE=""
+if [[ -f /etc/freepbx-factory/compliance-report.json ]]; then
+    _COMPLIANCE_SCORE=$(python3 -c "
+import json
+with open('/etc/freepbx-factory/compliance-report.json') as f:
+    r=json.load(f)
+s=r['score']
+print(f'{s[\"percent\"]}% ({s[\"ok\"]}/{s[\"total\"]} controles OK)')
+" 2>/dev/null || echo "voir compliance-report.json")
+fi
+
+# R6 — Statut trunk SIP au moment de la livraison
+_TRUNK_REG_STATUS=""
+if [[ "$TRUNK_ENABLED" == "oui" && -n "$TRUNK_REGISTRAR" ]]; then
+    _TRUNK_REG_STATUS=$(asterisk -rx 'pjsip show registrations' 2>/dev/null \
+        | grep -iE "Registered|Failed|Unregistered|NoAuth" | head -1 \
+        | grep -oiE "Registered|Failed|Unregistered|NoAuth" || echo "inconnu")
+fi
+
 echo ""
 echo ""
 ok "╔══════════════════════════════════════════╗"
@@ -2616,10 +2663,53 @@ ok "╠════════════════════════�
 ok "║ Admin    : $ADMIN_USERNAME"
 ok "║ SSH port : $SSH_PORT — restreint à $MANAGEMENT_IP"
 ok "║ URL GUI  : $GUI_URL"
+[[ -n "$_COMPLIANCE_SCORE" ]] && ok "║ Conformité : $_COMPLIANCE_SCORE"
+[[ -n "$_TRUNK_REG_STATUS" ]] && ok "║ Trunk SIP  : $TRUNK_REGISTRAR — $_TRUNK_REG_STATUS"
 ok "║ Rapport  : $REPORT_FILE"
 ok "║ Journal  : $SESSION_LOG"
 ok "╚══════════════════════════════════════════╝"
 echo ""
+
+# R4 — Apache sans TLS : commandes start/stop pour accès ponctuel
+if [[ -z "$TLS_DOMAIN" ]]; then
+    echo -e "  ${CYAN}ℹ  Interface web désactivée (Apache arrêté — sécurité).${NC}"
+    echo    "     Accès ponctuel HTTP (sous votre responsabilité) :"
+    echo    "       sudo systemctl start apache2"
+    echo    "       Ouvrir : http://${VPS_IP}/admin/"
+    echo    "       sudo systemctl stop apache2  (fermer après utilisation)"
+    echo ""
+fi
+
+# R2 — Avertissement module pare-feu FreePBX
+echo -e "${YELLOW}  ⚠  AVERTISSEMENT PARE-FEU FreePBX${NC}"
+echo -e "${YELLOW}  À la première connexion, FreePBX propose d'activer son module pare-feu${NC}"
+echo -e "${YELLOW}  intégré. Si vous l'activez, la configuration UFW actuelle sera remplacée${NC}"
+echo -e "${YELLOW}  et les protections de ce déploiement devront être reconfigurées.${NC}"
+echo ""
+
+# R3 — Accès perdu : 3 chemins de récupération
+echo -e "  ${CYAN}ℹ  En cas de perte d'accès :${NC}"
+echo    "     1. Vérifiez que votre IP publique n'a pas changé depuis le déploiement"
+echo    "        (IP autorisée : $MANAGEMENT_IP)"
+echo    "     2. Reconnexion SSH : ssh -p $SSH_PORT debian@${VPS_IP}"
+echo    "     3. Accès définitivement perdu : console KVM OVHcloud → corriger UFW"
+echo    "        ou réinstaller le VPS en Debian 12 et recommencer."
+echo ""
+
+# R8 — Fichiers générés sur le VPS
+echo -e "  ${CYAN}ℹ  Fichiers générés sur ce serveur :${NC}"
+echo    "     Rapport   : sudo cat $REPORT_FILE"
+echo    "     Journal   : sudo cat $SESSION_LOG"
+echo    "     Conformité: sudo cat /etc/freepbx-factory/compliance-report.json"
+echo    "     SBOM      : sudo cat /etc/freepbx-factory/sbom.json"
+echo ""
+
+# R9 — Changement de mot de passe admin après déploiement
+echo -e "  ${CYAN}ℹ  Changer le mot de passe admin après déploiement :${NC}"
+echo    "     GUI FreePBX : Admin → User Management → sélectionner $ADMIN_USERNAME"
+echo    "     (le mot de passe défini au wizard n'est pas récupérable — notez-le)"
+echo ""
+
 warn "═══ INFORMATIONS À CONSERVER ═══════════════"
 warn "Port SSH     : $SSH_PORT"
 warn "Reconnexion  : ssh -p $SSH_PORT debian@${VPS_IP}"
