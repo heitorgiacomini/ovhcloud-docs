@@ -2062,11 +2062,16 @@ if [[ -z "$MANAGEMENT_IP" ]]; then
         _DETECTED_IP="${SSH_CONNECTION%% *}"
     fi
     if [[ -z "$_DETECTED_IP" ]]; then
-        _DETECTED_IP=$(who am i 2>/dev/null | grep -oP '\(\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
+        # `who` (pas `who am i`) liste toutes les sessions SSH avec l'IP source — fonctionne dans tmux/sudo
+        _DETECTED_IP=$(who 2>/dev/null | grep -oP '\(\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(?=\))' | head -1 || true)
     fi
     if [[ -z "$_DETECTED_IP" ]]; then
+        # ss fallback : extrait toutes les IPs de la connexion SSH, filtre l'IP locale
+        _LOCAL_IP=$(ip route get 8.8.8.8 2>/dev/null | grep -oP 'src \K[0-9.]+' | head -1 || true)
         _DETECTED_IP=$(ss -tn state established 'sport = :22' 2>/dev/null \
-            | awk 'NR>1 {split($5,a,":"); print a[1]}' | head -1)
+            | grep -oP '\b[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\b' \
+            | grep -v "^${_LOCAL_IP:-127\.0\.0\.1}$" | tail -1 || true)
+        unset _LOCAL_IP
     fi
 
     echo ""
