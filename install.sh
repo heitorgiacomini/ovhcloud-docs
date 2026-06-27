@@ -1672,7 +1672,19 @@ fi
 
 [[ -f "$PHASES_DIR/00_cleanup.sh" ]] || err "Scripts de phase introuvables dans $PHASES_DIR"
 command -v wget &>/dev/null || err "wget introuvable après installation — vérifier la connectivité réseau"
-command -v fwconsole &>/dev/null && err "FreePBX déjà installé — ce script est à usage unique."
+# FreePBX installé : reprise possible si état wizard sauvegardé (post-reboot installateur)
+if command -v fwconsole &>/dev/null; then
+    if [[ -f /root/.fpbx-state.sh ]]; then
+        source /root/.fpbx-state.sh || err "Fichier état corrompu — supprimez /root/.fpbx-state.sh et relancez"
+        FACTORY_RESUME_MODE=1
+        echo ""
+        echo -e "${YELLOW}  ↻  Reprise détectée — FreePBX installé, paramètres wizard restaurés.${NC}"
+        echo -e "${YELLOW}     Les phases de configuration reprennent automatiquement.${NC}"
+        echo ""
+    else
+        err "FreePBX déjà installé — ce script est à usage unique."
+    fi
+fi
 
 # ── tmux : démarrage en session persistante ─────────────────────────────────
 # La session survit à la déconnexion SSH lors du hardening SSH (port change).
@@ -1792,6 +1804,8 @@ read_ext_password() {
 # WIZARD — Saisie paramètres (V1.9 CRA)
 # ════════════════════════════════════════════════════════════════════════════
 while true; do
+# Mode reprise : wizard déjà complété — utiliser les paramètres sauvegardés
+if [[ -n "${FACTORY_RESUME_MODE:-}" ]]; then break; fi
 MANAGEMENT_IP=""
 # Port SSH généré au plus tôt — sauvegardé et affiché avant les questions
 SSH_PORT=$(shuf -i 10000-49151 -n 1 2>/dev/null \
@@ -2188,6 +2202,22 @@ done  # fin wizard
 
 INSTALL_START=$(date +%s)
 
+# ── Sauvegarde état wizard (reprise post-reboot installateur FreePBX) ────────
+{
+  for _sv in MANAGEMENT_IP SSH_PORT SSH_ENABLED VPS_IP \
+              ADMIN_USERNAME ADMIN_SHA1 ADMIN_SHA512 \
+              KIT_STARTER \
+              EXT1_NUMBER EXT1_NAME EXT1_PASS \
+              EXT2_NUMBER EXT2_NAME EXT2_PASS \
+              EXT3_NUMBER EXT3_NAME EXT3_PASS \
+              TRUNK_ENABLED TRUNK_REGISTRAR TRUNK_USERNAME TRUNK_PASSWORD \
+              TRUNK_NAME TRUNK_CALLERID TRUNK_DID \
+              EXTRA_IGNOREIP TLS_DOMAIN DEPLOY_ID SESSION_LOG; do
+    declare -p "$_sv" 2>/dev/null || echo "declare -- $_sv=''"
+  done
+} > /root/.fpbx-state.sh
+chmod 600 /root/.fpbx-state.sh
+
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║  Déploiement lancé — 20 à 40 minutes                    ║${NC}"
@@ -2199,15 +2229,52 @@ echo ""
 _send_telem "{\"event\":\"deploy_start\",\"version\":\"${SCRIPT_VERSION}\",\"os\":\"${_OS_ID}\",\"id\":\"${DEPLOY_ID}\"}"
 
 # ════════════════════════════════════════════════════════════════════════════
-# PHASE 00 — Cleanup
+# PHASE 00 — Cleanup (ignorée en mode reprise)
 # ════════════════════════════════════════════════════════════════════════════
+if [[ -z "${FACTORY_RESUME_MODE:-}" ]]; then
 log ""
 log "=== PHASE 00 — Cleanup ==="
 run_phase "$PHASES_DIR/00_cleanup.sh"
 ok "00_cleanup"
+fi
 
 # ════════════════════════════════════════════════════════════════════════════
-# PHASE 00b — SSH hardening
+# PHASE 01 — Installation FreePBX (~20-40 min, ignorée en mode reprise)
+# ════════════════════════════════════════════════════════════════════════════
+if [[ -z "${FACTORY_RESUME_MODE:-}" ]]; then
+log ""
+log "=== PHASE 01 — Installation FreePBX (20-40 min) ==="
+echo ""
+echo -e "${CYAN}  Cette phase peut prendre 20 à 40 minutes. Certains messages${NC}"
+echo -e "${CYAN}  peuvent rester affichés plusieurs minutes sans évoluer, c'est normal.${NC}"
+echo -e "${CYAN}  Ne fermez pas cette fenêtre et ne coupez pas la connexion SSH.${NC}"
+echo ""
+echo -e "${YELLOW}  ⚠  L'installateur FreePBX va redémarrer le VPS en cours de route.${NC}"
+echo -e "${YELLOW}     Si cette fenêtre se ferme, reconnectez-vous sur port 22 (SSH${NC}"
+echo -e "${YELLOW}     non encore changé) et relancez : sudo bash $0${NC}"
+echo -e "${YELLOW}     Le script détectera l'installation et reprendra automatiquement.${NC}"
+echo ""
+run_phase "$PHASES_DIR/01_install.sh"
+ok "01_install"
+fi
+
+# ════════════════════════════════════════════════════════════════════════════
+# MODE REPRISE — attente fin installateur FreePBX si encore actif
+# ════════════════════════════════════════════════════════════════════════════
+if [[ -n "${FACTORY_RESUME_MODE:-}" ]]; then
+    log ""
+    log "=== MODE REPRISE — vérification installateur FreePBX ==="
+    _fw_wait=0
+    until ! pgrep -f "sng_freepbx" >/dev/null 2>&1; do
+        echo "  Installateur FreePBX encore actif — attente 20s..."
+        sleep 20; _fw_wait=$((_fw_wait + 20))
+        [[ $_fw_wait -ge 1800 ]] && err "Timeout attente installateur FreePBX (30 min)"
+    done
+    ok "Installateur FreePBX terminé — reprise phases de configuration"
+fi
+
+# ════════════════════════════════════════════════════════════════════════════
+# PHASE 00b — SSH hardening (après phase 01 — SSH reste sur 22 pendant l'install)
 # Note : sshd restart coupe la connexion SSH cliente — ce script continue
 # car il tourne dans tmux (processus local, pas dans un pipe SSH).
 # ════════════════════════════════════════════════════════════════════════════
@@ -2227,19 +2294,6 @@ echo ""
 read -rp "  Port $SSH_PORT noté ? Appuyez sur Entrée pour continuer... "
 run_phase "$PHASES_DIR/00_hardening.sh" "$MANAGEMENT_IP" "$SSH_PORT"
 ok "00_hardening — SSH actif sur port $SSH_PORT"
-
-# ════════════════════════════════════════════════════════════════════════════
-# PHASE 01 — Installation FreePBX (~20-40 min)
-# ════════════════════════════════════════════════════════════════════════════
-log ""
-log "=== PHASE 01 — Installation FreePBX (20-40 min) ==="
-echo ""
-echo -e "${CYAN}  Cette phase peut prendre 20 à 40 minutes. Certains messages${NC}"
-echo -e "${CYAN}  peuvent rester affichés plusieurs minutes sans évoluer, c'est normal.${NC}"
-echo -e "${CYAN}  Ne fermez pas cette fenêtre et ne coupez pas la connexion SSH.${NC}"
-echo ""
-run_phase "$PHASES_DIR/01_install.sh"
-ok "01_install"
 
 # ════════════════════════════════════════════════════════════════════════════
 # PHASE 02 — Asterisk
@@ -2334,9 +2388,13 @@ log ""
 log "=== Vérification locale de disponibilité GUI ==="
 systemctl start apache2 2>/dev/null || true
 sleep 2
-_GUI_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost/admin/index.php \
-    --data-urlencode "username=$ADMIN_USERNAME" \
-    --data-urlencode "password=$ADMIN_PASSWORD" 2>/dev/null || echo "000")
+if [[ -n "${ADMIN_PASSWORD:-}" ]]; then
+    _GUI_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost/admin/index.php \
+        --data-urlencode "username=$ADMIN_USERNAME" \
+        --data-urlencode "password=$ADMIN_PASSWORD" 2>/dev/null || echo "000")
+else
+    _GUI_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/admin/ 2>/dev/null || echo "000")
+fi
 if [[ "$_GUI_CODE" =~ ^(200|302)$ ]]; then
     ok "Disponibilité GUI : Apache répond localement (HTTP $_GUI_CODE) — authentification à vérifier depuis votre navigateur"
 else
@@ -2770,4 +2828,7 @@ warn "URL GUI      : $GUI_URL"
 warn "Rapport      : $REPORT_FILE"
 warn "Journal      : $SESSION_LOG"
 warn "══════════════════════════════════════════════"
+# Nettoyage état wizard (reprise plus nécessaire)
+rm -f /root/.fpbx-state.sh 2>/dev/null || true
+
 touch /tmp/fpbx_deploy_done 2>/dev/null || true
