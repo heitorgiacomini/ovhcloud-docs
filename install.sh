@@ -325,6 +325,14 @@ exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 02_ASTERISK ==="
 
+# Node.js 20 (UCP 17.x requiert Node >= 20 ; Sangoma installe Node 18)
+# n surcharge le binaire sans toucher aux paquets apt Sangoma
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Upgrade Node.js → 20 (requis par UCP)..."
+npm install -g n 2>&1 | tail -2
+n 20 2>&1 | tail -3
+NODE_VER=$(node --version 2>/dev/null || /usr/local/bin/node --version 2>/dev/null || echo "inconnu")
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] NODE_OK — $NODE_VER"
+
 # Activer et démarrer Asterisk
 systemctl enable asterisk 2>/dev/null || true
 systemctl start asterisk 2>/dev/null || true
@@ -1285,6 +1293,13 @@ checks.append(check("asterisk — shell nologin", "nologin" in asterisk_shell, a
 sbom_ok = os.path.exists('/etc/freepbx-factory/sbom.json')
 checks.append(check("SBOM — Fichier présent", sbom_ok,
     "/etc/freepbx-factory/sbom.json" if sbom_ok else "absent", "CRA Annex II"))
+
+# PM2 — 4 services online (dont UCP)
+pm2_out = run("fwconsole pm2 --list 2>/dev/null")
+pm2_online = pm2_out.count('online')
+ucp_ok = 'ucp' in pm2_out and 'online' in pm2_out[pm2_out.find('ucp'):pm2_out.find('ucp')+80] if 'ucp' in pm2_out else False
+checks.append(check("PM2 — 4 services online", pm2_online >= 4, f"{pm2_online}/4 online", "Opérationnel"))
+checks.append(check("PM2 — UCP online (Node 20)", ucp_ok, "online" if ucp_ok else "errored/absent", "Opérationnel"))
 
 ok_count = sum(1 for c in checks if c["status"] == "ok")
 total = len(checks)
