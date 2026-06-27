@@ -468,18 +468,18 @@ backend  = systemd
 
 [apache-badbots]
 enabled  = true
-action   = iptables-allports[name=apache-badbots]
+action   = iptables-allports[name=apache-badbots, protocol=all]
 
 [apache-noscript]
 enabled  = true
-action   = iptables-allports[name=apache-noscript]
+action   = iptables-allports[name=apache-noscript, protocol=all]
 
 [recidive]
 enabled  = true
 bantime  = 604800
 findtime = 86400
 maxretry = 3
-action   = iptables-allports[name=recidive]
+action   = iptables-allports[name=recidive, protocol=all]
 JAILEOF
 
 # Overlay hardening — 7 jails avec actions explicites (E23)
@@ -513,7 +513,7 @@ port     = ${SSH_PORT}
 logpath  = /var/log/auth.log
 maxretry = 3
 bantime  = 86400
-action   = iptables-allports[name=ssh-iptables]
+action   = iptables-allports[name=ssh-iptables, protocol=all]
 
 [asterisk-iptables]
 enabled  = true
@@ -521,7 +521,7 @@ filter   = asterisk
 logpath  = /var/log/asterisk/fail2ban
 maxretry = 5
 bantime  = 86400
-action   = iptables-allports[name=asterisk-iptables]
+action   = iptables-allports[name=asterisk-iptables, protocol=all]
 
 [pbx-gui]
 enabled  = true
@@ -529,7 +529,7 @@ filter   = pbx-gui
 logpath  = /var/log/asterisk/freepbx_security.log
 maxretry = 3
 bantime  = 86400
-action   = iptables-allports[name=pbx-gui]
+action   = iptables-allports[name=pbx-gui, protocol=all]
 
 [apache-tcpwrapper]
 enabled  = true
@@ -537,7 +537,7 @@ filter   = apache-common
 logpath  = /var/log/apache2/error.log
 maxretry = 3
 bantime  = 86400
-action   = iptables-allports[name=apache-tcpwrapper]
+action   = iptables-allports[name=apache-tcpwrapper, protocol=all]
 
 [apache-badbots]
 enabled  = true
@@ -545,7 +545,7 @@ filter   = apache-badbots
 logpath  = /var/log/apache2/access.log
 maxretry = 1
 bantime  = 86400
-action   = iptables-allports[name=apache-badbots]
+action   = iptables-allports[name=apache-badbots, protocol=all]
 
 [apache-noscript]
 enabled  = true
@@ -553,14 +553,14 @@ filter   = apache-noscript
 logpath  = /var/log/apache2/error.log
 maxretry = 3
 bantime  = 86400
-action   = iptables-allports[name=apache-noscript]
+action   = iptables-allports[name=apache-noscript, protocol=all]
 
 [recidive]
 enabled  = true
 bantime  = 604800
 findtime = 86400
 maxretry = 3
-action   = iptables-allports[name=recidive]
+action   = iptables-allports[name=recidive, protocol=all]
 OVERLAYEOF
 
 systemctl enable fail2ban
@@ -885,13 +885,17 @@ fi
 fwconsole reload 2>&1 | tail -3 || true
 fwconsole firewall stop 2>/dev/null || true
 ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
+# restart (pas reload) : recréer les chaînes iptables après ufw enable (E24)
+systemctl restart fail2ban
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ROUTES_DIALPLAN_OK"
 
 # ── chan_ooh323 + chan_iax2 : désactivation (E11) ─────────
-asterisk -rx 'module unload chan_ooh323.so' 2>/dev/null || true
+asterisk -rx 'module show like chan_ooh323' 2>/dev/null | grep -q 'Running' && \
+    asterisk -rx 'module unload chan_ooh323.so' 2>/dev/null || true
 grep -q 'chan_ooh323.so' /etc/asterisk/modules.conf || \
     echo 'noload = chan_ooh323.so' >> /etc/asterisk/modules.conf
-asterisk -rx 'module unload chan_iax2.so' 2>/dev/null || true
+asterisk -rx 'module show like chan_iax2' 2>/dev/null | grep -q 'Running' && \
+    asterisk -rx 'module unload chan_iax2.so' 2>/dev/null || true
 grep -q 'chan_iax2.so' /etc/asterisk/modules.conf || \
     echo 'noload = chan_iax2.so' >> /etc/asterisk/modules.conf
 
@@ -1401,8 +1405,12 @@ fi
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 15_TLS — $TLS_DOMAIN ==="
 
-# ── 1. Certbot ────────────────────────────────────────────────────────────────
-DEBIAN_FRONTEND=noninteractive apt-get install -y certbot -q
+# ── 1. Certbot (venv/pip — évite incompatibilité certbot 2.1.0/python3-openssl 23.x Debian 12) ──
+DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv python3-pip -q
+rm -rf /opt/certbot
+python3 -m venv /opt/certbot
+/opt/certbot/bin/pip install --quiet --upgrade pip certbot
+ln -sf /opt/certbot/bin/certbot /usr/local/bin/certbot
 
 # ── 2. Préparation vhost HTTP pour challenge ACME ─────────────────────────────
 # FreePBX 17 : freepbx.conf contient uniquement des <Directory>, pas de
@@ -1442,7 +1450,7 @@ if ! certbot certonly \
     echo -e "${YELLOW}║    - Limite quotidienne Let's Encrypt dépassée            ║${NC}"
     echo -e "${YELLOW}║                                                           ║${NC}"
     echo -e "${YELLOW}║  Apache a été arrêté. Pour relancer HTTPS plus tard :    ║${NC}"
-    echo -e "${YELLOW}║    sudo certbot certonly --webroot                        ║${NC}"
+    echo -e "${YELLOW}║    sudo /opt/certbot/bin/certbot certonly --webroot       ║${NC}"
     echo -e "${YELLOW}║         -w /var/www/html -d $TLS_DOMAIN${NC}"
     echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
     systemctl stop apache2 2>/dev/null || true
@@ -1514,7 +1522,13 @@ else
     echo "       Délai DNS possible si le domaine vient d'être créé."
 fi
 
-# Renouvellement auto certbot
+# Renouvellement auto (venv/pip — créer cron si absent)
+if [[ ! -f /etc/cron.d/certbot ]] && ! systemctl is-active --quiet certbot.timer 2>/dev/null; then
+    echo "0 0,12 * * * root /opt/certbot/bin/certbot renew --quiet --post-hook 'systemctl reload apache2 2>/dev/null || true'" \
+        > /etc/cron.d/certbot
+    chmod 644 /etc/cron.d/certbot
+    echo "[INFO] Cron renouvellement créé : /etc/cron.d/certbot"
+fi
 echo "[INFO] Renouvellement automatique : $(systemctl is-active certbot.timer 2>/dev/null || cat /etc/cron.d/certbot 2>/dev/null | grep -v '^#' | head -1 || echo 'non détecté')"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === TLS_COMPLETE — $TLS_DOMAIN ==="
@@ -1533,6 +1547,7 @@ TELEMETRY_URL=""   # À configurer — vide = télémétrie désactivée
 LOG_DIR="/var/log/freepbx-factory"
 mkdir -p "$LOG_DIR"
 SESSION_LOG="$LOG_DIR/install-$(date '+%Y%m%d-%H%M%S').log"
+touch "$SESSION_LOG" && chmod 600 "$SESSION_LOG"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 log()  { echo -e "[$(date '+%H:%M:%S')] $*" | tee -a "$SESSION_LOG"; }
