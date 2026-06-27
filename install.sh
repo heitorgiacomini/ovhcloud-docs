@@ -1808,7 +1808,9 @@ echo ""
 # Windows Terminal envoie une réponse ESC[>0;10;1c (Secondary Device Attributes)
 # au démarrage de bash — elle atterrit dans stdin et pollue le premier read.
 # On draine stdin avant d'entrer dans le wizard.
+stty -echo 2>/dev/null || true
 while IFS= read -r -t 0.1 -n 512 _da_discard 2>/dev/null; do :; done || true
+stty echo 2>/dev/null || true
 
 info "  Les options sont facultatives et configurables après le déploiement."
 echo ""
