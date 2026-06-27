@@ -90,6 +90,16 @@ exec > >(tee -a "$LOG") 2>&1
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 00_CLEANUP ==="
 
+# Attente dpkg lock — unattended-upgrades tourne souvent au boot sur VPS Debian frais
+systemctl stop unattended-upgrades 2>/dev/null || true
+_dpkg_wait=0
+while flock -n /var/lib/dpkg/lock-frontend /bin/true 2>/dev/null; [ $? -ne 0 ]; do
+    [ $((_dpkg_wait % 15)) -eq 0 ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] Attente verrou dpkg (unattended-upgrades)..."
+    sleep 5; _dpkg_wait=$((_dpkg_wait + 5))
+    [ $_dpkg_wait -ge 120 ] && { echo "ERREUR : verrou dpkg non libéré après 2 min"; exit 1; }
+done
+unset _dpkg_wait
+
 apt-get remove --purge nodejs npm -y 2>&1 | tail -3 || true
 rm -rf /usr/lib/node_modules /etc/apt/sources.list.d/nodesource.list 2>/dev/null || true
 apt-get autoremove -y 2>&1 | tail -2
