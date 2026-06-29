@@ -3021,3 +3021,10 @@ cat > /etc/motd << MOTDEOF2
 MOTDEOF2
 
 touch /tmp/fpbx_deploy_done 2>/dev/null || true
+
+if [ -t 1 ] && [[ -f "$REPORT_FILE" ]]; then
+    echo ""
+    echo -e "${CYAN}  Rapport complet — utilisez les flèches / Page Up·Down pour défiler, q pour quitter${NC}"
+    sleep 1
+    less -R "$REPORT_FILE" || true
+fi
