@@ -2686,7 +2686,7 @@ $([ -n "${TLS_DOMAIN}" ] && printf "\nDOMAINE ACTIF : %s\n  Accès GUI HTTPS   :
 REGISTRAR SIP POUR LES SOFTPHONES
   Protocole   : PJSIP  —  port 5060 (UDP)
   Serveur SIP : ${_SIP_SERVER}
-  (${TLS_DOMAIN:+domaine TLS actif — utiliser ce domaine dans vos softphones}${TLS_DOMAIN:-IP du serveur — configurer un domaine ulterieurement si besoin})
+  ($([ -n "${TLS_DOMAIN}" ] && echo "domaine TLS actif — utiliser ce domaine dans vos softphones" || echo "IP du serveur — configurer un domaine ulterieurement si besoin"))
 
 OPTIONS DÉPLOYÉES
   Kit starter : ${KIT_STARTER}  (extensions : ${_ext_info})
