@@ -288,6 +288,21 @@ wget -q -O /tmp/sng_freepbx_debian_install.sh \
 chmod +x /tmp/sng_freepbx_debian_install.sh
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] INSTALL_SCRIPT_DOWNLOADED"
 
+# Drop-in systemd anti-deadlock firewall FreePBX — créé AVANT l'installateur
+# L'installateur peut rebooter le VPS en cours d'exécution. Sans ce fichier,
+# freepbx.service démarre après reboot avec le module firewall actif : règles
+# iptables bloquantes → SSH coupé → deadlock. En le créant ici, systemd le
+# trouve dès que freepbx.service est installé, quelle que soit la phase du reboot.
+# Ce drop-in reste permanent : la GUI peut activer le firewall ponctuellement
+# jusqu'au prochain reboot ; pour une activation durable, voir rapport de livraison.
+mkdir -p /etc/systemd/system/freepbx.service.d
+cat > /etc/systemd/system/freepbx.service.d/factory-disable-firewall.conf << 'DROPIN'
+[Service]
+ExecStartPost=-/usr/sbin/fwconsole firewall stop
+DROPIN
+systemctl daemon-reload 2>/dev/null || true
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] FPBX_FIREWALL_DROPIN_CREATED"
+
 # Installation FreePBX (20-40 min)
 # Note E15 : l'installateur supprime UFW — sera réinstallé par 03_firewall.sh
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Lancement installation FreePBX (20-40 min)..."
@@ -422,11 +437,17 @@ SSH_PORT="${2:-2222}"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 03_FIREWALL ==="
 
-# Stopper le firewall FreePBX (empêche les conflits iptables avec UFW)
-# fwconsole firewall stop : arrête les règles iptables du module — fonctionne même si
-# sysadmin dépend du module firewall (contrairement à "ma disable" qui échoue silencieusement)
+# Arrêt immédiat des règles iptables FreePBX firewall
 fwconsole firewall stop 2>/dev/null || true
+# Désactivation du module — peut échouer si sysadmin déclare une dépendance (|| true)
+# Le drop-in systemd (créé en phase 01) constitue le filet de sécurité permanent.
+fwconsole ma disable firewall 2>/dev/null || true
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_FW_MODULE_DISABLED"
+# Le drop-in factory-disable-firewall.conf est conservé intentionnellement :
+# il garantit que le firewall FreePBX reste arrêté à chaque reboot du VPS.
+# Comportement attendu : GUI peut activer le firewall jusqu'au prochain reboot ;
+# activation durable = supprimer le drop-in + voir rapport de livraison.
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] FPBX_FIREWALL_DROPIN_KEPT"
 
 # Réinstaller UFW (supprimé par l'installateur — E15)
 apt-get install -y ufw 2>&1 | tail -2
@@ -1677,6 +1698,9 @@ if command -v fwconsole &>/dev/null; then
     if [[ -f /root/.fpbx-state.sh ]]; then
         source /root/.fpbx-state.sh || err "Fichier état corrompu — supprimez /root/.fpbx-state.sh et relancez"
         FACTORY_RESUME_MODE=1
+        # Guard : le firewall FreePBX peut être actif depuis le reboot (drop-in absent ou
+        # race condition systemd). L'arrêter immédiatement avant toute phase.
+        fwconsole firewall stop 2>/dev/null || true
         echo ""
         echo -e "${YELLOW}  ↻  Reprise détectée — FreePBX installé, paramètres wizard restaurés.${NC}"
         echo -e "${YELLOW}     Les phases de configuration reprennent automatiquement.${NC}"
@@ -1799,6 +1823,47 @@ read_ext_password() {
         validate_password "$pass" "Extension $ext" && printf -v "$varname" '%s' "$pass" && break
     done
 }
+
+# ════════════════════════════════════════════════════════════════════════════
+# PRÉREQUIS — vérification environnement (alertes non bloquantes)
+# Ignoré en mode reprise (déjà validé au premier lancement)
+# ════════════════════════════════════════════════════════════════════════════
+if [[ -z "${FACTORY_RESUME_MODE:-}" ]]; then
+_PREREQ_WARNS=()
+# Architecture x86_64
+_ARCH=$(uname -m 2>/dev/null || echo "unknown")
+[[ "$_ARCH" != "x86_64" ]] && \
+    _PREREQ_WARNS+=("Architecture : $_ARCH détectée — FreePBX 17 requiert x86_64")
+# RAM >= 1 GB
+_RAM_MB=$(awk '/MemTotal/{print int($2/1024)}' /proc/meminfo 2>/dev/null || echo 0)
+[[ "$_RAM_MB" -lt 1024 ]] && \
+    _PREREQ_WARNS+=("RAM : ${_RAM_MB} MB disponible — minimum recommandé 1 GB")
+# Disque / >= 10 GB libres
+_DISK_GB=$(df -BG / 2>/dev/null | awk 'NR==2{gsub("G","",$4); print int($4)}' || echo 0)
+[[ "$_DISK_GB" -lt 10 ]] && \
+    _PREREQ_WARNS+=("Disque : ${_DISK_GB} GB libres sur / — minimum recommandé 10 GB")
+# Connectivité internet (installateur FreePBX sur github.com)
+if ! timeout 5 wget -q --spider https://github.com 2>/dev/null; then
+    _PREREQ_WARNS+=("Connectivité : github.com inaccessible — l'installateur FreePBX ne pourra pas être téléchargé")
+fi
+if [[ ${#_PREREQ_WARNS[@]} -gt 0 ]]; then
+    echo ""
+    echo -e "${YELLOW}╔══════════════════════════════════════════════════════╗${NC}"
+    echo -e "${YELLOW}║  Prérequis non respectés                             ║${NC}"
+    echo -e "${YELLOW}╚══════════════════════════════════════════════════════╝${NC}"
+    for _w in "${_PREREQ_WARNS[@]}"; do
+        echo -e "  ${YELLOW}⚠  $_w${NC}"
+    done
+    echo ""
+    read -t 30 -rp "  Poursuivre l'installation malgré ces avertissements ? [o/N] : " _PREREQ_CONT || _PREREQ_CONT="n"
+    if [[ "${_PREREQ_CONT,,}" != "o" ]]; then
+        echo "  Installation annulée."
+        exit 0
+    fi
+    echo "  → Poursuite de l'installation."
+    echo ""
+fi
+fi
 
 # ════════════════════════════════════════════════════════════════════════════
 # WIZARD — Saisie paramètres (V1.9 CRA)
@@ -1962,7 +2027,7 @@ if [[ -n "$TRUNK_ENABLED_ARG" ]]; then
             TRUNK_PASSWORD="$FACTORY_TEST_TRUNK_PASS"
             echo "  ✓ Mot de passe SIP (mode test)"
         else
-            read_password TRUNK_PASSWORD "  Mot de passe SIP" 0
+            read_password TRUNK_PASSWORD "  Mot de passe SIP"
         fi
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
         _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
@@ -2001,7 +2066,7 @@ else
             echo -e "  ${YELLOW}  Ce mot de passe est différent du mot de passe de l'espace client.${NC}"
             echo -e "  ${YELLOW}  Il doit correspondre exactement à celui fourni par votre opérateur.${NC}"
             _rpret=0
-            read_password TRUNK_PASSWORD "  Mot de passe SIP" 0 || _rpret=$?
+            read_password TRUNK_PASSWORD "  Mot de passe SIP" || _rpret=$?
             [[ $_rpret -eq 2 ]] && { echo "  Retour au début du wizard."; continue; }
             echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
             _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
@@ -2790,12 +2855,29 @@ if [[ -z "$TLS_DOMAIN" ]]; then
     echo ""
 fi
 
-# R2 — Avertissement module pare-feu FreePBX
-echo -e "${YELLOW}  ⚠  AVERTISSEMENT PARE-FEU FreePBX${NC}"
-echo -e "${YELLOW}  À la première connexion, FreePBX propose d'activer son module pare-feu${NC}"
-echo -e "${YELLOW}  intégré. Si vous l'activez, la configuration UFW actuelle sera remplacée${NC}"
-echo -e "${YELLOW}  et les protections de ce déploiement devront être reconfigurées.${NC}"
-echo ""
+# R2 — Module pare-feu FreePBX : désactivé intentionnellement
+echo -e "${YELLOW}  ⚠  MODULE PARE-FEU FreePBX : DÉSACTIVÉ${NC}"
+echo    "     Ce déploiement utilise UFW comme unique outil de filtrage réseau."
+echo    "     Le module Firewall FreePBX est désactivé pour éviter les conflits"
+echo    "     de règles iptables — source documentée de blocages SSH non récupérables."
+echo    ""
+echo    "     Si vous souhaitez activer le Firewall FreePBX, c'est possible."
+echo    "     Cela implique cependant de reconsidérer l'ensemble de la stratégie"
+echo    "     de sécurité : UFW et le Firewall FreePBX ne peuvent pas coexister,"
+echo    "     et les 7 couches de protection en place devront être reconfigurées"
+echo    "     pour rester compatibles avec ce nouveau mode de fonctionnement."
+echo    ""
+echo -e "${YELLOW}     Activer le Firewall FreePBX depuis la GUI seule ne suffit pas :${NC}"
+echo    "     une commande SSH est également requise pour lever le verrou technique."
+echo    "     Sans elle, le module sera à nouveau désactivé au prochain redémarrage."
+echo    ""
+echo    "     Procédure complète d'activation :"
+echo    "       sudo fwconsole ma enable firewall"
+echo    "       sudo rm /etc/systemd/system/freepbx.service.d/factory-disable-firewall.conf"
+echo    "       sudo systemctl daemon-reload"
+echo    "       sudo ufw disable"
+echo    "       (puis adapter la configuration réseau au nouveau mode de filtrage)"
+echo    ""
 
 # R3 — Accès perdu : 3 chemins de récupération
 echo -e "  ${CYAN}ℹ  En cas de perte d'accès :${NC}"
