@@ -309,7 +309,7 @@ mkdir -p /usr/local/bin
 cat > /usr/local/bin/fpbx-factory-disable-firewall.sh << 'SCRIPT'
 #!/bin/bash
 mysql -u root asterisk \
-  -e "UPDATE modules SET status='disabled' WHERE modulename='firewall';" \
+  -e "UPDATE modules SET enabled=0 WHERE modulename='firewall';" \
   2>/dev/null || true
 exit 0
 SCRIPT
@@ -352,13 +352,13 @@ fi
 # (pas via systemd) — le drop-in ExecStartPost ne s'exécute pas pendant l'installation.
 # Fix en deux coups :
 #   1. fwconsole firewall stop — arrête les règles iptables pour le run courant
-#   2. UPDATE modules SET status='disabled' — persistant : le module ne charge plus
+#   2. UPDATE modules SET enabled=0 — persistant : le module ne charge plus
 #      jamais (systemd, fwconsole start, reload) jusqu'à réactivation explicite
 # Le drop-in ExecStartPost reste comme filet de sécurité pour les reboots.
 if command -v fwconsole &>/dev/null; then
     fwconsole firewall stop 2>/dev/null || true
     mysql -u root asterisk \
-        -e "UPDATE modules SET status='disabled' WHERE modulename='firewall';" \
+        -e "UPDATE modules SET enabled=0 WHERE modulename='firewall';" \
         2>/dev/null || true
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] FPBX_FW_STOPPED_AND_DB_DISABLED"
 fi
@@ -1236,7 +1236,7 @@ sbom = {
     ],
     "vulnerabilities": {
         "pending_security_updates": sec_updates,
-        "unattended_upgrades_active": run("systemctl is-active unattended-upgrades 2>/dev/null") == "active",
+        "unattended_upgrades_active": run("systemctl is-enabled apt-daily-upgrade.timer 2>/dev/null") in ("enabled", "static", "generated"),
         "packages_total": dpkg_count
     },
     "environment": {
@@ -1351,8 +1351,9 @@ checks.append(check("SSH — Port non standard", actual_port != "22",
     f"port {actual_port}" if actual_port else f"port {ssh_port}", "CRA Annex I"))
 
 # Mises à jour
-unattended = run("systemctl is-active unattended-upgrades 2>/dev/null")
-checks.append(check("Mises à jour auto sécurité", unattended == "active", unattended, "CRA Art.13 + NIS2 Art.21(e)"))
+unattended = run("systemctl is-enabled apt-daily-upgrade.timer 2>/dev/null")
+checks.append(check("Mises à jour auto sécurité", unattended in ("enabled", "static", "generated"),
+    f"timer: {unattended}", "CRA Art.13 + NIS2 Art.21(e)"))
 
 # Asterisk
 asterisk_shell = run("getent passwd asterisk | cut -d: -f7")
@@ -1739,7 +1740,7 @@ if command -v fwconsole &>/dev/null; then
         # Double verrou : arrêt immédiat + désactivation en base de données.
         fwconsole firewall stop 2>/dev/null || true
         mysql -u root asterisk \
-            -e "UPDATE modules SET status='disabled' WHERE modulename='firewall';" \
+            -e "UPDATE modules SET enabled=0 WHERE modulename='firewall';" \
             2>/dev/null || true
         echo ""
         echo -e "${YELLOW}  ↻  Reprise détectée — FreePBX installé, paramètres wizard restaurés.${NC}"
@@ -2323,6 +2324,45 @@ INSTALL_START=$(date +%s)
 } > /root/.fpbx-state.sh
 chmod 600 /root/.fpbx-state.sh
 
+# ── Reprise automatique post-reboot : service systemd ────────────────────────
+# L'installateur FreePBX reboot le VPS sans revenir au script.
+# Ce service redemarre automatiquement la suite au boot suivant,
+# sans aucune intervention de l'utilisateur.
+_script_abs="$(realpath "$0" 2>/dev/null || readlink -f "$0" 2>/dev/null || echo "$0")"
+cp -f "$_script_abs" /root/freepbx-factory-install.sh 2>/dev/null && chmod 700 /root/freepbx-factory-install.sh || true
+
+cat > /etc/systemd/system/freepbx-factory-resume.service << 'SVCEOF'
+[Unit]
+Description=FreePBX Factory - Reprise automatique post-reboot installateur
+After=network-online.target mariadb.service
+Wants=network-online.target
+ConditionPathExists=/root/.fpbx-state.sh
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/tmux new-session -d -s factory -e FACTORY_IN_TMUX=1 /bin/bash /root/freepbx-factory-install.sh
+
+[Install]
+WantedBy=multi-user.target
+SVCEOF
+
+systemctl daemon-reload 2>/dev/null || true
+systemctl enable freepbx-factory-resume 2>/dev/null || true
+log "Reprise auto : service freepbx-factory-resume active"
+
+# ── MOTD indicateur (visible a la reconnexion SSH apres reboot) ──────────────
+mkdir -p /var/log/freepbx-factory
+cat > /etc/motd << MOTDEOF
+
+  FreePBX Factory - Installation en cours (reprise automatique)
+  Port SSH apres installation : $SSH_PORT
+  Suivi en direct :
+    sudo tmux attach -t factory
+    ou : sudo tail -f $SESSION_LOG
+
+MOTDEOF
+
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║  Déploiement lancé — 20 à 40 minutes                    ║${NC}"
@@ -2354,10 +2394,11 @@ echo -e "${CYAN}  Cette phase peut prendre 20 à 40 minutes. Certains messages${
 echo -e "${CYAN}  peuvent rester affichés plusieurs minutes sans évoluer, c'est normal.${NC}"
 echo -e "${CYAN}  Ne fermez pas cette fenêtre et ne coupez pas la connexion SSH.${NC}"
 echo ""
-echo -e "${YELLOW}  ⚠  L'installateur FreePBX va redémarrer le VPS en cours de route.${NC}"
-echo -e "${YELLOW}     Si cette fenêtre se ferme, reconnectez-vous sur port 22 (SSH${NC}"
-echo -e "${YELLOW}     non encore changé) et relancez : sudo bash $0${NC}"
-echo -e "${YELLOW}     Le script détectera l'installation et reprendra automatiquement.${NC}"
+echo -e "${YELLOW}  ⚠  Le VPS va redemarrer en cours d'installation.${NC}"
+echo -e "${YELLOW}     La reprise est automatique : aucune action requise.${NC}"
+echo -e "${YELLOW}     Pour suivre la progression apres le reboot (port 22 encore actif) :${NC}"
+echo -e "${YELLOW}       ssh debian@${VPS_IP} -p 22  puis  sudo tail -f $SESSION_LOG${NC}"
+echo -e "${YELLOW}     Port SSH definitif apres installation : $SSH_PORT${NC}"
 echo ""
 run_phase "$PHASES_DIR/01_install.sh"
 ok "01_install"
@@ -2438,6 +2479,16 @@ run_phase "$PHASES_DIR/06_post_restore.sh" \
     "$EXT2_NUMBER" "$EXT2_NAME" "$EXT2_PASS" \
     "$EXT3_NUMBER" "$EXT3_NAME" "$EXT3_PASS"
 ok "06_post_restore"
+
+# Récupérer les mots de passe extensions auto-générés depuis le log phase 06
+if [[ "$KIT_STARTER" == "oui" ]]; then
+    _ph06_log="/var/log/freepbx-factory/deploy-phase-06-post-restore.log"
+    if [[ -f "$_ph06_log" ]]; then
+        [[ -z "$EXT1_PASS" && -n "$EXT1_NUMBER" ]] && EXT1_PASS=$(grep -oP "MOT DE PASSE EXT ${EXT1_NUMBER} : \K.+" "$_ph06_log" | tail -1 || echo "")
+        [[ -z "$EXT2_PASS" && -n "$EXT2_NUMBER" ]] && EXT2_PASS=$(grep -oP "MOT DE PASSE EXT ${EXT2_NUMBER} : \K.+" "$_ph06_log" | tail -1 || echo "")
+        [[ -z "$EXT3_PASS" && -n "$EXT3_NUMBER" ]] && EXT3_PASS=$(grep -oP "MOT DE PASSE EXT ${EXT3_NUMBER} : \K.+" "$_ph06_log" | tail -1 || echo "")
+    fi
+fi
 
 # ════════════════════════════════════════════════════════════════════════════
 # PHASE 09 — Apache hardening
@@ -2635,7 +2686,7 @@ $([ -n "${TLS_DOMAIN}" ] && printf "\nDOMAINE ACTIF : %s\n  Accès GUI HTTPS   :
 REGISTRAR SIP POUR LES SOFTPHONES
   Protocole   : PJSIP  —  port 5060 (UDP)
   Serveur SIP : ${_SIP_SERVER}
-  (${TLS_DOMAIN:+domaine HTTPS actif — utiliser le domaine, pas l'IP}${TLS_DOMAIN:-IP du serveur — si un domaine est configuré ultérieurement, l'utiliser à la place})
+  (${TLS_DOMAIN:+domaine TLS actif — utiliser ce domaine dans vos softphones}${TLS_DOMAIN:-IP du serveur — configurer un domaine ulterieurement si besoin})
 
 OPTIONS DÉPLOYÉES
   Kit starter : ${KIT_STARTER}  (extensions : ${_ext_info})
@@ -2953,5 +3004,20 @@ warn "Journal      : $SESSION_LOG"
 warn "══════════════════════════════════════════════"
 # Nettoyage état wizard (reprise plus nécessaire)
 rm -f /root/.fpbx-state.sh 2>/dev/null || true
+
+# Désactivation service de reprise (déploiement terminé)
+systemctl disable freepbx-factory-resume 2>/dev/null || true
+rm -f /etc/systemd/system/freepbx-factory-resume.service 2>/dev/null || true
+rm -f /root/freepbx-factory-install.sh 2>/dev/null || true
+systemctl daemon-reload 2>/dev/null || true
+
+# MOTD final
+cat > /etc/motd << MOTDEOF2
+
+  FreePBX Factory - Installation terminee
+  Port SSH : $SSH_PORT  |  Connexion : ssh -p $SSH_PORT debian@${VPS_IP}
+  Rapport  : sudo cat /root/freepbx-factory-delivery-report.txt
+
+MOTDEOF2
 
 touch /tmp/fpbx_deploy_done 2>/dev/null || true
