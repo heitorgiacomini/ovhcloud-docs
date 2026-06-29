@@ -2,8 +2,14 @@
 
 ## 2026.06.29
 
+### Features
+- **bare-metal-cloud/dedicated-servers/partitioning-ovh:** default diskgroupid (#306)
+
+### Fixes
+- remove OPCP - prefix from article names (#307)
+
 ### Documentation
-- 1 guides updated across fr
+- 60 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.06.26
 
