@@ -136,6 +136,16 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 00_HARDENING ==="
 echo "  management_ip : $MANAGEMENT_IP"
 echo "  ssh_port      : $SSH_PORT"
 
+# --- Attente verrou dpkg (installateur Sangoma ou unattended-upgrades au boot) ---
+systemctl stop unattended-upgrades 2>/dev/null || true
+_dpkg_wait=0
+while ! flock -n /var/lib/dpkg/lock-frontend /bin/true 2>/dev/null; do
+    [ $((_dpkg_wait % 15)) -eq 0 ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] Attente verrou dpkg..."
+    sleep 5; _dpkg_wait=$((_dpkg_wait + 5))
+    [ $_dpkg_wait -ge 120 ] && { echo "[ERREUR] verrou dpkg non libéré après 2 min"; exit 1; }
+done
+unset _dpkg_wait
+
 # --- UFW bootstrap (AVANT toute modification sshd) ---
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] UFW : installation..."
 apt-get install -y ufw 2>&1 | tail -2
@@ -288,16 +298,27 @@ wget -q -O /tmp/sng_freepbx_debian_install.sh \
 chmod +x /tmp/sng_freepbx_debian_install.sh
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] INSTALL_SCRIPT_DOWNLOADED"
 
-# Drop-in systemd anti-deadlock firewall FreePBX — créé AVANT l'installateur
-# L'installateur peut rebooter le VPS en cours d'exécution. Sans ce fichier,
-# freepbx.service démarre après reboot avec le module firewall actif : règles
-# iptables bloquantes → SSH coupé → deadlock. En le créant ici, systemd le
-# trouve dès que freepbx.service est installé, quelle que soit la phase du reboot.
-# Ce drop-in reste permanent : la GUI peut activer le firewall ponctuellement
-# jusqu'au prochain reboot ; pour une activation durable, voir rapport de livraison.
+# Script helper + drop-in systemd ExecStartPre — créés AVANT l'installateur.
+# Problème constaté : l'installateur reboot après "Upgrading FreePBX 17 modules"
+# sans jamais retourner à ce script. Le SQL de désactivation post-install ne tourne
+# donc jamais lors du premier déploiement.
+# Solution définitive : ExecStartPre tourne AVANT que fwconsole start charge les
+# modules. MariaDB est déjà up (freepbx.service a After=mariadb.service).
+# Le module firewall est désactivé en base avant tout chargement → jamais actif.
+mkdir -p /usr/local/bin
+cat > /usr/local/bin/fpbx-factory-disable-firewall.sh << 'SCRIPT'
+#!/bin/bash
+mysql -u root asterisk \
+  -e "UPDATE modules SET status='disabled' WHERE modulename='firewall';" \
+  2>/dev/null || true
+exit 0
+SCRIPT
+chmod +x /usr/local/bin/fpbx-factory-disable-firewall.sh
+
 mkdir -p /etc/systemd/system/freepbx.service.d
 cat > /etc/systemd/system/freepbx.service.d/factory-disable-firewall.conf << 'DROPIN'
 [Service]
+ExecStartPre=-/usr/local/bin/fpbx-factory-disable-firewall.sh
 ExecStartPost=-/usr/sbin/fwconsole firewall stop
 DROPIN
 systemctl daemon-reload 2>/dev/null || true
@@ -2375,7 +2396,8 @@ echo -e "${YELLOW}    ssh -p ${SSH_PORT} debian@<IP_DU_VPS>         ${NC}"
 echo -e "${YELLOW}    sudo tmux attach -t factory                     ${NC}"
 echo -e "${YELLOW}══════════════════════════════════════════════════${NC}"
 echo ""
-read -rp "  Port $SSH_PORT noté ? Appuyez sur Entrée pour continuer... "
+read -t 60 -rp "  Port $SSH_PORT noté ? Appuyez sur Entrée pour continuer (auto dans 60s)... " || true
+echo ""
 run_phase "$PHASES_DIR/00_hardening.sh" "$MANAGEMENT_IP" "$SSH_PORT"
 ok "00_hardening — SSH actif sur port $SSH_PORT"
 
