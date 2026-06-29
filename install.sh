@@ -326,6 +326,22 @@ else
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] FREEPBX_INSTALL_DONE"
 fi
 
+# Désactivation déterministe du firewall FreePBX immédiatement après l'installateur.
+# Problème racine : l'installateur démarre FreePBX via fwconsole start directement
+# (pas via systemd) — le drop-in ExecStartPost ne s'exécute pas pendant l'installation.
+# Fix en deux coups :
+#   1. fwconsole firewall stop — arrête les règles iptables pour le run courant
+#   2. UPDATE modules SET status='disabled' — persistant : le module ne charge plus
+#      jamais (systemd, fwconsole start, reload) jusqu'à réactivation explicite
+# Le drop-in ExecStartPost reste comme filet de sécurité pour les reboots.
+if command -v fwconsole &>/dev/null; then
+    fwconsole firewall stop 2>/dev/null || true
+    mysql -u root asterisk \
+        -e "UPDATE modules SET status='disabled' WHERE modulename='firewall';" \
+        2>/dev/null || true
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] FPBX_FW_STOPPED_AND_DB_DISABLED"
+fi
+
 # Vérification post-install
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Vérification post-install..."
 fwconsole pm2 --list || true
@@ -1698,9 +1714,12 @@ if command -v fwconsole &>/dev/null; then
     if [[ -f /root/.fpbx-state.sh ]]; then
         source /root/.fpbx-state.sh || err "Fichier état corrompu — supprimez /root/.fpbx-state.sh et relancez"
         FACTORY_RESUME_MODE=1
-        # Guard : le firewall FreePBX peut être actif depuis le reboot (drop-in absent ou
-        # race condition systemd). L'arrêter immédiatement avant toute phase.
+        # Guard : le firewall FreePBX peut être actif depuis le reboot.
+        # Double verrou : arrêt immédiat + désactivation en base de données.
         fwconsole firewall stop 2>/dev/null || true
+        mysql -u root asterisk \
+            -e "UPDATE modules SET status='disabled' WHERE modulename='firewall';" \
+            2>/dev/null || true
         echo ""
         echo -e "${YELLOW}  ↻  Reprise détectée — FreePBX installé, paramètres wizard restaurés.${NC}"
         echo -e "${YELLOW}     Les phases de configuration reprennent automatiquement.${NC}"
