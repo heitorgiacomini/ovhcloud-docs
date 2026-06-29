@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.06.29
+
+### Documentation
+- 1 guides updated across fr
+
 ## 2026.06.26
 
 ### Features
