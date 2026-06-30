@@ -19,7 +19,7 @@
 #
 # PHASES :
 #   00_cleanup → 00_hardening → 01_install → 02_asterisk →
-#   03_firewall → 04_fail2ban → 06_post_restore →
+#   03_firewall → 04_fail2ban → 06_freepbx_config →
 #   09_apache_hardening → 10_mariadb_hardening → 11_services_hardening →
 #   14_auditd → 12_sbom → 13_post_checks
 #   (05_restore supprimé — V1.9 CRA — template non nécessaire)
@@ -674,9 +674,9 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === FAIL2BAN_COMPLETE (7 jails) ==="
 __FPBXPHASE_04_FAIL2BAN_SH__
 chmod +x "$_PHASES_TMP/04_fail2ban.sh"
 
-cat > "$_PHASES_TMP/06_post_restore.sh" <<'__FPBXPHASE_06_POST_RESTORE_SH__'
+cat > "$_PHASES_TMP/06_freepbx_config.sh" <<'__FPBXPHASE_06_FREEPBX_CONFIG_SH__'
 #!/bin/bash
-# 06_post_restore.sh — Fix endpoint + admin + extensions + trunk post-restore
+# 06_freepbx_config.sh — Fix endpoint + admin + extensions + trunk post-restore
 #
 # E3  : fix endpoint systématique post-restore
 # E6  : admin recréé par DELETE+INSERT (état déterministe)
@@ -688,7 +688,7 @@ cat > "$_PHASES_TMP/06_post_restore.sh" <<'__FPBXPHASE_06_POST_RESTORE_SH__'
 #       50 keywords PJSIP dans sip — identique à 06b_extensions.yml Ansible
 #       mots de passe fournis par le wizard (args) ou auto-générés
 #
-# Usage : sudo bash /tmp/06_post_restore.sh \
+# Usage : sudo bash /tmp/06_freepbx_config.sh \
 #           <admin_username> <admin_sha1> <admin_sha512> \
 #           [trunk_registrar] [trunk_username] [trunk_password] \
 #           [trunk_name] [trunk_callerid] \
@@ -697,7 +697,7 @@ cat > "$_PHASES_TMP/06_post_restore.sh" <<'__FPBXPHASE_06_POST_RESTORE_SH__'
 #           [ext3_number (auto-généré par deploy.sh)] [ext3_name] [ext3_pass]
 
 set -euo pipefail
-LOG=/var/log/freepbx-factory/deploy-phase-06-post-restore.log
+LOG=/var/log/freepbx-factory/deploy-phase-06-freepbx-config.log
 touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
@@ -720,7 +720,7 @@ EXT3_NAME="${16:-Poste 3}"
 EXT3_PASS="${17:-}"
 
 gen_pass() {
-    head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9!@#^*_-' | cut -c1-20
+    head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9@#^_-' | cut -c1-20
 }
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 06_POST_RESTORE ==="
@@ -917,7 +917,8 @@ INSERT INTO pjsip (id, keyword, data, flags) VALUES
   (@tid, 'disabled',                 'off',                 0),
   (@tid, 'name',                     '${_st_name}',         0),
   (@tid, 'maxchans',                 '',                    0),
-  (@tid, 'routedisplay',             'on',                  0);
+  (@tid, 'routedisplay',             'on',                  0),
+  (@tid, 'inband_progress',          'no',                  0);
 TRUNKEOF
     fwconsole reload 2>&1 | tail -3 || true
     ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
@@ -932,7 +933,7 @@ if [[ -n "$EXT1_NUMBER" && -n "$EXT2_NUMBER" && -n "$EXT3_NUMBER" ]]; then
     mysql -u root asterisk << RGEOF
 DELETE FROM ringgroups WHERE grpnum='600';
 INSERT INTO ringgroups (grpnum, strategy, grptime, grplist, description, rvolume)
-  VALUES ('600', 'ringall', 30, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}', 'Kit Demo', '');
+  VALUES ('600', 'ringall', 55, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}', 'Kit Demo', '');
 RGEOF
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] RINGGROUP_OK"
 fi
@@ -974,6 +975,17 @@ INEOF
     fi
 fi
 
+# ── Dialplan override : suppression Progress() ring group 600 ─────────────
+# Sans cette surcharge, FreePBX émet Progress() → 183+SDP vers OVH → early media
+# OVH considère l'appel "en cours" et n'applique pas forwardNoReply(25s)
+# Avec NoOp : Asterisk propage 180 Ringing → OVH déclenche la messagerie à 25s
+cat > /etc/asterisk/extensions_override_freepbx.conf << 'OVERRIDE_EOF'
+[ext-group]
+exten => 600,3,NoOp(Suppressed Playtones)
+exten => 600,4,NoOp(Suppressed Progress - 180 Ringing only to OVH)
+OVERRIDE_EOF
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] OVERRIDE_CONF_OK"
+
 # ── Reload dialplan avec toutes les routes ────────────────
 fwconsole reload 2>&1 | tail -3 || true
 fwconsole firewall stop 2>/dev/null || true
@@ -992,9 +1004,9 @@ asterisk -rx 'module show like chan_iax2' 2>/dev/null | grep -q 'Running' && \
 grep -q 'chan_iax2.so' /etc/asterisk/modules.conf || \
     echo 'noload = chan_iax2.so' >> /etc/asterisk/modules.conf
 
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] === POST_RESTORE_COMPLETE ==="
-__FPBXPHASE_06_POST_RESTORE_SH__
-chmod +x "$_PHASES_TMP/06_post_restore.sh"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] === FREEPBX_CONFIG_COMPLETE ==="
+__FPBXPHASE_06_FREEPBX_CONFIG_SH__
+chmod +x "$_PHASES_TMP/06_freepbx_config.sh"
 
 cat > "$_PHASES_TMP/09_apache_hardening.sh" <<'__FPBXPHASE_09_APACHE_HARDENING_SH__'
 #!/bin/bash
@@ -1855,7 +1867,7 @@ read_ext_password() {
         _read_star_input pass "  Mot de passe du poste $ext"
         if [[ -z "$pass" ]]; then
             # head -c 512 ferme stdin de tr proprement — évite SIGPIPE avec set -o pipefail
-            pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9!#^&*._-' | cut -c1-20)
+            pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9#^&._-' | cut -c1-20)
             echo "  → Généré : $pass"
             printf -v "$varname" '%s' "$pass"
             break
@@ -1870,33 +1882,44 @@ read_ext_password() {
 # Ignoré en mode reprise (déjà validé au premier lancement)
 # ════════════════════════════════════════════════════════════════════════════
 if [[ -z "${FACTORY_RESUME_MODE:-}" ]]; then
-_PREREQ_WARNS=()
-# Architecture x86_64
 _ARCH=$(uname -m 2>/dev/null || echo "unknown")
-[[ "$_ARCH" != "x86_64" ]] && \
-    _PREREQ_WARNS+=("Architecture : $_ARCH détectée — FreePBX 17 requiert x86_64")
-# RAM >= 1 GB
 _RAM_MB=$(awk '/MemTotal/{print int($2/1024)}' /proc/meminfo 2>/dev/null || echo 0)
-[[ "$_RAM_MB" -lt 1024 ]] && \
-    _PREREQ_WARNS+=("RAM : ${_RAM_MB} MB disponible — minimum recommandé 1 GB")
-# Disque / >= 10 GB libres
 _DISK_GB=$(df -BG / 2>/dev/null | awk 'NR==2{gsub("G","",$4); print int($4)}' || echo 0)
-[[ "$_DISK_GB" -lt 10 ]] && \
-    _PREREQ_WARNS+=("Disque : ${_DISK_GB} GB libres sur / — minimum recommandé 10 GB")
-# Connectivité internet (installateur FreePBX sur github.com)
-if ! timeout 5 wget -q --spider https://github.com 2>/dev/null; then
-    _PREREQ_WARNS+=("Connectivité : github.com inaccessible — l'installateur FreePBX ne pourra pas être téléchargé")
-fi
+_GITHUB_OK=1; timeout 5 wget -q --spider https://github.com 2>/dev/null || _GITHUB_OK=0
+_FPBX_EXISTS=0; command -v fwconsole &>/dev/null && _FPBX_EXISTS=1
+
+_PREREQ_WARNS=()
+[[ "$_ARCH" != "x86_64" ]] && _PREREQ_WARNS+=("Architecture $_ARCH détectée — FreePBX 17 requiert x86_64")
+[[ "$_RAM_MB" -lt 1024 ]]  && _PREREQ_WARNS+=("Mémoire ${_RAM_MB} MB — minimum recommandé 1 GB")
+[[ "$_DISK_GB" -lt 10 ]]   && _PREREQ_WARNS+=("Disque ${_DISK_GB} GB libres — minimum recommandé 10 GB")
+[[ "$_GITHUB_OK" -eq 0 ]]  && _PREREQ_WARNS+=("github.com inaccessible — l'installateur FreePBX ne pourra pas être téléchargé")
+
+echo ""
+echo "  Environnement détecté :"
+[[ "$_ARCH" == "x86_64" ]] \
+    && echo -e "  ${GREEN}✓${NC}  Architecture : $_ARCH" \
+    || echo -e "  ${YELLOW}⚠${NC}  Architecture : $_ARCH  (x86_64 requis)"
+[[ "$_RAM_MB" -ge 1024 ]] \
+    && echo -e "  ${GREEN}✓${NC}  Mémoire      : ${_RAM_MB} MB" \
+    || echo -e "  ${YELLOW}⚠${NC}  Mémoire      : ${_RAM_MB} MB  (minimum recommandé 1 GB)"
+[[ "$_DISK_GB" -ge 10 ]] \
+    && echo -e "  ${GREEN}✓${NC}  Disque       : ${_DISK_GB} GB libres sur /" \
+    || echo -e "  ${YELLOW}⚠${NC}  Disque       : ${_DISK_GB} GB libres  (minimum recommandé 10 GB)"
+[[ "$_GITHUB_OK" -eq 1 ]] \
+    && echo -e "  ${GREEN}✓${NC}  Connectivité : github.com accessible" \
+    || echo -e "  ${YELLOW}⚠${NC}  Connectivité : github.com inaccessible"
+[[ "$_FPBX_EXISTS" -eq 0 ]] \
+    && echo -e "  ${GREEN}✓${NC}  FreePBX      : non installé" \
+    || echo -e "  ${CYAN}ℹ${NC}  FreePBX      : installation existante détectée"
+echo ""
+
 if [[ ${#_PREREQ_WARNS[@]} -gt 0 ]]; then
-    echo ""
-    echo -e "${YELLOW}╔══════════════════════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}║  Prérequis non respectés                             ║${NC}"
-    echo -e "${YELLOW}╚══════════════════════════════════════════════════════╝${NC}"
+    echo -e "  ${YELLOW}Points d'attention détectés (non bloquants — l'installation peut continuer) :${NC}"
     for _w in "${_PREREQ_WARNS[@]}"; do
         echo -e "  ${YELLOW}⚠  $_w${NC}"
     done
     echo ""
-    read -t 30 -rp "  Poursuivre l'installation malgré ces avertissements ? [o/N] : " _PREREQ_CONT || _PREREQ_CONT="n"
+    read -t 30 -rp "  Poursuivre malgré ces points d'attention ? [o/N] : " _PREREQ_CONT || _PREREQ_CONT="n"
     if [[ "${_PREREQ_CONT,,}" != "o" ]]; then
         echo "  Installation annulée."
         exit 0
@@ -2031,7 +2054,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
         varname="EXT${i}_NAME"; varpass="EXT${i}_PASS"; extnum="EXT${i}_NUMBER"
         default_name="${!varname}"
         if [[ -n "${FACTORY_TEST_ADMIN:-}" ]]; then
-            local_pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9!#^*._-' | cut -c1-20)
+            local_pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9#^._-' | cut -c1-20)
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
@@ -2162,7 +2185,9 @@ else
         echo "  ℹ  Enregistrement attendu : A  $TLS_DOMAIN  →  $VPS_IP"
         echo "  ℹ  Pour vérifier depuis votre poste : nslookup $TLS_DOMAIN"
     else
-        echo "  → Interface web désactivée en fin d'installation"
+        echo -e "  ${CYAN}ℹ${NC}  Aucun HTTPS configuré — FreePBX fonctionnera normalement."
+        echo    "     L'interface web sera accessible ponctuellement en HTTP (voir rapport de livraison)."
+        echo    "     Un domaine HTTPS peut être ajouté à tout moment après le déploiement."
     fi
 fi
 echo ""
@@ -2471,18 +2496,18 @@ ok "04_fail2ban"
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 06 — Configuration FreePBX ==="
-run_phase "$PHASES_DIR/06_post_restore.sh" \
+run_phase "$PHASES_DIR/06_freepbx_config.sh" \
     "$ADMIN_USERNAME" "$ADMIN_SHA1" "$ADMIN_SHA512" \
     "$TRUNK_REGISTRAR" "$TRUNK_USERNAME" "$TRUNK_PASSWORD" \
     "$TRUNK_NAME" "$TRUNK_CALLERID" \
     "$EXT1_NUMBER" "$EXT1_NAME" "$EXT1_PASS" \
     "$EXT2_NUMBER" "$EXT2_NAME" "$EXT2_PASS" \
     "$EXT3_NUMBER" "$EXT3_NAME" "$EXT3_PASS"
-ok "06_post_restore"
+ok "06_freepbx_config"
 
 # Récupérer les mots de passe extensions auto-générés depuis le log phase 06
 if [[ "$KIT_STARTER" == "oui" ]]; then
-    _ph06_log="/var/log/freepbx-factory/deploy-phase-06-post-restore.log"
+    _ph06_log="/var/log/freepbx-factory/deploy-phase-06-freepbx-config.log"
     if [[ -f "$_ph06_log" ]]; then
         [[ -z "$EXT1_PASS" && -n "$EXT1_NUMBER" ]] && EXT1_PASS=$(grep -oP "MOT DE PASSE EXT ${EXT1_NUMBER} : \K.+" "$_ph06_log" | tail -1 || echo "")
         [[ -z "$EXT2_PASS" && -n "$EXT2_NUMBER" ]] && EXT2_PASS=$(grep -oP "MOT DE PASSE EXT ${EXT2_NUMBER} : \K.+" "$_ph06_log" | tail -1 || echo "")
@@ -2692,8 +2717,13 @@ OPTIONS DÉPLOYÉES
   Kit starter : ${KIT_STARTER}  (extensions : ${_ext_info})
   Trunk SIP   : ${TRUNK_REGISTRAR:-désactivé}$([ -n "${TRUNK_USERNAME}" ] && echo "
   Identifiant SIP : ${TRUNK_USERNAME}")
-  HTTPS/TLS   : ${TLS_DOMAIN:-non activé}
+  HTTPS/TLS   : ${TLS_DOMAIN:-non activé — configurable ultérieurement}
   SSH activé  : ${SSH_ENABLED}
+
+ENVIRONNEMENT VÉRIFIÉ AU DÉPLOIEMENT
+  Architecture  : $(uname -m)
+  Mémoire       : $(awk '/MemTotal/{print int($2/1024)}' /proc/meminfo) MB
+  Disque (/)    : $(df -BG / | awk 'NR==2{gsub("G","",$4); print $4}') GB libres
 
 COUCHES DE SÉCURITÉ (7 actives)
   [1] Réseau    UFW actif — deny all entrant sauf ports projet
@@ -2954,21 +2984,16 @@ echo    "     Le module Firewall FreePBX est désactivé pour éviter les confli
 echo    "     de règles iptables — source documentée de blocages SSH non récupérables."
 echo    ""
 echo    "     Si vous souhaitez activer le Firewall FreePBX, c'est possible."
-echo    "     Cela implique cependant de reconsidérer l'ensemble de la stratégie"
-echo    "     de sécurité : UFW et le Firewall FreePBX ne peuvent pas coexister,"
-echo    "     et les 7 couches de protection en place devront être reconfigurées"
-echo    "     pour rester compatibles avec ce nouveau mode de fonctionnement."
+echo    "     Cela implique de reconsidérer l'ensemble de la stratégie de sécurité :"
+echo    "     UFW et le Firewall FreePBX ne peuvent pas coexister."
 echo    ""
-echo -e "${YELLOW}     Activer le Firewall FreePBX depuis la GUI seule ne suffit pas :${NC}"
-echo    "     une commande SSH est également requise pour lever le verrou technique."
-echo    "     Sans elle, le module sera à nouveau désactivé au prochain redémarrage."
-echo    ""
-echo    "     Procédure complète d'activation :"
+echo -e "${YELLOW}     Commencer impérativement par les commandes SSH suivantes${NC}"
+echo    "     (avant toute action dans l'interface graphique) :"
 echo    "       sudo fwconsole ma enable firewall"
 echo    "       sudo rm /etc/systemd/system/freepbx.service.d/factory-disable-firewall.conf"
 echo    "       sudo systemctl daemon-reload"
 echo    "       sudo ufw disable"
-echo    "       (puis adapter la configuration réseau au nouveau mode de filtrage)"
+echo    "     Puis configurer le Firewall FreePBX depuis Admin → Firewall dans la GUI."
 echo    ""
 
 # R3 — Accès perdu : 3 chemins de récupération
