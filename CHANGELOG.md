@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.30.1
+
+### Fixes
+- **landing:** rename game-panel landing + fix SIRET banner link locale prefix
+
+### Documentation
+- 7 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.30
 
 ### Features
