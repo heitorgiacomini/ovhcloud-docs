@@ -77,7 +77,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # @@BUNDLE_INJECT_START@@
 _PHASES_TMP="$(mktemp -d /tmp/fpbx-phases-XXXXXX)"
 trap 'rm -rf "$_PHASES_TMP" 2>/dev/null' EXIT
-trap 'stty sane 2>/dev/null; echo ""; echo "  Installation interrompue."; exit 130' INT TERM
+trap '
+    stty sane 2>/dev/null
+    echo ""; echo "  Installation interrompue — nettoyage en cours..."
+    rm -f /root/.fpbx-state.sh 2>/dev/null || true
+    systemctl disable freepbx-factory-resume 2>/dev/null || true
+    rm -f /etc/systemd/system/freepbx-factory-resume.service 2>/dev/null || true
+    systemctl daemon-reload 2>/dev/null || true
+    grep -q "FreePBX Factory" /etc/motd 2>/dev/null && printf "\n" > /etc/motd || true
+    exit 130
+' INT TERM
 
 cat > "$_PHASES_TMP/00_cleanup.sh" <<'__FPBXPHASE_00_CLEANUP_SH__'
 #!/bin/bash
@@ -93,7 +102,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 00_CLEANUP ==="
 # Attente dpkg lock — unattended-upgrades tourne souvent au boot sur VPS Debian frais
 systemctl stop unattended-upgrades 2>/dev/null || true
 _dpkg_wait=0
-while flock -n /var/lib/dpkg/lock-frontend /bin/true 2>/dev/null; [ $? -ne 0 ]; do
+while ! flock -n /var/lib/dpkg/lock-frontend /bin/true 2>/dev/null; do
     [ $((_dpkg_wait % 15)) -eq 0 ] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] Attente verrou dpkg (unattended-upgrades)..."
     sleep 5; _dpkg_wait=$((_dpkg_wait + 5))
     [ $_dpkg_wait -ge 120 ] && { echo "ERREUR : verrou dpkg non libéré après 2 min"; exit 1; }
@@ -101,8 +110,12 @@ done
 unset _dpkg_wait
 
 apt-get remove --purge nodejs npm -y 2>&1 | tail -3 || true
-rm -rf /usr/lib/node_modules /etc/apt/sources.list.d/nodesource.list 2>/dev/null || true
-apt-get autoremove -y 2>&1 | tail -2
+rm -rf /usr/lib/node_modules \
+       /etc/apt/sources.list.d/nodesource.list \
+       /etc/apt/sources.list.d/nodesource.list.d \
+       /etc/apt/keyrings/nodesource.gpg \
+       /etc/apt/trusted.gpg.d/nodesource.gpg 2>/dev/null || true
+apt-get autoremove -y 2>&1 | tail -2 || true
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] CLEANUP_OK"
 __FPBXPHASE_00_CLEANUP_SH__
@@ -240,7 +253,7 @@ grep -q "^AllowUsers" /etc/ssh/sshd_config \
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] SSH_CONFIG_WRITTEN"
 echo "  Contenu Port/Auth :"
-grep -E "^Port|^PermitRootLogin|^MaxAuthTries|^PasswordAuthentication|^AllowUsers" /etc/ssh/sshd_config
+grep -E "^Port|^PermitRootLogin|^MaxAuthTries|^PasswordAuthentication|^AllowUsers" /etc/ssh/sshd_config || true
 
 # Validation AVANT restart (abort si config invalide)
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] sshd -t : validation..."
@@ -292,9 +305,9 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] APT_UPGRADE_OK"
 
 # Téléchargement script FreePBX
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Téléchargement installateur FreePBX..."
-wget -q -O /tmp/sng_freepbx_debian_install.sh \
+wget -q --timeout=60 -O /tmp/sng_freepbx_debian_install.sh \
   https://github.com/FreePBX/sng_freepbx_debian_install/raw/master/sng_freepbx_debian_install.sh
-
+[ -s /tmp/sng_freepbx_debian_install.sh ] || { echo "[ERREUR] Fichier installateur vide — vérifier la connectivité GitHub"; exit 1; }
 chmod +x /tmp/sng_freepbx_debian_install.sh
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] INSTALL_SCRIPT_DOWNLOADED"
 
@@ -432,7 +445,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Persistance noload dans modules.conf..."
 MODULES_CONF=/etc/asterisk/modules.conf
 for module in chan_ooh323.so chan_mgcp.so chan_skinny.so chan_iax2.so res_stun_monitor.so; do
     grep -q "noload => $module" "$MODULES_CONF" 2>/dev/null \
-        || echo "noload => $module" >> "$MODULES_CONF"
+        || sed -i "/^\[modules\]/a noload => $module" "$MODULES_CONF"
 done
 
 # Validation : port 1720 fermé
@@ -470,7 +483,7 @@ touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
 MANAGEMENT_IP="${1:?Argument 1 requis : management_ip}"
-SSH_PORT="${2:-2222}"
+SSH_PORT="${2:?Argument 2 requis : ssh_port}"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 03_FIREWALL ==="
 
@@ -505,6 +518,7 @@ ufw allow 5061/tcp comment 'SIP TLS'
 ufw allow 10000:20000/udp comment 'RTP audio'
 
 ufw --force enable
+ufw logging low
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] UFW_OK"
 ufw status numbered
 
@@ -557,7 +571,7 @@ cat > /etc/fail2ban/jail.local << 'JAILEOF'
 bantime  = 86400
 findtime = 3600
 maxretry = 3
-backend  = systemd
+backend  = auto
 
 [apache-badbots]
 enabled  = true
@@ -669,7 +683,7 @@ if echo "$ACTIONS" | grep -q "No actions"; then
     echo "  → sudo fail2ban-client get ssh-iptables actions"
 fi
 
-fail2ban-client status
+fail2ban-client status || true
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === FAIL2BAN_COMPLETE (7 jails) ==="
 __FPBXPHASE_04_FAIL2BAN_SH__
 chmod +x "$_PHASES_TMP/04_fail2ban.sh"
@@ -720,7 +734,7 @@ EXT3_NAME="${16:-Poste 3}"
 EXT3_PASS="${17:-}"
 
 gen_pass() {
-    head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9@#^_-' | cut -c1-20
+    head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9._-' | cut -c1-20
 }
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 06_POST_RESTORE ==="
@@ -728,15 +742,15 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 06_POST_RESTORE ==="
 # ── Fix endpoint (E3) ────────────────────────────────────
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Fix endpoint..."
 fwconsole ma install endpoint -f 2>&1 | tail -3
-fwconsole reload 2>&1 | tail -3 || true
+timeout 120 fwconsole reload 2>&1 | tail -3 || true
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ENDPOINT_OK"
 
 # ── UFW garde post-reload (E15) ──────────────────────────
-ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
+ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall' || true
 
 # ── Admin GUI — DELETE + INSERT (E6, E10, E16, E18) ──────
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Recréation compte admin..."
-mysql -u root asterisk << SQLEOF
+mysql -u root asterisk << SQLEOF || true
 DELETE FROM ampusers WHERE username='${ADMIN_USERNAME}';
 INSERT INTO ampusers (username, password_sha1, sections, deptname, extension_low, extension_high)
   VALUES ('${ADMIN_USERNAME}', '${ADMIN_SHA1}', '*', '', '', '');
@@ -749,12 +763,14 @@ SET @dir_id = IFNULL(@dir_id, 1);
 -- userman_users.auth = integer dir_id (E25 : 'freepbx' string -> 0 != 1 -> getUserByUsername fail -> login refuse)
 INSERT INTO userman_users (username, password, auth, description, primary_group, default_extension, email)
   VALUES ('${ADMIN_USERNAME}', '${ADMIN_SHA1}', @dir_id, 'Admin FreePBX Factory', 1, 'none', '');
+SET @admin_uid = LAST_INSERT_ID();
 
 -- Groupe Administrators (id=1) requis pour AUTHTYPE=usermanager (E25)
 -- users = JSON array des uid membres ; pbx_login = acces admin ; pbx_admin + pbx_modules = menu complet
+-- @admin_uid capturé après INSERT (LAST_INSERT_ID) — uid non garanti = 1 en re-déploiement (B3)
 INSERT INTO userman_groups (id, auth, groupname, description, priority, local, users)
-  VALUES (1, 'freepbx', 'Administrators', 'Default Administrators Group', 0, 0, '[1]')
-  ON DUPLICATE KEY UPDATE users='[1]', groupname='Administrators';
+  VALUES (1, 'freepbx', 'Administrators', 'Default Administrators Group', 0, 0, CONCAT('[', @admin_uid, ']'))
+  ON DUPLICATE KEY UPDATE users=CONCAT('[', @admin_uid, ']'), groupname='Administrators';
 REPLACE INTO userman_groups_settings (gid, module, \`key\`, val, type)
   VALUES (1, 'global', 'pbx_login', 1, NULL);
 REPLACE INTO userman_groups_settings (gid, module, \`key\`, val, type)
@@ -773,7 +789,7 @@ insert_extension() {
     [[ -z "$pass" ]] && pass=$(gen_pass)
     local safe_name="${name//\'/\'\'}"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Extension $num ($name)..."
-    mysql -u root asterisk << EXTEOF
+    mysql -u root asterisk << EXTEOF || true
 DELETE FROM devices WHERE id='${num}';
 DELETE FROM users   WHERE extension='${num}';
 DELETE FROM sip     WHERE id='${num}';
@@ -858,8 +874,8 @@ if [[ -n "$EXT1_NUMBER" ]]; then
     insert_extension "$EXT1_NUMBER" "$EXT1_NAME" "$EXT1_PASS"
     insert_extension "$EXT2_NUMBER" "$EXT2_NAME" "$EXT2_PASS"
     insert_extension "$EXT3_NUMBER" "$EXT3_NAME" "$EXT3_PASS"
-    fwconsole reload 2>&1 | tail -3 || true
-    ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
+    timeout 120 fwconsole reload 2>&1 | tail -3 || true
+    ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall' || true
     # Sync AstDB APRÈS reload — CLI stable, dialparties.agi peut résoudre les extensions
     sync_astdb "$EXT1_NUMBER"
     sync_astdb "$EXT2_NUMBER"
@@ -874,21 +890,22 @@ else
 fi
 
 # ── fwconsole reload final ────────────────────────────────
-fwconsole reload 2>&1 | tail -3 || true
-ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
+timeout 120 fwconsole reload 2>&1 | tail -3 || true
+ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall' || true
 
 # ── Trunk SIP (optionnel, E22) ────────────────────────────
 if [[ -n "$TRUNK_REGISTRAR" && -n "$TRUNK_USERNAME" && -n "$TRUNK_PASSWORD" ]]; then
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Configuration trunk $TRUNK_NAME..."
     TRUNK_PROVIDER=$(echo "$TRUNK_REGISTRAR" | awk -F'.' '{print $(NF-1)}' | tr '[:lower:]' '[:upper:]')
-    # Échappement apostrophes pour SQL — évite casse si credentials contiennent '
-    _st_pass="${TRUNK_PASSWORD//\'/\'\'}"
-    _st_user="${TRUNK_USERNAME//\'/\'\'}"
-    _st_reg="${TRUNK_REGISTRAR//\'/\'\'}"
-    _st_name="${TRUNK_NAME//\'/\'\'}"
-    _st_cid="${TRUNK_CALLERID//\'/\'\'}"
+    # Échappement SQL : backslashes d'abord (\ → \\), puis apostrophes (' → '')
+    # Ordre impératif : inverser produirait \'' interprété comme quote échappé par MariaDB
+    _st_pass="${TRUNK_PASSWORD//\\/\\\\}";  _st_pass="${_st_pass//\'/\'\'}"
+    _st_user="${TRUNK_USERNAME//\\/\\\\}";  _st_user="${_st_user//\'/\'\'}"
+    _st_reg="${TRUNK_REGISTRAR//\\/\\\\}";  _st_reg="${_st_reg//\'/\'\'}"
+    _st_name="${TRUNK_NAME//\\/\\\\}";      _st_name="${_st_name//\'/\'\'}"
+    _st_cid="${TRUNK_CALLERID//\\/\\\\}";   _st_cid="${_st_cid//\'/\'\'}"
 
-    mysql -u root asterisk << TRUNKEOF
+    mysql -u root asterisk << TRUNKEOF || true
 SET @existing_tid = (SELECT trunkid FROM trunks WHERE name='${_st_name}' LIMIT 1);
 DELETE FROM pjsip WHERE id = @existing_tid AND @existing_tid IS NOT NULL;
 DELETE FROM trunks WHERE name='${_st_name}';
@@ -920,8 +937,8 @@ INSERT INTO pjsip (id, keyword, data, flags) VALUES
   (@tid, 'routedisplay',             'on',                  0),
   (@tid, 'inband_progress',          'no',                  0);
 TRUNKEOF
-    fwconsole reload 2>&1 | tail -3 || true
-    ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
+    timeout 120 fwconsole reload 2>&1 | tail -3 || true
+    ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall' || true
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] TRUNK_OK : $TRUNK_NAME ($TRUNK_REGISTRAR)"
 else
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Pas de trunk configuré"
@@ -930,10 +947,10 @@ fi
 # ── Ring group kit starter (sonnerie simultanée 3 postes) ─
 if [[ -n "$EXT1_NUMBER" && -n "$EXT2_NUMBER" && -n "$EXT3_NUMBER" ]]; then
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Ring group 600 (ringall : ${EXT1_NUMBER}/${EXT2_NUMBER}/${EXT3_NUMBER})..."
-    mysql -u root asterisk << RGEOF
+    mysql -u root asterisk << RGEOF || true
 DELETE FROM ringgroups WHERE grpnum='600';
 INSERT INTO ringgroups (grpnum, strategy, grptime, grplist, description, rvolume)
-  VALUES ('600', 'ringall', 55, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}', 'Kit Demo', '');
+  VALUES ('600', 'ringall', 55, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}', 'Kit Demo', '0');
 RGEOF
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] RINGGROUP_OK"
 fi
@@ -941,9 +958,10 @@ fi
 # ── Routes sortante + entrante (trunk requis) ─────────────
 if [[ -n "$TRUNK_REGISTRAR" && -n "$TRUNK_USERNAME" && -n "$TRUNK_PASSWORD" ]]; then
     TRUNK_DB_ID=$(mysql -u root asterisk -sNe "SELECT trunkid FROM trunks WHERE name='${TRUNK_NAME}' LIMIT 1;" 2>/dev/null || true)
+    [[ "$TRUNK_DB_ID" =~ ^[0-9]+$ ]] || TRUNK_DB_ID=""
     if [[ -n "$TRUNK_DB_ID" ]]; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Route sortante (trunk_id=${TRUNK_DB_ID}, pattern X.)..."
-        mysql -u root asterisk << RTEOF
+        mysql -u root asterisk << RTEOF || true
 SET @del_id = (SELECT route_id FROM outbound_routes WHERE name='Route-Sortante' LIMIT 1);
 DELETE FROM outbound_route_patterns WHERE route_id = @del_id AND @del_id IS NOT NULL;
 DELETE FROM outbound_route_trunks   WHERE route_id = @del_id AND @del_id IS NOT NULL;
@@ -963,7 +981,7 @@ RTEOF
 
         if [[ -n "$EXT1_NUMBER" ]]; then
             echo "[$(date '+%Y-%m-%d %H:%M:%S')] Route entrante → ext-group,600,1..."
-            mysql -u root asterisk << INEOF
+            mysql -u root asterisk << INEOF || true
 DELETE FROM incoming WHERE extension='' AND cidnum='';
 INSERT INTO incoming (cidnum, extension, destination, mohclass, description)
   VALUES ('', '', 'ext-group,600,1', 'default', 'Appels entrants kit demo');
@@ -987,9 +1005,9 @@ OVERRIDE_EOF
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] OVERRIDE_CONF_OK"
 
 # ── Reload dialplan avec toutes les routes ────────────────
-fwconsole reload 2>&1 | tail -3 || true
+timeout 120 fwconsole reload 2>&1 | tail -3 || true
 fwconsole firewall stop 2>/dev/null || true
-ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall'
+ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall' || true
 # restart (pas reload) : recréer les chaînes iptables après ufw enable (E24)
 systemctl restart fail2ban
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ROUTES_DIALPLAN_OK"
@@ -997,12 +1015,12 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] ROUTES_DIALPLAN_OK"
 # ── chan_ooh323 + chan_iax2 : désactivation (E11) ─────────
 asterisk -rx 'module show like chan_ooh323' 2>/dev/null | grep -q 'Running' && \
     asterisk -rx 'module unload chan_ooh323.so' 2>/dev/null || true
-grep -q 'chan_ooh323.so' /etc/asterisk/modules.conf || \
-    echo 'noload = chan_ooh323.so' >> /etc/asterisk/modules.conf
+grep -q 'noload => chan_ooh323.so' /etc/asterisk/modules.conf || \
+    echo 'noload => chan_ooh323.so' >> /etc/asterisk/modules.conf
 asterisk -rx 'module show like chan_iax2' 2>/dev/null | grep -q 'Running' && \
     asterisk -rx 'module unload chan_iax2.so' 2>/dev/null || true
-grep -q 'chan_iax2.so' /etc/asterisk/modules.conf || \
-    echo 'noload = chan_iax2.so' >> /etc/asterisk/modules.conf
+grep -q 'noload => chan_iax2.so' /etc/asterisk/modules.conf || \
+    echo 'noload => chan_iax2.so' >> /etc/asterisk/modules.conf
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === FREEPBX_CONFIG_COMPLETE ==="
 __FPBXPHASE_06_FREEPBX_CONFIG_SH__
@@ -1012,15 +1030,19 @@ cat > "$_PHASES_TMP/09_apache_hardening.sh" <<'__FPBXPHASE_09_APACHE_HARDENING_S
 #!/bin/bash
 # 09_apache_hardening.sh — Durcissement Apache post-restore
 #
-# Masquage version, désactivation TRACE, security headers
+# Masquage version, désactivation TRACE, security headers, restriction /admin
 # Équivalent de 09_apache_hardening.yml (playbook Ansible)
+#
+# Usage : sudo bash 09_apache_hardening.sh <management_ip>
 
 set -euo pipefail
 LOG=/var/log/freepbx-factory/deploy-phase-09-apache-hardening.log
 touch "$LOG" && chmod 600 "$LOG"
 exec > >(tee -a "$LOG") 2>&1
 
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 09_APACHE_HARDENING ==="
+MANAGEMENT_IP="${1:?Argument 1 requis : management_ip}"
+
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 09_APACHE_HARDENING (management_ip: $MANAGEMENT_IP) ==="
 
 SEC=/etc/apache2/conf-available/security.conf
 
@@ -1029,6 +1051,7 @@ sed -i 's/^#\?ServerSignature.*/ServerSignature Off/' "$SEC"
 sed -i 's/^#\?TraceEnable.*/TraceEnable Off/'         "$SEC"
 
 a2enmod headers -q 2>/dev/null || true
+a2enmod authz_host -q 2>/dev/null || true
 
 cat > /etc/apache2/conf-available/freepbx-security-headers.conf << 'EOF'
 <IfModule mod_headers.c>
@@ -1037,20 +1060,39 @@ cat > /etc/apache2/conf-available/freepbx-security-headers.conf << 'EOF'
   Header always set X-XSS-Protection "1; mode=block"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always unset X-Powered-By
+  <If "%{HTTPS} == 'on'">
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+  </If>
 </IfModule>
 EOF
 
 a2enconf freepbx-security-headers -q 2>/dev/null || true
 
+# Restriction accès /admin à l'IP de gestion uniquement (E25 equiv — Ansible 09_apache_hardening.yml)
+cat > /etc/apache2/conf-available/freepbx-admin-restrict.conf << ADMINEOF
+<LocationMatch "^/admin">
+  <RequireAny>
+    Require ip ${MANAGEMENT_IP}
+    Require ip 127.0.0.1
+    Require ip ::1
+  </RequireAny>
+</LocationMatch>
+ADMINEOF
+a2enconf freepbx-admin-restrict -q 2>/dev/null || true
+
 sed -i 's/Options Indexes FollowSymLinks/Options FollowSymLinks/' \
     /etc/apache2/apache2.conf 2>/dev/null || true
 
-systemctl reload apache2 2>/dev/null || echo "[AVERTISSEMENT] Apache non actif au moment du reload — headers appliqués au prochain démarrage"
+systemctl reload apache2 2>/dev/null || echo "[AVERTISSEMENT] Apache non actif au moment du reload — config appliquée au prochain démarrage"
 
-HEADERS=$(curl -sI http://localhost/admin/ 2>/dev/null)
-echo "X-Frame-Options    : $(echo "$HEADERS" | grep -i 'X-Frame-Options' || echo 'ABSENT')"
-echo "X-Content-Type     : $(echo "$HEADERS" | grep -i 'X-Content-Type-Options' || echo 'ABSENT')"
-echo "ServerTokens check : $(curl -sI http://localhost/ 2>/dev/null | grep -i 'Server:' || echo 'OK masqué')"
+if systemctl is-active --quiet apache2 2>/dev/null; then
+    HEADERS=$(curl -sI http://localhost/admin/ 2>/dev/null)
+    echo "X-Frame-Options    : $(echo "$HEADERS" | grep -i 'X-Frame-Options' || echo 'ABSENT')"
+    echo "X-Content-Type     : $(echo "$HEADERS" | grep -i 'X-Content-Type-Options' || echo 'ABSENT')"
+    echo "ServerTokens check : $(curl -sI http://localhost/ 2>/dev/null | grep -i 'Server:' || echo 'OK masqué')"
+else
+    echo "[INFO] Apache arrêté — headers vérifiables au prochain démarrage"
+fi
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] === APACHE_HARDENING_COMPLETE ==="
 __FPBXPHASE_09_APACHE_HARDENING_SH__
@@ -1072,6 +1114,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === PHASE 10_MARIADB_HARDENING ==="
 
 mysql -u root << 'SQLEOF'
 DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1');
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db LIKE 'test%';
 FLUSH PRIVILEGES;
@@ -1157,18 +1200,18 @@ else
     echo "  [OK] Shell asterisk : $CURRENT_SHELL → /usr/sbin/nologin"
 fi
 
-# asterisk : override systemd Restart=on-failure
-# fwconsole reload peut déclencher un graceful restart qui se termine après le script
-# → sans override, Asterisk reste arrêté jusqu'au prochain reboot ou relance manuelle
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Override systemd asterisk (Restart=on-failure)..."
+# asterisk : override systemd Restart=always
+# Restart=always rattrape aussi les arrêts propres (exit 0) déclenchés par fwconsole reload
+# systemctl stop asterisk reste respecté (stop explicite ne déclenche pas le restart)
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Override systemd asterisk (Restart=always)..."
 mkdir -p /etc/systemd/system/asterisk.service.d/
 cat > /etc/systemd/system/asterisk.service.d/restart.conf << 'EOF'
 [Service]
-Restart=on-failure
+Restart=always
 RestartSec=10
 EOF
 systemctl daemon-reload
-echo "  [OK] asterisk.service : Restart=on-failure, RestartSec=10"
+echo "  [OK] asterisk.service : Restart=always, RestartSec=10"
 
 # Validation ports UDP
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Validation ports UDP..."
@@ -1329,7 +1372,11 @@ jail_count = int(m.group(1)) if m else 0
 checks.append(check("fail2ban — 7 jails actifs", jail_count >= 7, f"{jail_count} jails", "NIS2 Art.21(b)"))
 
 f2b_bantime = run("fail2ban-client get ssh-iptables bantime 2>/dev/null")
-checks.append(check("fail2ban — Bantime 24h", f2b_bantime == "86400", f"{f2b_bantime}s", "NIS2 Art.21(b)"))
+try:
+    _bantime_ok = int(float(f2b_bantime)) == 86400
+except (ValueError, TypeError):
+    _bantime_ok = False
+checks.append(check("fail2ban — Bantime 24h", _bantime_ok, f"{f2b_bantime}s", "NIS2 Art.21(b)"))
 
 f2b_actions = run("fail2ban-client get ssh-iptables actions 2>/dev/null")
 checks.append(check("fail2ban — Actions iptables actives", "No actions" not in f2b_actions,
@@ -1379,7 +1426,7 @@ checks.append(check("SBOM — Fichier présent", sbom_ok,
 # PM2 — 4 services online (dont UCP)
 pm2_out = run("fwconsole pm2 --list 2>/dev/null")
 pm2_online = pm2_out.count('online')
-ucp_ok = 'ucp' in pm2_out and 'online' in pm2_out[pm2_out.find('ucp'):pm2_out.find('ucp')+80] if 'ucp' in pm2_out else False
+ucp_ok = bool(re.search(r'ucp.*online', pm2_out))
 checks.append(check("PM2 — 4 services online", pm2_online >= 4, f"{pm2_online}/4 online", "Opérationnel"))
 checks.append(check("PM2 — UCP online (Node 20)", ucp_ok, "online" if ucp_ok else "errored/absent", "Opérationnel"))
 
@@ -1748,6 +1795,9 @@ if command -v fwconsole &>/dev/null; then
     if [[ -f /root/.fpbx-state.sh ]]; then
         source /root/.fpbx-state.sh || err "Fichier état corrompu — supprimez /root/.fpbx-state.sh et relancez"
         FACTORY_RESUME_MODE=1
+        # Supprimer immédiatement le fichier état pour éviter une re-reprise si l'utilisateur
+        # reboot manuellement en cours de dépannage (les phases config sont idempotentes)
+        rm -f /root/.fpbx-state.sh 2>/dev/null || true
         # Guard : le firewall FreePBX peut être actif depuis le reboot.
         # Double verrou : arrêt immédiat + désactivation en base de données.
         fwconsole firewall stop 2>/dev/null || true
@@ -1814,10 +1864,11 @@ _send_telem() {
 validate_password() {
     local pass="$1" label="${2:-Mot de passe}"
     [[ -z "$pass" ]] && { echo "  ✗ $label : ne peut pas être vide"; return 1; }
-    [[ ${#pass} -lt 8 ]] && echo -e "  ${YELLOW}ℹ${NC} $label : moins de 8 caractères — FreePBX peut le refuser selon sa politique"
-    echo "$pass" | grep -q '[A-Z]' || echo -e "  ${YELLOW}ℹ${NC} $label : sans majuscule — recommandé pour la résistance aux attaques"
-    echo "$pass" | grep -q '[0-9]' || echo -e "  ${YELLOW}ℹ${NC} $label : sans chiffre — recommandé"
-    echo "$pass" | grep -qP '[^A-Za-z0-9]' || echo -e "  ${YELLOW}ℹ${NC} $label : sans caractère spécial — recommandé"
+    [[ ${#pass} -lt 12 ]] && { echo -e "  ✗ $label : 12 caractères minimum requis (CRA Axe 1)"; return 1; }
+    echo "$pass" | grep -q '[A-Z]' || { echo -e "  ✗ $label : au moins une majuscule requise"; return 1; }
+    echo "$pass" | grep -q '[a-z]' || { echo -e "  ✗ $label : au moins une minuscule requise"; return 1; }
+    echo "$pass" | grep -q '[0-9]' || { echo -e "  ✗ $label : au moins un chiffre requis"; return 1; }
+    echo "$pass" | grep -qP '[^A-Za-z0-9]' || { echo -e "  ✗ $label : au moins un caractère spécial requis"; return 1; }
     return 0
 }
 
@@ -1848,7 +1899,7 @@ read_password() {
         _read_star_input pass "$label"
         [[ -z "$pass" ]] && { echo "  Installation annulée."; exit 0; }
         [[ "$pass" == "q" ]] && return 2  # q = marche arrière (capté par l'appelant)
-        validate_password "$pass" "$label"
+        validate_password "$pass" "$label" || continue
         if [[ $confirm -eq 1 ]]; then
             _read_star_input pass2 "  Confirmer $_lbl"
             if [[ "$pass" != "$pass2" ]]; then
@@ -1867,7 +1918,7 @@ read_ext_password() {
         _read_star_input pass "  Mot de passe du poste $ext"
         if [[ -z "$pass" ]]; then
             # head -c 512 ferme stdin de tr proprement — évite SIGPIPE avec set -o pipefail
-            pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9#^&._-' | cut -c1-20)
+            pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9._-' | cut -c1-20)
             echo "  → Généré : $pass"
             printf -v "$varname" '%s' "$pass"
             break
@@ -1992,7 +2043,7 @@ info "  Mot de passe : 12+ caractères avec minuscules, majuscules, chiffres et 
 echo ""
 while true; do
     read -rp "  Identifiant de connexion FreePBX (q = recommencer) : " ADMIN_USERNAME
-    [[ -z "$ADMIN_USERNAME" ]] && { echo "  Installation annulée."; exit 0; }
+    [[ -z "$ADMIN_USERNAME" ]] && { echo "  ✗ Identifiant vide — saisissez à nouveau"; continue; }
     [[ "${ADMIN_USERNAME,,}" == "q" ]] && { echo "  Retour au début du wizard."; continue 2; }
     case "$ADMIN_USERNAME" in
         *"'"*|*'"'*|*";"*|*"<"*|*">"*|*"&"*|*'`'*)
@@ -2026,6 +2077,7 @@ KIT_STARTER="non"
 EXT1_NUMBER="" EXT1_NAME="Poste 1"  EXT1_PASS=""
 EXT2_NUMBER="" EXT2_NAME="Poste 2"  EXT2_PASS=""
 EXT3_NUMBER="" EXT3_NAME="Poste 3"  EXT3_PASS=""
+GUI_URL=""
 
 if [[ -n "$KIT_STARTER_ARG" ]]; then
     # Pré-sélection wizard — pas de question interactive
@@ -2054,7 +2106,7 @@ if [[ "${KIT_RESP,,}" == "o" ]]; then
         varname="EXT${i}_NAME"; varpass="EXT${i}_PASS"; extnum="EXT${i}_NUMBER"
         default_name="${!varname}"
         if [[ -n "${FACTORY_TEST_ADMIN:-}" ]]; then
-            local_pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9#^._-' | cut -c1-20)
+            local_pass=$(head -c 512 /dev/urandom | tr -dc 'A-Za-z0-9._-' | cut -c1-20)
             printf -v "$varpass" '%s' "$local_pass"
             echo "  Poste $i : ${!varname} — mot de passe auto-généré (mode test)"
         else
@@ -2075,7 +2127,7 @@ fi
 echo ""
 
 TRUNK_ENABLED="non"
-TRUNK_REGISTRAR="" TRUNK_USERNAME="" TRUNK_PASSWORD=""
+TRUNK_REGISTRAR="" TRUNK_USERNAME="" TRUNK_PASSWORD="" TRUNK_DID=""
 EXTRA_IGNOREIP=""
 
 if [[ -n "$TRUNK_ENABLED_ARG" ]]; then
@@ -2152,7 +2204,12 @@ echo ""
 # Détection anticipée de l'IP du VPS (nécessaire pour le wizard TLS)
 VPS_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1)
 [[ -z "$VPS_IP" ]] && VPS_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
-[[ -z "$VPS_IP" ]] && VPS_IP="<IP_VPS>"
+if [[ -z "$VPS_IP" ]]; then
+    echo ""
+    echo -e "${RED}  [ERR] Impossible de détecter l'IP de ce serveur automatiquement.${NC}"
+    read -rp "  Adresse IPv4 du serveur (ex: 51.79.65.161) : " VPS_IP
+    [[ -z "$VPS_IP" ]] && { echo "  IP requise — installation annulée."; exit 1; }
+fi
 
 # ── TLS HTTPS ─────────────────────────────────────────────────────────────────
 info "▶ 3/4 : Accès HTTPS à l'interface d'administration (optionnel)"
@@ -2275,7 +2332,10 @@ if [[ -z "$MANAGEMENT_IP" ]]; then
     fi
 fi
 TRUNK_NAME=""
-[[ -n "$TRUNK_REGISTRAR" ]] && TRUNK_NAME="trunk-$(echo "$TRUNK_REGISTRAR" | awk -F'.' '{print $(NF-1)}')"
+if [[ -n "$TRUNK_REGISTRAR" ]]; then
+  _tn_part="$(echo "$TRUNK_REGISTRAR" | awk -F'.' '{print $(NF-1)}')"
+  TRUNK_NAME="trunk-${_tn_part:-sip}"
+fi
 TRUNK_CALLERID="$TRUNK_USERNAME"
 
 echo "╔══════════════════════════════════════════╗"
@@ -2334,7 +2394,7 @@ done  # fin wizard
 INSTALL_START=$(date +%s)
 
 # ── Sauvegarde état wizard (reprise post-reboot installateur FreePBX) ────────
-{
+(umask 077; {
   for _sv in MANAGEMENT_IP SSH_PORT SSH_ENABLED VPS_IP \
               ADMIN_USERNAME ADMIN_SHA1 ADMIN_SHA512 \
               KIT_STARTER \
@@ -2346,22 +2406,22 @@ INSTALL_START=$(date +%s)
               EXTRA_IGNOREIP TLS_DOMAIN DEPLOY_ID SESSION_LOG; do
     declare -p "$_sv" 2>/dev/null || echo "declare -- $_sv=''"
   done
-} > /root/.fpbx-state.sh
-chmod 600 /root/.fpbx-state.sh
+} > /root/.fpbx-state.sh)
 
 # ── Reprise automatique post-reboot : service systemd ────────────────────────
 # L'installateur FreePBX reboot le VPS sans revenir au script.
 # Ce service redemarre automatiquement la suite au boot suivant,
 # sans aucune intervention de l'utilisateur.
-_script_abs="$(realpath "$0" 2>/dev/null || readlink -f "$0" 2>/dev/null || echo "$0")"
-cp -f "$_script_abs" /root/freepbx-factory-install.sh 2>/dev/null && chmod 700 /root/freepbx-factory-install.sh || true
+if [[ -z "${FACTORY_RESUME_MODE:-}" ]]; then
+  _script_abs="$(realpath "$0" 2>/dev/null || readlink -f "$0" 2>/dev/null || echo "$0")"
+  cp -f "$_script_abs" /root/freepbx-factory-install.sh 2>/dev/null && chmod 700 /root/freepbx-factory-install.sh || true
 
-cat > /etc/systemd/system/freepbx-factory-resume.service << 'SVCEOF'
+  cat > /etc/systemd/system/freepbx-factory-resume.service << 'SVCEOF'
 [Unit]
 Description=FreePBX Factory - Reprise automatique post-reboot installateur
 After=network-online.target mariadb.service
 Wants=network-online.target
-ConditionPathExists=/root/.fpbx-state.sh
+AssertPathExists=/root/.fpbx-state.sh
 
 [Service]
 Type=oneshot
@@ -2372,9 +2432,10 @@ ExecStart=/usr/bin/tmux new-session -d -s factory -e FACTORY_IN_TMUX=1 /bin/bash
 WantedBy=multi-user.target
 SVCEOF
 
-systemctl daemon-reload 2>/dev/null || true
-systemctl enable freepbx-factory-resume 2>/dev/null || true
-log "Reprise auto : service freepbx-factory-resume active"
+  systemctl daemon-reload 2>/dev/null || true
+  systemctl enable freepbx-factory-resume 2>/dev/null || true
+  log "Reprise auto : service freepbx-factory-resume active"
+fi
 
 # ── MOTD indicateur (visible a la reconnexion SSH apres reboot) ──────────────
 mkdir -p /var/log/freepbx-factory
@@ -2520,7 +2581,7 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 log ""
 log "=== PHASE 09 — Apache hardening ==="
-run_phase "$PHASES_DIR/09_apache_hardening.sh"
+run_phase "$PHASES_DIR/09_apache_hardening.sh" "$MANAGEMENT_IP"
 ok "09_apache_hardening"
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -2634,7 +2695,7 @@ if [[ -n "$TLS_DOMAIN" ]] && systemctl is-active apache2 >/dev/null 2>&1; then
     GUI_URL="https://$TLS_DOMAIN/admin/"
 else
     warn "15_tls — Apache arrêté — GUI inaccessible jusqu'à configuration TLS"
-    [[ -n "$TLS_DOMAIN" ]] && warn "  Pour réessayer TLS : sudo certbot --apache -d $TLS_DOMAIN && sudo systemctl start apache2"
+    [[ -n "$TLS_DOMAIN" ]] && warn "  Pour réessayer TLS : sudo /opt/certbot/bin/certbot certonly --webroot -w /var/www/html -d $TLS_DOMAIN && sudo systemctl start apache2"
     GUI_URL="désactivée (Apache arrêté — HTTPS requis)"
 fi
 
@@ -2665,7 +2726,7 @@ getent passwd asterisk | cut -d: -f7
 echo -e "${CYAN}--- fail2ban ---${NC}"
 fail2ban-client get ssh-iptables bantime 2>/dev/null || echo "fail2ban : vérifier manuellement"
 echo -e "${CYAN}--- UFW ---${NC}"
-ufw status | head -10
+ufw status | head -10 || true
 echo -e "${CYAN}--- Conformité CRA+NIS2 ---${NC}"
 if [[ -f /etc/freepbx-factory/compliance-report.json ]]; then
     python3 -c "
@@ -2688,6 +2749,8 @@ fi
 # RAPPORT DE LIVRAISON — CRA EU 2024/2847 (traçabilité déploiement)
 # ════════════════════════════════════════════════════════════════════════════
 REPORT_FILE="/root/freepbx-factory-delivery-report.txt"
+(umask 077; : > "$REPORT_FILE")
+VPS_IP="${VPS_IP:-$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1 || hostname -I | awk '{print $1}' || echo 'inconnu')}"
 DEPLOY_DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 _ext_info="désactivé" ; [[ "$KIT_STARTER" == "oui" ]] && _ext_info="$EXT1_NUMBER / $EXT2_NUMBER / $EXT3_NUMBER"
 # Registrar SIP pour les softphones : domaine si TLS actif, sinon IP du serveur
@@ -2822,7 +2885,7 @@ _DEPLOY_DUR=$(( (_INSTALL_END - INSTALL_START) / 60 ))
 _FPBX_VER=$(fwconsole --version 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "17.0.x")
 _JAILS_N=$(fail2ban-client status 2>/dev/null | grep -oP 'Number of jails:\s*\K\d+' || echo "7")
 _GUI_OK=0; [[ "${_GUI_CODE:-000}" =~ ^(200|302)$ ]] && _GUI_OK=1
-_UFW_OK=0; ufw status 2>/dev/null | grep -q "Status: active" && _UFW_OK=1
+_UFW_OK=0; ufw status 2>/dev/null | grep -q "Status: active" && _UFW_OK=1 || true
 _TRUNK_STATUS="${TRUNK_ENABLED:-non}"; _TLS_VAL="${TLS_DOMAIN:-}"
 _AST_VER=$(asterisk -V 2>/dev/null | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "")
 _HOSTNAME=$(hostname 2>/dev/null || echo "")
@@ -2836,7 +2899,7 @@ echo ""
 # ── Accès et options déployées ───────────────────────────────────────────────
 echo -e "${CYAN}  ── Accès et options déployées ─────────────────────────────${NC}"
 if [[ -f "$REPORT_FILE" ]]; then
-    grep -E '^\s+(Admin|IP VPS|Port SSH|Kit|Ligne|HTTPS|SSH activé)' "$REPORT_FILE" 2>/dev/null | head -8 || true
+    grep -E '^\s+(Admin|IP VPS|Port SSH|Kit|Ligne|HTTPS|SSH activé|Trunk SIP|Identifiant SIP)' "$REPORT_FILE" 2>/dev/null | head -10 || true
     echo ""
     echo "  → Fiche complète enregistrée : $REPORT_FILE"
 else
@@ -2961,7 +3024,13 @@ ok "║ Admin    : $ADMIN_USERNAME"
 ok "║ SSH port : $SSH_PORT — restreint à $MANAGEMENT_IP"
 ok "║ URL GUI  : $GUI_URL"
 [[ -n "$_COMPLIANCE_SCORE" ]] && ok "║ Conformité : $_COMPLIANCE_SCORE"
-[[ -n "$_TRUNK_REG_STATUS" ]] && ok "║ Trunk SIP  : $TRUNK_REGISTRAR — $_TRUNK_REG_STATUS"
+if [[ -n "$_TRUNK_REG_STATUS" ]]; then
+    if [[ "${_TRUNK_REG_STATUS,,}" == "registered" ]]; then
+        ok   "║ Trunk SIP  : $TRUNK_REGISTRAR — $_TRUNK_REG_STATUS"
+    else
+        warn "║ Trunk SIP  : $TRUNK_REGISTRAR — $_TRUNK_REG_STATUS (vérifier la configuration)"
+    fi
+fi
 ok "║ Rapport  : $REPORT_FILE"
 ok "║ Journal  : $SESSION_LOG"
 ok "╚══════════════════════════════════════════╝"
