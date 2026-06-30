@@ -58,7 +58,14 @@ export function CategoryColumns({ categories }: CategoryColumnsProps) {
     <div className="rp-category-columns">
       {visibleCategories.map((cat) => (
         <section className="rp-category-columns__col" key={cat.title}>
-          <h3 className="rp-category-columns__heading">{cat.title}</h3>
+          {cat.title ? (
+            <h3 className="rp-category-columns__heading">{cat.title}</h3>
+          ) : (
+            <div
+              className="rp-category-columns__heading rp-category-columns__heading--spacer"
+              aria-hidden="true"
+            />
+          )}
           <ul className="rp-category-columns__list">
             {cat.items.map((item) => (
               <li key={item.title}>
