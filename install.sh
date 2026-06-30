@@ -1862,13 +1862,13 @@ _send_telem() {
 
 # ── Validation mot de passe ─────────────────────────────────────────────────
 validate_password() {
-    local pass="$1" label="${2:-Mot de passe}"
+    local pass="$1" label="${2:-Mot de passe}" require_special="${3:-1}"
     [[ -z "$pass" ]] && { echo "  ✗ $label : ne peut pas être vide"; return 1; }
     [[ ${#pass} -lt 12 ]] && { echo -e "  ✗ $label : 12 caractères minimum requis (CRA Axe 1)"; return 1; }
     echo "$pass" | grep -q '[A-Z]' || { echo -e "  ✗ $label : au moins une majuscule requise"; return 1; }
     echo "$pass" | grep -q '[a-z]' || { echo -e "  ✗ $label : au moins une minuscule requise"; return 1; }
     echo "$pass" | grep -q '[0-9]' || { echo -e "  ✗ $label : au moins un chiffre requis"; return 1; }
-    echo "$pass" | grep -qP '[^A-Za-z0-9]' || { echo -e "  ✗ $label : au moins un caractère spécial requis"; return 1; }
+    [[ "$require_special" -eq 1 ]] && { echo "$pass" | grep -qP '[^A-Za-z0-9]' || { echo -e "  ✗ $label : au moins un caractère spécial requis"; return 1; }; }
     return 0
 }
 
@@ -1893,13 +1893,13 @@ _read_star_input() {
 }
 
 read_password() {
-    local varname="$1" label="$2" confirm="${3:-1}" pass pass2
+    local varname="$1" label="$2" confirm="${3:-1}" require_special="${4:-1}" pass pass2
     local _lbl="${label#"${label%%[! ]*}"}"  # label sans espaces de tête pour le prompt confirmation
     while true; do
         _read_star_input pass "$label"
         [[ -z "$pass" ]] && { echo "  Installation annulée."; exit 0; }
         [[ "$pass" == "q" ]] && return 2  # q = marche arrière (capté par l'appelant)
-        validate_password "$pass" "$label" || continue
+        validate_password "$pass" "$label" "$require_special" || continue
         if [[ $confirm -eq 1 ]]; then
             _read_star_input pass2 "  Confirmer $_lbl"
             if [[ "$pass" != "$pass2" ]]; then
@@ -2143,7 +2143,7 @@ if [[ -n "$TRUNK_ENABLED_ARG" ]]; then
             TRUNK_PASSWORD="$FACTORY_TEST_TRUNK_PASS"
             echo "  ✓ Mot de passe SIP (mode test)"
         else
-            read_password TRUNK_PASSWORD "  Mot de passe SIP"
+            read_password TRUNK_PASSWORD "  Mot de passe SIP" 1 0
         fi
         echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
         _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
@@ -2182,7 +2182,7 @@ else
             echo -e "  ${YELLOW}  Ce mot de passe est différent du mot de passe de l'espace client.${NC}"
             echo -e "  ${YELLOW}  Il doit correspondre exactement à celui fourni par votre opérateur.${NC}"
             _rpret=0
-            read_password TRUNK_PASSWORD "  Mot de passe SIP" || _rpret=$?
+            read_password TRUNK_PASSWORD "  Mot de passe SIP" 1 0 || _rpret=$?
             [[ $_rpret -eq 2 ]] && { echo "  Retour au début du wizard."; continue; }
             echo "  ✓ Ligne opérateur configurée : $TRUNK_REGISTRAR"
             _trunk_ip=$(timeout 3 getent hosts "$TRUNK_REGISTRAR" 2>/dev/null | awk '{print $1}' | head -1)
