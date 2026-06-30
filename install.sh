@@ -2690,6 +2690,11 @@ fi
 
 export TLS_DOMAIN
 run_phase "$PHASES_DIR/15_tls.sh" "$TLS_DOMAIN"
+if [[ -n "$TLS_DOMAIN" ]]; then
+    # fwconsole reload arrête Apache via check_ip_and_start_apache.sh — forcer le redémarrage
+    systemctl enable apache2 2>/dev/null || true
+    systemctl start apache2 2>/dev/null || true
+fi
 if [[ -n "$TLS_DOMAIN" ]] && systemctl is-active apache2 >/dev/null 2>&1; then
     ok "15_tls — HTTPS actif — https://$TLS_DOMAIN/admin/"
     GUI_URL="https://$TLS_DOMAIN/admin/"
