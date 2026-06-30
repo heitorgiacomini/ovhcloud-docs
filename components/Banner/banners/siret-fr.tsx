@@ -15,7 +15,7 @@ export const siretFr: BannerDef = {
       Renseignez votre{' '}
       <a
         className="ovh-promo-banner__link"
-        href="/guides/account-and-service-management/managing-billing-payments-and-services/update-vat-rate"
+        href="/fr/guides/account-and-service-management/managing-billing-payments-and-services/update-vat-rate"
       >
         numéro SIRET
       </a>{' '}

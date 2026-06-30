@@ -355,7 +355,7 @@
         + [Additional resources](bare-metal-cloud-virtual-private-servers-additional-resources)
             + [Public Cloud & VPS - Image and OS life cycle and end of life/support announcements](public-cloud/compute/image-life-cycle)
             + [End of Plesk and cPanel support for VPS - Ensure continuity of your services](bare-metal-cloud/virtual-private-servers/eos-cpanel-plesk)
-        + [Game Panel](bare-metal-cloud-virtual-private-servers-game-panel){landing=bare-metal-cloud/virtual-private-servers/game-panel-landing}
+        + [Game Panel](bare-metal-cloud-virtual-private-servers-game-panel){landing=bare-metal-cloud/virtual-private-servers/landing-page-game-panel}
             + [Manage your Game Panel](bare-metal-cloud-virtual-private-servers-game-panel-general)
                 + [Choose a VPS plan for your game server](bare-metal-cloud/virtual-private-servers/game-panel-choose-vps)
                 + [Install the Game Panel on a VPS](bare-metal-cloud/virtual-private-servers/game-panel-install-on-vps)
