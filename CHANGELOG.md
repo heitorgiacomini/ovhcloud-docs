@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.06.30
+
+### Features
+- **components:** add SIRET reminder banner to FR account guides (#311)
+
+### Documentation
+- 215 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.06.29
 
 ### Features
