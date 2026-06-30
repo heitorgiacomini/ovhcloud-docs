@@ -2690,8 +2690,8 @@ fi
 
 export TLS_DOMAIN
 run_phase "$PHASES_DIR/15_tls.sh" "$TLS_DOMAIN"
-if [[ -n "$TLS_DOMAIN" ]]; then
-    # fwconsole reload arrête Apache via check_ip_and_start_apache.sh — forcer le redémarrage
+if [[ -n "$TLS_DOMAIN" ]] && [[ -f "/etc/letsencrypt/live/$TLS_DOMAIN/fullchain.pem" ]]; then
+    # Certificat présent — fwconsole reload peut avoir arrêté Apache, forcer le redémarrage
     systemctl enable apache2 2>/dev/null || true
     systemctl start apache2 2>/dev/null || true
 fi
