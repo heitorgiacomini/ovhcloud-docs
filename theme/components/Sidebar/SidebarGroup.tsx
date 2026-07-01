@@ -98,13 +98,12 @@ export function SidebarGroup(props: SidebarGroupProps) {
         depth={depth}
         onClick={(e) => {
           // Linked category (has a landing page): let the underlying <Link>
-          // handle navigation. We only ensure the group expands — clicking the
-          // row never collapses it (the chevron does that). This gives the
-          // "navigate + keep expanded" behaviour for landing categories.
+          // handle navigation, but also toggle the group so a click on the
+          // row behaves like a container category — expand on the way in,
+          // collapse on the way back. This keeps navigate + toggle in sync
+          // whether the row is currently collapsed or expanded.
           if (item.link) {
-            if (collapsible && collapsed) {
-              toggleCollapse();
-            }
+            collapsible && toggleCollapse();
             return;
           }
           // Container-only category: clicking the row toggles expand/collapse.
