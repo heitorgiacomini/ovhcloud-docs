@@ -85,10 +85,7 @@ export function SidebarList({
           <img src="/images/ai.svg" alt="AI assistant" className="w-6 h-6" />
         </button>
       </div>
-      <ActiveBranchProvider
-        sidebarData={sidebarData}
-        setSidebarData={setSidebarData}
-      >
+      <ActiveBranchProvider sidebarData={sidebarData}>
         <div className="overflow-auto">
           {sidebarData.map((item, index) => {
             return (

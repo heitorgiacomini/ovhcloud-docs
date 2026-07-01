@@ -63,13 +63,17 @@ export interface SidebarGroupProps {
 
 export function SidebarGroup(props: SidebarGroupProps) {
   const activeMatcher = useActiveMatcher();
-  const { activeId, notifyClick } = useActiveBranch();
+  const { activeId, notifyClick, shouldForceCollapse } = useActiveBranch();
   const { item, depth, id, setSidebarData, className } = props;
   // A linked category can itself be multi-located: highlight it only when it
   // is the single resolved-active instance, not merely a route match.
   const active = item.link && activeMatcher(item.link) && id === activeId;
-  const { collapsed = false, collapsible = true } =
+  const { collapsed: rawCollapsed = false, collapsible = true } =
     item as NormalizedSidebarGroup;
+  // A "wrong" branch of a multi-located guide is forced collapsed even though
+  // Rspress auto-expanded it (see ActiveBranchProvider). Otherwise honour the
+  // group's own collapse state (config default + user toggles).
+  const collapsed = shouldForceCollapse(id) || rawCollapsed;
 
   const toggleCollapse = (): void => {
     // update collapsed state

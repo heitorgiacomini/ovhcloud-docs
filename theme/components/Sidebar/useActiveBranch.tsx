@@ -3,7 +3,6 @@ import { useActiveMatcher } from '@rspress/core/runtime';
 import {
   createContext,
   useContext,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -41,11 +40,18 @@ interface ActiveBranchContextValue {
   activeId: string | null;
   /** Record that the user clicked a specific instance (by its tree-path id). */
   notifyClick: (id: string) => void;
+  /**
+   * True when the group at `id` holds a route-matching instance but is NOT on
+   * the resolved active path — i.e. it is a "wrong" branch of a multi-located
+   * guide and must be kept collapsed even though Rspress auto-expanded it.
+   */
+  shouldForceCollapse: (id: string) => boolean;
 }
 
 const ActiveBranchContext = createContext<ActiveBranchContextValue>({
   activeId: null,
   notifyClick: () => {},
+  shouldForceCollapse: () => false,
 });
 
 /**
@@ -97,93 +103,6 @@ function collectCandidates(
   return candidates;
 }
 
-/** All ancestor-group ids of an instance id, excluding the instance itself. */
-function ancestorIdsOf(id: string): string[] {
-  const parts = id.split('-');
-  const ancestors: string[] = [];
-  for (let i = 1; i < parts.length; i++) {
-    ancestors.push(parts.slice(0, i).join('-'));
-  }
-  return ancestors;
-}
-
-/** Read `collapsed` of the group at `groupId`, or undefined if not a group. */
-function getCollapsedAt(
-  data: SidebarData,
-  groupId: string,
-): boolean | undefined {
-  const indexes = groupId.split('-').map(Number);
-  let current: SidebarNode | undefined = data[indexes[0]];
-  for (let i = 1; i < indexes.length && current; i++) {
-    if (!isSidebarGroup(current)) return undefined;
-    current = (current as NormalizedSidebarGroup).items[
-      indexes[i]
-    ] as SidebarNode;
-  }
-  return current && 'items' in current
-    ? (current as NormalizedSidebarGroup).collapsed
-    : undefined;
-}
-
-/** Set `collapsed` on the group at `groupId` within a cloned tree. */
-function setCollapsedAt(
-  data: SidebarData,
-  groupId: string,
-  collapsed: boolean,
-): void {
-  const indexes = groupId.split('-').map(Number);
-  let current: SidebarNode | undefined = data[indexes[0]];
-  for (let i = 1; i < indexes.length && current; i++) {
-    if (!isSidebarGroup(current)) return;
-    current = (current as NormalizedSidebarGroup).items[
-      indexes[i]
-    ] as SidebarNode;
-  }
-  if (current && 'items' in current) {
-    (current as NormalizedSidebarGroup).collapsed = collapsed;
-  }
-}
-
-/**
- * Reconcile branch expansion for a multi-located guide:
- *  - collapse, for each non-resolved candidate, its SHALLOWEST ancestor group
- *    not shared with the resolved instance (closes the whole wrong branch);
- *  - (re-)open every ancestor of the resolved instance, so a branch that a
- *    prior transient resolution had collapsed is corrected in the same pass.
- * The shared product family (a common ancestor) is thus always left open.
- * Returns a new (mutated clone) sidebar tree; the caller passes the previous
- * state. Returns the input unchanged when nothing needs to move.
- */
-function collapseAncestorsOf(
-  data: SidebarData,
-  nonResolved: string[],
-  activeId: string,
-): SidebarData {
-  const openIds = ancestorIdsOf(activeId);
-  const keepOpen = new Set([activeId, ...openIds]);
-  const collapseIds = new Set<string>();
-  for (const id of nonResolved) {
-    // ancestorIdsOf returns shallow→deep; the first not shared with the
-    // resolved instance is the divergence point for this branch.
-    const divergent = ancestorIdsOf(id).find((a) => !keepOpen.has(a));
-    if (divergent) collapseIds.add(divergent);
-  }
-  if (collapseIds.size === 0) return data;
-
-  // No-op guard: if the tree is already in the desired state, return the SAME
-  // reference so React skips a needless re-render (and so this function can
-  // never drive a render loop even if effect deps change in future).
-  const alreadyDone =
-    openIds.every((id) => getCollapsedAt(data, id) !== true) &&
-    [...collapseIds].every((id) => getCollapsedAt(data, id) === true);
-  if (alreadyDone) return data;
-
-  const clone = structuredClone(data);
-  for (const id of openIds) setCollapsedAt(clone, id, false);
-  for (const id of collapseIds) setCollapsedAt(clone, id, true);
-  return clone;
-}
-
 function readStoredBranch(): string | null {
   try {
     return sessionStorage.getItem(STORAGE_KEY);
@@ -201,13 +120,47 @@ function writeStoredBranch(branch: string): void {
   }
 }
 
+/**
+ * The shallowest ancestor of `id` that is NOT shared with `activeId` — the
+ * point where this candidate's branch diverges from the resolved branch.
+ * Collapsing that one group hides the whole wrong branch.
+ */
+function divergencePoint(id: string, activeId: string): string | null {
+  const a = id.split('-');
+  const b = activeId.split('-');
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  // a[0..i] is the shared prefix; the divergent group is a[0..i] inclusive of
+  // the first differing segment, i.e. index i (must still be a group, i.e. not
+  // the leaf itself).
+  if (i >= a.length) return null;
+  return a.slice(0, i + 1).join('-');
+}
+
+const SUPPRESS_KEY = 'ovh.sidebar.suppressedBranches';
+
+function readSuppressed(): Set<string> {
+  try {
+    const raw = sessionStorage.getItem(SUPPRESS_KEY);
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function writeSuppressed(set: Set<string>): void {
+  try {
+    sessionStorage.setItem(SUPPRESS_KEY, JSON.stringify([...set]));
+  } catch {
+    // ignore
+  }
+}
+
 export function ActiveBranchProvider({
   sidebarData,
-  setSidebarData,
   children,
 }: {
   sidebarData: SidebarData;
-  setSidebarData: React.Dispatch<React.SetStateAction<SidebarData>>;
   children: React.ReactNode;
 }) {
   const activeMatcher = useActiveMatcher();
@@ -293,29 +246,60 @@ export function ActiveBranchProvider({
     if (clickedRef.current === activeId) clickedRef.current = null;
   }, [activeId, mounted]);
 
-  // Rspress's createInitialSidebar auto-expands EVERY group that contains the
-  // active link — so a multi-located guide opens all of its branches. Once we
-  // have resolved a single active instance, re-collapse the branches that were
-  // only expanded because they hold a NON-resolved candidate. Groups that are
-  // ancestors of the resolved instance are left untouched (they must stay
-  // open).
+  // Rspress's createInitialSidebar only ever sets `collapsed = false` and, on
+  // navigation, mutates the shared sidebar data IN PLACE (no clone) — so a
+  // branch opened for one route stays open forever, even after you navigate
+  // away. For a multi-located guide this means the "wrong" branch, opened the
+  // first time you visited, leaks open on every later page.
   //
-  // This MUST be a passive effect (useEffect), not useLayoutEffect: Rspress's
-  // own useSidebarDynamic runs a useLayoutEffect that rebuilds+re-expands the
-  // sidebar on every route change. Child layout effects fire before the
-  // parent's, so a layout-effect collapse here would be clobbered by Rspress's
-  // re-expansion. A passive effect runs after all layout effects, so our
-  // collapse wins. Keyed on the resolved id + candidate set so it runs once
-  // per route, not on every user toggle within the same page — leaving manual
-  // expand/collapse intact.
-  useEffect(() => {
-    if (!mounted || !activeId || candidates.length < 2) return;
-    const toCollapse = candidates.filter(
-      (id) => id !== activeId && !isAncestorId(id, activeId),
-    );
-    if (toCollapse.length === 0) return;
-    setSidebarData((data) => collapseAncestorsOf(data, toCollapse, activeId));
-  }, [mounted, activeId, candidates, setSidebarData]);
+  // We track those wrong branches in a session-scoped set (their divergence
+  // group id) and force-collapse them on every render until the visitor
+  // actually navigates INTO one (active item inside it), at which point it is
+  // un-suppressed. This is declarative (recomputed each render) so it survives
+  // Rspress's per-route rebuild, and session-scoped so it survives navigation.
+  const suppressedRef = useRef<Set<string>>(readSuppressed());
+  const [suppressedVersion, bumpSuppressed] = useState(0);
+
+  useLayoutEffect(() => {
+    if (!mounted || !activeId) return;
+    const set = suppressedRef.current;
+    let changed = false;
+
+    // Add the divergence point of every non-resolved candidate on this route.
+    if (candidates.length > 1) {
+      for (const id of candidates) {
+        if (id === activeId || isAncestorId(id, activeId)) continue;
+        const dp = divergencePoint(id, activeId);
+        if (dp && !set.has(dp)) {
+          set.add(dp);
+          changed = true;
+        }
+      }
+    }
+
+    // Un-suppress any branch the visitor is now inside (active item within it).
+    for (const dp of set) {
+      if (isAncestorId(dp, activeId)) {
+        set.delete(dp);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      writeSuppressed(set);
+      bumpSuppressed((v) => v + 1);
+    }
+  }, [mounted, activeId, candidates]);
+
+  // suppressedVersion is intentionally a trigger dep: it re-creates this
+  // callback (which reads the mutable suppressedRef) whenever the suppressed
+  // set changes, so SidebarGroup re-renders with the new collapse decision.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional trigger dep
+  const shouldForceCollapse = useMemo(() => {
+    const set = suppressedRef.current;
+    return (groupId: string): boolean =>
+      set.has(groupId) && !isAncestorId(groupId, activeId);
+  }, [activeId, suppressedVersion]);
 
   const value = useMemo<ActiveBranchContextValue>(
     () => ({
@@ -323,8 +307,9 @@ export function ActiveBranchProvider({
       notifyClick: (id: string) => {
         clickedRef.current = id;
       },
+      shouldForceCollapse,
     }),
-    [activeId],
+    [activeId, shouldForceCollapse],
   );
 
   return (
