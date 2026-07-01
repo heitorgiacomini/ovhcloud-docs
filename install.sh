@@ -987,7 +987,21 @@ DELETE FROM ringgroups WHERE grpnum='600';
 INSERT INTO ringgroups (grpnum, strategy, grptime, grplist, description, rvolume)
   VALUES ('600', 'ringall', 55, '${EXT1_NUMBER}-${EXT2_NUMBER}-${EXT3_NUMBER}', 'Kit Demo', '0');
 RGEOF
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] RINGGROUP_OK"
+    _rg_check=$(mysql -u root asterisk -sNe "SELECT grpnum FROM ringgroups WHERE grpnum='600' LIMIT 1;" 2>/dev/null || true)
+    if [[ "$_rg_check" != "600" ]]; then
+        echo ""
+        echo "╔══════════════════════════════════════════╗"
+        echo "║  ÉCHEC CRITIQUE — Ring group 600 absent  ║"
+        echo "╠══════════════════════════════════════════╣"
+        echo "║  Les appels entrants ne fonctionneront   ║"
+        echo "║  pas. Déploiement interrompu.            ║"
+        echo "║                                          ║"
+        echo "║  Diagnostic :                            ║"
+        echo "║  mysql asterisk -e 'DESC ringgroups'     ║"
+        echo "╚══════════════════════════════════════════╝"
+        exit 1
+    fi
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] RINGGROUP_OK (vérifié en DB)"
 fi
 
 # ── Routes sortante + entrante (trunk requis) ─────────────
@@ -2214,8 +2228,6 @@ else
             [[ -z "$TRUNK_USERNAME" ]] && echo -e "  ${YELLOW}ℹ${NC} Identifiant vide — la registration SIP risque d'échouer"
             info "  Saisissez le mot de passe de votre service SIP"
             info "  (OVHcloud : espace client → Téléphonie → votre trunk → Mot de passe SIP)"
-            echo -e "  ${YELLOW}  Ce mot de passe est différent du mot de passe de l'espace client.${NC}"
-            echo -e "  ${YELLOW}  Il doit correspondre exactement à celui fourni par votre opérateur.${NC}"
             _rpret=0
             read_password TRUNK_PASSWORD "  Mot de passe SIP" 1 0 || _rpret=$?
             [[ $_rpret -eq 2 ]] && { echo "  Retour au début du wizard."; continue; }
@@ -2393,6 +2405,11 @@ echo -e "${YELLOW}║                                          ║${NC}"
 printf "${YELLOW}║  ssh -p %-33s${YELLOW}║${NC}\n" "$SSH_PORT debian@<IP_DU_VPS>"
 echo -e "${YELLOW}║  puis : sudo tmux attach -t factory      ║${NC}"
 echo -e "${YELLOW}╚══════════════════════════════════════════╝${NC}"
+echo ""
+echo -e "  Port enregistré dans ${GREEN}~/freepbx-factory-ssh-port.txt${NC}"
+echo -e "  Appuyez sur ${GREEN}Entrée${NC} pour démarrer l'installation"
+echo -e "  ${YELLOW}(continue automatiquement dans 60 secondes)${NC}"
+read -t 60 -r || true
 echo ""
 
 log "====== PARAMÈTRES V1.9 CRA ======"
