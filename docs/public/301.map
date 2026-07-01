@@ -228,3 +228,12 @@
 
 # OverTheBox (FR-only): overview page replaced by a landing page
 /fr/guides/web-cloud/internet/overthebox/overview /fr/guides/web-cloud/internet/overthebox/landing-page-overthebox;
+
+# Web Hosting overview -> product landing page
+/en/guides/web-cloud/web-hosting/overview /en/guides/web-cloud/web-hosting/landing-page-web-hosting;
+/fr/guides/web-cloud/web-hosting/overview /fr/guides/web-cloud/web-hosting/landing-page-web-hosting;
+/de/guides/web-cloud/web-hosting/overview /de/guides/web-cloud/web-hosting/landing-page-web-hosting;
+/es/guides/web-cloud/web-hosting/overview /es/guides/web-cloud/web-hosting/landing-page-web-hosting;
+/it/guides/web-cloud/web-hosting/overview /it/guides/web-cloud/web-hosting/landing-page-web-hosting;
+/pl/guides/web-cloud/web-hosting/overview /pl/guides/web-cloud/web-hosting/landing-page-web-hosting;
+/pt/guides/web-cloud/web-hosting/overview /pt/guides/web-cloud/web-hosting/landing-page-web-hosting;
