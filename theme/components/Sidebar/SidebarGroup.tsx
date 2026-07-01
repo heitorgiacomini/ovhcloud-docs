@@ -9,6 +9,7 @@ import { IconArrowRight as ArrowRight, SvgWrapper } from '@theme-original';
 import clsx from 'clsx';
 import type React from 'react';
 import { SidebarDivider } from './SidebarDivider';
+import { useActiveBranch } from './useActiveBranch';
 import './SidebarGroup.scss';
 import { SidebarItem as SidebarItemComp, SidebarItemRaw } from './SidebarItem';
 import { SidebarSectionHeader } from './SidebarSectionHeader';
@@ -62,8 +63,11 @@ export interface SidebarGroupProps {
 
 export function SidebarGroup(props: SidebarGroupProps) {
   const activeMatcher = useActiveMatcher();
+  const { activeId, notifyClick } = useActiveBranch();
   const { item, depth, id, setSidebarData, className } = props;
-  const active = item.link && activeMatcher(item.link);
+  // A linked category can itself be multi-located: highlight it only when it
+  // is the single resolved-active instance, not merely a route match.
+  const active = item.link && activeMatcher(item.link) && id === activeId;
   const { collapsed = false, collapsible = true } =
     item as NormalizedSidebarGroup;
 
@@ -103,6 +107,7 @@ export function SidebarGroup(props: SidebarGroupProps) {
           // collapse on the way back. This keeps navigate + toggle in sync
           // whether the row is currently collapsed or expanded.
           if (item.link) {
+            notifyClick(id);
             collapsible && toggleCollapse();
             return;
           }
@@ -172,6 +177,7 @@ export function SidebarGroup(props: SidebarGroupProps) {
               <SidebarItemComp
                 // biome-ignore lint/suspicious/noArrayIndexKey: sidebar items have no stable unique ID
                 key={index}
+                id={`${id}-${index}`}
                 item={item}
                 depth={depth + 1}
                 className="rp-sidebar-item--group-item"
