@@ -843,8 +843,6 @@ INSERT INTO sip (id, keyword, data, flags) VALUES
   ('${num}','rtcp_mux',             'no',                           13),
   ('${num}','rtp_symmetric',        'yes',                          23),
   ('${num}','rtp_keepalive',        '5',                            41),
-  ('${num}','rtp_timeout',          '0',                            42),
-  ('${num}','rtp_timeout_hold',     '0',                            43),
   ('${num}','secret',               '${pass}',                       2),
   ('${num}','secret_origional',     '${pass}',                      48),
   ('${num}','send_connected_line',  'yes',                           6),
@@ -2833,6 +2831,66 @@ else
 fi
 
 # ════════════════════════════════════════════════════════════════════════════
+# SMOKE TEST — Vérification services (A2)
+# ════════════════════════════════════════════════════════════════════════════
+log ""
+log "=== SMOKE TEST ==="
+_SMOKE_OK=0
+_SMOKE_FAIL=0
+_smoke() {
+    local label="$1" ok="$2"
+    if [[ "$ok" == "1" ]]; then
+        echo "  ✅ $label"
+        (( _SMOKE_OK++ ))
+    else
+        echo "  ❌ $label"
+        (( _SMOKE_FAIL++ ))
+    fi
+}
+
+# PM2 : 4 services online
+_pm2_count=$(fwconsole pm2 --list 2>/dev/null | grep -c 'online' || echo "0")
+_smoke "PM2 — 4 services online (obtenu: ${_pm2_count})" "$([ "$_pm2_count" -ge 4 ] && echo 1 || echo 0)"
+
+# fail2ban : 7 jails
+_fb_jails=$(fail2ban-client status 2>/dev/null | grep -oP 'Number of jails:\s*\K\d+' || echo "0")
+_smoke "fail2ban — 7 jails actifs (obtenu: ${_fb_jails})" "$([ "$_fb_jails" -eq 7 ] && echo 1 || echo 0)"
+
+# strictrtp=no
+_strictrtp=$(grep -oP '^strictrtp=\K\S+' /etc/asterisk/rtp_additional.conf 2>/dev/null || echo "absent")
+_smoke "strictrtp=no — NAT smartphones (obtenu: ${_strictrtp})" "$([ "$_strictrtp" = "no" ] && echo 1 || echo 0)"
+
+# rtp_timeout=0
+_rtptout=$(grep -oP '^rtp_timeout=\K\d+' /etc/asterisk/pjsip.endpoint.conf 2>/dev/null | head -1 || echo "absent")
+_smoke "rtp_timeout=0 — appels background (obtenu: ${_rtptout})" "$([ "$_rtptout" = "0" ] && echo 1 || echo 0)"
+
+# Transport IPv6 actif
+_ipv6_ok=$(asterisk -rx 'pjsip show transports' 2>/dev/null | grep -c '::' || echo "0")
+_smoke "Transport IPv6 PJSIP (obtenu: ${_ipv6_ok} transport(s))" "$([ "$_ipv6_ok" -ge 1 ] && echo 1 || echo 0)"
+
+# Trunk SIP (si activé)
+if [[ "$TRUNK_ENABLED" == "oui" && -n "$TRUNK_REGISTRAR" ]]; then
+    _trunk_reg=$(asterisk -rx 'pjsip show registrations' 2>/dev/null | grep -oiE 'Registered|Failed|Unregistered|NoAuth' | head -1 || echo "inconnu")
+    _smoke "Trunk SIP — Registered (obtenu: ${_trunk_reg})" "$([ "${_trunk_reg,,}" = "registered" ] && echo 1 || echo 0)"
+fi
+
+# Kit starter : ring group + AstDB (si activé)
+if [[ "$KIT_STARTER" == "oui" ]]; then
+    _rg=$(mysql asterisk -sNe "SELECT COUNT(*) FROM ringgroups WHERE grpnum='600'" 2>/dev/null || echo "0")
+    _smoke "Ring group 600 en DB (obtenu: ${_rg})" "$([ "$_rg" -ge 1 ] && echo 1 || echo 0)"
+    _astdb=$(asterisk -rx 'database show' 2>/dev/null | grep -c '/' || echo "0")
+    _smoke "AstDB — au moins 27 entrées (obtenu: ${_astdb})" "$([ "$_astdb" -ge 27 ] && echo 1 || echo 0)"
+fi
+
+echo ""
+_SMOKE_TOTAL=$(( _SMOKE_OK + _SMOKE_FAIL ))
+if [[ $_SMOKE_FAIL -eq 0 ]]; then
+    echo -e "  ${GREEN}SMOKE TEST : ${_SMOKE_OK}/${_SMOKE_TOTAL} ✅  — tous les services opérationnels${NC}"
+else
+    echo -e "  ${YELLOW}SMOKE TEST : ${_SMOKE_OK}/${_SMOKE_TOTAL} — ${_SMOKE_FAIL} ❌  — vérifier les points en échec${NC}"
+fi
+
+# ════════════════════════════════════════════════════════════════════════════
 # RAPPORT DE LIVRAISON — CRA EU 2024/2847 (traçabilité déploiement)
 # ════════════════════════════════════════════════════════════════════════════
 REPORT_FILE="/root/freepbx-factory-delivery-report.txt"
@@ -2842,6 +2900,8 @@ DEPLOY_DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 _ext_info="désactivé" ; [[ "$KIT_STARTER" == "oui" ]] && _ext_info="$EXT1_NUMBER / $EXT2_NUMBER / $EXT3_NUMBER"
 # Registrar SIP pour les softphones : domaine si TLS actif, sinon IP du serveur
 _SIP_SERVER="${TLS_DOMAIN:-$VPS_IP}"
+# IPv6 server pour smartphones en réseau IPv6-only
+_VPS_IPV6=$(ip -6 route get 2001:4860:4860::8888 2>/dev/null | grep -oP 'src \K\S+' | grep -v '^fe80' | head -1 || echo "")
 
 cat > "$REPORT_FILE" << REPORTEOF
 ═══════════════════════════════════════════════════════════
@@ -2861,7 +2921,7 @@ $([ -n "${TLS_DOMAIN}" ] && printf "\nDOMAINE ACTIF : %s\n  Accès GUI HTTPS   :
 REGISTRAR SIP POUR LES SOFTPHONES
   Protocole   : PJSIP  —  port 5060 (UDP)
   Serveur SIP : ${_SIP_SERVER}
-  ($([ -n "${TLS_DOMAIN}" ] && echo "domaine TLS actif — utiliser ce domaine dans vos softphones" || echo "IP du serveur — configurer un domaine ulterieurement si besoin"))
+$([ -n "${_VPS_IPV6}" ] && printf "  Serveur SIPv6 : %s  (smartphones IPv6-only)\n" "${_VPS_IPV6}")  ($([ -n "${TLS_DOMAIN}" ] && echo "domaine TLS actif — utiliser ce domaine dans vos softphones" || echo "IP du serveur — configurer un domaine ulterieurement si besoin"))
 
 OPTIONS DÉPLOYÉES
   Kit starter : ${KIT_STARTER}  (extensions : ${_ext_info})
@@ -2913,7 +2973,7 @@ if [[ "$KIT_STARTER" == "oui" ]]; then
 
 KIT STARTER — CONFIGURATION SOFTPHONES
   Serveur SIP : ${_SIP_SERVER}
-  Port SIP    : 5060 (UDP / PJSIP)
+$([ -n "${_VPS_IPV6}" ] && printf "  Serveur SIPv6 : %s  (smartphones IPv6-only)\n" "${_VPS_IPV6}")  Port SIP    : 5060 (UDP / PJSIP)
 
   Extension ${EXT1_NUMBER} — ${EXT1_NAME}
     Compte SIP   : ${EXT1_NUMBER}
@@ -3059,6 +3119,7 @@ if [[ "$KIT_STARTER" == "oui" ]]; then
     echo -e "${GREEN}  ── CONFIGURATION SOFTPHONES ──────────────────────────${NC}"
     echo    "  Protocole  : PJSIP"
     echo    "  Serveur SIP: ${_SIP_SERVER}"
+    [[ -n "${_VPS_IPV6}" ]] && echo "  Serveur SIPv6: ${_VPS_IPV6}  (smartphones IPv6-only)"
     echo    "  Port SIP   : 5060 (UDP)"
     echo    "  Domaine    : ${_SIP_SERVER}"
     echo ""
