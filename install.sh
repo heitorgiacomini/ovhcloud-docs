@@ -822,7 +822,7 @@ INSERT INTO sip (id, keyword, data, flags) VALUES
   ('${num}','icesupport',           'no',                           12),
   ('${num}','match',                '',                             39),
   ('${num}','max_audio_streams',    '1',                            29),
-  ('${num}','max_contacts',         '1',                            20),
+  ('${num}','max_contacts',         '5',                            20),
   ('${num}','max_video_streams',    '1',                            30),
   ('${num}','maximum_expiration',   '7200',                         40),
   ('${num}','media_address',        '',                             35),
@@ -842,6 +842,7 @@ INSERT INTO sip (id, keyword, data, flags) VALUES
   ('${num}','rewrite_contact',      'yes',                          24),
   ('${num}','rtcp_mux',             'no',                           13),
   ('${num}','rtp_symmetric',        'yes',                          23),
+  ('${num}','rtp_keepalive',        '5',                            41),
   ('${num}','rtp_timeout',          '0',                            42),
   ('${num}','rtp_timeout_hold',     '0',                            43),
   ('${num}','secret',               '${pass}',                       2),
@@ -1060,12 +1061,33 @@ ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall' || true
 # restart (pas reload) : recréer les chaînes iptables après ufw enable (E24)
 systemctl restart fail2ban
 
-# ── strictrtp=no — audio bidirectionnel smartphones NAT (E27) ─
-# fwconsole reload régénère rtp_additional.conf avec strictrtp=yes ;
-# on corrige après le dernier reload et on recharge uniquement le module RTP.
+# ── strictrtp=no + rtp_timeout=0 — audio smartphones NAT (E27) ──
+# fwconsole reload régénère ces fichiers avec des valeurs incompatibles smartphones :
+#   rtp_additional.conf → strictrtp=yes  (audio unidirectionnel derrière CGNAT)
+#   pjsip.endpoint.conf → rtp_timeout=30 (appel coupé après 30s silence / app arrière-plan)
+# On corrige après le dernier reload ; un reload manuel ultérieur nécessiterait de relancer ces sed.
 sed -i 's/^strictrtp=yes/strictrtp=no/' /etc/asterisk/rtp_additional.conf || true
 asterisk -rx 'module reload res_rtp_asterisk' 2>/dev/null || true
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] STRICTRTP_NO_OK"
+sed -i 's/^rtp_timeout=30$/rtp_timeout=0/' /etc/asterisk/pjsip.endpoint.conf || true
+sed -i 's/^rtp_timeout_hold=300$/rtp_timeout_hold=0/' /etc/asterisk/pjsip.endpoint.conf || true
+asterisk -rx 'module reload res_pjsip' 2>/dev/null || true
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] RTP_TIMEOUT_ZERO_OK"
+
+# ── Transport PJSIP IPv6 — smartphones IPv6 (E28) ─────────────
+# pjsip.transports.conf (auto-généré) ne crée qu'un transport UDP IPv4.
+# On ajoute le transport IPv6 dans le fichier custom_post (survit aux fwconsole reload).
+cat > /etc/asterisk/pjsip.transports_custom_post.conf << 'IPVSIX'
+[0.0.0.0-udp-ipv6]
+type=transport
+protocol=udp
+bind=:::5060
+allow_reload=no
+tos=cs3
+cos=3
+IPVSIX
+asterisk -rx 'module reload res_pjsip' 2>/dev/null || true
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] PJSIP_IPV6_TRANSPORT_OK"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ROUTES_DIALPLAN_OK"
 
