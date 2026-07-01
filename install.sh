@@ -628,7 +628,7 @@ action   = iptables-allports[name=ssh-iptables, protocol=all]
 enabled  = true
 filter   = asterisk
 logpath  = /var/log/asterisk/fail2ban
-maxretry = 15
+maxretry = 25
 bantime  = 86400
 action   = iptables-allports[name=asterisk-iptables, protocol=all]
 
@@ -636,7 +636,7 @@ action   = iptables-allports[name=asterisk-iptables, protocol=all]
 enabled  = true
 filter   = pbx-gui
 logpath  = /var/log/asterisk/freepbx_security.log
-maxretry = 3
+maxretry = 5
 bantime  = 86400
 action   = iptables-allports[name=pbx-gui, protocol=all]
 
@@ -807,7 +807,7 @@ INSERT INTO sip (id, keyword, data, flags) VALUES
   ('${num}','account',              '${num}',                       50),
   ('${num}','accountcode',          '',                             19),
   ('${num}','aggregate_mwi',        'yes',                          27),
-  ('${num}','allow',                'opus,ulaw,alaw',               17),
+  ('${num}','allow',                'alaw,ulaw,g729',               17),
   ('${num}','avpf',                 'no',                           11),
   ('${num}','bundle',               'no',                           28),
   ('${num}','callerid',             '${safe_name} <${num}>',        51),
@@ -959,7 +959,7 @@ INSERT INTO pjsip (id, keyword, data, flags) VALUES
   (@tid, 'from_domain',              '${_st_reg}',          0),
   (@tid, 'context',                  'from-pstn',           0),
   (@tid, 'transport',                '0.0.0.0-udp',         0),
-  (@tid, 'codecs',                   'ulaw,alaw,gsm,g726,g722', 0),
+  (@tid, 'codecs',                   'alaw,ulaw,g729', 0),
   (@tid, 'expiration',               '3600',                0),
   (@tid, 'retry_interval',           '60',                  0),
   (@tid, 'fatal_retry_interval',     '60',                  0),
@@ -1059,6 +1059,14 @@ fwconsole firewall stop 2>/dev/null || true
 ufw --force enable 2>&1 | grep -E 'active|enabled|Firewall' || true
 # restart (pas reload) : recréer les chaînes iptables après ufw enable (E24)
 systemctl restart fail2ban
+
+# ── strictrtp=no — audio bidirectionnel smartphones NAT (E27) ─
+# fwconsole reload régénère rtp_additional.conf avec strictrtp=yes ;
+# on corrige après le dernier reload et on recharge uniquement le module RTP.
+sed -i 's/^strictrtp=yes/strictrtp=no/' /etc/asterisk/rtp_additional.conf || true
+asterisk -rx 'module reload res_rtp_asterisk' 2>/dev/null || true
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] STRICTRTP_NO_OK"
+
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ROUTES_DIALPLAN_OK"
 
 # ── chan_ooh323 + chan_iax2 : désactivation (E11) ─────────
