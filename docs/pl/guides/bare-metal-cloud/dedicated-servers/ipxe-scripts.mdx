@@ -68,7 +68,7 @@ Przykład:
     "rootDevice": null,
     "rescueMail": null,
     "linkSpeed": 1000,
-    "bootScript": "#!ipxe\necho Boot first local hdd in LEGACY mode\nsanboot --no-describe --drive 0x80\nexit 1\n",
+    "bootScript": "#!ipxe\necho Chainloading netboot.xyz\ndhcp\nchain --autofree https://boot.netboot.xyz\n",
     "reverse": "nsXXXXXXX.ip-XXX-XXX-XXX.eu",
     "state": "ok",
     "ip": "XXX.XXX.XXX.XXX",
