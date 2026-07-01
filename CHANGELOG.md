@@ -3,8 +3,10 @@
 ## 2026.07.01
 
 ### Fixes
+- **sidebar:** stop wrong branch of multi-located guide leaking open
 - **banner:** stop SIRET icon zooming + roll banner out to FR billing guides
 - **managed-private-registry:** bump Harbor version to 2.15.1 in FAQ (#317)
+- **sidebar:** keep active branch when opening a multi-located guide
 - **landing-pages:** clean titles, tab labels and sidebar collapse
 
 ### Maintenance
