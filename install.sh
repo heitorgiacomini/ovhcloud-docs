@@ -1912,7 +1912,8 @@ if [[ -z "${FACTORY_IN_TMUX:-}" ]]; then
     # SSH_CLIENT / SSH_CONNECTION transmis pour que la détection IP de gestion fonctionne dans tmux
     _FWD_ENV_PREFIX="FACTORY_IN_TMUX=1${SSH_CLIENT:+ SSH_CLIENT='${SSH_CLIENT}'}${SSH_CONNECTION:+ SSH_CONNECTION='${SSH_CONNECTION}'}${FACTORY_TEST_ADMIN:+ FACTORY_TEST_ADMIN='${FACTORY_TEST_ADMIN}'}${FACTORY_TEST_PASS:+ FACTORY_TEST_PASS='${FACTORY_TEST_PASS}'}"
     tmux new-session -d -s factory -x 220 -y 50 \
-        "$_FWD_ENV_PREFIX bash '$_SCRIPT_PATH' $_FWD_ARGS; echo ''; if [ -f /tmp/fpbx_deploy_done ]; then echo '-- Déploiement terminé — Appuyer sur Entrée --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) — Appuyer sur Entrée --'; fi; read _unused"
+        "$_FWD_ENV_PREFIX bash '$_SCRIPT_PATH' $_FWD_ARGS; echo ''; if [ -f /tmp/fpbx_deploy_done ]; then echo '-- Déploiement terminé --'; rm -f /tmp/fpbx_deploy_done; else echo '-- Session terminée (annulée ou interrompue) --'; fi; echo '   Pour faire défiler : Ctrl+B  [  puis PgUp / flèches.  Entrée pour quitter.'; read _unused"
+    tmux set-option -t factory history-limit 20000 2>/dev/null || true
     tmux attach-session -t factory
     exit 0
 fi
@@ -2803,9 +2804,22 @@ fwconsole pm2 --list 2>/dev/null || echo "PM2 check — voir fwconsole pm2 --lis
 echo -e "${CYAN}--- GUI ---${NC}"
 curl -s -o /dev/null -w 'HTTP GUI: %{http_code}\n' http://localhost/admin/ 2>/dev/null || true
 echo -e "${CYAN}--- Ports sensibles TCP ---${NC}"
-ss -tlnp | grep -E ':1720|:3306' && echo 'ATTENTION port exposé' || echo 'Ports 1720/3306 : fermés OK'
+_tcp_pub=$(ss -tlnp 2>/dev/null | grep -E ':1720|:3306' | grep -v '127\.0\.0\.1\|::1' || true)
+_tcp_lo=$(ss -tlnp 2>/dev/null | grep -E ':1720|:3306' | grep '127\.0\.0\.1\|::1' || true)
+if [[ -n "$_tcp_pub" ]]; then
+    echo "  Port réseau TCP actif (vérifier) : $_tcp_pub"
+elif [[ -n "$_tcp_lo" ]]; then
+    echo "  Port 3306 (MariaDB) : loopback uniquement — conforme"
+else
+    echo "  Ports 1720/3306 : non utilisés"
+fi
 echo -e "${CYAN}--- Ports sensibles UDP ---${NC}"
-ss -ulnp | grep -E ':69 |:5353 ' && echo 'ATTENTION port UDP exposé' || echo 'Ports 69/5353 : fermés OK'
+_udp_pub=$(ss -ulnp 2>/dev/null | grep -E ':69 |:5353 ' | grep -v '127\.0\.0\.1\|::1' || true)
+if [[ -n "$_udp_pub" ]]; then
+    echo "  Port réseau UDP actif (vérifier) : $_udp_pub"
+else
+    echo "  Ports 69/5353 : non utilisés — conforme"
+fi
 echo -e "${CYAN}--- Shell asterisk ---${NC}"
 getent passwd asterisk | cut -d: -f7
 echo -e "${CYAN}--- fail2ban ---${NC}"
@@ -2841,10 +2855,10 @@ _smoke() {
     local label="$1" ok="$2"
     if [[ "$ok" == "1" ]]; then
         echo "  ✅ $label"
-        (( _SMOKE_OK++ ))
+        _SMOKE_OK=$(( _SMOKE_OK + 1 ))
     else
         echo "  ❌ $label"
-        (( _SMOKE_FAIL++ ))
+        _SMOKE_FAIL=$(( _SMOKE_FAIL + 1 ))
     fi
 }
 
