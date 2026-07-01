@@ -583,6 +583,8 @@ action   = iptables-allports[name=apache-noscript, protocol=all]
 
 [recidive]
 enabled  = true
+filter   = recidive
+logpath  = /var/log/fail2ban.log
 bantime  = 604800
 findtime = 86400
 maxretry = 3
@@ -626,7 +628,7 @@ action   = iptables-allports[name=ssh-iptables, protocol=all]
 enabled  = true
 filter   = asterisk
 logpath  = /var/log/asterisk/fail2ban
-maxretry = 5
+maxretry = 15
 bantime  = 86400
 action   = iptables-allports[name=asterisk-iptables, protocol=all]
 
@@ -664,6 +666,8 @@ action   = iptables-allports[name=apache-noscript, protocol=all]
 
 [recidive]
 enabled  = true
+filter   = recidive
+logpath  = /var/log/fail2ban.log
 bantime  = 604800
 findtime = 86400
 maxretry = 3
@@ -856,17 +860,48 @@ EXTEOF
     echo "  MOT DE PASSE EXT $num : ${pass}"
 }
 
-# Sync AstDB — séparé de insert_extension() pour garantir que le CLI Asterisk
-# est stable (évite la race CLI juste après fwconsole reload endpoint)
+# Sync AstDB — attend la disponibilité du CLI, vérifie l'écriture, retry si nécessaire
 sync_astdb() {
     local num="$1"
-    [[ -z "$num" ]] && return
-    asterisk -rx "database put DEVICE ${num}/dial PJSIP/${num}"   >/dev/null 2>&1 || true
-    asterisk -rx "database put DEVICE ${num}/tech pjsip"          >/dev/null 2>&1 || true
-    asterisk -rx "database put DEVICE ${num}/type fixed"          >/dev/null 2>&1 || true
-    asterisk -rx "database put DEVICE ${num}/user ${num}"         >/dev/null 2>&1 || true
-    asterisk -rx "database put DEVICE ${num}/default_user ${num}" >/dev/null 2>&1 || true
-    asterisk -rx "database put AMPUSER ${num}/device ${num}"      >/dev/null 2>&1 || true
+    [[ -z "$num" ]] && return 0
+
+    local waited=0
+    while ! asterisk -rx 'core show version' >/dev/null 2>&1; do
+        sleep 3; waited=$((waited + 3))
+        [[ $waited -ge 30 ]] && { echo "  [WARN] AstDB ${num}: CLI indisponible après 30s"; return 0; }
+    done
+
+    local keys=(
+        "DEVICE ${num}/dial PJSIP/${num}"
+        "DEVICE ${num}/tech pjsip"
+        "DEVICE ${num}/type fixed"
+        "DEVICE ${num}/user ${num}"
+        "DEVICE ${num}/default_user ${num}"
+        "AMPUSER ${num}/device ${num}"
+    )
+    local entry
+    for entry in "${keys[@]}"; do
+        asterisk -rx "database put ${entry}" >/dev/null 2>&1 || true
+    done
+
+    local check
+    check=$(asterisk -rx "database get DEVICE ${num}/dial" 2>/dev/null || echo "")
+    if echo "$check" | grep -q "PJSIP/${num}"; then
+        echo "  AstDB ${num}: OK"
+        return 0
+    fi
+
+    echo "  AstDB ${num}: CLI instable, retry dans 5s..."
+    sleep 5
+    for entry in "${keys[@]}"; do
+        asterisk -rx "database put ${entry}" >/dev/null 2>&1 || true
+    done
+    check=$(asterisk -rx "database get DEVICE ${num}/dial" 2>/dev/null || echo "")
+    if echo "$check" | grep -q "PJSIP/${num}"; then
+        echo "  AstDB ${num}: OK (retry)"
+    else
+        echo "  [WARN] AstDB ${num}: toujours vide après retry — appels entrants non fonctionnels"
+    fi
 }
 
 if [[ -n "$EXT1_NUMBER" ]]; then
