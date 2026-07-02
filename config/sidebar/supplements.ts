@@ -7,6 +7,7 @@
  */
 
 import type { SidebarGroup, SidebarItem } from '@rspress/core';
+import { regionConfig } from '../regions';
 
 export type Locale = 'fr' | 'en' | 'de' | 'es' | 'it' | 'pl' | 'pt';
 
@@ -33,10 +34,7 @@ const localizedUrls: Record<string, Record<Locale, string>> = {
 export function getHeaderItems(locale: Locale): SidebarItem[] {
   return [
     { sectionHeaderText: 'sidebar.documentation' } as SidebarItem,
-    {
-      text: 'sidebar.apiReference',
-      link: 'https://api.eu.ovhcloud.com/console/',
-    },
+    { text: 'sidebar.apiReference', link: regionConfig.apiConsoleUrl },
     {
       text: 'sidebar.productChangelog',
       link: localizedUrls.changelog[locale],
