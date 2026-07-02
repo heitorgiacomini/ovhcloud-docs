@@ -1762,8 +1762,7 @@
                 + [Securing your domain name with DNSSEC](web-cloud/domains/dns-dnssec)
             + [Tutorials](web-cloud-domains-dns-tutorials)
                 + [Tutorial - Using Zonemaster](web-cloud/domains/dns-zonemaster)
-    + [Web Hosting](products/web-cloud-hosting)
-        + [Overview](web-cloud/web-hosting/overview)
+    + [Web Hosting](products/web-cloud-hosting){landing=web-cloud/web-hosting/landing-page-web-hosting}
         + [Getting started](web-cloud-hosting-getting-started){landing=web-cloud/web-hosting/landing-page-getting-started}
             + [Activating the 100M free hosting plan](web-cloud/web-hosting/activate-start10m)
             + [Getting started with an Individual or Business Web Hosting plan](web-cloud/web-hosting/web-hosting-getting-started)
@@ -2544,8 +2543,7 @@
         + [Enabling and configuring the Edge Network Firewall](bare-metal-cloud/dedicated-servers/firewall-network)
         + [How to protect a Game server with the application firewall](bare-metal-cloud/dedicated-servers/firewall-game-ddos)
         + [Monitoring DDoS attacks with the Network Security Dashboard](bare-metal-cloud/dedicated-servers/network-security-dashboard)
-    + [OVHcloud Connect](products/network-ovhcloud-connect)
-        + [Overview](network/ovhcloud-connect/overview)
+    + [OVHcloud Connect](products/network-ovhcloud-connect){landing=network/ovhcloud-connect/landing-page-ovhcloud-connect}
         + [Key Concepts](network-ovhcloud-connect-concepts)
             + [Introduction to OVHcloud Connect](network/ovhcloud-connect/introduction)
             + [Glossary](network/ovhcloud-connect/glossary)
