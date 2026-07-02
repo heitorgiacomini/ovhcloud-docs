@@ -3,11 +3,12 @@
 ## 2026.07.02
 
 ### Features
+- **ovhcloud-connect:** add product landing page, replace overview (#334)
 - add Web Hosting product landing page (replaces overview) (#326)
 - bump packages
 
 ### Documentation
-- 49 guides updated across de, en, es, fr, it, pl, pt
+- 65 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.01
 
