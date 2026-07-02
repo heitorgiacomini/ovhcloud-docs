@@ -1,14 +1,30 @@
+/* Two flex columns, filled row by row in the component. Sections stack tightly
+   from the top with a fixed gap — no empty space opens between them — and the
+   component balances the two columns' heights. */
 .rp-category-columns {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 3rem;
-  row-gap: 2.5rem;
+  display: flex;
+  gap: 2.5rem 3rem;
   margin: 1.5rem 0;
 }
 
+.rp-category-columns__group {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
 @media (max-width: 768px) {
+  /* Collapse to one column: dissolve the column wrappers so every section
+     becomes a direct flex child, then let each section's `order` (its source
+     index) restore the original top-to-bottom reading sequence. */
   .rp-category-columns {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .rp-category-columns__group {
+    display: contents;
   }
 
   /* In a single column, a blank continuation heading would inject a stray
