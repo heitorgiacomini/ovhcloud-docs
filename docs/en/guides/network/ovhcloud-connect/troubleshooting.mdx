@@ -88,39 +88,13 @@ Optical values show UP on both sides, but the Ethernet interface remains DOWN an
 | # | Possible cause | Solution |
 |---|---|---|
 | 1 | **SFP type mismatch** | The SFP must match the ordered bandwidth. Use **1000Base-LX/LH** for 1 Gbps, **10GBase-LR** for 10 Gbps, **100GBase-LR4** for 100 Gbps. |
-| 2 | **Auto-negotiation enabled** | Auto-negotiation is **not supported** on OVHcloud Connect. Disable it on your router (see commands below). |
+| 2 | **Auto-negotiation enabled** | Auto-negotiation is **not supported** on OVHcloud Connect. Disable it on your router (see below). |
 | 3 | **Speed mismatch** | Your interface speed must match the ordered link speed. Configure it explicitly. |
 | 4 | **Faulty SFP or transceiver** | Try replacing the SFP module on your side. |
 
 ### Disabling auto-negotiation
 
-**Cisco IOS:**
-
-```text
-interface GigabitEthernet0/0
- no negotiate auto
-```
-
-or:
-
-```text
-interface GigabitEthernet0/0
- speed nonegotiate
-```
-
-**Cisco NX-OS:**
-
-```text
-interface Ethernet1/1
- speed 1000
- no negotiate auto
-```
-
-**Juniper JunOS:**
-
-```text
-set interfaces ge-0/0/0 ether-options no-auto-negotiation
-```
+Disable autonegotiation on your router's interface, following your vendor's documentation. The port speed must be forced to match the ordered link (1 Gbps or 10 Gbps).
 
 ---
 
@@ -140,25 +114,6 @@ The physical link is up, but the BGP session does not reach the `Established` st
 | 6 | **PoP configuration not created in OVHcloud** | Verify in the OVHcloud Control Panel that a PoP configuration has been created for your service. Without it, OVHcloud's router will not peer. |
 | 7 | **MD5 authentication mismatch** | If MD5 is configured, the password must match on both sides. Check with your OVHcloud Connect service details. |
 
-### Verification commands
-
-**Cisco IOS:**
-
-```bash
-show ip bgp summary
-show bgp ipv4 unicast neighbors 192.0.2.1
-show interfaces GigabitEthernet0/0
-show ip interface brief
-```
-
-**Juniper JunOS:**
-
-```bash
-show bgp summary
-show bgp neighbor 192.0.2.1
-show interfaces terse
-```
-
 ### Diagnostic flowchart
 
 <img className="thumbnail" alt="Diagnostic flowchart for BGP session stuck in Active or Idle state" src="/images/network/ovhcloud-connect/troubleshooting/fig-2.svg" loading="lazy" />
@@ -173,32 +128,12 @@ The BGP session shows `Established`, but no prefixes are being received from OVH
 
 | # | Possible cause | Solution |
 |---|---|---|
-| 1 | **Missing `network` statement or export policy** | On your router, ensure you are advertising the correct prefixes using `network` commands (Cisco) or export policies (Juniper). See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). |
+| 1 | **Missing `network` statement or export policy** | On your router, ensure you are advertising the correct prefixes from your router. See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). |
 | 2 | **Prefix filter blocking routes** | Your import prefix-list may be too restrictive, filtering out OVHcloud routes. Check your prefix-lists and route policies. |
 | 3 | **vRack not associated** | OVHcloud routes are only exchanged if the OVHcloud Connect service is associated with a vRack. Verify the association in the Control Panel. See [Associate with vRack](/guides/network/ovhcloud-connect/associate-vrack). |
 | 4 | **AZ subnets not configured** | If no subnets are defined in the Availability Zone configuration, there will be no routes to exchange. See [Set up your vRack network](/guides/network/ovhcloud-connect/vrack-network-setup). |
 | 5 | **Maximum prefix limit reached** | OVHcloud supports up to **100 prefixes** per BGP session. If you exceed this limit, the session may stop accepting new routes. Aggregate your prefixes. |
 | 6 | **Route not in the routing table** | The prefix you are trying to advertise must exist in your router's routing table (via a connected network, static route, or IGP). |
-
-### Verification commands
-
-**Cisco IOS:**
-
-```bash
-show ip bgp summary
-show ip bgp neighbors 192.0.2.1 received-routes
-show ip bgp neighbors 192.0.2.1 advertised-routes
-show ip route bgp
-```
-
-**Juniper JunOS:**
-
-```bash
-show bgp summary
-show route receive-protocol bgp 192.0.2.1
-show route advertising-protocol bgp 192.0.2.1
-show route protocol bgp
-```
 
 ---
 
@@ -215,25 +150,6 @@ The BGP session oscillates between `Established` and `Active`/`Idle` states, cau
 | 3 | **BGP hold timer expiry** | Default BGP hold time is 90 seconds. If keepalives are lost due to link instability, the session drops. Consider adjusting BGP timers, but fix the root cause first. |
 | 4 | **CPU or memory overload on your router** | BGP processing may be delayed if the router is under high load. Check CPU and memory usage. |
 | 5 | **Aggressive prefix changes** | Rapidly withdrawing and re-advertising routes can trigger flap dampening. Stabilise your routing announcements. |
-
-### Verification commands
-
-**Cisco IOS:**
-
-```bash
-show interfaces GigabitEthernet0/0
-show ip bgp summary
-show ip bgp flap-statistics
-show log | include BGP
-```
-
-**Juniper JunOS:**
-
-```bash
-show interfaces ge-0/0/0 extensive
-show bgp summary
-show log messages | match BGP
-```
 
 ---
 
@@ -287,13 +203,6 @@ The connection is working, but throughput is lower than expected or latency is h
 | 6 | **TCP window size misconfiguration** | For high-bandwidth, high-latency links, ensure TCP window scaling is enabled on hosts to maximise throughput. |
 
 ### Verification commands
-
-**Cisco IOS:**
-
-```bash
-show interfaces GigabitEthernet0/0 | include rate|error|drop|CRC
-show ip route 172.16.1.0
-```
 
 **From a Linux host:**
 
@@ -356,8 +265,6 @@ You have two OVHcloud Connect links for redundancy, but traffic does not failove
 
 ### Verification commands
 
-**Cisco IOS:**
-
 ```bash
 show ip bgp
 show ip bgp summary
@@ -409,33 +316,6 @@ For the full list of prerequisites and limitations, see [Prerequisites & Limitat
 ---
 
 ## Quick reference: diagnostic commands
-
-### Cisco IOS / IOS-XE
-
-| Purpose | Command |
-|---|---|
-| Interface status | `show interfaces GigabitEthernet0/0` |
-| Interface brief | `show ip interface brief` |
-| BGP session summary | `show ip bgp summary` |
-| BGP neighbour details | `show bgp ipv4 unicast neighbors <peer-IP>` |
-| Routes received from peer | `show ip bgp neighbors <peer-IP> received-routes` |
-| Routes advertised to peer | `show ip bgp neighbors <peer-IP> advertised-routes` |
-| BGP routing table | `show ip route bgp` |
-| BGP flap statistics | `show ip bgp flap-statistics` |
-| Logs | `show log \| include BGP` |
-
-### Juniper JunOS
-
-| Purpose | Command |
-|---|---|
-| Interface status | `show interfaces ge-0/0/0 extensive` |
-| Interface summary | `show interfaces terse` |
-| BGP session summary | `show bgp summary` |
-| BGP neighbour details | `show bgp neighbor <peer-IP>` |
-| Routes received from peer | `show route receive-protocol bgp <peer-IP>` |
-| Routes advertised to peer | `show route advertising-protocol bgp <peer-IP>` |
-| BGP routing table | `show route protocol bgp` |
-| Logs | `show log messages \| match BGP` |
 
 ### Linux host
 

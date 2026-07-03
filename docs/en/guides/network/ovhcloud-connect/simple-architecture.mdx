@@ -97,13 +97,9 @@ Configure monitoring alerts for link status, BGP session, and bandwidth. See [Mo
 - BGP-capable network equipment
 - An IP addressing plan with no overlaps between your network and OVHcloud subnets
 
-### Architecture
-
-<img className="thumbnail" alt="WAN OVHcloud Connect architecture" src="/images/network/ovhcloud-connect/simple-architecture/fig-2.svg" loading="lazy" />
-
 ### How it differs from on-premises
 
-In a WAN scenario, your traffic typically originates from **multiple branch offices** or sites and is aggregated through a WAN backbone (MPLS or SD-WAN) before reaching the OVHcloud PoP. The WAN edge device (router or SD-WAN gateway) is the equipment that peers with OVHcloud via BGP.
+In a WAN scenario, your traffic typically originates from **multiple branch offices** or sites and is aggregated through a WAN backbone (for example MPLS) before reaching the OVHcloud PoP. The WAN edge router is the equipment that peers with OVHcloud via BGP.
 
 ### When to use this architecture
 
@@ -111,13 +107,12 @@ In a WAN scenario, your traffic typically originates from **multiple branch offi
 |---|---|
 | Connecting multiple branch offices to OVHcloud through a single WAN exit | Critical workloads needing 99.99% uptime |
 | Branch consolidation to a cloud environment | Multi-cloud setups requiring diverse paths |
-| Hybrid SD-WAN deployments | Highly regulated environments |
 
 ### Step-by-step
 
 #### 1. Coordinate with your WAN provider
 
-Contact your WAN/MPLS/SD-WAN provider and request:
+Contact your WAN/MPLS provider and request:
 
 - A **circuit** or **virtual connection** from your WAN backbone to the OVHcloud PoP.
 - The circuit should terminate at a facility where OVHcloud has a PoP (see [PoP Locations](/guides/network/ovhcloud-connect/pop-locations-regions)).

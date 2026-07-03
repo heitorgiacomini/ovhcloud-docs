@@ -59,35 +59,7 @@ For each link:
 
 Set up **two BGP sessions** — one per link — with routing policies that define which path is preferred.
 
-##### Active/Standby example (Cisco IOS)
-
-```text
-router bgp 65001
- ! Primary link via PoP A
- neighbor 192.0.2.1 remote-as 35540
- neighbor 192.0.2.1 description OVHcloud-Primary
- neighbor 192.0.2.1 route-map PRIMARY-IN in
- neighbor 192.0.2.1 route-map PRIMARY-OUT out
-
- ! Backup link via PoP B
- neighbor 198.51.100.1 remote-as 35540
- neighbor 198.51.100.1 description OVHcloud-Backup
- neighbor 198.51.100.1 route-map BACKUP-IN in
- neighbor 198.51.100.1 route-map BACKUP-OUT out
-
-! Prefer primary path using Local Preference
-route-map PRIMARY-IN permit 10
- set local-preference 200
-
-route-map BACKUP-IN permit 10
- set local-preference 100
-
-! Influence OVHcloud's return traffic using AS-path prepending on backup
-route-map PRIMARY-OUT permit 10
-
-route-map BACKUP-OUT permit 10
- set as-path prepend 65001 65001
-```
+Configure your edge routers so the primary path is preferred and the backup path is used only on failure (for example using local-preference for outbound and prepending on the backup for inbound), following your vendor's documentation.
 
 ##### Key BGP attributes for failover
 
@@ -155,19 +127,14 @@ For maximum throughput and faster failover, you can run both links in **Active/A
 
 - An OVHcloud account with a vRack
 - Two OVHcloud Connect services (Direct, Provider, or a mix) terminating at **different PoPs**
-- A WAN backbone (MPLS or SD-WAN) with circuits reaching both PoPs
+- A WAN backbone (for example MPLS) with circuits reaching both PoPs
 - BGP-capable WAN edge devices
 - An IP addressing plan with no overlaps between your WAN and OVHcloud subnets
-
-### Architecture
-
-<img className="thumbnail" alt="WAN resilient architecture diagram" src="/images/network/ovhcloud-connect/resilient-architecture/fig-2.svg" loading="lazy" />
 
 ### When to use this architecture
 
 - **Business-critical WAN connectivity** — Multiple branches depend on OVHcloud access.
 - **SLA requirements ≥ 99.99%** — Dual links needed for premium uptime guarantees.
-- **SD-WAN with diverse paths** — SD-WAN platforms can automatically route over the best available path.
 
 ### Step-by-step
 
@@ -177,7 +144,7 @@ Order at **different PoPs** for physical diversity. You can mix Direct and Provi
 
 #### 2. Provision both WAN circuits
 
-Coordinate with your WAN provider to deliver circuits to both PoPs. If using an SD-WAN platform, configure both paths as underlay connections.
+Coordinate with your WAN provider to deliver circuits to both PoPs.
 
 #### 3. Configure BGP with failover
 
@@ -185,7 +152,6 @@ Set up two BGP sessions with appropriate routing policies:
 
 - **Active/Standby:** Use Local Preference and AS-path prepending (see the On-Premises tab for detailed BGP examples).
 - **Active/Active:** Use ECMP for load balancing across both links.
-- **SD-WAN integration:** Many SD-WAN platforms can detect link quality and switch traffic automatically, supplementing BGP failover.
 
 #### 4. Associate both links with your vRack
 
@@ -205,14 +171,6 @@ Distribute subnets across both AZs for full redundancy. See [Set up your vRack n
 #### 7. Monitor both paths
 
 Set up independent monitoring for each link, each BGP session, and each WAN circuit. See [Monitor](/guides/network/ovhcloud-connect/monitor).
-
-### SD-WAN considerations
-
-If you use an SD-WAN overlay:
-
-- Configure OVHcloud Connect links as **underlay transports** in your SD-WAN controller.
-- The SD-WAN platform can perform **path selection** based on latency, jitter, and packet loss — faster than BGP convergence.
-- Ensure BGP and SD-WAN policies are **aligned** (avoid conflicting routing decisions).
 
 </Tab>
 <Tab label="AWS">

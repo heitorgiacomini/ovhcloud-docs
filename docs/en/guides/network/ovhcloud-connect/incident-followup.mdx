@@ -19,31 +19,15 @@ Before contacting support, collect the following information to speed up diagnos
 | **Timestamp (UTC)** | Note exactly when the issue started and its duration |
 | **Affected service** | OVHcloud Connect service name/ID, PoP, VLAN ID |
 | **Symptoms** | Link down, BGP session drop, packet loss, high latency, etc. |
-| **Interface status** | `show interfaces` (Cisco) or `show interfaces terse` (Juniper) |
-| **BGP status** | `show ip bgp summary` (Cisco) or `show bgp summary` (Juniper) |
+| **Interface status** | Check interface/BGP status on your router (vendor-specific commands) |
+| **BGP status** | Check interface/BGP status on your router (vendor-specific commands) |
 | **Traceroute** | Run from your side to an OVHcloud resource, and vice versa |
 | **MTR output** | If available, run `mtr` for a combined ping + traceroute with loss % |
 | **Recent changes** | Any configuration changes, maintenance, or updates before the incident |
 
 ### Example diagnostic commands
 
-**Cisco IOS:**
-
-```bash
-show ip bgp summary
-show interfaces GigabitEthernet0/0
-show ip route
-traceroute 172.16.1.10
-```
-
-**Juniper JunOS:**
-
-```bash
-show bgp summary
-show interfaces terse
-show route
-traceroute 172.16.1.10
-```
+Collect the equivalent BGP, interface, and routing status from your own edge router using your vendor's commands.
 
 **From a Linux host in OVHcloud:**
 
@@ -61,7 +45,7 @@ Before opening a ticket, verify whether the issue is already known:
 - **Provider status page** — If using a provider (Megaport, Equinix, Console Connect), check their status/maintenance pages.
 - **Your own monitoring** — Confirm the issue is not on your side (local router failure, ISP outage, etc.).
 
-Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
 ## Step 3 — Open a support ticket
 

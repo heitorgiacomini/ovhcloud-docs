@@ -8,7 +8,7 @@ lastUpdated: 2026-06-15
 
 Monitoring your OVHcloud Connect service ensures that the connection is healthy, performant, and meeting your expectations. This guide covers the tools and metrics available.
 
-Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
 ## Monitoring tools
 
@@ -117,25 +117,7 @@ Diagnostics are also available programmatically through the OVHcloud API under t
 
 ## Monitoring commands on your router
 
-### Cisco IOS
-
-```bash
-show interfaces GigabitEthernet0/0
-show ip bgp summary
-show ip bgp neighbors 192.0.2.1 received-routes
-show ip bgp neighbors 192.0.2.1 advertised-routes
-show ip route bgp
-```
-
-### Juniper JunOS
-
-```bash
-show interfaces terse
-show bgp summary
-show route receive-protocol bgp 192.0.2.1
-show route advertising-protocol bgp 192.0.2.1
-show route protocol bgp
-```
+You can also verify the session from your own edge router using your vendor's standard BGP and interface show commands.
 
 ## Best practices
 
