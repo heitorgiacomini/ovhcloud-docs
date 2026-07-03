@@ -1,7 +1,7 @@
 ---
 title: "Configurer un script iPXE personnalisé pour démarrer votre serveur via l'API OVHcloud"
 description: "Découvrez comment l'API OVHcloud vous permet de configurer un script d'amorçage personnalisé PXE pour booter votre serveur"
-lastUpdated: 2024-02-27
+lastUpdated: 2026-07-03
 ---
 
 import Api from '@components/Api';
@@ -51,6 +51,7 @@ Spécifiez votre script dans l'attribut `bootScript` directement.
 Votre script se situe dans l'attribut `bootScript`.
 
 Par exemple, le script suivant enchaîne sur le menu de démarrage [netboot.xyz](https://netboot.xyz/) :
+
 ```json
 {
     "noIntervention": false,

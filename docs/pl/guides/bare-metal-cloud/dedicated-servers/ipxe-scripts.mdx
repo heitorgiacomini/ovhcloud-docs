@@ -1,7 +1,7 @@
 ---
 title: Skonfiguruj spersonalizowany skrypt iPXE, aby uruchomić serwer przez API OVHcloud
 description: Dowiedz się, jak API OVHcloud pozwala na skonfigurowanie spersonalizowanego skryptu PXE do uruchamiania serwera
-lastUpdated: 2024-02-27
+lastUpdated: 2026-07-03
 ---
 
 import Api from '@components/Api';
@@ -56,7 +56,7 @@ Określ skrypt w atrybucie `bootScript` bezpośrednio.
 
 Twój skrypt znajduje się w atrybucie `bootScript`.
 
-Przykład:
+Na przykład poniższy skrypt ładuje (chainload) menu startowe [netboot.xyz](https://netboot.xyz/):
 
 ```json
 {
