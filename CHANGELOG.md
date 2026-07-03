@@ -2,8 +2,12 @@
 
 ## 2026.07.03
 
+### Features
+- **managed-rancher-service:** Remove version 2.11 (#336)
+- **OPCP prerequisites:** improve s3 buckets prerequisites for backups (#332)
+
 ### Documentation
-- 7 guides updated across de, en, es, fr, it, pl, pt
+- 29 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.02
 
