@@ -7,7 +7,7 @@
 - **OPCP prerequisites:** improve s3 buckets prerequisites for backups (#332)
 
 ### Documentation
-- 29 guides updated across de, en, es, fr, it, pl, pt
+- 289 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.02
 
