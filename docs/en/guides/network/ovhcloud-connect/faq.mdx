@@ -56,21 +56,21 @@ You can order through the OVHcloud Control Panel, the API, or Terraform.
 
 **Direct:**
 
-- The **Letter of Authorization (LOA)** is issued **within minutes** of the order.
+- OVHcloud provides the **Letter of Authorization (LOA)** after the order (delivery times are objectives, not guarantees).
 - You then have **60 days** to finalise the interconnection: order the cross-connect from your data centre operator, and physically connect your equipment to the OVHcloud patch panel.
-- The service is delivered as soon as OVHcloud detects light on the port. If no light is detected within 60 days, the service is nevertheless considered operational and **billing starts**.
+- The service is delivered when OVHcloud detects light on the port, or 60 days after the order even if no light is detected (the service is then considered operational and **billing starts**), or by manual arrangement with an OVHcloud agent.
 
 **Provider:**
 
-- OVHcloud generates a **pairing key** (service key) immediately after the order.
-- The service is delivered as soon as your provider consumes the pairing key and provisions the virtual circuit — typically within **minutes to hours** for on-demand providers such as Megaport, Equinix Fabric, or Console Connect.
+- OVHcloud generates a **service key** immediately after the order.
+- The service is delivered as soon as your provider consumes the service key and provisions the virtual circuit — typically within **minutes to hours** for on-demand providers such as Megaport, Equinix Fabric, or Console Connect.
 
 ### How is OVHcloud Connect billed?
 
 OVHcloud Connect is billed monthly based on:
 
 - **Connection type** (Direct or Provider)
-- **Bandwidth** (from 50 Mbps to 100 Gbps)
+- **Bandwidth** (Direct: 1, 10 or 100 Gbps; Provider: 50 Mbps to 50 Gbps)
 - **Number of services**
 
 Provider connections may also incur charges from the provider (Megaport, Equinix, etc.). Check the [OVHcloud pricing page](/links/network/ovhcloud-connect) for current rates.
@@ -94,7 +94,7 @@ No. Bandwidth changes require ordering a new service at the desired speed and mi
 
 ### What BGP ASN does OVHcloud use?
 
-OVHcloud uses ASN **35540** for OVHcloud Connect BGP peering. You must configure your side with a different ASN (typically a private ASN in the 64512–65534 range).
+For OVHcloud Connect BGP peering, the OVHcloud side uses the reserved ASN assigned to your region: **65501** (Europe), **65502** (Canada), or **65519** (Asia). Note the known issue with **AS65501** (routes are not propagated). You must configure your side with a different ASN (typically a private ASN in the 64512–65534 range).
 
 ### What is the maximum number of BGP prefixes?
 
@@ -102,11 +102,11 @@ OVHcloud supports a maximum of **100 prefixes** per BGP session. Aggregate your 
 
 ### Does OVHcloud Connect support IPv6?
 
-Currently, OVHcloud Connect primarily supports **IPv4**. Check with OVHcloud support for the latest IPv6 availability.
+No. IPv6 is **not supported** on OVHcloud Connect L3. Use IPv4 for your BGP peering and routed traffic.
 
 ### What MTU is supported?
 
-The default MTU is **1500 bytes**. Jumbo frames (9000 bytes) may be supported on Direct connections depending on the PoP — confirm with OVHcloud support before configuring.
+Jumbo frames up to **9000 bytes** are supported. Make sure the MTU is configured consistently on both sides of the connection.
 
 ### Can I use OVHcloud Connect with Hosted Private Cloud (VMware)?
 
@@ -122,29 +122,19 @@ If you have a single OVHcloud Connect link, traffic between your network and OVH
 
 ### Can I use BFD (Bidirectional Forwarding Detection)?
 
-BFD support depends on the OVHcloud Connect type and PoP. Contact OVHcloud support to confirm BFD availability for your service. BFD can significantly reduce failover times from ~90 seconds to under 1 second.
+Yes. BFD is **enabled by default** on all BGP sessions. It significantly reduces failover times to under 1 second. Make sure BFD is also enabled and correctly configured on your own router.
 
 ---
 
-## Multi-cloud
+## Connecting to other clouds
 
-### Can I connect AWS, Azure, and GCP to OVHcloud simultaneously?
+### Can I use OVHcloud Connect to reach other public clouds?
 
-Yes. Order separate OVHcloud Connect Provider services and bridge each to the respective cloud:
+OVHcloud Connect links your network to your OVHcloud vRack. Connectivity to other clouds (such as AWS, Azure, or GCP) is handled by third-party providers and is out of scope for OVHcloud Connect. Refer to the relevant provider's documentation for their own interconnection products.
 
-- [AWS via Direct Connect](/guides/network/ovhcloud-connect/simple-architecture)
-- [Azure via ExpressRoute](/guides/network/ovhcloud-connect/simple-architecture)
-- [GCP via Interconnect](/guides/network/ovhcloud-connect/simple-architecture)
+### Do I need a separate vRack for each OVHcloud Connect service?
 
-All can be associated with the same vRack, allowing traffic to flow between all clouds through OVHcloud.
-
-### Can cloud-to-cloud traffic transit through OVHcloud?
-
-Technically, if all cloud connections share the same vRack and BGP prefixes are exchanged, traffic could transit through OVHcloud. However, this is **not recommended** for production — use dedicated cloud-to-cloud interconnects (e.g., AWS ↔ Azure) for direct inter-cloud traffic.
-
-### Do I need a separate vRack for each cloud connection?
-
-No. You can associate multiple OVHcloud Connect services with the **same vRack**. This allows all connected networks (on-premises, AWS, Azure, GCP) to communicate through the shared vRack.
+No. You can associate multiple OVHcloud Connect services with the **same vRack**, allowing your connected networks to communicate through the shared vRack.
 
 ---
 
@@ -152,14 +142,16 @@ No. You can associate multiple OVHcloud Connect services with the **same vRack**
 
 ### What SLA does OVHcloud Connect offer?
 
-SLA levels depend on your architecture:
+The availability SLA depends on your configuration:
 
-| Architecture | Typical SLA |
+| Configuration | Monthly availability SLA |
 |---|---|
-| Single link, single AZ | ~99.9% |
-| Dual links, Multi-AZ | ~99.95%–99.99% |
+| 1 connection on 1 PoP | No commitment |
+| 2 connections on 1 PoP (Local redundant connection) | No commitment |
+| 2 connections on 2 PoPs (High Availability – Level 1) | 99.9% |
+| 4 connections on 2 PoPs to 2 datacentres (High Availability – Level 2) | 99.99% |
 
-See [SLAs](/guides/network/ovhcloud-connect/slas) for full details and conditions.
+The SLA covers the PoP-to-Datacenter path only and excludes the third-party Virtual Circuit (Provider). See [SLAs](/guides/network/ovhcloud-connect/slas) for full details and conditions.
 
 ### How do I set up a resilient connection?
 
@@ -175,7 +167,7 @@ Tutorials:
 
 ### How long does BGP failover take?
 
-With default BGP timers (hold time = 90 seconds), failover can take **30–90 seconds**. With aggressive timers or BFD enabled, failover can be **under 1 second**.
+BFD is enabled by default on all BGP sessions and brings failover down to **under 1 second**. Make sure BFD is also enabled on your own router so both sides detect the failure quickly.
 
 ---
 
@@ -186,13 +178,13 @@ With default BGP timers (hold time = 90 seconds), failover can take **30–90 se
 | Possible cause | Action |
 |---|---|
 | Cross-connect not completed (Direct) | Contact your colocation provider; check LOA status |
-| Provider VXC not provisioned (Provider) | Check provider portal; ensure pairing key is correct |
+| Provider VXC not provisioned (Provider) | Check provider portal; ensure the service key is correct |
 | BGP not configured | [Configure BGP](/guides/network/ovhcloud-connect/l3-bgp) |
 | vRack not associated | [Associate vRack](/guides/network/ovhcloud-connect/associate-vrack) |
 
 ### I can see the BGP session but have no reachability
 
-- Verify that **routes are being exchanged** (check `show ip bgp summary` or the OVHcloud API).
+- Verify that **routes are being exchanged** (on your router or via the OVHcloud API).
 - Ensure **subnets are correct** and non-overlapping.
 - Check for **firewall rules** blocking traffic on either side.
 - Verify **VLAN tagging** matches between your equipment and OVHcloud.
@@ -219,7 +211,7 @@ See [Incident follow-up](/guides/network/ovhcloud-connect/incident-followup) for
 
 ### Can I manage OVHcloud Connect with Terraform?
 
-Yes. Use the [OVHcloud Terraform provider](https://registry.terraform.io/providers/ovh/ovh/latest) (version ≥ 2.7.0) to manage OVHcloud Connect resources. See [Automation](/guides/network/ovhcloud-connect/automation) for examples.
+Yes. Use a recent version of the [OVHcloud Terraform provider](https://registry.terraform.io/providers/ovh/ovh/latest) to manage OVHcloud Connect resources. See [Automation](/guides/network/ovhcloud-connect/automation) for examples.
 
 ### Is there an API for OVHcloud Connect?
 

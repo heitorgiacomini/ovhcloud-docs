@@ -34,7 +34,7 @@ Below are prerequisites and instructions for five use cases; choose the one matc
 |---|---|
 | Development and test environments | Business-critical production workloads |
 | Non-critical production workloads | Regulated / compliance-heavy environments |
-| Proof of concept or pilot projects | Applications requiring 99.99% uptime |
+| Proof of concept or pilot projects | Applications requiring a high availability SLA |
 | Small offices with a single site | Multi-site organisations needing failover |
 
 #### 1. Order OVHcloud Connect
@@ -73,17 +73,17 @@ Define the private subnets in OVHcloud that your on-premises network should reac
 | Ping from on-prem to OVHcloud VM | `ping 172.16.1.10` |
 | Ping from OVHcloud VM to on-prem | `ping 10.0.0.1` |
 | Traceroute | `traceroute 172.16.1.10` (should not go via internet) |
-| BGP verification | `show ip bgp summary` |
+| BGP verification | Confirm the BGP session is `Established` on your router |
 
 #### 7. Set up monitoring
 
-Configure monitoring alerts for link status, BGP session, and bandwidth. See [Monitor](/guides/network/ovhcloud-connect/monitor).
+Monitor link status and the BGP session state using your own monitoring tools. See [Monitor](/guides/network/ovhcloud-connect/monitor).
 
 ### Limitations of a simple connection
 
 - **Single point of failure** — If the link, PoP, or cross-connect fails, connectivity is lost.
 - **No automatic failover** — You need to manually intervene or rely on internet-based backup.
-- **Lower SLA** — A single connection typically supports up to 99.9% SLA (see [SLAs](/guides/network/ovhcloud-connect/slas)).
+- **No availability commitment** — A single connection on a single PoP carries no availability SLA. See [SLAs](/guides/network/ovhcloud-connect/slas) for the config-based tiers.
 
 **Recommendation:** For production workloads, consider upgrading to a [resilient architecture](/guides/network/ovhcloud-connect/resilient-architecture).
 
@@ -105,7 +105,7 @@ In a WAN scenario, your traffic typically originates from **multiple branch offi
 
 | ✅ Good for | ❌ Not recommended for |
 |---|---|
-| Connecting multiple branch offices to OVHcloud through a single WAN exit | Critical workloads needing 99.99% uptime |
+| Connecting multiple branch offices to OVHcloud through a single WAN exit | Critical workloads needing a high availability SLA |
 | Branch consolidation to a cloud environment | Multi-cloud setups requiring diverse paths |
 
 ### Step-by-step
@@ -159,6 +159,10 @@ Monitor the WAN edge BGP session and OVHcloud Connect link. See [Monitor](/guide
 
 </Tab>
 <Tab label="AWS">
+
+:::info
+These steps are performed in the third-party cloud or provider console and are outside OVHcloud's control. Refer to that provider's documentation for exact, current steps.
+:::
 
 ### Prerequisites
 
@@ -253,6 +257,10 @@ See [Associate with vRack](/guides/network/ovhcloud-connect/associate-vrack).
 </Tab>
 <Tab label="Azure">
 
+:::info
+These steps are performed in the third-party cloud or provider console and are outside OVHcloud's control. Refer to that provider's documentation for exact, current steps.
+:::
+
 ### Prerequisites
 
 - An **Azure subscription** with permissions to create ExpressRoute circuits
@@ -281,7 +289,7 @@ See [Associate with vRack](/guides/network/ovhcloud-connect/associate-vrack).
 2. Select:
    - **Provider**: Megaport or Equinix
    - **Peering location**: Choose a location shared with your OVHcloud PoP
-   - **Bandwidth**: Match your OVHcloud Connect bandwidth (1 Gbps / 10 Gbps)
+   - **Bandwidth**: Match your OVHcloud Connect bandwidth (OVHcloud Connect Direct offers 1, 10 or 100 Gbps; Provider offers 50 Mbps up to 50 Gbps)
 3. Complete the creation. Note the **Service Key** (a GUID).
 
 #### 2. Order your OVHcloud Connect Provider
@@ -354,7 +362,7 @@ There are **three BGP segments** in this architecture:
 | OVHcloud ↔ vRack | Internal routing within OVHcloud | N/A |
 
 :::info
-Azure uses ASN **12076** for ExpressRoute Private Peering. The OVHcloud BGP AS depends on the PoP region: **65501** (Europe), **65502** (Canada), **65519** (Asia).
+Azure uses ASN **12076** for ExpressRoute Private Peering. The OVHcloud BGP AS depends on the PoP region: **65501** (Europe), **65502** (Canada), **65519** (Asia). Do not use **AS65501** as your customer-side ASN (a known issue prevents routes from being propagated); choose a customer ASN in the **64512–65534** range instead.
 :::
 
 ### Troubleshooting
@@ -369,6 +377,10 @@ Azure uses ASN **12076** for ExpressRoute Private Peering. The OVHcloud BGP AS d
 
 </Tab>
 <Tab label="GCP">
+
+:::info
+These steps are performed in the third-party cloud or provider console and are outside OVHcloud's control. Refer to that provider's documentation for exact, current steps.
+:::
 
 ### Prerequisites
 
@@ -411,7 +423,7 @@ In the **GCP Console** → **Hybrid Connectivity** → **Cloud Routers** → **C
 - **Name**: `router-ovhcloud`
 - **Network**: Your VPC
 - **Region**: Region closest to the provider PoP (e.g., `europe-west1` for Paris)
-- **ASN**: Use a private ASN (e.g., `65001`) or Google's default (`16550`)
+- **ASN**: Use a private ASN in the `64512`–`65534` range (e.g., `64512`) or Google's default (`16550`)
 
 #### 2. Create a Partner Interconnect VLAN attachment
 
@@ -420,7 +432,7 @@ Go to **Hybrid Connectivity** → **Interconnect** → **VLAN attachments** → 
 1. Select **Partner Interconnect connection**.
 2. Choose your Cloud Router.
 3. Select the appropriate region and edge availability domain.
-4. Set the **MTU** to 1500 (standard) or 1440 for VPN interworking.
+4. Set the **MTU** according to Google's current options for the attachment. On the OVHcloud side, jumbo frames up to **9000 bytes** are supported; make sure the MTU is consistent end to end across GCP, the provider, and OVHcloud Connect.
 5. Note the **pairing key** generated by GCP.
 
 **GCP pairing key format**: A string like `<random>/<region>/<edge-availability-domain>`
@@ -481,7 +493,7 @@ Ensure the provider MCR:
 | OVHcloud ↔ vRack | Internal OVHcloud routing | N/A |
 
 :::info
-GCP Cloud Router uses ASN **16550** by default. You can configure a custom ASN during Cloud Router creation. The OVHcloud BGP AS depends on the PoP region: **65501** (Europe), **65502** (Canada), **65519** (Asia).
+GCP Cloud Router uses ASN **16550** by default. You can configure a custom ASN during Cloud Router creation. The OVHcloud BGP AS depends on the PoP region: **65501** (Europe), **65502** (Canada), **65519** (Asia). Do not use **AS65501** as your customer-side ASN (a known issue prevents routes from being propagated); choose a customer ASN in the **64512–65534** range instead.
 :::
 
 ### Troubleshooting

@@ -10,28 +10,24 @@ A **Service Level Agreement (SLA)** is a contractual commitment from OVHcloud th
 
 ## What the SLA covers
 
-OVHcloud Connect SLAs typically address the following areas:
-
-| Area | What it means |
-|---|---|
-| **Availability (uptime)** | The percentage of time the service is operational over a given period (e.g. 99.9% monthly uptime). |
-| **Latency** | The maximum acceptable delay for traffic traversing the OVHcloud Connect link. |
-| **Support response time** | How quickly OVHcloud acknowledges and begins working on a reported issue. |
-| **Resolution time** | The target timeframe for restoring service after an incident. |
-
-## SLA levels and connection type
-
-The level of SLA you can achieve depends on your architecture:
-
-| Architecture | Typical availability | Notes |
-|---|---|---|
-| **Single connection** (one PoP, one link) | Up to 99.9% | Covers the OVHcloud-managed portion of the link. A single physical path remains a point of failure. |
-| **Redundant connections** (Multi-AZ, two PoPs) | Up to 99.99% | Multiple independent paths protect against single-link and single-site failures. Higher SLA tiers may apply. |
-| **Provider connection** | Varies | The end-to-end SLA depends on both OVHcloud's SLA and your provider's SLA. Check both. |
+The OVHcloud Connect SLA is a **monthly availability** commitment. The level you are entitled to depends on how your connections are configured, as detailed in the table below.
 
 :::info
-**Important:** SLA guarantees apply to the OVHcloud-managed portion of the service. Third-party elements (your router, provider links, cross-connects managed by data centre operators) are not covered under OVHcloud's SLA.
+**Scope:** The SLA covers the OVHcloud portion of the service only, from the Point of Presence (PoP) to the datacenter. It excludes the third-party Virtual Circuit provided through a Provider connection. There is no latency SLA and no response-time or resolution-time commitment.
 :::
+
+## SLA levels and configuration
+
+The availability commitment depends on your configuration:
+
+| Configuration | Monthly availability SLA |
+|---|---|
+| 1 connection on 1 PoP | No commitment |
+| 2 connections on 1 PoP ("Local redundant connection") | No commitment |
+| 2 connections on 2 PoPs ("High Availability – Level 1") | 99.9% |
+| 4 connections on 2 PoPs to 2 datacentres ("High Availability – Level 2") | 99.99% |
+
+Only redundant configurations across two PoPs qualify for an availability commitment. A single connection, or two connections within a single PoP, carries no availability commitment.
 
 ## SLA prerequisites
 
@@ -44,22 +40,23 @@ For the SLA to be valid, you must:
 
 ## Remedies and service credits
 
-If OVHcloud fails to meet the SLA targets, you may be entitled to:
+If OVHcloud fails to meet the availability SLA, you may be entitled to **service credits** — a percentage of the impacted service's monthly cost, based on the measured availability:
 
-- **Service credits** — A percentage of your monthly fee credited back to your account, proportional to the downtime experienced.
-- **Priority support** — Accelerated handling for unresolved issues.
+| Measured monthly availability | Service credit |
+|---|---|
+| 99.9% down to 99% | 10% |
+| 99% down to 95% | 20% |
+| Below 95% | 30% |
+
+Service credits are capped at 30% of the impacted service's monthly cost per month. Claims must be submitted within one month of the closure of the corresponding support ticket.
 
 The exact credit calculation and claim process are described in the OVHcloud Connect specific conditions, available in your contract or on the OVHcloud website.
 
-## Monitoring SLA compliance
+## Monitoring your connection
 
-To track whether your connection meets the SLA:
+OVHcloud Connect provides on-demand diagnostics rather than a continuous uptime dashboard or alerting feature. To check the state of your connection, run the available diagnostics from the Control Panel or the API.
 
-- Use the **OVHcloud Control Panel** to view connection status, uptime, and historical metrics.
-- Set up **alerts** for link-down events, BGP session drops, and latency spikes.
-- Use the **OVHcloud API** to query status programmatically and integrate with your monitoring tools.
-
-See [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) for detailed monitoring guidance.
+See [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) for detailed guidance on the on-demand diagnostics available.
 
 ## What's next?
 

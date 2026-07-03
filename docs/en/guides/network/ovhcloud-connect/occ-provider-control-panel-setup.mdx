@@ -28,17 +28,17 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open th
 1. Select <code className="action">OVHcloud Connect Provider</code>.
 2. Choose your **provider**, **PoP location**, and **bandwidth**.
 3. Review pricing and submit the order.
-4. OVHcloud generates a **pairing key** (also called a service key) for your provider.
+4. OVHcloud generates a **service key** for your provider.
 
 For detailed steps, see [Order OVHcloud Connect Provider](/guides/network/ovhcloud-connect/order-provider).
 
-### Step 2 — Share the pairing key
+### Step 2 — Share the service key
 
-Give the **pairing key** to your provider. This key allows the provider to identify and activate the connection to OVHcloud on your behalf.
+Give the **service key** to your provider. This key allows the provider to identify and activate the connection to OVHcloud on your behalf.
 
-- On **Megaport**: create a VXC (Virtual Cross Connect) to OVHcloud and enter the pairing key.
+- On **Megaport**: create a VXC (Virtual Cross Connect) to OVHcloud and enter the service key.
 - On **Equinix Fabric**: create a connection to OVHcloud and provide the service key.
-- On **Console Connect**: initiate a connection to OVHcloud and use the pairing key.
+- On **Console Connect**: initiate a connection to OVHcloud and use the service key.
 
 ### Step 3 — Provider provisions the connection
 
@@ -102,7 +102,7 @@ See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) for det
 
 | Issue | What to check |
 |---|---|
-| Connection stuck in "Pending" | Verify the pairing key was entered correctly on the provider's side |
+| Connection stuck in "Pending" | Verify the service key was entered correctly on the provider's side |
 | Provider shows "Active" but OVHcloud shows "Down" | Contact OVHcloud support — there may be a provisioning delay |
 | BGP session not establishing | Check peering IPs, ASN, and VLAN ID on both your router and the OVHcloud PoP configuration |
 | High latency or packet loss | Check provider's network status page; run traceroute to identify where delays occur |

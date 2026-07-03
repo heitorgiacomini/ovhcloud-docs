@@ -41,10 +41,7 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open
 
 ## Overview
 
-```text
-Your Router ── [ L3 at PoP ] ── OVHcloud PoP Router ── [ Static routes at DC ] ── vRack Router ── Services
-                 /30 peering                                next-hop + subnet       (172.16.x.x)
-```
+<img className="thumbnail" alt="OVHcloud Connect L3 static-routing topology: your router connects to the OVHcloud PoP router over an L3 /30 peering subnet, static routes reach the OVHcloud AZ routers A and B in your vRack, reaching your services" src="/images/network/ovhcloud-connect/l3-static/l3-static-topology.svg" loading="lazy" />
 
 - **PoP level**: An L3 session with a /30 peering subnet between your router and OVHcloud.
 - **AZ level**: Static routes defined with a next-hop IP and destination subnet.
@@ -92,7 +89,7 @@ The PoP configuration establishes the L3 session at the Point of Presence. This 
 |---|---|---|---|
 | `interfaceId` | long | Yes | ID of the OVHcloud Connect interface |
 | `type` | string | Yes | `l3` for Layer 3 mode |
-| `customerBgpArea` | long | No | Your AS number (still required for L3 — used for PoP-level peering) |
+| `customerBgpArea` | long | No | Your AS number (still required for L3 — used for PoP-level peering). Use a public ASN or a private ASN in the range 64512–65534 (e.g. `64512`). |
 | `subnet` | ipv4Block | No | /30 peering subnet. First IP is OVHcloud, second is yours. |
 
 **Example request:**
@@ -101,7 +98,7 @@ The PoP configuration establishes the L3 session at the Point of Presence. This 
 {
   "interfaceId": 101,
   "type": "l3",
-  "customerBgpArea": 65001,
+  "customerBgpArea": 64512,
   "subnet": "192.0.2.0/30"
 }
 ```
@@ -118,8 +115,8 @@ The PoP configuration establishes the L3 session at the Point of Presence. This 
   "id": 5678,
   "interfaceId": 101,
   "type": "l3",
-  "customerBgpArea": 65001,
-  "ovhBgpArea": 35540,
+  "customerBgpArea": 64512,
+  "ovhBgpArea": 65502,
   "subnet": "192.0.2.0/30",
   "status": "active"
 }
@@ -134,10 +131,14 @@ From this response:
 
 #### Step 4 — Create AZ extra configuration (static)
 
-After the PoP configuration and a [AZ configuration](/guides/network/ovhcloud-connect/vrack-network-setup), create a **network extra configuration** to define static routes within the AZ.
+After the PoP configuration and the AZ configuration, create a **network extra configuration** to define static routes within the AZ.
 
 :::info
-With static routing, **VRRP remains active** on the AZ endpoint. OVHcloud devices A and B share a virtual IP (the second address of the AZ subnet, e.g. `172.16.1.1`). Point your services' default gateway to this VRRP virtual IP for automatic failover between devices.
+The AZ (datacenter) configuration must already exist before you can create the extra configuration. Create it first with `POST .../config/pop/{popId}/datacenter` (providing the /28 subnet from your vRack) — see [Set up vRack networking](/guides/network/ovhcloud-connect/vrack-network-setup). This is what provides the `{datacenterId}` used in the `/extra` call below.
+:::
+
+:::info
+With static routing, **VRRP remains active** on the AZ endpoint. OVHcloud devices A and B share a VRRP virtual gateway, which is the **first usable IP** of the AZ /28 subnet (OVHcloud routers A and B take the next two addresses; the first 3 IPs of the /28 are reserved for OVHcloud). Point your services' default gateway to this VRRP virtual IP for automatic failover between devices.
 :::
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra"} />

@@ -40,23 +40,20 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open
 
 When you use OVHcloud Connect in L3 mode, traffic flows through three stages:
 
-```text
-Your Network ──── [ PoP BGP/Static ] ──── [ vRack Router ] ──── OVHcloud AZ(s)
-                    (OCC-specific)          (this guide)
-```
+<img className="thumbnail" alt="OVHcloud Connect vRack networking: your network connects through the OVHcloud PoP configuration (BGP or static), then the vRack routing instance configured in this guide, reaching your OVHcloud availability zones" src="/images/network/ovhcloud-connect/vrack-network-setup/vrack-topology.svg" loading="lazy" />
 
 The **AZ configuration** creates an L3 routing instance inside the vRack. This routing instance is composed of two physical OVHcloud devices (labelled "A" and "B") for redundancy. You must create one AZ configuration per AZ you want to reach.
 
 ### AZ subnet — IP addressing rules
 
-When you create an AZ configuration, you assign a **private subnet** to it. Within this subnet, several IP addresses are reserved by OVHcloud:
+When you create an AZ configuration, you assign a **private subnet** to it. The network address plus the **first 3 usable IP addresses** of the subnet are reserved by OVHcloud. The first usable IP is the VRRP virtual gateway:
 
 | IP address | Role |
 |---|---|
-| First address (e.g. `.0`) | Network address |
-| Second address (e.g. `.1`) | OVHcloud virtual router (VRRP gateway) |
-| Third address (e.g. `.2`) | OVHcloud router A |
-| Fourth address (e.g. `.3`) | OVHcloud router B |
+| `.0` | Network address |
+| `.1` (first usable IP) | OVHcloud virtual router (VRRP gateway) |
+| `.2` | OVHcloud router A |
+| `.3` | OVHcloud router B |
 | Remaining addresses | Available for your services |
 
 **Subnet planning guidelines:**
@@ -74,7 +71,7 @@ The OVHcloud AZ routing instance uses **VRRP (Virtual Router Redundancy Protocol
 
 | Property | Detail |
 |---|---|
-| **Virtual IP** | The second address of the AZ subnet (e.g. `172.16.1.1`) |
+| **Virtual IP** | The first usable IP of the AZ subnet (e.g. `172.16.1.1`) |
 | **VRID** | Assigned by OVHcloud (not configurable) |
 | **Master device** | Device A by default |
 | **Instances per AZ** | One VRRP instance per AZ configuration |
@@ -134,7 +131,7 @@ Create the AZ configuration:
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `datacenterId` | long | Yes | ID of the AZ (from Step 1) |
-| `ovhBgpArea` | long | No | OVHcloud private AS number for the AZ BGP session (assigned automatically if omitted) |
+| `ovhBgpArea` | long | No | The OVHcloud-side ASN for the AZ. Provide the value for your region (`65501` Europe / `65502` Canada / `65519` Asia) |
 | `subnet` | ipv4Block | No | Private subnet for the AZ (/28 minimum). Example: `172.16.1.0/28` |
 
 
@@ -171,7 +168,7 @@ Once the task completes, verify the AZ configuration:
 
 Monitor task progress with:
 
-<Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/task/\{taskId\}"} />
+<Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/task/\{id\}"} />
 
 ### Step 4 — Repeat for additional AZs (optional)
 

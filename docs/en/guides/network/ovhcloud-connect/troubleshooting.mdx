@@ -107,12 +107,12 @@ The physical link is up, but the BGP session does not reach the `Established` st
 | # | Possible cause | Solution |
 |---|---|---|
 | 1 | **Incorrect peer IP address** | Verify that the peer IP configured on your router matches exactly the IP assigned by OVHcloud in the Control Panel. The PoP peering subnet is a /30: OVHcloud takes the first IP, you take the second. See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). |
-| 2 | **Incorrect ASN** | Check that you are peering with OVHcloud ASN **35540** and that your own ASN is correctly configured (private ASN range 64512–65534 recommended). Avoid reserved ASNs: **65501** (EU PoP), **65502** (CA PoP), **65519** (Asia PoP). |
-| 3 | **VLAN ID mismatch** | The VLAN tag on your interface must match the VLAN ID configured in the OVHcloud Control Panel PoP configuration. Verify with `show interfaces` or `show vlans`. |
+| 2 | **Incorrect ASN** | Check that you are peering with the OVHcloud-side ASN assigned for your region (**65501** Europe, **65502** Canada, **65519** Asia) and that your own ASN is correctly configured (private ASN range 64512–65534 recommended). Note the known issue with **AS65501** (routes are not propagated). |
+| 3 | **VLAN ID mismatch** | The VLAN tag on your interface must match the VLAN ID configured in the OVHcloud Control Panel PoP configuration. Verify this on your router. |
 | 4 | **Firewall blocking TCP port 179** | BGP uses TCP port 179. Ensure no firewall or ACL is blocking this port between the two peers. |
 | 5 | **Interface not configured with correct encapsulation** | For L3 connections, the interface must use 802.1Q encapsulation with the correct VLAN ID. See configuration examples in the [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). |
 | 6 | **PoP configuration not created in OVHcloud** | Verify in the OVHcloud Control Panel that a PoP configuration has been created for your service. Without it, OVHcloud's router will not peer. |
-| 7 | **MD5 authentication mismatch** | If MD5 is configured, the password must match on both sides. Check with your OVHcloud Connect service details. |
+| 7 | **MD5 authentication mismatch** | If you have configured MD5 on your side, the password must match on both sides. Remove or align the MD5 configuration if in doubt. |
 
 ### Diagnostic flowchart
 
@@ -145,9 +145,9 @@ The BGP session oscillates between `Established` and `Active`/`Idle` states, cau
 
 | # | Possible cause | Solution |
 |---|---|---|
-| 1 | **Unstable physical link** | Check interface error counters (`show interfaces`) for CRC errors, input errors, or output drops. Inspect the SFP, cross-connect cable, and patch panel. |
-| 2 | **MTU mismatch** | An MTU mismatch between your equipment and OVHcloud can cause large BGP update packets to be dropped. The default MTU is **1500 bytes**. Confirm MTU settings on both sides. |
-| 3 | **BGP hold timer expiry** | Default BGP hold time is 90 seconds. If keepalives are lost due to link instability, the session drops. Consider adjusting BGP timers, but fix the root cause first. |
+| 1 | **Unstable physical link** | Check the interface error counters on your router for CRC errors, input errors, or output drops. Inspect the SFP, cross-connect cable, and patch panel. |
+| 2 | **MTU mismatch** | An MTU mismatch between your equipment and OVHcloud can cause large BGP update packets to be dropped. Jumbo frames up to **9000 bytes** are supported; make sure the MTU is consistent on both sides. |
+| 3 | **BGP hold timer expiry** | If keepalives are lost due to link instability, the BGP session drops when the hold timer expires. Consider adjusting BGP timers, but fix the root cause first. |
 | 4 | **CPU or memory overload on your router** | BGP processing may be delayed if the router is under high load. Check CPU and memory usage. |
 | 5 | **Aggressive prefix changes** | Rapidly withdrawing and re-advertising routes can trigger flap dampening. Stabilise your routing announcements. |
 
@@ -197,7 +197,7 @@ The connection is working, but throughput is lower than expected or latency is h
 |---|---|---|
 | 1 | **Bandwidth saturation** | Check interface utilisation in the OVHcloud Control Panel and on your router. If you consistently exceed 80% of the provisioned bandwidth, plan an upgrade. |
 | 2 | **MTU mismatch causing fragmentation** | Fragmented packets reduce effective throughput. Verify MTU end-to-end and run path MTU discovery: `ping -s 1472 -M do <destination>`. |
-| 3 | **Interface errors (CRC, FCS, drops)** | Check `show interfaces` for error counters. Physical issues (dirty fibre, bad SFP, loose connector) cause retransmissions and degrade performance. |
+| 3 | **Interface errors (CRC, FCS, drops)** | Check the interface error counters on your router. Physical issues (dirty fibre, bad SFP, loose connector) cause retransmissions and degrade performance. |
 | 4 | **Sub-optimal routing** | Traffic may be taking a longer path than expected. Check `traceroute` and BGP attributes (Local Preference, AS-path) to ensure optimal path selection. |
 | 5 | **Congestion at the provider** | If using OVHcloud Connect Provider, check the provider's portal (Megaport, Equinix Fabric, Console Connect) for utilisation and alerts on the virtual circuit. |
 | 6 | **TCP window size misconfiguration** | For high-bandwidth, high-latency links, ensure TCP window scaling is enabled on hosts to maximise throughput. |
@@ -221,14 +221,14 @@ You have ordered an OVHcloud Connect Provider service, but the connection throug
 
 | # | Possible cause | Solution |
 |---|---|---|
-| 1 | **Incorrect pairing key / service key** | Verify that the pairing key (or service key) entered in your provider's portal exactly matches the key from the OVHcloud Control Panel. |
+| 1 | **Incorrect service key** | Verify that the service key entered in your provider's portal exactly matches the key from the OVHcloud Control Panel. |
 | 2 | **Provider virtual circuit not provisioned** | Check the status of the VXC (Megaport), virtual connection (Equinix), or connection (Console Connect) in the provider's portal. It should show as "Active" or "Provisioned". |
 | 3 | **Provider does not have presence at the PoP** | The provider must be available at the OVHcloud PoP you selected. Verify PoP availability in [Providers](/guides/network/ovhcloud-connect/providers) and [PoP Locations](/guides/network/ovhcloud-connect/pop-locations-regions). |
 | 4 | **Bandwidth mismatch** | The bandwidth ordered on the provider side must match or be compatible with the OVHcloud Connect service bandwidth. |
 | 5 | **Provider-side maintenance or outage** | Check your provider's status page for ongoing incidents or planned maintenance. |
 
 :::tip
-**Tip:** If the provider portal shows the connection as "Active" but OVHcloud still shows it as "Pending", wait a few minutes for the provisioning to complete. If it persists beyond 30 minutes, contact OVHcloud support.
+**Tip:** If the provider portal shows the connection as "Active" but OVHcloud still shows it as "Pending", wait a few minutes for the provisioning to complete. If the status does not update after a reasonable delay, contact OVHcloud support.
 :::
 
 ---
@@ -243,7 +243,7 @@ Your OVHcloud Connect service appears in the Control Panel but cannot be configu
 |---|---|---|
 | 1 | **Cross-connect not yet installed (Direct)** | The service becomes configurable once OVHcloud detects light on the port. Order the cross-connect from your data centre operator using the LOA and ensure your equipment is connected. |
 | 2 | **60-day interconnection window (Direct)** | After the order, you have **60 days** to finalize the interconnection (order the cross-connect and interconnect your equipment). Beyond 60 days — even without detected light — the service is considered operational and billing starts. |
-| 3 | **Provider circuit not yet linked (Provider)** | Ensure the provider virtual circuit is provisioned and linked to the OVHcloud service using the correct pairing key. |
+| 3 | **Provider circuit not yet linked (Provider)** | Ensure the provider virtual circuit is provisioned and linked to the OVHcloud service using the correct service key. |
 | 4 | **Provisioning in progress** | New services may take a few minutes to become configurable after ordering. Wait and refresh the Control Panel. |
 | 5 | **Order issue** | If the service remains in "Pending" state for an extended period, contact OVHcloud support with your order reference. |
 
@@ -259,21 +259,14 @@ You have two OVHcloud Connect links for redundancy, but traffic does not failove
 |---|---|---|
 | 1 | **Both links in the same PoP** | For true Multi-AZ resilience, the two links must terminate at **different PoPs** and **different Availability Zones**. See [Multi-AZ](/guides/network/ovhcloud-connect/multi-az). |
 | 2 | **BGP failover not configured** | Configure BGP attributes to control path selection: use **Local Preference** to prefer the primary path and **AS-path prepending** on the backup. See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). |
-| 3 | **BFD not enabled** | Without BFD, BGP failover relies on hold timers (default 90 seconds). Enable **BFD (Bidirectional Forwarding Detection)** to reduce failover time to under 1 second. Contact OVHcloud support to confirm BFD availability for your service. |
+| 3 | **BFD not detecting the failure** | **BFD (Bidirectional Forwarding Detection)** is enabled by default on all BGP sessions and reduces failover time to under 1 second. Make sure BFD is also enabled and correctly configured on your own router so both sides can detect the failure. |
 | 4 | **vRack not shared between both services** | Both OVHcloud Connect services must be associated with the **same vRack** for failover to work. Verify in the Control Panel. See [Associate with vRack](/guides/network/ovhcloud-connect/associate-vrack). |
 | 5 | **Prefix-list filtering backup routes** | Ensure your import/export prefix filters allow the same prefixes on both links. |
 
-### Verification commands
+### Verification
 
-```bash
-show ip bgp
-show ip bgp summary
-show ip route bgp
-show ip bgp neighbors 192.0.2.1
-show ip bgp neighbors 198.51.100.1
-```
 
-Check that both BGP sessions are `Established` and that routes are received from both peers with different attributes (Local Preference, AS-path length).
+On your router, verify that both BGP sessions are `Established` and that routes are received from both peers with different attributes (Local Preference, AS-path length).
 
 ---
 
@@ -287,7 +280,7 @@ BGP session may not establish, or traffic may be routed incorrectly due to IP ad
 |---|---|---|
 | 1 | **Using OVHcloud reserved IPs** | In the PoP /30 subnet, the **first IP** is reserved for OVHcloud. In the DC /28 (minimum) subnet, the **first three IPs** are reserved for OVHcloud. Ensure you are using the correct IPs. |
 | 2 | **Overlapping subnets** | Your on-premises subnets must not overlap with subnets used in the OVHcloud vRack. Plan your IP addressing carefully. See [Set up your vRack network](/guides/network/ovhcloud-connect/vrack-network-setup). |
-| 3 | **Duplicate ASN** | Your BGP ASN must differ from OVHcloud's ASN (35540) and from the reserved ASNs (65501, 65502, 65519). |
+| 3 | **Duplicate ASN** | Your BGP ASN must differ from the OVHcloud-side region ASN (65501 Europe, 65502 Canada, 65519 Asia). Use a private ASN in the 64512–65534 range. |
 
 ---
 

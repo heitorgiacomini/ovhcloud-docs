@@ -17,65 +17,28 @@ This guide explains how to order an OVHcloud Connect service through a **third-p
 | **Bandwidth** | The desired speed (from 50 Mbps to 50 Gbps — options vary by provider) |
 | **Your ASN & IP plan** | OVHcloud Connect Provider is always a Layer 3 service; you need an ASN and peering IPs for BGP |
 
-## Order via the OVHcloud Control Panel
+The **bandwidth** available for OVHcloud Connect Provider ranges from 50 Mbps to 50 Gbps (options vary by provider).
 
-1. **Log in** to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
-2. Click <code className="action">Order</code>.
-3. Select <code className="action">OVHcloud Connect Provider</code>.
-4. Choose your **provider** from the list.
-5. Select the **PoP location** and **bandwidth**.
-6. OVHcloud generates a **pairing key** (service key).
-7. Review pricing and <code className="action">Confirm</code> the order.
+## Place your order
+
+OVHcloud Connect Provider is ordered from the [OVHcloud website](https://www.ovhcloud.com/), not from the Control Panel. Select the OVHcloud Connect Provider offer, choose your **PoP location** and **bandwidth**, and complete the order.
+
+Once the order is validated, OVHcloud emails you a **service key**. This key identifies your OVHcloud Connect order and lets your provider provision the connection.
 
 :::warning
-**Important:** Copy the pairing key — you will need it in the next step.
+**Important:** Keep the service key — you will need it in the next step.
 :::
 
-## Share the pairing key with your provider
+## Enter the service key in your provider's portal
 
-The pairing key identifies your OVHcloud Connect order and lets the provider provision the connection.
-
-### On Megaport
-
-1. Log in to the [Megaport portal](https://portal.megaport.com/).
-2. Create a new **VXC (Virtual Cross Connect)**.
-3. Select <code className="action">OVHcloud</code> as the destination.
-4. Enter the **pairing key** provided by OVHcloud.
-5. Choose bandwidth and confirm.
-
-:::info
-Megaport documentation: [docs.megaport.com](https://docs.megaport.com/)
-:::
-
-### On Equinix Fabric
-
-1. Log in to [Equinix Fabric](https://fabric.equinix.com/).
-2. Create a new **connection**.
-3. Select <code className="action">OVHcloud</code> from the service provider catalogue.
-4. Enter the **service key** (pairing key).
-5. Choose speed and confirm.
-
-:::info
-Equinix Fabric documentation: [docs.equinix.com/fabric](https://docs.equinix.com/fabric/)
-:::
-
-### On Console Connect
-
-1. Log in to [Console Connect](https://app.consoleconnect.com/).
-2. Search for **OVHcloud** in the marketplace.
-3. Create a new connection and enter the **pairing key**.
-4. Choose bandwidth and confirm.
-
-:::info
-Console Connect documentation: [consoleconnect.com/help](https://www.consoleconnect.com/help/)
-:::
+In your provider's portal, enter the service key provided by OVHcloud, then create the connection to OVHcloud. Refer to your provider's documentation for the exact steps (for example [Megaport](https://docs.megaport.com/), [Equinix Fabric](https://docs.equinix.com/fabric/), or [Console Connect](https://www.consoleconnect.com/help/)).
 
 ## What happens after ordering
 
-<img className="thumbnail" alt="Provisioning steps after ordering: pairing key generated, provider provisions the link, then connection activated" src="/images/network/ovhcloud-connect/order-provider/fig-1.svg" loading="lazy" />
+<img className="thumbnail" alt="Provisioning steps after ordering: service key generated, provider provisions the link, then connection activated" src="/images/network/ovhcloud-connect/order-provider/fig-1.svg" loading="lazy" />
 
-1. **Pairing key generated** — OVHcloud provides the key after you place the order.
-2. **Provider provisions** — The provider uses the key to set up the virtual or physical link. On-demand providers (Megaport, Equinix) typically complete this in minutes.
+1. **Service key emailed** — OVHcloud sends you the service key after you place the order.
+2. **Provider provisions** — Your provider uses the service key to set up the virtual or physical link.
 3. **Link becomes active** — OVHcloud activates the connection and the status changes to "Active" in the Control Panel.
 4. **Configure and test** — Verify BGP peering, associate with your vRack, and test connectivity.
 

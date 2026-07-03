@@ -30,8 +30,8 @@ Multi-AZ designs address this by establishing **redundant connections through di
 For automatic failover, your BGP configuration must distinguish between the primary and backup paths. Common approaches:
 
 - **Local Preference** — Set a higher Local Preference on routes learned from the primary link.
-- **AS-path prepending** — Make the backup path's AS-path longer so it is less preferred.
-- **MED (Multi-Exit Discriminator)** — Use MED values to influence inbound routing from OVHcloud.
+- **AS-path prepending** — Make the backup path's AS-path longer so it is less preferred. AS-path prepending is only configurable on your own devices, not on the OVHcloud side.
+- **MED (Multi-Exit Discriminator)** — Use MED values to influence inbound routing from OVHcloud. MED is the recommended way to influence OVHcloud/inbound path selection.
 
 See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) for detailed configuration guidance.
 
@@ -42,7 +42,7 @@ See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) for det
 | Test / development workloads | Single connection is usually sufficient |
 | Non-critical production | Single connection with monitoring |
 | Business-critical production | **Multi-AZ recommended** |
-| Regulated / compliance workloads | **Multi-AZ required** |
+| Regulated / compliance workloads | **Multi-AZ recommended** |
 
 ## What's next?
 
