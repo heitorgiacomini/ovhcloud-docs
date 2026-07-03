@@ -60,6 +60,31 @@ Once the physical link is established, routing is configured using **BGP (Border
 
 To configure L3 routing, see the [Configure OVHcloud Connect L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) guide or the [Configure OVHcloud Connect L3 with static routes](/guides/network/ovhcloud-connect/l3-static) guide.
 
+## Supported topologies
+
+The way you can wire PoPs and availability zones (AZ) together depends on the service layer. Understanding these rules up front helps you design a topology that matches your resiliency needs.
+
+### Layer 2 topologies
+
+An OCC L2 service is **strictly point-to-point**: it connects **one PoP (entry point) to one availability zone**, and nothing else. A single vRack can hold **only one OCC L2 service**.
+
+Because the link is point-to-point, redundancy is achieved **only through link aggregation (LACP) on the same PoP**: you bundle several physical interfaces into one logical link. A backup link routed through a *second* PoP is **not supported** for L2.
+
+### Layer 3 topologies
+
+An OCC L3 service builds a **full-mesh IP network between any PoP and any availability zone of the same region**. This gives you much more freedom than L2:
+
+- You can associate **several PoPs with one AZ**, and **several AZs with one PoP**.
+- You **cannot** link two PoPs together — no traffic is forwarded directly between PoPs.
+- One L3 domain (subnet) **maps to a single AZ** and cannot be stretched across two AZs or two PoPs.
+- You can run **as many L3 services as you want** in the same vRack.
+
+When at least two PoPs are attached, **ECMP (Equal-Cost Multi-Path) is enabled automatically** (up to 4 paths), distributing traffic across the available links for resiliency.
+
+### Mixing L2 and L3
+
+L2 and L3 services can **coexist in the same vRack**, so you can combine a transparent L2 bridge with routed L3 connectivity when your architecture needs both.
+
 ## Architecture overview
 
 <img className="thumbnail" alt="Global design of OVHcloud Connect linking a customer network to OVHcloud through a PoP" src="/images/network/ovhcloud-connect/introduction/image.png" loading="lazy" />

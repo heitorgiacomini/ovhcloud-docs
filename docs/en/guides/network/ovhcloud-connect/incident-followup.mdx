@@ -6,7 +6,7 @@ lastUpdated: 2026-06-15
 
 ## Objective
 
-If you experience a service degradation or outage on your OVHcloud Connect link, follow this guide to report the incident, provide the right diagnostic information, and track resolution.
+When an OVHcloud Connect link degrades or goes down, knowing how to report, track, and escalate the incident shortens resolution and clarifies what OVHcloud covers (the PoP-to-datacentre segment) versus what you or your provider own. It also determines how the availability SLA and any service credits apply, since credits are tied to an open ticket. If you experience a service degradation or outage, follow this guide to report the incident, provide the right diagnostic information, and track resolution through to a post-incident review.
 
 ## Step 1 — Gather diagnostic information
 
@@ -42,7 +42,7 @@ mtr -r -c 50 10.0.0.1
 Before opening a ticket, verify whether the issue is already known:
 
 - **OVHcloud status page** — Check the OVHcloud status and scheduled maintenance pages (accessible from the Control Panel).
-- **Provider status page** — If using a provider (Megaport, Equinix, Console Connect), check their status/maintenance pages.
+- **Provider status page** — If using a provider, check your provider's status/maintenance page.
 - **Your own monitoring** — Confirm the issue is not on your side (local router failure, ISP outage, etc.).
 
 Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.

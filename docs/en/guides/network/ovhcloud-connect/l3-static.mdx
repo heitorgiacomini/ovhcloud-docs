@@ -8,7 +8,7 @@ import Api from '@components/Api';
 
 ## Objective
 
-**This guide explains how to** configure OVHcloud Connect in L3 mode with static routing. This involves two levels of configuration:
+Static routing is the simplest way to connect your network to OVHcloud when you have a small, stable set of prefixes and do not need a routing protocol. Unlike BGP, it offers no automatic failover — you update routes yourself when your network changes — though VRRP still protects the gateway within an AZ. Configuring OVHcloud Connect in L3 mode with static routing involves two levels of configuration:
 
 1. **PoP configuration** — The L3 session between your router and OVHcloud at the Point of Presence.
 2. **AZ extra configuration (network)** — Static routes within the OVHcloud AZ for route distribution.
@@ -116,7 +116,7 @@ The PoP configuration establishes the L3 session at the Point of Presence. This 
   "interfaceId": 101,
   "type": "l3",
   "customerBgpArea": 64512,
-  "ovhBgpArea": 65502,
+  "ovhBgpArea": 35540,
   "subnet": "192.0.2.0/30",
   "status": "active"
 }

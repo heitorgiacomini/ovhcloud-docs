@@ -67,7 +67,7 @@ Configure your edge routers so the primary path is preferred and the backup path
 |---|---|---|
 | **Local Preference** | Controls outbound path preference (higher = preferred) | Make primary path preferred for traffic leaving your network |
 | **AS-path prepending** | Makes a path look longer (less preferred). Configurable only on your own devices — it cannot be applied on the OVHcloud side | Influence the return path chosen from your side |
-| **MED** | Signals your preferred inbound path to OVHcloud (lower = preferred) | Recommended way to influence OVHcloud's choice of return path |
+| **MED** | Signals a preferred path (lower = preferred) | The OVHcloud-side alternative to AS-path prepending (which is customer-side only) for active/passive path selection |
 
 #### 4. Associate both links with your vRack
 
@@ -197,7 +197,7 @@ These steps are performed in the third-party cloud or provider console and are o
 - An **OVHcloud account** with a vRack
 - Two AWS Direct Connect connections at **different locations**
 - Two OVHcloud Connect Provider services at **different PoPs**
-- A shared provider (Megaport or Equinix) present at both locations
+- A shared connectivity provider present at both locations (see [Providers](/guides/network/ovhcloud-connect/providers))
 - Non-overlapping IP ranges between AWS VPC and OVHcloud subnets
 
 ### Architecture
@@ -209,7 +209,7 @@ These steps are performed in the third-party cloud or provider console and are o
 For maximum availability between AWS and OVHcloud:
 
 1. **Two AWS Direct Connect connections** in different AWS Direct Connect locations.
-2. **Two provider VXCs** (or separate providers) bridging to two OVHcloud PoPs.
+2. **Two provider virtual circuits / connections** (or separate providers) bridging to two OVHcloud PoPs.
 3. **Two OVHcloud Connect services** at different PoPs, both associated with your vRack.
 4. **BGP failover** configured across both paths.
 
@@ -237,14 +237,14 @@ On your provider platform:
 - **Bridge 1:** AWS Direct Connect 1 ↔ OVHcloud PoP A
 - **Bridge 2:** AWS Direct Connect 2 ↔ OVHcloud PoP B
 
-If using MCR (Cloud Router), create separate MCR instances or peering sessions for each path.
+If using a provider cloud router, create separate cloud router instances or peering sessions for each path.
 
 #### 4. Configure BGP failover
 
 Ensure BGP routing preferences are set so traffic prefers the primary path and falls back to the backup:
 
 - Use **Local Preference** on your own devices to prefer the primary path outbound.
-- Use **AS-path prepending** on your own devices for the backup path (AS-path prepending cannot be applied on the OVHcloud side); use **MED** to signal your preferred inbound path to OVHcloud.
+- Use **AS-path prepending** on your own (customer-side) devices for the backup path; **MED** is the OVHcloud-side alternative (a lower MED is preferred).
 - On AWS, use **Direct Connect Gateway** with appropriate route priorities.
 
 See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) for detailed instructions.
@@ -265,7 +265,7 @@ Associate both OVHcloud Connect services with the same vRack. See [Associate wit
 Resilient AWS-to-OVHcloud requires:
 
 - 2× AWS Direct Connect connections (AWS billing)
-- 2× Provider VXCs or MCR sessions (provider billing)
+- 2× provider virtual circuits / connections or cloud router sessions (provider billing)
 - 2× OVHcloud Connect services (OVHcloud billing)
 
 Plan your budget accordingly. The cost of redundancy is typically justified by the risk reduction for production workloads.
@@ -287,7 +287,7 @@ These steps are performed in the third-party cloud or provider console and are o
 - An **OVHcloud account** with a vRack
 - Two Azure ExpressRoute circuits at **different peering locations**
 - Two OVHcloud Connect Provider services at **different PoPs**
-- A shared provider (Megaport or Equinix) present at both locations
+- A shared connectivity provider present at both locations (see [Providers](/guides/network/ovhcloud-connect/providers))
 - A vRack with Multi-AZ enabled ([Multi-AZ guide](/guides/network/ovhcloud-connect/multi-az))
 - Non-overlapping IP ranges between Azure VNet and OVHcloud vRack
 
@@ -302,7 +302,7 @@ Microsoft recommends **two ExpressRoute circuits in different peering locations*
 | Component | Primary | Backup |
 |---|---|---|
 | Azure ExpressRoute | Circuit 1 (Location A) | Circuit 2 (Location B) |
-| Provider VXC | VXC set 1 | VXC set 2 |
+| Provider circuit | Circuit set 1 | Circuit set 2 |
 | OVHcloud Connect | Service 1 (PoP A) | Service 2 (PoP B) |
 | OVHcloud AZ | AZ 1 | AZ 2 |
 
@@ -314,7 +314,7 @@ In the **Azure Portal** → **Create ExpressRoute** (repeat for each circuit):
 
 | Setting | Circuit 1 | Circuit 2 |
 |---|---|---|
-| Provider | Megaport (or Equinix) | Megaport (or Equinix) |
+| Provider | Your OVHcloud Connect provider | Your OVHcloud Connect provider |
 | Peering location | Location A (e.g., Paris) | Location B (e.g., Frankfurt) |
 | Bandwidth | Match your OVHcloud Connect link | Match your OVHcloud Connect link |
 | SKU | Standard or Premium | Standard or Premium |
@@ -334,17 +334,19 @@ Retrieve both **service keys**.
 
 #### 3. Create provider bridges for each path
 
+On your provider platform, create a bridge for each path. Use a provider cloud router if Layer 3 routing at the provider is needed. Refer to your provider's documentation for the exact steps; see [Providers](/guides/network/ovhcloud-connect/providers) for the list.
+
 **Path 1 (Primary):**
 
-1. Create MCR or port at Location A.
-2. VXC: Azure ExpressRoute 1 (Service Key 1) → MCR A.
-3. VXC: MCR A → OVHcloud Connect 1 (OVHcloud service key 1).
+1. Create a provider cloud router or port at Location A.
+2. Virtual circuit / connection: Azure ExpressRoute 1 (Service Key 1) → provider cloud router A.
+3. Virtual circuit / connection: provider cloud router A → OVHcloud Connect 1 (OVHcloud service key 1).
 
 **Path 2 (Backup):**
 
-1. Create MCR or port at Location B.
-2. VXC: Azure ExpressRoute 2 (Service Key 2) → MCR B.
-3. VXC: MCR B → OVHcloud Connect 2 (OVHcloud service key 2).
+1. Create a provider cloud router or port at Location B.
+2. Virtual circuit / connection: Azure ExpressRoute 2 (Service Key 2) → provider cloud router B.
+3. Virtual circuit / connection: provider cloud router B → OVHcloud Connect 2 (OVHcloud service key 2).
 
 #### 4. Configure Azure Private Peering on both circuits
 
@@ -369,12 +371,12 @@ Azure uses **connection weight** to prefer one path over the other.
 
 #### 6. Configure OVHcloud BGP with failover
 
-Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) to prefer the primary path. Local Preference and MED are the levers for OVHcloud/inbound path selection; AS-path prepending is applied only on your own devices, not on the OVHcloud side:
+Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) to prefer the primary path. To build an active/passive topology, tune AS-path prepending and/or MED (a lower MED is preferred). AS-path prepending is customer-side only; MED is the OVHcloud-side alternative:
 
-| Path | Local Preference | MED (toward OVHcloud) | AS-path prepend (your devices only) |
-|---|---|---|---|
-| OVHcloud Connect 1 (primary) | 200 | 100 (lower = preferred) | None |
-| OVHcloud Connect 2 (backup) | 100 | 200 | 1× prepend |
+| Path | MED (lower = preferred) | AS-path prepend (your devices) |
+|---|---|---|
+| OVHcloud Connect 1 (primary) | 100 | None |
+| OVHcloud Connect 2 (backup) | 200 | 1× prepend |
 
 #### 7. Associate both services with your vRack
 
@@ -386,7 +388,7 @@ Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) to pref
 |---|---|---|
 | Primary link failure | Disable ExpressRoute 1 VIF in Azure | Traffic shifts to ExpressRoute 2 within BGP convergence time |
 | Primary OCC failure | Disable OVHcloud Connect 1 | Traffic shifts to OVHcloud Connect 2 |
-| Provider failure | Take down MCR A VXCs | Traffic shifts to MCR B path |
+| Provider failure | Take down the path A virtual circuits / connections | Traffic shifts to the path B route |
 | Full recovery | Re-enable all links | Traffic returns to primary path |
 
 > **Convergence:** Failover completes once BGP reconverges. BFD is enabled by default on OVHcloud Connect BGP sessions and speeds up detection and convergence.
@@ -414,7 +416,7 @@ These steps are performed in the third-party cloud or provider console and are o
 - Two Cloud Routers (one per region or availability domain)
 - An **OVHcloud account** with a vRack
 - Two OVHcloud Connect Provider services at **different PoPs**
-- A shared provider (Megaport or Equinix) at both locations
+- A shared connectivity provider at both locations (see [Providers](/guides/network/ovhcloud-connect/providers))
 - A vRack with Multi-AZ enabled
 - **Non-overlapping IP ranges** between GCP VPC and OVHcloud vRack
 
@@ -429,7 +431,7 @@ Google Cloud recommends using VLAN attachments in **different edge availability 
 | Component | Primary | Backup |
 |---|---|---|
 | GCP VLAN attachment | Edge domain zone1 | Edge domain zone2 |
-| Provider VXC | VXC set 1 | VXC set 2 |
+| Provider circuit | Circuit set 1 | Circuit set 2 |
 | OVHcloud Connect | Service 1 (PoP A) | Service 2 (PoP B) |
 | OVHcloud AZ | AZ 1 | AZ 2 |
 
@@ -474,17 +476,19 @@ Retrieve both **OVHcloud service keys**.
 
 #### 4. Create provider bridges for each path
 
+On your provider platform, create a bridge for each path. Use a provider cloud router if Layer 3 routing at the provider is needed. Refer to your provider's documentation for the exact steps; see [Providers](/guides/network/ovhcloud-connect/providers) for the list.
+
 **Path 1 (Primary):**
 
-1. MCR or port at Location A.
-2. VXC: GCP Partner Interconnect (GCP pairing key 1) → MCR A.
-3. VXC: MCR A → OVHcloud Connect 1 (OVHcloud service key 1).
+1. Provider cloud router or port at Location A.
+2. Virtual circuit / connection: GCP Partner Interconnect (GCP pairing key 1) → provider cloud router A.
+3. Virtual circuit / connection: provider cloud router A → OVHcloud Connect 1 (OVHcloud service key 1).
 
 **Path 2 (Backup):**
 
-1. MCR or port at Location B.
-2. VXC: GCP Partner Interconnect (GCP pairing key 2) → MCR B.
-3. VXC: MCR B → OVHcloud Connect 2 (OVHcloud service key 2).
+1. Provider cloud router or port at Location B.
+2. Virtual circuit / connection: GCP Partner Interconnect (GCP pairing key 2) → provider cloud router B.
+3. Virtual circuit / connection: provider cloud router B → OVHcloud Connect 2 (OVHcloud service key 2).
 
 #### 5. Activate both GCP VLAN attachments
 
@@ -498,23 +502,23 @@ In the GCP Console:
 
 **GCP side:**
 
-GCP Cloud Router uses **MED (Multi-Exit Discriminator)** to influence path selection. Set different MED values:
+Within GCP, Cloud Router uses **MED (Multi-Exit Discriminator)** as its own native mechanism to influence path selection between its VLAN attachments. Set different MED values:
 
 | Attachment | Advertised MED |
 |---|---|
 | `attachment-1` (primary) | 100 (lower = preferred) |
 | `attachment-2` (backup) | 200 |
 
-You can configure MED via custom route advertisements in the Cloud Router BGP peer settings.
+You can configure MED via custom route advertisements in the Cloud Router BGP peer settings. This is a GCP-internal mechanism and does not influence how OVHcloud selects its path toward you.
 
 **OVHcloud side:**
 
-Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). Local Preference and MED are the levers for OVHcloud/inbound path selection; AS-path prepending is applied only on your own devices, not on the OVHcloud side:
+Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). To build an active/passive topology, tune AS-path prepending and/or MED (a lower MED is preferred). AS-path prepending is customer-side only; MED is the OVHcloud-side alternative:
 
-| Path | Local Preference | MED (toward OVHcloud) | AS-path prepend (your devices only) |
-|---|---|---|---|
-| OVHcloud Connect 1 (primary) | 200 | 100 (lower = preferred) | None |
-| OVHcloud Connect 2 (backup) | 100 | 200 | 1× prepend |
+| Path | MED (lower = preferred) | AS-path prepend (your devices) |
+|---|---|---|
+| OVHcloud Connect 1 (primary) | 100 | None |
+| OVHcloud Connect 2 (backup) | 200 | 1× prepend |
 
 #### 7. Associate both services with your vRack
 
@@ -526,7 +530,7 @@ Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). Local 
 |---|---|---|
 | GCP link failure | Disable VLAN attachment 1 | Traffic shifts to attachment 2 |
 | OCC link failure | Disable OVHcloud Connect 1 | Traffic shifts to OVHcloud Connect 2 |
-| Provider failure | Take down MCR A | Traffic shifts to MCR B path |
+| Provider failure | Take down the path A provider cloud router | Traffic shifts to the path B route |
 | Full recovery | Re-enable all | Traffic returns to primary |
 
 ### GCP-specific considerations
@@ -534,7 +538,7 @@ Use [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). Local 
 - **Custom route advertisements**: Use Cloud Router custom route advertisements to control which subnets are announced to OVHcloud. Avoid advertising the entire VPC if only specific subnets are needed.
 - **Dataplane v2**: If using GKE with Dataplane v2, ensure Pod CIDR ranges are included in route advertisements if GKE pods need to communicate with OVHcloud.
 - **Shared VPC**: If using Shared VPC, create the Interconnect in the host project and share with service projects.
-- **MTU**: GCP Interconnect sets its own MTU for Partner Interconnect (refer to Google's current documentation). On the OVHcloud side, jumbo frames up to **9000 bytes** are supported; ensure the MTU is consistent end to end across GCP, the provider VXCs, and OVHcloud Connect.
+- **MTU**: GCP Interconnect sets its own MTU for Partner Interconnect (refer to Google's current documentation). On the OVHcloud side, jumbo frames up to **9000 bytes** are supported; ensure the MTU is consistent end to end across GCP, the provider virtual circuits / connections, and OVHcloud Connect.
 
 > For more information, please consult [GCP Interconnect documentation](https://docs.cloud.google.com/network-connectivity/docs/interconnect) and [GCP Cloud Router documentation](https://docs.cloud.google.com/network-connectivity/docs/router).
 

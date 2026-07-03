@@ -23,13 +23,7 @@ See [What is OVHcloud Connect?](/guides/network/ovhcloud-connect/introduction) f
 
 ### Which providers are supported?
 
-OVHcloud Connect Provider works with:
-
-- **Megaport** — VXC and MCR (Cloud Router)
-- **Equinix Fabric** — Virtual connections
-- **Console Connect** (PCCW Global) — On-demand connections
-
-See [Providers](/guides/network/ovhcloud-connect/providers) for details.
+OVHcloud Connect Provider works with several third-party network providers — see the [Providers](/guides/network/ovhcloud-connect/providers) guide for the current list.
 
 ### Where is OVHcloud Connect available?
 
@@ -63,7 +57,7 @@ You can order through the OVHcloud Control Panel, the API, or Terraform.
 **Provider:**
 
 - OVHcloud generates a **service key** immediately after the order.
-- The service is delivered as soon as your provider consumes the service key and provisions the virtual circuit — typically within **minutes to hours** for on-demand providers such as Megaport, Equinix Fabric, or Console Connect.
+- The service is delivered as soon as your provider consumes the service key and provisions the virtual circuit — typically within **minutes to hours** for on-demand providers.
 
 ### How is OVHcloud Connect billed?
 
@@ -73,7 +67,7 @@ OVHcloud Connect is billed monthly based on:
 - **Bandwidth** (Direct: 1, 10 or 100 Gbps; Provider: 50 Mbps to 50 Gbps)
 - **Number of services**
 
-Provider connections may also incur charges from the provider (Megaport, Equinix, etc.). Check the [OVHcloud pricing page](/links/network/ovhcloud-connect) for current rates.
+Provider connections may also incur charges from your provider. Check the [OVHcloud pricing page](/links/network/ovhcloud-connect) for current rates.
 
 ### Can I upgrade bandwidth without downtime?
 
@@ -92,9 +86,9 @@ No. Bandwidth changes require ordering a new service at the desired speed and mi
 
 ## Technical
 
-### What BGP ASN does OVHcloud use?
+### Which BGP ASN can I use?
 
-For OVHcloud Connect BGP peering, the OVHcloud side uses the reserved ASN assigned to your region: **65501** (Europe), **65502** (Canada), or **65519** (Asia). Note the known issue with **AS65501** (routes are not propagated). You must configure your side with a different ASN (typically a private ASN in the 64512–65534 range).
+You can use any BGP ASN, except the values reserved by OVHcloud per region: **65501** (Europe), **65502** (Canada), or **65519** (Asia). Your side and the OVHcloud-side routing instance must use different ASNs — for example, AS35540 is a valid choice. Do not use the reserved region values as your ASN (a private ASN in the 64512–65534 range is a common choice for your own side).
 
 ### What is the maximum number of BGP prefixes?
 
@@ -178,7 +172,7 @@ BFD is enabled by default on all BGP sessions and brings failover down to **unde
 | Possible cause | Action |
 |---|---|
 | Cross-connect not completed (Direct) | Contact your colocation provider; check LOA status |
-| Provider VXC not provisioned (Provider) | Check provider portal; ensure the service key is correct |
+| Provider virtual circuit not provisioned (Provider) | Check provider portal; ensure the service key is correct |
 | BGP not configured | [Configure BGP](/guides/network/ovhcloud-connect/l3-bgp) |
 | vRack not associated | [Associate vRack](/guides/network/ovhcloud-connect/associate-vrack) |
 

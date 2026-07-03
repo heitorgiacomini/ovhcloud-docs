@@ -11,7 +11,7 @@ This page defines the key terms you will encounter throughout the OVHcloud Conne
 ### A
 
 **ASN (Autonomous System Number)**
-A unique number that identifies a network on the Internet for the purpose of exchanging routing information via BGP. Your network has its own ASN, and OVHcloud has its own ASN. These numbers are used when configuring BGP sessions.
+A unique number that identifies a network on the Internet for the purpose of exchanging routing information via BGP. Your network has its own ASN, and the OVHcloud-side routing instance has its own ASN. These numbers are used when configuring BGP sessions, and the two sides must differ (eBGP). You can use any ASN except the OVHcloud per-region reserved values (65501 Europe, 65502 Canada, 65519 Asia).
 
 **AZ (Availability Zone)**
 A physically separate data centre within a region, containing the one or more data centres hosting your services. AZs are both sufficiently geographically distant from each other to be isolated in the event of a disaster, and sufficiently close to ensure low latency.
@@ -90,6 +90,9 @@ A contractual commitment from OVHcloud that defines the guaranteed level of serv
 
 **VLAN (Virtual Local Area Network)**
 Independent logical network created on a shared physical infrastructure, allowing a local network to be segmented into several isolated groups to improve security and performance.
+
+**VRRP (Virtual Router Redundancy Protocol)**
+A protocol that provides gateway redundancy for the OVHcloud L3 routing instance in an availability zone. OVHcloud runs two devices (A and B) that share a virtual gateway IP (the first usable IP of the AZ subnet). There is one VRRP instance per AZ; the VRID is provided by OVHcloud; device A is the master by default. Enabling BGP on the AZ disables VRRP.
 
 **vRack**
 Isolated virtual private network provided by OVHcloud that allows you to interconnect your other OVHcloud services (Bare Metal servers, Public Cloud instances, Hosted Private Cloud, etc) in an isolated private network, regardless of their location. OVHcloud Connect is associated with a vRack to extend your private network into OVHcloud. For more information, please consult the [product page on our website](/links/network/vrack).

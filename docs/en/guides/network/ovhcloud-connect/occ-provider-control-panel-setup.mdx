@@ -6,7 +6,7 @@ lastUpdated: 2026-06-15
 
 ## Objective
 
-This guide walks you through connecting to OVHcloud using a **third-party network provider** (such as Megaport, Equinix Fabric, or Console Connect). A provider handles the physical connectivity on your behalf, so you don't need to be present in the same data centre as OVHcloud.
+OVHcloud Connect Provider is the provider-managed option: a third-party network provider builds the physical link to an OVHcloud PoP on your behalf, so you do not need to be present in the same data centre as OVHcloud. It is always a Layer 3 service. This quick start covers the end-to-end path — from ordering to a configured link — so that by the end you have a connection carrying traffic to your OVHcloud resources.
 
 ## Before you begin
 
@@ -36,13 +36,11 @@ For detailed steps, see [Order OVHcloud Connect Provider](/guides/network/ovhclo
 
 Give the **service key** to your provider. This key allows the provider to identify and activate the connection to OVHcloud on your behalf.
 
-- On **Megaport**: create a VXC (Virtual Cross Connect) to OVHcloud and enter the service key.
-- On **Equinix Fabric**: create a connection to OVHcloud and provide the service key.
-- On **Console Connect**: initiate a connection to OVHcloud and use the service key.
+In your provider's portal, create the connection to OVHcloud and enter the service key. See the [Providers](/guides/network/ovhcloud-connect/providers) guide.
 
 ### Step 3 — Provider provisions the connection
 
-The provider sets up the physical and logical link between their infrastructure and OVHcloud's PoP. This is usually fast (minutes to hours for on-demand providers like Megaport), but timing varies.
+The provider sets up the physical and logical link between their infrastructure and OVHcloud's PoP. This is usually fast (minutes to hours for on-demand providers), but timing varies.
 
 You can track the connection status in both the **OVHcloud Control Panel** and your **provider's portal**.
 

@@ -8,7 +8,7 @@ import Api from '@components/Api';
 
 ## Objective
 
-Before configuring OVHcloud Connect L3 routing (BGP or static), you must prepare the **AZ configuration** that creates a virtual router inside the vRack, connecting your OVHcloud Connect link to the OVHcloud AZ(s) where your services run.
+The **AZ configuration** creates the OVHcloud-side routing instance inside your vRack — two redundant devices, A and B — that your services use to reach your network. It defines the AZ subnet and the gateway your resources point to, and is the prerequisite for L3 routing, whether you use BGP or static routing. You create one AZ configuration per AZ you want to reach before configuring OVHcloud Connect L3 routing.
 
 **This guide explains how to:**
 
@@ -62,7 +62,7 @@ When you create an AZ configuration, you assign a **private subnet** to it. The 
 |---|---|
 | **Minimum /28 per AZ** | The API enforces this minimum. |
 | **Avoid IP overlaps** | Subnets must not overlap with your on-premises network, WAN, or other cloud providers. |
-| **Use private (RFC 1918) addresses** | Use `10.0.0.0/8`, `172.16.0.0/12`, or `192.168.0.0/16` ranges. |
+| **Any address range is accepted** | OVHcloud does not restrict the subnet's address type — you can use private (RFC 1918) or public ranges, as long as they do not overlap with your other networks. |
 | **Use different subnets per AZ** | One subnet cannot be stretched between two AZs. |
 
 ### VRRP — Gateway redundancy
@@ -131,7 +131,7 @@ Create the AZ configuration:
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `datacenterId` | long | Yes | ID of the AZ (from Step 1) |
-| `ovhBgpArea` | long | No | The OVHcloud-side ASN for the AZ. Provide the value for your region (`65501` Europe / `65502` Canada / `65519` Asia) |
+| `ovhBgpArea` | long | No | The ASN for the OVHcloud-side routing instance. You can use any ASN except the values reserved by OVHcloud per region (`65501` Europe, `65502` Canada, `65519` Asia); it must differ from your customer ASN (e.g. `35540`) |
 | `subnet` | ipv4Block | No | Private subnet for the AZ (/28 minimum). Example: `172.16.1.0/28` |
 
 
@@ -161,7 +161,7 @@ Once the task completes, verify the AZ configuration:
   "id": 3456,
   "datacenterId": 1234,
   "subnet": "172.16.1.0/28",
-  "ovhBgpArea": 65501,
+  "ovhBgpArea": 35540,
   "status": "active"
 }
 ```

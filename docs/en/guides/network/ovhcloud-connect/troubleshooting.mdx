@@ -107,12 +107,11 @@ The physical link is up, but the BGP session does not reach the `Established` st
 | # | Possible cause | Solution |
 |---|---|---|
 | 1 | **Incorrect peer IP address** | Verify that the peer IP configured on your router matches exactly the IP assigned by OVHcloud in the Control Panel. The PoP peering subnet is a /30: OVHcloud takes the first IP, you take the second. See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). |
-| 2 | **Incorrect ASN** | Check that you are peering with the OVHcloud-side ASN assigned for your region (**65501** Europe, **65502** Canada, **65519** Asia) and that your own ASN is correctly configured (private ASN range 64512–65534 recommended). Note the known issue with **AS65501** (routes are not propagated). |
+| 2 | **Incorrect ASN** | Your ASN and the OVHcloud-side ASN must both be set correctly, must differ from each other, and must not use the reserved values (**65501** Europe, **65502** Canada, **65519** Asia); any other ASN is allowed. |
 | 3 | **VLAN ID mismatch** | The VLAN tag on your interface must match the VLAN ID configured in the OVHcloud Control Panel PoP configuration. Verify this on your router. |
 | 4 | **Firewall blocking TCP port 179** | BGP uses TCP port 179. Ensure no firewall or ACL is blocking this port between the two peers. |
 | 5 | **Interface not configured with correct encapsulation** | For L3 connections, the interface must use 802.1Q encapsulation with the correct VLAN ID. See configuration examples in the [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp). |
 | 6 | **PoP configuration not created in OVHcloud** | Verify in the OVHcloud Control Panel that a PoP configuration has been created for your service. Without it, OVHcloud's router will not peer. |
-| 7 | **MD5 authentication mismatch** | If you have configured MD5 on your side, the password must match on both sides. Remove or align the MD5 configuration if in doubt. |
 
 ### Diagnostic flowchart
 
@@ -199,7 +198,7 @@ The connection is working, but throughput is lower than expected or latency is h
 | 2 | **MTU mismatch causing fragmentation** | Fragmented packets reduce effective throughput. Verify MTU end-to-end and run path MTU discovery: `ping -s 1472 -M do <destination>`. |
 | 3 | **Interface errors (CRC, FCS, drops)** | Check the interface error counters on your router. Physical issues (dirty fibre, bad SFP, loose connector) cause retransmissions and degrade performance. |
 | 4 | **Sub-optimal routing** | Traffic may be taking a longer path than expected. Check `traceroute` and BGP attributes (Local Preference, AS-path) to ensure optimal path selection. |
-| 5 | **Congestion at the provider** | If using OVHcloud Connect Provider, check the provider's portal (Megaport, Equinix Fabric, Console Connect) for utilisation and alerts on the virtual circuit. |
+| 5 | **Congestion at the provider** | If using OVHcloud Connect Provider, check your provider's portal for utilisation and alerts on the virtual circuit / connection. |
 | 6 | **TCP window size misconfiguration** | For high-bandwidth, high-latency links, ensure TCP window scaling is enabled on hosts to maximise throughput. |
 
 ### Verification commands
@@ -215,14 +214,14 @@ mtr -r -c 100 <destination>
 
 ## Issue 8 — Provider virtual circuit not connecting (OVHcloud Connect Provider)
 
-You have ordered an OVHcloud Connect Provider service, but the connection through your provider (Megaport, Equinix Fabric, or Console Connect) is not coming up.
+You have ordered an OVHcloud Connect Provider service, but the connection through your provider is not coming up.
 
 ### Possible causes and solutions
 
 | # | Possible cause | Solution |
 |---|---|---|
 | 1 | **Incorrect service key** | Verify that the service key entered in your provider's portal exactly matches the key from the OVHcloud Control Panel. |
-| 2 | **Provider virtual circuit not provisioned** | Check the status of the VXC (Megaport), virtual connection (Equinix), or connection (Console Connect) in the provider's portal. It should show as "Active" or "Provisioned". |
+| 2 | **Provider virtual circuit not provisioned** | Check the status of the virtual circuit / connection to OVHcloud in your provider's portal. It should show as "Active" or "Provisioned". |
 | 3 | **Provider does not have presence at the PoP** | The provider must be available at the OVHcloud PoP you selected. Verify PoP availability in [Providers](/guides/network/ovhcloud-connect/providers) and [PoP Locations](/guides/network/ovhcloud-connect/pop-locations-regions). |
 | 4 | **Bandwidth mismatch** | The bandwidth ordered on the provider side must match or be compatible with the OVHcloud Connect service bandwidth. |
 | 5 | **Provider-side maintenance or outage** | Check your provider's status page for ongoing incidents or planned maintenance. |
@@ -280,7 +279,7 @@ BGP session may not establish, or traffic may be routed incorrectly due to IP ad
 |---|---|---|
 | 1 | **Using OVHcloud reserved IPs** | In the PoP /30 subnet, the **first IP** is reserved for OVHcloud. In the DC /28 (minimum) subnet, the **first three IPs** are reserved for OVHcloud. Ensure you are using the correct IPs. |
 | 2 | **Overlapping subnets** | Your on-premises subnets must not overlap with subnets used in the OVHcloud vRack. Plan your IP addressing carefully. See [Set up your vRack network](/guides/network/ovhcloud-connect/vrack-network-setup). |
-| 3 | **Duplicate ASN** | Your BGP ASN must differ from the OVHcloud-side region ASN (65501 Europe, 65502 Canada, 65519 Asia). Use a private ASN in the 64512–65534 range. |
+| 3 | **Duplicate ASN** | Your ASN and the OVHcloud-side ASN must both be set correctly, must differ from each other, and must not use the reserved values (65501 Europe, 65502 Canada, 65519 Asia); any other ASN is allowed. |
 
 ---
 

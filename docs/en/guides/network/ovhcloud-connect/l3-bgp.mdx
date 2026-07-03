@@ -8,7 +8,7 @@ import Api from '@components/Api';
 
 ## Objective
 
-**This guide explains how to** configure OVHcloud Connect in L3 mode with BGP. This involves two levels of configuration:
+BGP gives you dynamic route exchange and automatic failover between your network and OVHcloud: routes are learned and withdrawn automatically instead of being maintained by hand, and with two or more PoPs ECMP is enabled automatically to spread traffic across paths. Choose it when you have a growing or multiple set of prefixes, or a resilient multi-path, multi-AZ design. Configuring OVHcloud Connect in L3 mode with BGP involves two levels of configuration:
 
 1. **PoP configuration** — The eBGP session between your router and OVHcloud at the Point of Presence.
 2. **AZ extra configuration (BGP)** — BGP peering within the OVHcloud AZ for route distribution.
@@ -80,7 +80,7 @@ The PoP configuration establishes the L3 BGP session at the Point of Presence.
 | `interfaceId` | long | Yes | ID of the OVHcloud Connect interface |
 | `type` | string | Yes | `l3` for Layer 3 mode |
 | `customerBgpArea` | long | No | Your AS number (a public ASN or a private ASN in the range 64512–65534, e.g. `64512`) |
-| `ovhBgpArea` | long | No | The OVHcloud-side ASN. Provide the value for your region (`65501` Europe / `65502` Canada / `65519` Asia). |
+| `ovhBgpArea` | long | No | The ASN for the OVHcloud-side routing instance. You can use any ASN except the values reserved by OVHcloud per region (`65501` Europe, `65502` Canada, `65519` Asia); it must differ from your customer ASN (e.g. `35540`). |
 | `subnet` | ipv4Block | No | /30 peering subnet (e.g. `192.0.2.0/30`). First IP is OVHcloud, second is yours. |
 
 **Example request:**
@@ -110,7 +110,7 @@ Once the task completes:
   "interfaceId": 101,
   "type": "l3",
   "customerBgpArea": 64512,
-  "ovhBgpArea": 65502,
+  "ovhBgpArea": 35540,
   "subnet": "192.0.2.0/30",
   "status": "active"
 }
@@ -122,7 +122,7 @@ From this response, note:
 |---|---|---|
 | **OVHcloud peer IP** | `192.0.2.1` | First IP of the /30 — OVHcloud side |
 | **Your peer IP** | `192.0.2.2` | Second IP of the /30 — your router |
-| **OVHcloud ASN** | `65502` | The `ovhBgpArea` value (region-dependent) |
+| **OVHcloud ASN** | `35540` | The `ovhBgpArea` value (any ASN except the reserved region values) |
 | **Your ASN** | `64512` | The `customerBgpArea` value |
 
 Check the BGP session state:
@@ -218,9 +218,8 @@ Available diagnostic names: `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `di
 - **Only advertise prefixes you own.** Do not leak third-party routes through OVHcloud Connect.
 - **Apply prefix filters.** Use prefix-lists on both import and export to prevent accidental route leaks.
 - **Set maximum-prefix limits.** Protect your router from receiving an unexpected number of routes.
-- **Use MD5 authentication.** If required, configure MD5 on the BGP session for added security.
 - **Monitor the session.** Set up alerts for BGP flaps and session drops — see [Monitor your connection](/guides/network/ovhcloud-connect/monitor).
-- **For redundant setups.** Use Local Preference or AS-path prepending to control primary/backup path selection — see [Multi-AZ](/guides/network/ovhcloud-connect/multi-az). AS-path prepending can only be configured on your own devices, not on the OVHcloud side. To influence how OVHcloud selects the inbound path towards you, use MED (Multi-Exit Discriminator), which is supported.
+- **For redundant setups.** With two or more PoPs, ECMP is enabled automatically; to build an active/passive topology instead, tune BGP path selection with AS-path prepending and/or MED (a lower MED is preferred) — see [Multi-AZ](/guides/network/ovhcloud-connect/multi-az). AS-path prepending is customer-side only; MED is the OVHcloud-side alternative.
 
 ## Troubleshooting
 
