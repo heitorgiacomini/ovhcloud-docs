@@ -21,15 +21,14 @@
 | Traffic stays private and never touches the public internet | 21 | Authoritative/product fact: OCC is a private link; consistent across previous docs (no VPN over internet) |
 | vRack service is free to create | 26 | ovhcloud.com: vRack is provided free of charge |
 | Terraform resource ovh_vrack_ovhcloudconnect with args service_name and ovh_cloud_connect | 70-73 | SOT terraform.json: resource exists with exactly service_name + ovh_cloud_connect (both required) |
-| VLAN ID in the OCC PoP configuration should match the VLAN used by resources in the vRack | 83 | Standard vRack/VLAN consistency requirement; consistent with occ-layer3 vRack VLAN model |
+| Alternative association from the vRack page (vRack private network > Manage your vRack > select the OCC service under "Your eligible services" > Add) | 44-45 | Confirmed via live Manager (screenshot from docs owner) |
+| Removal from the vRack page (Manage your vRack > select the OCC service in "Your vRack" > Remove) | 85-92 | Confirmed via live Manager (screenshot from docs owner) |
 
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| Alternative association from the vRack page: Network > vRack > select vRack > "Add a service" > find OVHcloud Connect > "Add" | 45 | vRack-page "Add a service" flow not in the previous OCC docs; button labels not in manager-beta cache for this path — needs live manager confirmation |
-| Removal flow: Network > vRack > select vRack > find OCC service > "Remove" > confirm | 90-93 | vRack-page "Remove" flow/labels not in previous OCC docs or manager-beta cache — needs live manager confirmation |
-| "Association is typically effective within a few minutes" | 42 | Timing claim not in old docs/SOT — operational, needs live confirmation |
+_None — the "few minutes" timing claim was removed from the guide. It is unverifiable and not contractually defined; the OCC contract (Art. 4) states delivery times are non-guaranteed objectives._
 
 ## Summary
-- Category 1: 5 · Category 2: 4 · Category 3: 3
-- Notes: Strong carryover — the core "Attach a vRack" CP step and both vRack API calls come straight from the previous Direct CP and API guides (category 1), and the Terraform resource is confirmed in SOT. The vRack-page alternative/removal flows and the timing claim are the only items needing a live manager walk (category 3).
+- Category 1: 5 · Category 2: 5 · Category 3: 0
+- Notes: Fully reconciled. Core "Attach a vRack" CP step and both vRack API calls carry over from the previous Direct CP/API guides (category 1); Terraform resource confirmed in SOT. The vRack-page add/remove flows were confirmed against the live Manager (category 2). Removed: the VLAN "consistency" claim (not in the previous docs; vRack is Layer 2 and does not manage VLANs) and the "few minutes" timing claim (unverifiable; contract Art. 4 makes delivery times non-guaranteed).
