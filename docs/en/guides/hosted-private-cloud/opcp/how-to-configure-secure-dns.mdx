@@ -1,0 +1,141 @@
+---
+title: "Configuring secure DNS on OPCP (DoT and DNSSEC)"
+description: Learn how to encrypt outbound DNS resolution with DNS over TLS (DoT) and sign the administration zone with DNSSEC, using opcp-cli
+lastUpdated: 2026-07-03
+---
+
+## Objective
+
+**On-Prem Cloud Platform (OPCP)** resolves DNS names for its nodes, its containers and the services it exposes. By default, resolution towards your external resolvers happens in cleartext, which exposes it to passive eavesdropping and spoofing.
+
+Two features let you secure this resolution:
+
+- **DNS over TLS (DoT)**: encrypts resolution towards your upstream resolvers.
+- **DNSSEC**: signs the records served on the administration network (out-of-band, OOB) so your resolvers can validate their authenticity.
+
+**The aim of this guide is to show you how to enable and configure these two features** using the `opcp-cli` command-line tool.
+
+This guide is intended for administrators of an OPCP platform in **Self-managed** mode, who have access to `opcp-cli` and to the deployment configuration.
+
+## Requirements
+
+- An OPCP version **higher than 3.0.6**.
+- An OPCP platform in **Self-managed** mode already deployed.
+- Administrative access to the `opcp-cli` commands on the platform (see the [How to use the APIs and obtain the credentials](/guides/hosted-private-cloud/opcp/how-to-use-api-and-get-credentials) guide).
+- For **strict DoT**: an upstream resolver that supports DNS over TLS (port `853`) and its server name (SNI) for certificate validation.
+- For **DNSSEC validation**: a validating resolver on your side where you can declare the trust anchor.
+
+## Instructions
+
+### How OPCP resolves names
+
+All of OPCP's outbound resolution **transits through each node's `systemd-resolved` resolver**: the components that need to resolve external names query it, and it alone queries your upstream resolvers. Enabling **DoT** there therefore encrypts resolution for the whole platform (nodes, containers, compute hosts).
+
+**DNSSEC** acts on the CoreDNS that exposes the platform records on the administration network (OOB): it **signs** those responses so they can be validated.
+
+Configuration is done in your **deployment configuration** (`opcp-deployment-config.yaml`), which you edit with `opcp-cli config edit` and then apply with `opcp-cli deploy`.
+
+### 1. Enable DNS over TLS (DoT)
+
+Edit the deployment configuration:
+
+```bash
+opcp-cli config edit
+```
+
+Add the `dns.over_tls` key with the desired mode:
+
+```yaml
+dns:
+  over_tls: opportunistic
+```
+
+The available modes:
+
+| Mode | Behaviour |
+|------|-----------|
+| `no` | Disabled — queries are sent in cleartext. |
+| `opportunistic` *(default)* | Encrypts when the upstream supports DoT, otherwise **falls back to cleartext**. The certificate is **not validated** (protects against passive eavesdropping only). Suitable for airgapped environments or upstreams that do not support DoT. |
+| `yes` | **Strict** — encryption is **required** and the upstream resolver's **certificate chain is validated**. |
+
+For the **strict** mode, the upstream resolver must present a valid certificate. Provide its server name (used for validation) with the `IP#servername` syntax in the `public_forward_resolvers` list:
+
+```yaml
+dns:
+  over_tls: "yes"
+
+public_forward_resolvers:
+  - "193.110.81.0#dns0.eu"
+```
+
+Apply the configuration:
+
+```bash
+opcp-cli deploy
+```
+
+:::note
+The `opportunistic` mode (default) already encrypts resolution when possible, with no extra configuration and no risk for an upstream that does not support DoT. The `yes` mode guarantees encryption and validates the certificate, but requires a reachable DoT-capable upstream.
+:::
+
+You can check the encryption status on a node with:
+
+```bash
+resolvectl status
+```
+
+The output should show `DNSOverTLS: yes` (or `opportunistic`) as well as the configured servers.
+
+### 2. Enable DNSSEC on the administration zone (OOB)
+
+Enabling DNSSEC requires a **signing key** to exist **before** the feature is enabled.
+
+1. Generate the signing key (it is produced together with the other certificate secrets):
+
+    ```bash
+    opcp-cli secrets certificates generate
+    ```
+
+    The key is generated once and then reused on subsequent runs.
+
+2. Enable signing in the deployment configuration (`opcp-cli config edit`):
+
+    ```yaml
+    dns:
+      dnssec:
+        oob:
+          enabled: true
+    ```
+
+3. Apply the configuration:
+
+    ```bash
+    opcp-cli deploy
+    ```
+
+The OOB zone DNS service now serves signed responses (DNSKEY / RRSIG records).
+
+:::warning
+Enable `dns.dnssec.oob.enabled` **only after** generating the key with `opcp-cli secrets certificates generate`. Without the key, the OOB zone DNS service will not start.
+:::
+
+### 3. Retrieve the DNSSEC trust anchor
+
+For your resolvers to validate the signed zone, they need the public **trust anchor** (the DNSKEY record, from which you can derive a DS record). It is displayed together with the other connection details:
+
+```bash
+opcp-cli config auth-info
+```
+
+Add this DNSKEY (or the corresponding DS) as a trust anchor on your validating resolver.
+
+:::note
+As the OOB zone has no signed parent, it forms an **island of trust**: the anchor must be declared **manually** on your resolvers. The platform **signs** the zone and exposes the anchor; configuring validation on your own resolvers remains your responsibility.
+:::
+
+## Go further
+
+- [Network integration and connectivity for OPCP](/guides/hosted-private-cloud/opcp/opcp-network-architecture)
+- [How to use the APIs and obtain the credentials](/guides/hosted-private-cloud/opcp/how-to-use-api-and-get-credentials)
+
+Join our [community of users](/links/community).

@@ -1,0 +1,142 @@
+---
+title: "Configurer un DNS sécurisé sur OPCP (DoT et DNSSEC)"
+description: Découvrez comment chiffrer la résolution DNS sortante avec DNS over TLS (DoT) et signer la zone d'administration avec DNSSEC, à l'aide d'opcp-cli
+lastUpdated: 2026-07-03
+---
+
+## Objectif
+
+**On-Prem Cloud Platform (OPCP)** résout les noms DNS pour ses nœuds, ses conteneurs et les services qu'il expose. Par défaut, la résolution vers vos résolveurs externes se fait en clair, ce qui l'expose à l'écoute passive et à l'usurpation (*spoofing*).
+
+Deux fonctionnalités permettent de sécuriser cette résolution :
+
+- **DNS over TLS (DoT)** : chiffre la résolution vers vos résolveurs *upstream*.
+- **DNSSEC** : signe les enregistrements de la zone servie sur le réseau d'administration (*out-of-band*, OOB) pour que vos résolveurs puissent en valider l'authenticité.
+
+**L'objectif de ce guide est de vous montrer comment activer et configurer ces deux fonctionnalités** à l'aide de l'outil en ligne de commande `opcp-cli`.
+
+Ce guide s'adresse aux administrateurs d'une plateforme OPCP en mode **Self-managed**, qui disposent d'un accès à `opcp-cli` et à la configuration de déploiement.
+
+## Prérequis
+
+- Une version d'OPCP **supérieure à 3.0.6**.
+- Un accès administrateur aux commandes `opcp-cli` sur la plateforme (voir le guide [Utiliser les API et obtenir les informations d'identification](/guides/hosted-private-cloud/opcp/how-to-use-api-and-get-credentials)).
+- Pour le **DoT en mode strict** : un résolveur *upstream* compatible DNS over TLS (port `853`) et son nom de serveur (SNI) pour la validation du certificat.
+- Pour la **validation DNSSEC** : un résolveur validant côté client sur lequel vous pourrez déclarer l'ancre de confiance.
+
+## En pratique
+
+### Comment OPCP résout les noms
+
+Toute la résolution sortante d'OPCP **transite par le résolveur `systemd-resolved` de chaque nœud** : les composants qui doivent résoudre des noms externes s'y adressent, et c'est lui seul qui interroge vos résolveurs *upstream*. Activer le **DoT** à cet endroit chiffre donc la résolution pour l'ensemble de la plateforme (nœuds, conteneurs, hôtes de calcul).
+
+Le **DNSSEC**, lui, agit sur le CoreDNS qui expose les enregistrements de la plateforme sur le réseau d'administration (OOB) : il **signe** ces réponses pour permettre leur validation.
+
+La configuration se fait dans votre **configuration de déploiement** (`opcp-deployment-config.yaml`), que vous éditez avec `opcp-cli config edit`, puis que vous appliquez avec `opcp-cli deploy`.
+
+### 1. Activer DNS over TLS (DoT)
+
+Éditez la configuration de déploiement :
+
+```bash
+opcp-cli config edit
+```
+
+Ajoutez la clé `dns.over_tls` avec le mode souhaité :
+
+```yaml
+dns:
+  over_tls: opportunistic
+```
+
+Les modes disponibles :
+
+| Mode | Comportement |
+|------|--------------|
+| `no` | Désactivé — les requêtes sont envoyées en clair. |
+| `opportunistic` *(par défaut)* | Chiffre lorsque l'*upstream* supporte le DoT, sinon **repli en clair**. Le certificat **n'est pas validé** (protection contre l'écoute passive uniquement). Adapté aux environnements isolés (*airgap*) ou aux *upstreams* ne gérant pas le DoT. |
+| `yes` | **Strict** — chiffrement **obligatoire** et **validation de la chaîne de certificats** du résolveur *upstream*. |
+
+Pour le mode **strict**, le résolveur *upstream* doit présenter un certificat valide. Indiquez son nom de serveur (pour la validation) avec la syntaxe `IP#nom_de_serveur` dans la liste `public_forward_resolvers` :
+
+```yaml
+dns:
+  over_tls: "yes"
+
+#Exemple with dns4eu
+public_forward_resolvers:
+  - "86.54.11.100#unfiltered.joindns4.eu"
+  - "86.54.11.200#unfiltered.joindns4.eu"
+```
+
+Appliquez la configuration :
+
+```bash
+opcp-cli deploy
+```
+
+:::note
+Le mode `opportunistic` (par défaut) chiffre déjà la résolution lorsque c'est possible, sans configuration supplémentaire et sans risque pour un *upstream* qui ne gère pas le DoT. Le mode `yes` garantit le chiffrement et valide le certificat, mais impose un *upstream* compatible DoT joignable.
+:::
+
+Vous pouvez vérifier l'état du chiffrement sur un nœud avec :
+
+```bash
+resolvectl status
+```
+
+La sortie doit indiquer `DNSOverTLS: yes` (ou `opportunistic`) ainsi que les serveurs configurés.
+
+### 2. Activer DNSSEC sur la zone d'administration (OOB)
+
+L'activation du DNSSEC nécessite qu'une **clé de signature** existe **avant** d'activer la fonctionnalité.
+
+1. Générez la clé de signature (elle est produite avec les autres secrets de certificats) :
+
+    ```bash
+    opcp-cli secrets certificates generate
+    ```
+
+    La clé est générée une seule fois puis réutilisée lors des exécutions suivantes.
+
+2. Activez la signature dans la configuration de déploiement (`opcp-cli config edit`) :
+
+    ```yaml
+    dns:
+      dnssec:
+        oob:
+          enabled: true
+    ```
+
+3. Appliquez la configuration :
+
+    ```bash
+    opcp-cli deploy
+    ```
+
+Le service DNS de la zone OOB sert désormais des réponses signées (enregistrements DNSKEY / RRSIG).
+
+:::warning
+Activez `dns.dnssec.oob.enabled` **uniquement après** avoir généré la clé avec `opcp-cli secrets certificates generate`. Sans la clé, le service DNS de la zone OOB ne démarre pas.
+:::
+
+### 3. Récupérer l'ancre de confiance DNSSEC
+
+Pour que vos résolveurs valident la zone signée, ils ont besoin de l'**ancre de confiance** publique (l'enregistrement DNSKEY, dont vous pouvez dériver un enregistrement DS). Elle est affichée avec les autres informations de connexion :
+
+```bash
+opcp-cli config auth-info
+```
+
+Ajoutez cette DNSKEY (ou le DS correspondant) comme ancre de confiance sur votre résolveur validant.
+
+:::note
+La zone OOB n'ayant pas de parent signé, elle constitue un **îlot de confiance** : l'ancre doit être déclarée **manuellement** sur vos résolveurs. La plateforme **signe** la zone et expose l'ancre ; la configuration de la validation sur vos propres résolveurs reste à votre charge.
+:::
+
+## Aller plus loin
+
+- [Intégration réseau et connectivité pour OPCP](/guides/hosted-private-cloud/opcp/opcp-network-architecture)
+- [Utiliser les API et obtenir les informations d'identification](/guides/hosted-private-cloud/opcp/how-to-use-api-and-get-credentials)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).
