@@ -1907,8 +1907,7 @@
         + [Getting started](web-cloud-ssl-gateway-getting-started)
             + [Order an SSL Gateway](web-cloud/ssl-gateway/order)
             + [Using the SSL Gateway](web-cloud/ssl-gateway/use)
-    + [Web Cloud Databases](products/web-cloud-clouddb)
-        + [Overview](web-cloud/databases/overview)
+    + [Web Cloud Databases](products/web-cloud-clouddb){landing=web-cloud/databases/landing-page-databases}
         + [Getting started](web-cloud-clouddb-getting-started)
             + [Getting started with the Web Cloud Databases service](web-cloud/databases/db-getting-started)
             + [Getting started with MySQL and MariaDB](web-cloud/databases/db-getting-started-mysql-mariadb)
