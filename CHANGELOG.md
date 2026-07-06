@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026.07.06
+
+### Features
+- **occ:** temp 301s for guides deleted by the OCC revert
+- add Web Cloud Databases landing pages (product + configuration, replaces overview) (#333)
+- **object sto:** update sse guide (#199)
+
+### Maintenance
+- **docs:** clean up old api refs and images
+
+### Documentation
+- 162 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.07.03
 
 ### Features
