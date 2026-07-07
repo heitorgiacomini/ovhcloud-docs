@@ -137,6 +137,29 @@ export default defineConfig({
           append: true,
           attrs: { src: '/vendor/jquery-3.7.1.min.js', defer: true },
         },
+        // OVHcloud CMP — mirrors rspress.config.build.ts (early <head> consent
+        // gate). Intentional divergences from prod: (1) dev serves multiple
+        // locales from one instance, so we omit `locale` and let the CMP fall
+        // back to navigator.language / en-GB; (2) environment is 'preproduction'
+        // so local dev never writes test consents to the production API.
+        {
+          tag: 'script',
+          head: true,
+          append: true,
+          children:
+            "window.__cmpConfig={region:'EU',environment:'preproduction'," +
+            "scripts:['https://analytics.ovh.com/ovh/ovh_delta.js','https://analytics.ovh.com/ovh/ovh_tags.js']};",
+        },
+        {
+          // Absolute URL — the bundle is served by the OVHcloud server farms.
+          tag: 'script',
+          head: true,
+          append: true,
+          attrs: {
+            src: 'https://docs.ovhcloud.com/website/session_handler/assets/cmp_app/cmp.iife.js',
+            defer: true,
+          },
+        },
       ],
     },
     source: {
@@ -237,7 +260,7 @@ export default defineConfig({
     ],
     footer: {
       message:
-        '<div><a href="https://www.ovhcloud.com/" target="_blank" rel="nofollow">© Copyright 1999-2026 OVH SAS.</a> · <a href="#" onclick="window.tC&&window.tC.privacyCenter&&window.tC.privacyCenter.showPrivacyCenter();return false">Privacy center</a></div>',
+        '<div><a href="https://www.ovhcloud.com/" target="_blank" rel="nofollow">© Copyright 1999-2026 OVH SAS.</a> · <a href="#" data-cmp-trigger="show-preferences">Privacy center</a></div>',
     },
   },
 });
