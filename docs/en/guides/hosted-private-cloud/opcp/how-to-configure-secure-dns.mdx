@@ -119,6 +119,8 @@ The OOB zone DNS service now serves signed responses (DNSKEY / RRSIG records).
 
 :::warning
 Enable `dns.oob.dnssec.enabled` **only after** generating the key with `opcp-cli secrets certificates generate`. Without the key, the OOB zone DNS service will not start.
+
+Use the boolean values `true` / `false` for the `enabled` keys — **not** `yes` / `no`, which YAML keeps as strings and the deployment rejects.
 :::
 
 ### 3. Retrieve the DNSSEC trust anchor
@@ -148,6 +150,10 @@ dns:
       enabled: true
 ```
 
+:::warning
+Use `true` / `false` here — **not** `yes` / `no`, which YAML keeps as strings and the deployment rejects.
+:::
+
 Then apply the configuration:
 
 ```bash
@@ -158,6 +164,12 @@ When enabled, the OOB resolver presents a TLS certificate issued by the platform
 
 - If the platform uses its **internal certificate authority** (self-signed root — the default for disconnected / airgapped deployments), add that authority to your resolver's trust store so it can validate the DoT connection.
 - If the platform uses a **publicly-trusted authority** (for example Let's Encrypt), the certificate validates against the public trust store, provided the endpoint name is publicly resolvable.
+
+The DoT certificate (and the platform CA needed to trust it) is displayed together with the other connection details:
+
+```bash
+opcp-cli config auth-info
+```
 
 :::note
 DoT to the OOB resolver protects the **transport** (confidentiality), while DNSSEC protects the **content** (authenticity). The two are independent and complementary: enable both for end-to-end secure OOB resolution.

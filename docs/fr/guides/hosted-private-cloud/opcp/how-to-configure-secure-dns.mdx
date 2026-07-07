@@ -120,6 +120,8 @@ Le service DNS de la zone OOB sert désormais des réponses signées (enregistre
 
 :::warning
 Activez `dns.oob.dnssec.enabled` **uniquement après** avoir généré la clé avec `opcp-cli secrets certificates generate`. Sans la clé, le service DNS de la zone OOB ne démarre pas.
+
+Utilisez les valeurs booléennes `true` / `false` pour les clés `enabled` — **pas** `yes` / `no`, que YAML conserve comme des chaînes et que le déploiement rejette.
 :::
 
 ### 3. Récupérer l'ancre de confiance DNSSEC
@@ -149,6 +151,10 @@ dns:
       enabled: true
 ```
 
+:::warning
+Utilisez `true` / `false` ici — **pas** `yes` / `no`, que YAML conserve comme des chaînes et que le déploiement rejette.
+:::
+
 Puis appliquez la configuration :
 
 ```bash
@@ -159,6 +165,12 @@ Une fois activé, le résolveur OOB présente un certificat TLS émis par l'auto
 
 - Si la plateforme utilise son **autorité de certification interne** (racine auto-signée — le cas par défaut des déploiements isolés / *airgap*), ajoutez cette autorité au magasin de confiance de votre résolveur afin qu'il puisse valider la connexion DoT.
 - Si la plateforme utilise une **autorité publiquement reconnue** (par exemple Let's Encrypt), le certificat se valide via le magasin de confiance public, à condition que le nom du point d'accès soit résolvable publiquement.
+
+Le certificat DoT (ainsi que l'autorité de certification de la plateforme nécessaire pour lui faire confiance) est affiché avec les autres informations de connexion :
+
+```bash
+opcp-cli config auth-info
+```
 
 :::note
 Le DoT vers le résolveur OOB protège le **transport** (confidentialité), tandis que le DNSSEC protège le **contenu** (authenticité). Les deux sont indépendants et complémentaires : activez-les tous les deux pour une résolution OOB sécurisée de bout en bout.
