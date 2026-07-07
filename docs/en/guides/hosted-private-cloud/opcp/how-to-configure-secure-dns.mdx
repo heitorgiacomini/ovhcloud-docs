@@ -1,7 +1,7 @@
 ---
 title: "Configuring secure DNS on OPCP (DoT and DNSSEC)"
 description: Learn how to encrypt outbound DNS resolution with DNS over TLS (DoT) and sign the administration zone with DNSSEC, using opcp-cli
-lastUpdated: 2026-07-03
+lastUpdated: 2026-07-07
 ---
 
 ## Objective
@@ -10,7 +10,7 @@ lastUpdated: 2026-07-03
 
 Two features let you secure this resolution:
 
-- **DNS over TLS (DoT)**: encrypts resolution towards your upstream resolvers.
+- **DNS over TLS (DoT)**: encrypts resolution towards your upstream resolvers, and also lets you query the platform's administration (OOB) resolver over an encrypted channel.
 - **DNSSEC**: signs the records served on the administration network (out-of-band, OOB) so your resolvers can validate their authenticity.
 
 **The aim of this guide is to show you how to enable and configure these two features** using the `opcp-cli` command-line tool.
@@ -43,11 +43,12 @@ Edit the deployment configuration:
 opcp-cli config edit
 ```
 
-Add the `dns.over_tls` key with the desired mode:
+Add the `dns.resolver.over_tls` key with the desired mode:
 
 ```yaml
 dns:
-  over_tls: opportunistic
+  resolver:
+    over_tls: opportunistic
 ```
 
 The available modes:
@@ -62,7 +63,8 @@ For the **strict** mode, the upstream resolver must present a valid certificate.
 
 ```yaml
 dns:
-  over_tls: "yes"
+  resolver:
+    over_tls: "yes"
 
 public_forward_resolvers:
   - "193.110.81.0#dns0.eu"
@@ -102,8 +104,8 @@ Enabling DNSSEC requires a **signing key** to exist **before** the feature is en
 
     ```yaml
     dns:
-      dnssec:
-        oob:
+      oob:
+        dnssec:
           enabled: true
     ```
 
@@ -116,7 +118,7 @@ Enabling DNSSEC requires a **signing key** to exist **before** the feature is en
 The OOB zone DNS service now serves signed responses (DNSKEY / RRSIG records).
 
 :::warning
-Enable `dns.dnssec.oob.enabled` **only after** generating the key with `opcp-cli secrets certificates generate`. Without the key, the OOB zone DNS service will not start.
+Enable `dns.oob.dnssec.enabled` **only after** generating the key with `opcp-cli secrets certificates generate`. Without the key, the OOB zone DNS service will not start.
 :::
 
 ### 3. Retrieve the DNSSEC trust anchor
@@ -131,6 +133,34 @@ Add this DNSKEY (or the corresponding DS) as a trust anchor on your validating r
 
 :::note
 As the OOB zone has no signed parent, it forms an **island of trust**: the anchor must be declared **manually** on your resolvers. The platform **signs** the zone and exposes the anchor; configuring validation on your own resolvers remains your responsibility.
+:::
+
+### 4. Expose the OOB resolver over DNS over TLS (DoT)
+
+Besides encrypting *outbound* resolution (section 1), the resolver that serves the platform's administration (OOB) records can itself be exposed over **DNS over TLS** on port `853`. Your resolvers can then query the OOB zone over an encrypted channel and — combined with DNSSEC (section 2) — obtain responses that are both **confidential** (DoT) and **authenticated** (DNSSEC).
+
+This feature is **disabled by default**. Enable it in the deployment configuration (`opcp-cli config edit`):
+
+```yaml
+dns:
+  oob:
+    dot:
+      enabled: true
+```
+
+Then apply the configuration:
+
+```bash
+opcp-cli deploy
+```
+
+When enabled, the OOB resolver presents a TLS certificate issued by the platform's certificate authority (the same authority used for the platform's other certificates); no further configuration is required. To use it, point your forwarding or validating resolver at the **OOB VIP on port `853` (TCP)**, using `oob-dns.<your-base-domain>` as the TLS server name:
+
+- If the platform uses its **internal certificate authority** (self-signed root — the default for disconnected / airgapped deployments), add that authority to your resolver's trust store so it can validate the DoT connection.
+- If the platform uses a **publicly-trusted authority** (for example Let's Encrypt), the certificate validates against the public trust store, provided the endpoint name is publicly resolvable.
+
+:::note
+DoT to the OOB resolver protects the **transport** (confidentiality), while DNSSEC protects the **content** (authenticity). The two are independent and complementary: enable both for end-to-end secure OOB resolution.
 :::
 
 ## Go further

@@ -1,7 +1,7 @@
 ---
 title: "Configurer un DNS sécurisé sur OPCP (DoT et DNSSEC)"
 description: Découvrez comment chiffrer la résolution DNS sortante avec DNS over TLS (DoT) et signer la zone d'administration avec DNSSEC, à l'aide d'opcp-cli
-lastUpdated: 2026-07-03
+lastUpdated: 2026-07-07
 ---
 
 ## Objectif
@@ -10,7 +10,7 @@ lastUpdated: 2026-07-03
 
 Deux fonctionnalités permettent de sécuriser cette résolution :
 
-- **DNS over TLS (DoT)** : chiffre la résolution vers vos résolveurs *upstream*.
+- **DNS over TLS (DoT)** : chiffre la résolution vers vos résolveurs *upstream*, et vous permet aussi d'interroger le résolveur d'administration (OOB) de la plateforme via un canal chiffré.
 - **DNSSEC** : signe les enregistrements de la zone servie sur le réseau d'administration (*out-of-band*, OOB) pour que vos résolveurs puissent en valider l'authenticité.
 
 **L'objectif de ce guide est de vous montrer comment activer et configurer ces deux fonctionnalités** à l'aide de l'outil en ligne de commande `opcp-cli`.
@@ -42,11 +42,12 @@ La configuration se fait dans votre **configuration de déploiement** (`opcp-dep
 opcp-cli config edit
 ```
 
-Ajoutez la clé `dns.over_tls` avec le mode souhaité :
+Ajoutez la clé `dns.resolver.over_tls` avec le mode souhaité :
 
 ```yaml
 dns:
-  over_tls: opportunistic
+  resolver:
+    over_tls: opportunistic
 ```
 
 Les modes disponibles :
@@ -61,7 +62,8 @@ Pour le mode **strict**, le résolveur *upstream* doit présenter un certificat 
 
 ```yaml
 dns:
-  over_tls: "yes"
+  resolver:
+    over_tls: "yes"
 
 #Exemple with dns4eu
 public_forward_resolvers:
@@ -103,8 +105,8 @@ L'activation du DNSSEC nécessite qu'une **clé de signature** existe **avant** 
 
     ```yaml
     dns:
-      dnssec:
-        oob:
+      oob:
+        dnssec:
           enabled: true
     ```
 
@@ -117,7 +119,7 @@ L'activation du DNSSEC nécessite qu'une **clé de signature** existe **avant** 
 Le service DNS de la zone OOB sert désormais des réponses signées (enregistrements DNSKEY / RRSIG).
 
 :::warning
-Activez `dns.dnssec.oob.enabled` **uniquement après** avoir généré la clé avec `opcp-cli secrets certificates generate`. Sans la clé, le service DNS de la zone OOB ne démarre pas.
+Activez `dns.oob.dnssec.enabled` **uniquement après** avoir généré la clé avec `opcp-cli secrets certificates generate`. Sans la clé, le service DNS de la zone OOB ne démarre pas.
 :::
 
 ### 3. Récupérer l'ancre de confiance DNSSEC
@@ -132,6 +134,34 @@ Ajoutez cette DNSKEY (ou le DS correspondant) comme ancre de confiance sur votre
 
 :::note
 La zone OOB n'ayant pas de parent signé, elle constitue un **îlot de confiance** : l'ancre doit être déclarée **manuellement** sur vos résolveurs. La plateforme **signe** la zone et expose l'ancre ; la configuration de la validation sur vos propres résolveurs reste à votre charge.
+:::
+
+### 4. Exposer le résolveur OOB en DNS over TLS (DoT)
+
+Au-delà du chiffrement de la résolution *sortante* (section 1), le résolveur qui sert les enregistrements d'administration (OOB) de la plateforme peut lui-même être exposé en **DNS over TLS** sur le port `853`. Vos résolveurs peuvent alors interroger la zone OOB via un canal chiffré et — combiné au DNSSEC (section 2) — obtenir des réponses à la fois **confidentielles** (DoT) et **authentifiées** (DNSSEC).
+
+Cette fonctionnalité est **désactivée par défaut**. Activez-la dans la configuration de déploiement (`opcp-cli config edit`) :
+
+```yaml
+dns:
+  oob:
+    dot:
+      enabled: true
+```
+
+Puis appliquez la configuration :
+
+```bash
+opcp-cli deploy
+```
+
+Une fois activé, le résolveur OOB présente un certificat TLS émis par l'autorité de certification de la plateforme (la même autorité que pour les autres certificats de la plateforme) ; aucune configuration supplémentaire n'est nécessaire. Pour l'utiliser, pointez votre résolveur (relais ou validant) vers la **VIP OOB sur le port `853` (TCP)**, en utilisant `oob-dns.<votre-domaine-de-base>` comme nom de serveur TLS :
+
+- Si la plateforme utilise son **autorité de certification interne** (racine auto-signée — le cas par défaut des déploiements isolés / *airgap*), ajoutez cette autorité au magasin de confiance de votre résolveur afin qu'il puisse valider la connexion DoT.
+- Si la plateforme utilise une **autorité publiquement reconnue** (par exemple Let's Encrypt), le certificat se valide via le magasin de confiance public, à condition que le nom du point d'accès soit résolvable publiquement.
+
+:::note
+Le DoT vers le résolveur OOB protège le **transport** (confidentialité), tandis que le DNSSEC protège le **contenu** (authenticité). Les deux sont indépendants et complémentaires : activez-les tous les deux pour une résolution OOB sécurisée de bout en bout.
 :::
 
 ## Aller plus loin
