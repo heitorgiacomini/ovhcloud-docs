@@ -65,6 +65,22 @@ if [[ "${TRUNK_ENABLED_ARG,,}" =~ ^(oui|yes|1)$ ]]; then
     [[ -z "$TRUNK_USERNAME_ARG"  ]] && { echo -e "\033[0;31m[ERR]\033[0m --trunk-enabled=oui requiert --trunk-username=<login-sip>" >&2; exit 1; }
 fi
 
+# trunk-registrar / trunk-username : format strict (défense anti-injection au ré-exec tmux).
+# Ces valeurs sont réinjectées dans la commande de session tmux : on interdit tout
+# caractère shell (;, $, backtick, quotes, espace) qui permettrait une injection.
+if [[ -n "$TRUNK_REGISTRAR_ARG" ]]; then
+    if ! [[ "$TRUNK_REGISTRAR_ARG" =~ ^[A-Za-z0-9._:-]+$ ]]; then
+        echo -e "\033[0;31m[ERR]\033[0m --trunk-registrar='$TRUNK_REGISTRAR_ARG' invalide (hôte ou IP attendu ; caractères autorisés : lettres, chiffres, . _ - :)." >&2
+        exit 1
+    fi
+fi
+if [[ -n "$TRUNK_USERNAME_ARG" ]]; then
+    if ! [[ "$TRUNK_USERNAME_ARG" =~ ^[A-Za-z0-9._@+-]+$ ]]; then
+        echo -e "\033[0;31m[ERR]\033[0m --trunk-username='$TRUNK_USERNAME_ARG' invalide (caractères autorisés : lettres, chiffres, . _ - @ +)." >&2
+        exit 1
+    fi
+fi
+
 # tls-domain : format FQDN minimal (lettres, chiffres, tirets, points ; au moins un point)
 if [[ -n "$TLS_DOMAIN_ARG" ]]; then
     if ! [[ "$TLS_DOMAIN_ARG" =~ ^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)+$ ]]; then
@@ -214,6 +230,19 @@ APT::Periodic::AutocleanInterval "7";
 EOF
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] UNATTENDED_UPGRADES_OK"
 
+# --- Garde anti-lock-out : ne jamais couper l'auth par mot de passe sans clé SSH valide ---
+# Sans clé exploitable pour 'debian', désactiver PasswordAuthentication + PermitRootLogin
+# rendrait l'accès SSH définitivement impossible (seule issue : console KVM).
+# On s'arrête AVANT toute modification de sshd_config.
+_DEBIAN_AK="/home/debian/.ssh/authorized_keys"
+if [ ! -s "$_DEBIAN_AK" ] || ! grep -Eq '(^|[[:space:]])(sk-)?(ssh-(rsa|ed25519|dss)|ecdsa-sha2-)' "$_DEBIAN_AK"; then
+    echo "[ERREUR] Aucune clé SSH valide pour l'utilisateur 'debian' ($_DEBIAN_AK)."
+    echo "         Le durcissement SSH vous verrouillerait dehors. Associez une clé SSH"
+    echo "         au VPS (réinstallation OVHcloud ou ssh-copy-id) puis relancez."
+    exit 1
+fi
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] SSH_KEY_GUARD_OK — clé debian présente"
+
 # --- SSH hardening ---
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] SSH : configuration..."
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
@@ -303,13 +332,24 @@ DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y \
   -o Dpkg::Options::="--force-confdef"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] APT_UPGRADE_OK"
 
-# Téléchargement script FreePBX
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Téléchargement installateur FreePBX..."
-wget -q --timeout=60 -O /tmp/sng_freepbx_debian_install.sh \
-  https://github.com/FreePBX/sng_freepbx_debian_install/raw/master/sng_freepbx_debian_install.sh
+# Téléchargement de l'installateur officiel FreePBX (Sangoma) — VERSION FIGÉE.
+# Épinglé sur un commit précis + vérification d'empreinte SHA-256 avant exécution :
+# empêche de lancer en root un installateur altéré (dépôt compromis, miroir, MITM).
+# Anciennement tiré de la branche mobile "master" sans aucun contrôle d'intégrité.
+# Pour mettre à jour FreePBX : changer le commit ET recalculer l'empreinte ci-dessous
+#   SHA=<nouveau_commit>
+#   curl -fsSL https://raw.githubusercontent.com/FreePBX/sng_freepbx_debian_install/$SHA/sng_freepbx_debian_install.sh | sha256sum
+FREEPBX_INSTALLER_COMMIT="cc87f6451608d187fc55ada634279edc83bb53bd"   # sng_freepbx_debian_install v1.15
+FREEPBX_INSTALLER_SHA256="afef5e4b480cf545b2035f92068dc2fdd32452989d170a16a84acb6e37b7d564"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Téléchargement installateur FreePBX (commit ${FREEPBX_INSTALLER_COMMIT:0:12})..."
+wget -q --tries=3 --timeout=60 -O /tmp/sng_freepbx_debian_install.sh \
+  "https://raw.githubusercontent.com/FreePBX/sng_freepbx_debian_install/${FREEPBX_INSTALLER_COMMIT}/sng_freepbx_debian_install.sh" \
+  || { echo "[ERREUR] Téléchargement de l'installateur FreePBX échoué (réseau, 404, ou commit épinglé indisponible sur GitHub)."; exit 1; }
 [ -s /tmp/sng_freepbx_debian_install.sh ] || { echo "[ERREUR] Fichier installateur vide — vérifier la connectivité GitHub"; exit 1; }
+echo "${FREEPBX_INSTALLER_SHA256}  /tmp/sng_freepbx_debian_install.sh" | sha256sum -c - \
+  || { echo "[ERREUR] Empreinte de l'installateur FreePBX invalide — téléchargement rejeté (fichier altéré ou version modifiée en amont)."; rm -f /tmp/sng_freepbx_debian_install.sh; exit 1; }
 chmod +x /tmp/sng_freepbx_debian_install.sh
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] INSTALL_SCRIPT_DOWNLOADED"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] INSTALL_SCRIPT_DOWNLOADED (empreinte SHA-256 vérifiée)"
 
 # Script helper + drop-in systemd ExecStartPre — créés AVANT l'installateur.
 # Problème constaté : l'installateur reboot après "Upgrading FreePBX 17 modules"
@@ -1887,6 +1927,17 @@ if command -v fwconsole &>/dev/null; then
         echo ""
     else
         err "FreePBX déjà installé — ce script est à usage unique."
+    fi
+fi
+
+# ── Garde anti-lock-out (pré-vol) : échouer TÔT si aucune clé SSH pour 'debian' ──
+# Le durcissement SSH (phase 00_hardening) désactive l'auth par mot de passe.
+# On vérifie ici, AVANT l'installation (20-40 min), pour éviter un échec tardif
+# doublé d'un verrouillage hors du serveur. Re-vérifié dans 00_hardening.
+if [[ -z "${FACTORY_RESUME_MODE:-}" ]]; then
+    _DEBIAN_AK="/home/debian/.ssh/authorized_keys"
+    if [[ ! -s "$_DEBIAN_AK" ]] || ! grep -Eq '(^|[[:space:]])(sk-)?(ssh-(rsa|ed25519|dss)|ecdsa-sha2-)' "$_DEBIAN_AK"; then
+        err "Aucune clé SSH valide pour l'utilisateur 'debian' ($_DEBIAN_AK) — le durcissement SSH vous verrouillerait dehors. Associez une clé SSH au VPS puis relancez."
     fi
 fi
 
