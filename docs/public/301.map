@@ -240,6 +240,13 @@
 /it/guides/network/ovhcloud-connect/introduction /it/guides/network/ovhcloud-connect/ovhcloud-connect-overview;
 /pl/guides/network/ovhcloud-connect/introduction /pl/guides/network/ovhcloud-connect/ovhcloud-connect-overview;
 /pt/guides/network/ovhcloud-connect/introduction /pt/guides/network/ovhcloud-connect/ovhcloud-connect-overview;
+/en/guides/network/ovhcloud-connect/logs-forwarding /en/guides/network/ovhcloud-connect/logs-to-customers;
+/fr/guides/network/ovhcloud-connect/logs-forwarding /fr/guides/network/ovhcloud-connect/logs-to-customers;
+/de/guides/network/ovhcloud-connect/logs-forwarding /de/guides/network/ovhcloud-connect/logs-to-customers;
+/es/guides/network/ovhcloud-connect/logs-forwarding /es/guides/network/ovhcloud-connect/logs-to-customers;
+/it/guides/network/ovhcloud-connect/logs-forwarding /it/guides/network/ovhcloud-connect/logs-to-customers;
+/pl/guides/network/ovhcloud-connect/logs-forwarding /pl/guides/network/ovhcloud-connect/logs-to-customers;
+/pt/guides/network/ovhcloud-connect/logs-forwarding /pt/guides/network/ovhcloud-connect/logs-to-customers;
 # Revamp-only guides (no old equivalent) -> product overview:
 /en/guides/network/ovhcloud-connect/glossary /en/guides/network/ovhcloud-connect/overview;
 /fr/guides/network/ovhcloud-connect/glossary /fr/guides/network/ovhcloud-connect/overview;
@@ -360,3 +367,14 @@
 /it/guides/network/ovhcloud-connect/resilient-architecture /it/guides/network/ovhcloud-connect/overview;
 /pl/guides/network/ovhcloud-connect/resilient-architecture /pl/guides/network/ovhcloud-connect/overview;
 /pt/guides/network/ovhcloud-connect/resilient-architecture /pt/guides/network/ovhcloud-connect/overview;
+
+# Backup Agent - Bare Metal recovery guide folded into the new "Triggering
+# restores" guide (backup-agent/restore), which now covers both file-level
+# restore (FLR) and full-server Bare Metal Recovery.
+/en/guides/storage-and-backup/backup-and-disaster-recovery-solutions/veeam/agent-bare-metal-recovery /en/guides/storage-and-backup/backup-agent/restore;
+/fr/guides/storage-and-backup/backup-and-disaster-recovery-solutions/veeam/agent-bare-metal-recovery /fr/guides/storage-and-backup/backup-agent/restore;
+/de/guides/storage-and-backup/backup-and-disaster-recovery-solutions/veeam/agent-bare-metal-recovery /de/guides/storage-and-backup/backup-agent/restore;
+/es/guides/storage-and-backup/backup-and-disaster-recovery-solutions/veeam/agent-bare-metal-recovery /es/guides/storage-and-backup/backup-agent/restore;
+/it/guides/storage-and-backup/backup-and-disaster-recovery-solutions/veeam/agent-bare-metal-recovery /it/guides/storage-and-backup/backup-agent/restore;
+/pl/guides/storage-and-backup/backup-and-disaster-recovery-solutions/veeam/agent-bare-metal-recovery /pl/guides/storage-and-backup/backup-agent/restore;
+/pt/guides/storage-and-backup/backup-and-disaster-recovery-solutions/veeam/agent-bare-metal-recovery /pt/guides/storage-and-backup/backup-agent/restore;
