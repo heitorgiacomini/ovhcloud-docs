@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.07.08
+
+### Features
+- **OPCP:** create howto to update backup S3 buckets on OPCP (#355)
+
+### Fixes
+- **occ:** add missing temp 301 for logs-forwarding
+
+### Documentation
+- 52 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.07.06
 
 ### Features
