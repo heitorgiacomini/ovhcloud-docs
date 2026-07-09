@@ -3,10 +3,11 @@
 ## 2026.07.09.1
 
 ### Fixes
+- **search:** set Pagefind result title from frontmatter on all pages
 - **home:** render hero title as h1 and add meta description
 
 ### Documentation
-- 16 guides updated across de, en, es, fr, it, pl, pt
+- 23 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.09
 
