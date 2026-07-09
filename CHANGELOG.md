@@ -2,6 +2,9 @@
 
 ## 2026.07.09
 
+### Features
+- use new CMP
+
 ### Fixes
 - **seo:** repair 404 links reported by SEO team
 
