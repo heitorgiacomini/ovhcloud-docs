@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.07.09
+
+### Features
+- use new CMP
+
+### Fixes
+- **seo:** repair 404 links reported by SEO team
+
+### Documentation
+- 36 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.07.08
 
 ### Features
