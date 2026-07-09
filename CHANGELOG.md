@@ -6,7 +6,7 @@
 - **home:** render hero title as h1 and add meta description
 
 ### Documentation
-- 7 guides updated across de, en, es, fr, it, pl, pt
+- 16 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.09
 
