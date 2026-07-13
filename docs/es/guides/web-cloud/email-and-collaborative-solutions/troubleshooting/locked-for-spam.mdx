@@ -1,7 +1,7 @@
 ---
-title: ¿Qué hacer si una dirección de correo electrónico está bloqueada por spam?
-description: "Desbloquee una dirección de correo electrónico bloqueada por spam: identifique la causa de la actividad sospechosa, corríjala y contacte con el soporte de OVHcloud."
-lastUpdated: 2026-05-28
+title: "Correo electrónico bloqueado por spam: ¿qué hacer?"
+description: "Desbloquee una dirección de correo bloqueada por spam: identifique la causa de la actividad sospechosa, corríjala y contacte con el soporte OVHcloud."
+lastUpdated: 2026-07-13
 availableIn: [eu, ca, apac]
 ---
 
@@ -19,7 +19,7 @@ Cuando su dirección de correo electrónico está bloqueada por spam, significa 
 
 ## Requisitos
 
-- Disponer de un [plan de correo electrónico de OVHcloud](https://www.ovhcloud.com/es-es/emails/).
+- Disponer de un [plan de correo electrónico de OVHcloud](/links/web/emails).
 - Haber iniciado sesión en su <ManagerLink to="/">área de cliente de OVHcloud</ManagerLink>.
 
 {/* CP-NAV-START:web-mx-plan */}
@@ -58,7 +58,13 @@ Cuando su dirección de correo electrónico está bloqueada por spam, significa 
 
 ## Procedimiento <a name="instructions"></a>
 
-Antes de continuar, y si el bloqueo afecta a una dirección de correo electrónico de tipo MX Plan, identifique la tecnología de correo electrónico utilizada por su plan para seguir el proceso de desbloqueo adecuado. Para los planes **Zimbra Starter** y **Zimbra Pro**, vaya directamente a la pestaña **Zimbra** de la etapa 2, sin omitir las comprobaciones de la etapa 1.
+Antes de continuar, y si el bloqueo afecta a una dirección de correo electrónico de tipo MX Plan, identifique la tecnología de correo electrónico utilizada por su plan para seguir el proceso de desbloqueo adecuado.
+
+<Region zones={['eu']}>
+
+Para los planes **Zimbra Starter** y **Zimbra Pro**, vaya directamente a la pestaña **Zimbra** de la etapa 2, sin omitir las comprobaciones de la etapa 1.
+
+</Region>
 
 **Identificar la tecnología de correo electrónico de su plan MX Plan.**
 
@@ -99,6 +105,11 @@ Las razones concretas de un bloqueo no pueden ser divulgadas para evitar cualqui
 
 :::
 
+:::warning
+**Nuestras soluciones de correo no están diseñadas para el envío de correos transaccionales o masivos** (notificaciones automáticas, confirmaciones de pedido, restablecimientos de contraseña, campañas de emailing, etc.). Para este tipo de uso, utilice un servicio dedicado (un servicio de listas de correo o una plataforma de correo transaccional). Utilizar una dirección de correo estándar para estos envíos aumenta considerablemente el riesgo de bloqueo por actividad sospechosa.
+
+:::
+
 
 En primer lugar, asegúrese, con el o los usuarios de la dirección de correo electrónico bloqueada, de que no son los causantes directos del bloqueo debido a un uso inusual de la dirección (por ejemplo, tras envíos masivos de correos electrónicos). Si es así, debe corregir la situación antes de desbloquear la dirección.
 
@@ -114,15 +125,32 @@ Si la actividad sospechosa detectada por el antispam no ha sido iniciada por los
 
 - Compruebe las respuestas automáticas configuradas en la dirección de correo electrónico bloqueada por spam, mediante un software de mensajería o el webmail.
 
+<Region zones={['eu']}>
+
 :::info
 Los filtros, redirecciones y respuestas automáticas configurados directamente en el webmail (Zimbra, OWA) o en su software de mensajería no son accesibles para el soporte de OVHcloud: no puede verificarlos en su lugar. Estas comprobaciones deben realizarse por su cuenta, desde el webmail o un equipo ya configurado con la dirección.
 
 :::
 
+</Region>
+
+<Region zones={['ca', 'apac']}>
+
+:::info
+Los filtros, redirecciones y respuestas automáticas configurados directamente en el webmail (OWA) o en su software de mensajería no son accesibles para el soporte de OVHcloud: no puede verificarlos en su lugar. Estas comprobaciones deben realizarse por su cuenta, desde el webmail o un equipo ya configurado con la dirección.
+
+:::
+
+</Region>
+
+<Region zones={['eu']}>
+
 :::warning
 Si el bloqueo afecta a una dirección que utiliza la tecnología **Zimbra** (MX Plan - Zimbra, Zimbra Starter o Zimbra Pro), la dirección **deja de ser accesible**: además del envío, se suspende la conexión al webmail Zimbra. Los filtros, redirecciones y respuestas automáticas dejan de ser consultables desde el webmail.
 
 :::
+
+</Region>
 
 #### Configurar un filtro para aislar los mensajes SPAM / DCE
 
@@ -255,10 +283,20 @@ Si es necesario establecer una nueva contraseña, asegúrese de que sea lo sufic
 
 Para gestionar los alias y las redirecciones de su dirección de correo electrónico, consulte la guía [Utilizar alias y redirecciones de correo electrónico](/guides/web-cloud/email-and-collaborative-solutions/common-email-features/feature-redirections).
 
+<Region zones={['eu']}>
+
 Para consultar sus filtros y respuestas automáticas desde el webmail, consulte las guías [Utilizar su dirección de correo electrónico desde el webmail Roundcube](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-roundcube) y [Utilizar el webmail Zimbra](/guides/web-cloud/email-and-collaborative-solutions/mx-plan/email-zimbra).
 
-Para prestaciones especializadas (posicionamiento web, desarrollo, etc.), contacte con los [partners de OVHcloud](https://partner.ovhcloud.com/es/directory/).
+</Region>
 
-Para recibir asistencia en el uso y la configuración de sus soluciones de OVHcloud, consulte nuestras [ofertas de soporte](https://www.ovhcloud.com/es-es/support-levels/).
+<Region zones={['ca', 'apac']}>
 
-Interactúe con nuestra [comunidad de usuarios](https://community.ovhcloud.com/community/es).
+Para consultar sus filtros y respuestas automáticas desde el webmail, consulte la guía [Outlook Web App (OWA)](/guides/web-cloud/email-and-collaborative-solutions/using-the-outlook-web-app-webmail/email-owa).
+
+</Region>
+
+Para prestaciones especializadas (posicionamiento web, desarrollo, etc.), contacte con los [partners de OVHcloud](/links/partner).
+
+Para recibir asistencia en el uso y la configuración de sus soluciones de OVHcloud, consulte nuestras [ofertas de soporte](/links/support).
+
+Interactúe con nuestra [comunidad de usuarios](/links/community).
