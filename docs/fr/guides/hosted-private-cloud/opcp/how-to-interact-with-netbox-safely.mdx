@@ -1,0 +1,80 @@
+---
+title: "NetBox Automation - Interagir avec votre instance NetBox en toute sécurité"
+description: "Découvrez comment identifier les objets NetBox gérés automatiquement, ceux dont vous avez la charge, et comment effectuer des modifications sans entrer en conflit avec l'automatisation"
+lastUpdated: 2026-07-15
+---
+
+## Objectif
+
+**Ce guide vous aide à interagir en toute sécurité avec votre instance NetBox lorsqu'une partie de son inventaire est gérée automatiquement.**
+
+## Prérequis
+
+- Avoir accès à l'interface web de votre NetBox.
+
+## En pratique
+
+### Organisation de NetBox
+
+Votre instance NetBox contient deux types d'objets :
+
+- **Les objets gérés automatiquement.** Ils portent le tag **`automation-managed`**. Ils sont créés et maintenus synchronisés avec la Source of Truth (SoT) externe. Vous n'avez pas à les maintenir.
+
+- **Les objets que vous gérez vous-même.** Ils ne portent pas le tag `automation-managed`. Ils vous appartiennent : créez, modifiez, supprimez, retaguez, commentez — selon les besoins de votre workflow.
+
+
+Le tag `automation-managed` est le seul indicateur qui vous permet de savoir à quel côté appartient un objet. En cas de doute, vérifiez le tag.
+
+:::warning
+Ne retirez pas le tag `automation-managed` des objets qui le portent, et ne l'ajoutez pas aux objets que vous créez vous-même. L'une comme l'autre de ces actions conduira l'automatisation à écraser vos modifications lors de sa prochaine exécution.
+:::
+
+### Effectuer des modifications
+
+La méthode pour modifier un objet dépend de son caractère géré ou non par l'automatisation.
+
+**Pour les objets sans le tag `automation-managed` :**
+
+Effectuez vos modifications directement dans l'interface de NetBox, comme d'habitude. L'automatisation ne touche pas à ces objets.
+
+**Pour les objets avec le tag `automation-managed` :**
+
+Ils sont pilotés par la Source of Truth externe.
+
+:::info
+Si vous modifiez un objet `automation-managed` directement dans NetBox, la prochaine exécution de l'automatisation annulera votre modification. La SoT fait référence pour ces objets.
+:::
+
+Ces modifications persistent d'une exécution de l'automatisation à l'autre.
+
+### Le tenant Automation State
+
+Dans la section **Tenancy** de NetBox, vous verrez un tenant nommé **`Automation State`** (slug : `automation-state`). Ce tenant contient des données de gestion interne utilisées par l'automatisation.
+
+:::warning
+Ne supprimez pas le tenant `Automation State` et ne modifiez pas ses champs personnalisés (`automation_non_taggable_state` et `initializer_sot_hash`). Les modifier ou les supprimer entraînera un dysfonctionnement de l'automatisation lors de sa prochaine exécution.
+:::
+
+### Référence rapide
+
+| Action | Autorisée ? |
+|---|---|
+| Modifier un objet sans le tag `automation-managed` | Oui |
+| Ajouter des entrées de journal, des commentaires ou d'autres tags sur n'importe quel objet | Oui |
+| Modifier un champ géré par la SoT sur un objet `automation-managed` | Sera annulé à la prochaine exécution |
+| Supprimer un objet portant le tag `automation-managed` | Sera recréé à la prochaine exécution |
+| Retirer le tag `automation-managed` d'un objet | Sera rajouté à la prochaine exécution |
+| Ajouter le tag `automation-managed` à un objet que vous avez créé | Conduit l'automatisation à l'écraser ou à le supprimer |
+
+### À quoi s'attendre en fonctionnement normal
+
+- **Des entrées de changelog émises par le compte de l'automatisation** après chaque exécution réussie. C'est normal.
+- **Une branche éphémère** nommée `initializer-automation`. Elle est créée, utilisée puis fusionnée (ou supprimée) par l'automatisation.
+- **Le tag `automation-managed`** présent sur de nombreux objets.
+- **Le tenant `Automation State`** présent dans votre liste de tenants.
+
+## Aller plus loin
+
+Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).
