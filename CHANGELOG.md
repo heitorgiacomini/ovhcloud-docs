@@ -6,7 +6,7 @@
 - **search:** signal that universe filters unfold product sub-filters
 
 ### Documentation
-- 35 guides updated across de, en, es, fr, it, pl, pt
+- 112 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.15
 
