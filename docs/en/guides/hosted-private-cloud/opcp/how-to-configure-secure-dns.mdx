@@ -134,7 +134,7 @@ opcp-cli config auth-info
 Add this DNSKEY (or the corresponding DS) as a trust anchor on your validating resolver.
 
 :::note
-As the OOB zone has no signed parent, it forms an **island of trust**: the anchor must be declared **manually** on your resolvers. The platform **signs** the zone and exposes the anchor; configuring validation on your own resolvers remains your responsibility.
+As the OOB zone has no signed parent, it forms an **island of trust**: the anchor must be declared **manually** on your resolvers. The platform **signs** the zone and exposes the anchor; **it does not itself validate DNSSEC**, so there is no DNSSEC validation or enforcement mode to configure on the platform side — signing is simply on or off (step 2), and validating the signatures is entirely up to your own resolvers.
 :::
 
 ### 4. Expose the OOB resolver over DNS over TLS (DoT)
