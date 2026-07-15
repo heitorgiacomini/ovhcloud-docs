@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026.07.15
+
+### Features
+- **search:** add universe and product filters to docs search (#381)
+
+### Fixes
+- **public-cloud:** minor fixes on Increasing the size of an additional disk guide
+- **docs:** API links normalization & repair legacy links (#388)
+
+### Maintenance
+- **docs:** API guides update / clean-up (#390)
+
+### Documentation
+- 561 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.07.10
 
 ### Documentation
