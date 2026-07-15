@@ -2,6 +2,9 @@
 
 ## 2026.07.15.1
 
+### Features
+- **search:** signal that universe filters unfold product sub-filters
+
 ### Documentation
 - 14 guides updated across de, en, es, fr, it, pl, pt
 
