@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.07.16
+
+### Features
+- **home:** add SIRET banner to FR home page hero (#406)
+
+### Documentation
+- 1 guides updated across fr
+
 ## 2026.07.15.1
 
 ### Features
