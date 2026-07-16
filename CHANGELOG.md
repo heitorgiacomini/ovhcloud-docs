@@ -5,10 +5,11 @@
 ### Features
 - **docs:** add VPS product landing page (#409)
 - **home:** add SIRET banner to FR home page hero (#406)
+- **build:** improve AI/LLM retrievability of guides
 - **docs:** add VPS product landing page
 
 ### Documentation
-- 104 guides updated across de, en, es, fr, it, pl, pt
+- 106 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.15.1
 
