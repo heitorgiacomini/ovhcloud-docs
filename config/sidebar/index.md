@@ -282,8 +282,7 @@
             + [How to retrieve databases in rescue mode](bare-metal-cloud/dedicated-servers/restore-bdd-rescue)
             + [Network - Fixing slow downloads problems inside containers and VMs running on Proxmox VE servers with Broadcom BCM57502 NICs](bare-metal-cloud/dedicated-servers/proxmox-broadcom-slow-downloads)
             + [End of life for personal installation templates](bare-metal-cloud/dedicated-servers/end-of-life-for-personal-installation-templates)
-    + [Virtual Private Servers](products/bare-metal-cloud-virtual-private-servers)
-        + [Overview](bare-metal-cloud/virtual-private-servers/overview)
+    + [Virtual Private Servers](products/bare-metal-cloud-virtual-private-servers){landing=bare-metal-cloud/virtual-private-servers/landing-page-vps}
         + [Getting started](bare-metal-cloud-virtual-private-servers-getting-started)
             + [How to get started with a VPS](bare-metal-cloud/virtual-private-servers/starting-with-a-vps)
             + [How to manage a VPS from the OVHcloud Control Panel](bare-metal-cloud/virtual-private-servers/understand-vps-control-panel)
