@@ -3,10 +3,12 @@
 ## 2026.07.16
 
 ### Features
+- **docs:** add VPS product landing page (#409)
 - **home:** add SIRET banner to FR home page hero (#406)
+- **docs:** add VPS product landing page
 
 ### Documentation
-- 1 guides updated across fr
+- 104 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.15.1
 
