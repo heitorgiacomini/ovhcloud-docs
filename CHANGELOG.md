@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.07.17
+
+### Fixes
+- **sidebar:** let manual expand override auto-collapse of a multi-located guide's branch (#413)
+
+### Maintenance
+- add Qwen 3 32b decommissioning to docs (#419)
+
+### Documentation
+- 182 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.07.16
 
 ### Features
