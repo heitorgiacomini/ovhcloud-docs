@@ -117,7 +117,7 @@ Pour l'accès à l'API REST, privilégiez un **jeton d'accès personnel (PAT)** 
 
 Le domaine OKMS expose une interface Swagger unifiée à l'adresse `https://<region>.okms.ovh.net/swagger/`. Par exemple, pour un domaine en **eu-west-rbx** : [https://eu-west-rbx.okms.ovh.net/swagger/](https://eu-west-rbx.okms.ovh.net/swagger/).
 
-Vous pouvez aussi l'ouvrir depuis le lien Swagger du <ManagerLink to="/#/dedicated/security/kms">tableau de bord de votre domaine OKMS</ManagerLink>.
+Vous pouvez aussi l'ouvrir depuis le lien Swagger du <ManagerLink to="/#/okms/key-management-service">tableau de bord de votre domaine OKMS</ManagerLink>.
 
 L'interface Swagger prend en charge les trois méthodes d'authentification de l'API REST. Effectuez les [étapes de configuration](#set-up-authentication) pour la méthode choisie, y compris la [politique IAM](#iam-rights-for-okms) requise, avant d'exécuter des requêtes.
 
@@ -177,7 +177,7 @@ Vous pouvez maintenant exécuter des appels API de manière interactive depuis l
 
 ### Droits IAM pour OKMS <a name="iam-rights-for-okms"></a>
 
-Les actions IAM OKMS suivent le modèle `okms:<channel>:<resource>/<operation>` :
+Les actions IAM OKMS suivent le modèle `okms:<channel>:<resource>/<operation>` :
 
 | Canal | Périmètre | Utilisé pour |
 | --- | --- | --- |
@@ -298,8 +298,12 @@ Les opérations KMIP utilisent les actions `okms:kmip:*`, et non `okms:apiovh:*`
 
 ## Aller plus loin
 
-- [Utiliser votre OVHcloud Key Management Service (KMS)](/guides/manage-and-operate/kms/kms-usage)
-- [Utiliser le Secret Manager avec l'API REST](/guides/manage-and-operate/secret-manager/rest-api)
-- [Comment connecter un produit compatible en utilisant le protocole KMIP](/guides/manage-and-operate/kms/kms-kmip)
-- [Générer un certificat d'accès OKMS](/guides/manage-and-operate/kms/okms-certificate-management)
-- Échangez avec notre [communauté d'utilisateurs](/links/community).
+[Utiliser votre OVHcloud Key Management Service (KMS)](/guides/manage-and-operate/kms/kms-usage)
+
+[Utiliser le Secret Manager avec l'API REST](/guides/manage-and-operate/secret-manager/rest-api)
+
+[Comment connecter un produit compatible en utilisant le protocole KMIP](/guides/manage-and-operate/kms/kms-kmip)
+
+[Générer un certificat d'accès OKMS](/guides/manage-and-operate/kms/okms-certificate-management)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

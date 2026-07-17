@@ -1111,8 +1111,6 @@
             + [Overview](public-cloud/containers-orchestration/managed-private-registry/overview)
             + [Getting started](public-cloud-containers-orchestration-managed-private-registry-getting-started)
                 + [Creating a private registry](public-cloud/containers-orchestration/managed-private-registry/creation)
-                + [Creating a private registry (Harbor) through Terraform](public-cloud/containers-orchestration/managed-private-registry/creation-via-terraform)
-                + [Creating a private registry with Pulumi](public-cloud/containers-orchestration/managed-private-registry/creation-with-pulumi)
                 + [Creating and using a Docker image stored in an OVHcloud Managed Private Registry](public-cloud/containers-orchestration/managed-private-registry/create-private-image)
                 + [Connecting to the UI](public-cloud/containers-orchestration/managed-private-registry/connect-to-ui)
                 + [Managing users and projects](public-cloud/containers-orchestration/managed-private-registry/managing-users-projects)
@@ -1954,6 +1952,7 @@
             + [Retrieving email headers](web-cloud/email-and-collaborative-solutions/troubleshooting/diagnostic-headers){label=Email headers (.eml)}
             + [Managing the storage space for an email account](web-cloud/email-and-collaborative-solutions/troubleshooting/email-manage-quota){label=Mailbox storage}
             + [Restoring deleted items from your email account](web-cloud/email-and-collaborative-solutions/troubleshooting/diagnostic-retention){label=Restore deleted emails}
+            + [Email rejected for cross-domain spoofing (550 5.7.1)](web-cloud/email-and-collaborative-solutions/troubleshooting/email-rejected-cross-domain-spoofing){label=Rejected: cross-domain spoofing}
             + [Exchange - Outlook sign-in prompts to Office 365](web-cloud/email-and-collaborative-solutions/microsoft-exchange/outlook-connecting-to-office-365){label=Outlook sign-in prompts}
             + [Exchange - How to manage logs](web-cloud/email-and-collaborative-solutions/microsoft-exchange/exchange-manage-logs){label=Managing logs}
         + [MX Plan](products/web-cloud-email-collaborative-solutions-mx-plan){landing=web-cloud/email-and-collaborative-solutions/mx-plan/landing-page-mx-plan}
@@ -2718,6 +2717,7 @@
                 + [Extracting logs from Logs Data Platform](manage-and-operate/observability/logs-data-platform/extract-logs)
     + [Key Management Service (KMS)](manage-operate-kms)
         + [Overview](manage-and-operate/kms/overview)
+        + [Official third-party integrations with OVHcloud KMS](manage-and-operate/kms/third-party-integrations)
         + [Getting started with OVHcloud Key Management Service (KMS)](manage-and-operate/kms/quick-start)
         + [OKMS authentication methods](manage-and-operate/kms/okms-authentication-methods)
         + [Using the OVHcloud Key Management Service (KMS) with your data](manage-and-operate/kms/kms-usage)
@@ -2729,6 +2729,7 @@
         + [Pushing logs from OVHcloud KMS to Logs Data Platform](manage-and-operate/kms/logs)
     + [Secret Manager](manage-operate-secret-manager)
         + [Getting started with Secret Manager](manage-and-operate/secret-manager/secret-manager-ui)
+        + [Official third-party integrations with OVHcloud Secret Manager](manage-and-operate/secret-manager/third-party-integrations)
         + [OKMS authentication methods](manage-and-operate/kms/okms-authentication-methods)
         + [Use Secret Manager with REST API](manage-and-operate/secret-manager/rest-api)
         + [Use Secret Manager with Hashicorp Vault KV2 compliant API](manage-and-operate/secret-manager/kv2-api)
