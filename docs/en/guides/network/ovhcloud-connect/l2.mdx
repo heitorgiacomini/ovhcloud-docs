@@ -1,0 +1,105 @@
+---
+title: 'Configure OVHcloud Connect L2'
+description: 'Configure OVHcloud Connect in Layer 2 (L2) mode to extend your network to OVHcloud as a transparent, VLAN-preserving Ethernet bridge'
+lastUpdated: 2026-07-03
+---
+
+import Api from '@components/Api';
+
+## Objective
+
+Layer 2 (L2) mode extends your network to OVHcloud at the **data-link layer**: your vRack is bridged to your equipment "as-is", with no routing involved. Because the link is transparent to VLANs (802.1q), L2 is the simplest way to interconnect an existing network with an OVHcloud vRack — well suited to "lift & shift" migrations without IP changes, or to applications that need Layer 2 adjacency.
+
+L2 is available on **OVHcloud Connect Direct only** (OVHcloud Connect Provider is Layer 3 only). It is a **strictly point-to-point** service: one PoP to one availability zone, with only one OVHcloud Connect L2 per vRack.
+
+## Overview
+
+<img className="thumbnail" alt="OVHcloud Connect L2 implementation: the L2 tunnel is forwarded to and from the vRack" src="/images/network/ovhcloud-connect/l2/occ-l2-implementation.png" loading="lazy" />
+
+In L2 mode, the virtual link is an L2 tunnel forwarded to and from your vRack, so Ethernet traffic is carried transparently between your equipment and OVHcloud.
+
+### How L2 traffic is handled
+
+L2 forwards Ethernet frames (with their 802.1q VLAN header, if present):
+
+- Ethernet broadcast is forwarded.
+- Unknown Ethernet unicast is forwarded.
+- Multicast is forwarded (treated as broadcast, limited to 20 pps).
+- Point-to-point control frames such as LLDP and LACP are **not** forwarded.
+
+Your VLANs are preserved end to end: the same VLAN IDs apply in your network and inside the OVHcloud vRack.
+
+<img className="thumbnail" alt="OVHcloud Connect L2 traffic: the customer vRack is extended as-is and forwarded to the customer link, transparent to VLANs" src="/images/network/ovhcloud-connect/l2/occ-l2-trafic.png" loading="lazy" />
+
+### Topology and redundancy
+
+- L2 is **point-to-point**: one PoP (entry point) to one availability zone. A backup link through a second PoP is **not** supported.
+- Only **one** OVHcloud Connect L2 is supported per vRack.
+- Redundancy is achieved **only** by link aggregation (LACP) on the same PoP — when two links are configured on a PoP, LACP is mandatory.
+- Jumbo frames up to **9000 bytes** are supported.
+
+<img className="thumbnail" alt="Supported and unsupported L2 designs" src="/images/network/ovhcloud-connect/l2/occ-l2-supported-unsupported.png" loading="lazy" />
+
+<img className="thumbnail" alt="L2 point-to-point topologies: a backup link through a second PoP is not supported" src="/images/network/ovhcloud-connect/l2/occ-l2-topologies.png" loading="lazy" />
+
+For the full list of L2 capabilities and unsupported features, see [Prerequisites and limitations](/guides/network/ovhcloud-connect/limits).
+
+## Configure the OVHcloud side
+
+You can configure the OVHcloud side in L2 mode either from the **OVHcloud Control Panel** or with the **OVHcloud API**. Both methods achieve the same result. Afterwards, extend your VLANs over the link from your own equipment.
+
+:::warning
+Switching a PoP configuration between L2 and L3 requires deleting the whole configuration. Choose the mode carefully before you start.
+:::
+
+### Using the OVHcloud Control Panel
+
+Open your solution from the <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> section, then:
+
+1. **Associate a vRack** (if not already done): click <code className="action">Attach a vRack</code> and select an existing vRack.
+2. **Add a PoP configuration**: in the `PoP configuration` menu, click <code className="action">Add a PoP configuration</code>, select **L2**, and confirm.
+3. **Add an availability zone (AZ) configuration**: under the `AZ configuration` menu, click <code className="action">Add a configuration</code>, select an availability zone, and confirm.
+
+L2 mode has no routing configuration — that applies to L3 only.
+
+### Using the OVHcloud API
+
+#### Step 1 — Identify your interface ID
+
+<Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/interface"} />
+
+#### Step 2 — Create the PoP configuration (L2)
+
+<Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop"} />
+
+Provide the `interfaceId` obtained above and set `type` to `l2`.
+
+#### Step 3 — Add the availability zone (datacenter) configuration
+
+For L2, only the availability zone (datacenter) ID is required.
+
+<Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter"} />
+
+Provide the `datacenterId` of the availability zone you want to reach.
+
+## Configure your equipment
+
+On your side, extend the VLANs you want to reach OVHcloud over the OVHcloud Connect link — no routing is required. If you use two links to the same PoP for redundancy, configure **LACP** to aggregate them.
+
+Auto-negotiation is not supported on the OVHcloud Connect link: disable it on your interface and force the port speed to match the ordered link.
+
+## Verify
+
+- Confirm the port shows as **up** in the OVHcloud Control Panel.
+- Confirm your services in the vRack can reach your on-premises network over the expected VLANs.
+- For a Layer 2 diagnostic, retrieve the list of MAC addresses seen on the service — see [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor).
+
+## Go further
+
+- [Prerequisites and limitations](/guides/network/ovhcloud-connect/limits)
+- [Quick Start: OVHcloud Connect Direct](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
+- [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor)
+
+For training or technical assistance implementing our solutions, contact your sales representative or visit our [Professional Services](/links/professional-services) page to request a quote and have your project analyzed by our experts.
+
+Join our [community of users](/links/community).
