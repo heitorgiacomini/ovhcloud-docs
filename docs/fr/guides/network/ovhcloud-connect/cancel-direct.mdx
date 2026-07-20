@@ -6,18 +6,18 @@ lastUpdated: 2026-06-15
 
 ## Objectif
 
-Ce guide explique comment résilier un service OVHcloud Connect Direct et démanteler la connexion physique.
+Un service OVHcloud Connect Direct se renouvelle automatiquement jusqu’à ce que vous désactiviez le renouvellement automatique ou en demandiez la résiliation : l’arrêter constitue donc une action délibérée. La résiliation de l’abonnement met fin à la partie du service gérée par OVHcloud, mais le cross-connect physique présent dans le datacenter reste à votre charge et doit être démantelé séparément avec l’opérateur du PoP. Ce guide couvre ces deux aspects ainsi que le nettoyage nécessaire pour désactiver complètement la connexion.
 
-## Avant de commencer
+## Avant de résilier
 
 Tenez compte des points suivants avant de poursuivre :
 
 - **Interruption de trafic** — La résiliation du service interrompt définitivement l’ensemble du trafic transitant par cette connexion. Assurez-vous d’avoir migré vos charges de travail ou mis en place une connectivité alternative.
-- **Durée d’engagement minimale** — Vérifiez si votre contrat comporte une durée d’engagement minimale. Une résiliation anticipée peut entraîner des frais.
+- **Durée d’engagement** — Vous vous engagez sur la durée initiale sélectionnée lors de la commande, à l’issue de laquelle le service se renouvelle automatiquement. La résiliation interrompt le renouvellement ; le service n’est pas résilié en cours de période.
 - **Démantèlement du cross-connect** — Le cross-connect physique en datacenter doit être démantelé séparément.
-- **Facturation** — Comprenez le cycle de facturation. La résiliation prend généralement effet à la fin de la période de facturation en cours.
+- **Date d’effet** — La résiliation (désactivation du renouvellement automatique) prend effet à la **fin de la période en cours** : le service continue de fonctionner jusqu’à sa date d’expiration, puis s’arrête.
 
-Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez la section <code className="action">Bare Metal Cloud</code>, puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
 ## Étapes de résiliation
 
@@ -33,14 +33,17 @@ Avant de résilier le service OVHcloud Connect :
 
 1. Rendez-vous sur la page <ManagerLink to="/#/billing/autorenew/services">Mes offres et services</ManagerLink>.
 2. À droite de la ligne de votre service **OVHcloud Connect Direct**, cliquez sur <code className="action">...</code>, puis sélectionnez <code className="action">Résilier mon service</code>.
-3. Confirmez la résiliation. Un motif peut vous être demandé.
-4. Vous recevrez un **e-mail de confirmation** indiquant la date effective de résiliation.
+3. Confirmez la résiliation.
+
+:::info
+Pour empêcher le prochain renouvellement, résiliez au moins **24 heures avant la fin de la période en cours**. Le service s’arrête alors à la fin de cette période (à sa date d’expiration), et non immédiatement.
+:::
 
 ### 3. Démanteler le cross-connect
 
 Une fois la résiliation confirmée par OVHcloud :
 
-1. Contactez l'**opérateur de votre datacenter** et demandez la dépose du cross-connect.
+1. Contactez l’**opérateur de votre datacenter** et demandez la dépose du cross-connect.
 2. Fournissez la documentation requise (certains sites exigent une LOA pour la dépose — consultez [LOA Cross-connect](/guides/network/ovhcloud-connect/cross-connect-loa)).
 3. Confirmez auprès du datacenter que le câble physique a bien été retiré.
 
@@ -73,7 +76,7 @@ client.post(f"/ovhCloudConnect/{service_name}/terminate")
 Reportez-vous à la [console API OVHcloud](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1) pour connaître les endpoints de résiliation disponibles.
 :::
 
-## Et ensuite ?
+## Prochaines étapes
 
 - [Résilier OVHcloud Connect Provider](/guides/network/ovhcloud-connect/cancel-provider) (si vous disposez également d’une connexion via un opérateur)
 - [Commander une nouvelle connexion](/guides/network/ovhcloud-connect/order-direct) si vous avez besoin de remplacer le service

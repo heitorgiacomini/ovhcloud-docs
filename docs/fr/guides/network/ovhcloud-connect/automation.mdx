@@ -50,12 +50,12 @@ print(services)
 ```
 
 :::tip
-**Conseil de sécurité :** ne codez jamais en dur vos identifiants API. Utilisez des variables d’environnement, un fichier de configuration (`ovh.conf`) ou un gestionnaire de secrets (par exemple HashiCorp Vault, secrets CI/CD).
+**Conseil de sécurité :** ne codez jamais en dur vos identifiants API. Utilisez des variables d’environnement, un fichier de configuration (`ovh.conf`) ou un gestionnaire de secrets.
 :::
 
 ## Interface en ligne de commande (CLI)
 
-Bien qu’il n’existe pas de binaire CLI OVHcloud dédié à OVHcloud Connect, vous pouvez utiliser les wrappers d’API dans un contexte de scripting ou créer des scripts CLI légers à l’aide des SDKs ci-dessus.
+Vous pouvez utiliser les wrappers d’API dans un contexte de scripting ou créer des scripts CLI légers à l’aide des SDKs ci-dessus.
 
 Exemple : un rapide script bash utilisant `curl` et le mécanisme de signature de l’API OVHcloud :
 
@@ -75,7 +75,7 @@ En pratique, utiliser le SDK Python ou Node.js est bien plus simple que de gére
 
 Terraform vous permet de définir votre infrastructure OVHcloud Connect en tant que code. C’est idéal pour des déploiements reproductibles, le versioning et la collaboration.
 
-### Provider Terraform OVH
+### Provider Terraform OVHcloud
 
 - **Terraform Registry :** [registry.terraform.io/providers/ovh/ovh](https://registry.terraform.io/providers/ovh/ovh/latest)
 - **GitHub :** [github.com/ovh/terraform-provider-ovh](https://github.com/ovh/terraform-provider-ovh)
@@ -86,8 +86,8 @@ Terraform vous permet de définir votre infrastructure OVHcloud Connect en tant 
 terraform {
   required_providers {
     ovh = {
-      source  = "ovh/ovh"
-      version = ">= 2.7.0"
+      source = "ovh/ovh"
+      # Use a recent version of the OVHcloud Terraform provider
     }
   }
 }

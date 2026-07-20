@@ -6,7 +6,7 @@ lastUpdated: 2026-06-15
 
 ## Objectif
 
-Un **cross-connect** est un câble fibre optique physique qui relie votre équipement (ou celui de votre fournisseur) à l’équipement OVHcloud à l’intérieur d’un datacenter. Une **lettre d’autorisation (LOA)** est le document qui autorise l’opérateur du datacenter à installer ou retirer ce câble.
+Un **cross-connect** est un câble fibre optique physique qui relie votre équipement (ou celui de votre fournisseur) à l’équipement OVHcloud à l’intérieur d’un datacenter. Une **lettre d’autorisation (LOA)** autorise l’opérateur du datacenter à installer ou retirer ce câble, en indiquant précisément au site où brasser votre fibre sur l’équipement OVHcloud. Pour OVHcloud Connect Direct, c’est la réalisation du cross-connect qui déclenche la livraison du service : la LOA constitue donc une étape clé entre la commande et la configuration du service.
 
 ## Qu’est-ce qu’une LOA ?
 
@@ -16,7 +16,7 @@ Une LOA est un document formel qui contient :
 - **Référence de la baie/cage OVHcloud** — L’emplacement exact de l’équipement OVHcloud.
 - **Désignation du port** — Le port spécifique sur le panneau de brassage ou le routeur OVHcloud.
 - **Partie autorisée** — Qui est autorisé à effectuer l’intervention (vous, votre fournisseur ou l’opérateur du site).
-- **Spécifications du câble** — Type de fibre (monomode), type de connecteur (LC/SC) et longueur.
+- **Spécifications du câble** — Type de fibre (monomode) et type de connecteur. Le type de connecteur exact est précisé dans la LOA (par exemple, l’exemple de LOA ci-dessous montre un connecteur SC/PC).
 
 <img className="thumbnail" alt="Qu’est-ce qu’une LOA ?" src="/images/network/ovhcloud-connect/cross-connect-loa/fig-1.fr.svg" loading="lazy" />
 
@@ -26,8 +26,8 @@ Une LOA est un document formel qui contient :
 
 Après avoir commandé **OVHcloud Connect Direct**, OVHcloud vous fournit la LOA :
 
-- **Automatiquement par e-mail** après la confirmation de votre commande.
-- **Via l’espace client OVHcloud** — dans les détails de votre service OVHcloud Connect, recherchez l’option « Télécharger la LOA ».
+- **Par e-mail** après la confirmation de votre commande, ainsi que depuis votre commande.
+- **Depuis l’espace client OVHcloud** — ouvrez votre service OVHcloud Connect et utilisez l’action <code className="action">Télécharger la LOA</code> sur la configuration du PoP.
 - **Via le support** — Si vous ne l’avez pas reçue, contactez le support OVHcloud avec la référence de votre service.
 
 ### Étape 2 — Soumettre la LOA à l’opérateur du datacenter
@@ -37,14 +37,14 @@ Après avoir commandé **OVHcloud Connect Direct**, OVHcloud vous fournit la LOA
 3. Précisez :
    - La **référence de votre cage/baie** (côté A)
    - La **référence de la cage/baie OVHcloud** (côté Z, indiquée dans la LOA)
-   - Le **type de câble** — Typiquement de la fibre monomode avec connecteurs LC
+   - Le **type de câble** — Fibre monomode, avec le type de connecteur précisé dans la LOA
    - La **date de réalisation souhaitée**
 4. L’opérateur du datacenter peut facturer des **frais d’installation du cross-connect** ainsi qu’une **redevance mensuelle**.
 
 ### Étape 3 — Confirmer l’installation
 
-1. L’opérateur du datacenter installe le câble physique (généralement sous quelques jours ouvrés).
-2. Vérifiez dans l'**espace client OVHcloud** que le statut du port passe à « Up ».
+1. L’opérateur du datacenter installe le câble physique. Les délais varient selon le datacenter.
+2. Vérifiez dans l'**espace client OVHcloud** que le statut du port passe à `Up`.
 3. Procédez à la [configuration BGP](/guides/network/ovhcloud-connect/l3-bgp).
 
 ## Résilier un cross-connect
@@ -70,12 +70,12 @@ Avant de retirer le câble physique, résiliez le service OVHcloud Connect (voir
 | Conseil | Détails |
 |---|---|
 | **Conservez les copies de toutes les LOA** | Stockez-les dans votre documentation pour référence et audits ultérieurs. |
-| **Suivez les délais** | Les délais d’installation d’un cross-connect varient selon le datacenter (de 1 à 10 jours ouvrés en général). |
+| **Suivez les délais** | Les délais d’installation d’un cross-connect varient selon le datacenter. Anticipez et relancez l’opérateur si nécessaire. |
 | **Coordonnez avec votre fournisseur** | Si vous utilisez OVHcloud Connect Provider, le fournisseur prend généralement en charge le cross-connect pour vous. |
-| **Faites correspondre les types de câbles** | Veillez à utiliser de votre côté le même type de fibre (monomode) et le même connecteur (LC) que ceux indiqués dans la LOA. |
+| **Faites correspondre les types de câbles** | Veillez à utiliser de votre côté le même type de fibre (monomode) et le même type de connecteur que ceux indiqués dans la LOA. |
 | **Testez après installation** | Une fois le câble brassé, vérifiez les niveaux optiques et le statut du port avant de configurer BGP. |
 
-## Et ensuite ?
+## Prochaines étapes
 
 - [Configurez OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) une fois le cross-connect installé
 - [Commandez OVHcloud Connect Direct](/guides/network/ovhcloud-connect/order-direct) si vous n’avez pas encore débuté la procédure

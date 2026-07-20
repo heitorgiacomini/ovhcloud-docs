@@ -1,0 +1,105 @@
+---
+title: 'Configurer OVHcloud Connect L2'
+description: 'Configurez OVHcloud Connect en mode Layer 2 (L2) pour étendre votre réseau vers OVHcloud sous forme de pont Ethernet transparent qui préserve les VLAN'
+lastUpdated: 2026-07-03
+---
+
+import Api from '@components/Api';
+
+## Objectif
+
+Le mode Layer 2 (L2) étend votre réseau vers OVHcloud au niveau de la **couche liaison de données** : votre vRack est ponté avec vos équipements « tel quel », sans aucun routage. Comme le lien est transparent aux VLAN (802.1q), le L2 constitue le moyen le plus simple d'interconnecter un réseau existant avec un vRack OVHcloud. Il est particulièrement adapté aux migrations de type « lift & shift » sans changement d'adressage IP, ou aux applications nécessitant une adjacence de niveau Layer 2.
+
+Le L2 est disponible **uniquement sur OVHcloud Connect Direct** (OVHcloud Connect Provider est exclusivement Layer 3). Il s'agit d'un service **strictement point à point** : un PoP vers une zone de disponibilité, avec un seul OVHcloud Connect L2 par vRack.
+
+## Vue d'ensemble
+
+<img className="thumbnail" alt="Implémentation d'OVHcloud Connect L2 : le tunnel L2 est acheminé vers et depuis le vRack" src="/images/network/ovhcloud-connect/l2/occ-l2-implementation.png" loading="lazy" />
+
+En mode L2, le lien virtuel est un tunnel L2 acheminé vers et depuis votre vRack, de sorte que le trafic Ethernet est transporté de façon transparente entre vos équipements et OVHcloud.
+
+### Traitement du trafic L2
+
+Le L2 achemine les trames Ethernet (avec leur en-tête VLAN 802.1q, le cas échéant) :
+
+- Le broadcast Ethernet est acheminé.
+- L'unicast Ethernet inconnu est acheminé.
+- Le multicast est acheminé (traité comme du broadcast, limité à 20 pps).
+- Les trames de contrôle point à point telles que LLDP et LACP ne sont **pas** acheminées.
+
+Vos VLAN sont préservés de bout en bout : les mêmes identifiants VLAN s'appliquent dans votre réseau et à l'intérieur du vRack OVHcloud.
+
+<img className="thumbnail" alt="Trafic OVHcloud Connect L2 : le vRack du client est étendu tel quel et acheminé vers le lien du client, de façon transparente aux VLAN" src="/images/network/ovhcloud-connect/l2/occ-l2-trafic.png" loading="lazy" />
+
+### Topologie et redondance
+
+- Le L2 est **point à point** : un PoP (point d'entrée) vers une zone de disponibilité. Un lien de secours via un second PoP n'est **pas** pris en charge.
+- Un **seul** OVHcloud Connect L2 est pris en charge par vRack.
+- La redondance s'obtient **uniquement** par agrégation de liens (LACP) sur le même PoP. Lorsque deux liens sont configurés sur un PoP, le LACP est obligatoire.
+- Les jumbo frames jusqu'à **9000 octets** sont prises en charge.
+
+<img className="thumbnail" alt="Architectures L2 prises en charge et non prises en charge" src="/images/network/ovhcloud-connect/l2/occ-l2-supported-unsupported.png" loading="lazy" />
+
+<img className="thumbnail" alt="Topologies L2 point à point : un lien de secours via un second PoP n'est pas pris en charge" src="/images/network/ovhcloud-connect/l2/occ-l2-topologies.png" loading="lazy" />
+
+Pour la liste complète des fonctionnalités L2 et des fonctionnalités non prises en charge, consultez le guide [Prérequis et limitations](/guides/network/ovhcloud-connect/limits).
+
+## Configurer le côté OVHcloud
+
+Vous pouvez configurer le côté OVHcloud en mode L2 depuis l'**espace client OVHcloud** ou à l'aide de l'**API OVHcloud**. Les deux méthodes aboutissent au même résultat. Étendez ensuite vos VLAN sur le lien depuis vos propres équipements.
+
+:::warning
+Basculer une configuration de PoP entre le L2 et le L3 nécessite de supprimer l'intégralité de la configuration. Choisissez soigneusement le mode avant de commencer.
+:::
+
+### Depuis l'espace client OVHcloud
+
+Ouvrez votre solution depuis la section <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>, puis :
+
+1. **Associez un vRack** (si ce n'est pas déjà fait) : cliquez sur <code className="action">Associer un vRack</code> et sélectionnez un vRack existant.
+2. **Ajoutez une configuration de PoP** : dans le tableau `PoP configuration`, cliquez sur <code className="action">Configurer le port</code> pour ouvrir le formulaire **Ajouter une configuration de PoP**, réglez le **Type** sur **L2** et confirmez.
+3. **Ajoutez une configuration de zone de disponibilité (AZ)** : sous la section `AZ configuration`, cliquez sur <code className="action">Ajouter un AZ</code>, sélectionnez une zone de disponibilité et confirmez.
+
+Le mode L2 ne comporte aucune configuration de routage : celle-ci ne concerne que le L3.
+
+### Depuis l'API OVHcloud
+
+#### Étape 1 — Identifiez l'ID de votre interface
+
+<Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/interface"} />
+
+#### Étape 2 — Créez la configuration de PoP (L2)
+
+<Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop"} />
+
+Renseignez l'`interfaceId` obtenu ci-dessus et réglez le `type` sur `l2`.
+
+#### Étape 3 — Ajoutez la configuration de la zone de disponibilité (datacenter)
+
+Pour le L2, seul l'ID de la zone de disponibilité (datacenter) est requis.
+
+<Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter"} />
+
+Renseignez le `datacenterId` de la zone de disponibilité que vous souhaitez atteindre.
+
+## Configurer vos équipements
+
+De votre côté, étendez les VLAN que vous souhaitez faire parvenir à OVHcloud sur le lien OVHcloud Connect. Aucun routage n'est requis. Si vous utilisez deux liens vers le même PoP pour la redondance, configurez le **LACP** afin de les agréger.
+
+L'auto-négociation n'est pas prise en charge sur le lien OVHcloud Connect : désactivez-la sur votre interface et forcez la vitesse du port pour qu'elle corresponde au lien commandé.
+
+## Vérifier
+
+- Vérifiez que le port apparaît comme **actif** (« up ») dans l'espace client OVHcloud.
+- Vérifiez que vos services dans le vRack peuvent atteindre votre réseau on-premises via les VLAN attendus.
+- Pour un diagnostic Layer 2, récupérez la liste des adresses MAC vues sur le service. Consultez le guide [Superviser votre OVHcloud Connect](/guides/network/ovhcloud-connect/monitor).
+
+## Aller plus loin
+
+- [Prérequis et limitations](/guides/network/ovhcloud-connect/limits)
+- [Démarrage rapide : OVHcloud Connect Direct](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
+- [Superviser votre OVHcloud Connect](/guides/network/ovhcloud-connect/monitor)
+
+Pour toute formation ou assistance technique dans la mise en œuvre de nos solutions, contactez votre représentant commercial ou consultez notre page [Professional Services](/links/professional-services) pour demander un devis et faire analyser votre projet par nos experts.
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

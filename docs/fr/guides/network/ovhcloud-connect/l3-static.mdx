@@ -8,10 +8,10 @@ import Api from '@components/Api';
 
 ## Objectif
 
-**Ce guide explique comment** configurer OVHcloud Connect en mode L3 avec routage statique. Cela implique deux niveaux de configuration :
+Le routage statique est la manière la plus simple de connecter votre réseau à OVHcloud lorsque vous disposez d’un ensemble de préfixes restreint et stable et que vous n’avez pas besoin d’un protocole de routage. Contrairement à BGP, il n’offre aucune bascule automatique — vous mettez à jour les routes vous-même lorsque votre réseau évolue — même si VRRP protège toujours la passerelle au sein d’une AZ. Configurer OVHcloud Connect en mode L3 avec routage statique implique deux niveaux de configuration :
 
 1. **Configuration PoP** — La session L3 entre votre routeur et OVHcloud au niveau du Point de présence.
-2. **Configuration supplémentaire AZ (network)** — Des routes statiques au sein de l’Availability Zone OVHcloud pour la distribution des routes.
+2. **Configuration supplémentaire AZ (network)** — Des routes statiques au sein de l’AZ OVHcloud pour la distribution des routes.
 
 :::info
 Si vous préférez le routage dynamique avec BGP, consultez [Configurer OVHcloud Connect L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp).
@@ -37,26 +37,47 @@ Utilisez le routage statique lorsque vous disposez d’une configuration simple 
 - Un sous-réseau de peering /30 (par exemple `192.0.2.0/30`)
 - Des identifiants de l’API OVHcloud (Application Key, Application Secret, Consumer Key). Consultez le guide [Premiers pas avec l’API OVHcloud](/guides/manage-and-operate/api/first-steps).
 
-Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez la section <code className="action">Bare Metal Cloud</code>, puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
-## En pratique
+## Vue d’ensemble
 
-### Vue d’ensemble
-
-```text
-Votre routeur ── [ L3 au PoP ] ── Routeur PoP OVHcloud ── [ Routes statiques au DC ] ── Routeur vRack ── Services
-                  peering /30                                next-hop + sous-réseau         (172.16.x.x)
-```
+<img className="thumbnail" alt="Implémentation OVHcloud Connect L3 avec routage statique au niveau de l’Availability Zone" src="/images/network/ovhcloud-connect/l3-static/occ-l3-implementation.png" loading="lazy" />
 
 - **Niveau PoP** : une session L3 avec un sous-réseau de peering /30 entre votre routeur et OVHcloud.
 - **Niveau AZ** : des routes statiques définies par une IP next-hop et un sous-réseau de destination.
 
-### Étape 1 — Identifier l’ID de votre interface
+## Configurer le côté OVHcloud
+
+Vous pouvez configurer le côté OVHcloud de la configuration L3 en routage statique depuis l’**espace client OVHcloud** ou avec l’**API OVHcloud**. Les deux méthodes aboutissent au même résultat. Ensuite, configurez les routes statiques correspondantes sur votre propre routeur.
+
+### Depuis l’espace client OVHcloud
+
+Configurez le service depuis la section <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>. Ouvrez votre solution, puis :
+
+1. **Associez un vRack** (si ce n’est pas déjà fait) : cliquez sur <code className="action">Associer un vRack</code> et sélectionnez un vRack existant.
+2. **Ajoutez une configuration PoP** : dans le tableau `Configuration PoP`, cliquez sur <code className="action">Configurer le port</code> pour ouvrir le formulaire **Ajouter une configuration PoP**, réglez le **Type** sur **L3** et saisissez votre **ASN utilisateur**, l’**ASN OVHcloud** et un **sous-réseau /30** pour le lien PoP.
+3. **Ajoutez une configuration d’Availability Zone (AZ)** : sous la section `Configuration AZ`, cliquez sur <code className="action">Ajouter un AZ</code>, sélectionnez une Availability Zone, puis saisissez l’**ASN OVHcloud** et un **sous-réseau /28** (ou plus large) issu de votre vRack.
+4. **Ajoutez une configuration de routage** : sur l’Availability Zone, cliquez sur <code className="action">Règles de routage</code>, choisissez **Static**, puis saisissez :
+
+   | Information | Description |
+   |---|---|
+   | Network Focus | Le préfixe de destination, en notation CIDR |
+   | Next hop | Une adresse IP faisant office de passerelle dans la plage du sous-réseau |
+
+   Vous pouvez ajouter plusieurs routes statiques dans la même Availability Zone en répétant cette étape.
+
+Ajoutez ensuite les routes statiques correspondantes sur votre propre routeur (voir **Configurer les routes statiques sur votre routeur** ci-dessous).
+
+### Depuis l’API OVHcloud
+
+Les étapes suivantes configurent la même configuration L3 en routage statique par programmation.
+
+#### Étape 1 — Identifier l’ID de votre interface
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/interface"} />
 
 
-### Étape 2 — Créer la configuration PoP (L3)
+#### Étape 2 — Créer la configuration PoP (L3)
 
 La configuration PoP établit la session L3 au niveau du Point de présence. Cette étape est identique que vous utilisiez BGP ou le routage statique au niveau de l’AZ.
 
@@ -68,7 +89,7 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 |---|---|---|---|
 | `interfaceId` | long | Oui | ID de l’interface OVHcloud Connect |
 | `type` | string | Oui | `l3` pour le mode Layer 3 |
-| `customerBgpArea` | long | Non | Votre numéro d’AS (toujours requis pour le L3 — utilisé pour le peering au niveau du PoP) |
+| `customerBgpArea` | long | Non | Votre numéro d’AS (toujours requis pour le L3 — utilisé pour le peering au niveau du PoP). Utilisez un ASN public ou un ASN privé dans la plage 64512-65534 (par exemple `64512`). |
 | `subnet` | ipv4Block | Non | Sous-réseau de peering /30. La première IP est OVHcloud, la seconde est la vôtre. |
 
 **Exemple de requête :**
@@ -77,12 +98,12 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 {
   "interfaceId": 101,
   "type": "l3",
-  "customerBgpArea": 65001,
+  "customerBgpArea": 64512,
   "subnet": "192.0.2.0/30"
 }
 ```
 
-### Étape 3 — Vérifier la configuration PoP
+#### Étape 3 — Vérifier la configuration PoP
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}"} />
 
@@ -94,7 +115,7 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
   "id": 5678,
   "interfaceId": 101,
   "type": "l3",
-  "customerBgpArea": 65001,
+  "customerBgpArea": 64512,
   "ovhBgpArea": 35540,
   "subnet": "192.0.2.0/30",
   "status": "active"
@@ -108,12 +129,16 @@ La configuration PoP établit la session L3 au niveau du Point de présence. Cet
 | **IP du pair OVHcloud** | `192.0.2.1` | Première IP du /30 |
 | **Votre IP de pair** | `192.0.2.2` | Deuxième IP du /30 |
 
-### Étape 4 — Créer la configuration supplémentaire AZ (statique)
+#### Étape 4 — Créer la configuration supplémentaire AZ (statique)
 
-Après la configuration PoP et une [configuration AZ](/guides/network/ovhcloud-connect/vrack-network-setup), créez une **configuration supplémentaire network** pour définir des routes statiques au sein de l’AZ.
+Après la configuration PoP et la configuration AZ, créez une **configuration supplémentaire network** pour définir des routes statiques au sein de l’AZ.
 
 :::info
-Avec le routage statique, **VRRP reste actif** sur le point de terminaison de l’AZ. Les équipements OVHcloud A et B partagent une IP virtuelle (la deuxième adresse du sous-réseau de l’AZ, par exemple `172.16.1.1`). Pointez la passerelle par défaut de vos services vers cette IP virtuelle VRRP pour une bascule automatique entre les équipements.
+La configuration AZ (datacenter) doit déjà exister avant de pouvoir créer la configuration supplémentaire. Créez-la d’abord avec `POST .../config/pop/{popId}/datacenter` (en fournissant le sous-réseau /28 issu de votre vRack) — voir [Configurer le réseau vRack](/guides/network/ovhcloud-connect/vrack-network-setup). C’est ce qui fournit le `{datacenterId}` utilisé dans l’appel `/extra` ci-dessous.
+:::
+
+:::info
+Avec le routage statique, **VRRP reste actif** sur le point de terminaison de l’AZ. Les équipements OVHcloud A et B partagent une passerelle virtuelle VRRP, qui correspond à la **première IP utilisable** du sous-réseau /28 de l’AZ (les routeurs OVHcloud A et B prennent les deux adresses suivantes ; les 3 premières IP du /28 sont réservées à OVHcloud). Pointez la passerelle par défaut de vos services vers cette IP virtuelle VRRP pour une bascule automatique entre les équipements.
 :::
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra"} />
@@ -136,7 +161,7 @@ Avec le routage statique, **VRRP reste actif** sur le point de terminaison de l�
 }
 ```
 
-#### Ajouter plusieurs routes statiques
+**Ajouter plusieurs routes statiques**
 
 Créez une configuration supplémentaire par sous-réseau de destination. Répétez l’appel `POST .../extra` avec un `subnet` différent à chaque fois :
 
@@ -148,7 +173,7 @@ Créez une configuration supplémentaire par sous-réseau de destination. Répé
 }
 ```
 
-#### Vérifier la configuration supplémentaire
+**Vérifier la configuration supplémentaire**
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra/\{extraId\}"} />
 
@@ -166,72 +191,22 @@ Créez une configuration supplémentaire par sous-réseau de destination. Répé
 }
 ```
 
-#### Lister toutes les configurations supplémentaires d’une AZ
+**Lister toutes les configurations supplémentaires d’une AZ**
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/datacenter/\{datacenterId\}/extra"} />
 
 
-### Étape 5 — Configurer les routes statiques sur votre routeur
+## Configurer les routes statiques sur votre routeur
 
 Configurez votre routeur physique avec des routes statiques pointant les sous-réseaux d’AZ OVHcloud vers l’IP de peering OVHcloud Connect.
 
-#### Cisco IOS / IOS-XE
+Configurez BGP (ou des routes statiques) sur votre routeur de bordure conformément à la documentation de votre constructeur, en utilisant l’ASN, l’adresse IP du pair et le sous-réseau indiqués ci-dessus.
 
-```text
-! Interface facing OVHcloud
-interface GigabitEthernet0/0
- description OVHcloud Connect
- ip address 192.0.2.2 255.255.255.252
- no shutdown
-
-! Static routes to OVHcloud AZ subnets
-ip route 172.16.1.0 255.255.255.0 192.0.2.1 name OVH-DC1-Production
-ip route 172.16.2.0 255.255.255.0 192.0.2.1 name OVH-DC2-Production
-ip route 172.16.10.0 255.255.255.0 192.0.2.1 name OVH-DC1-Management
-```
-
-#### Juniper JunOS
-
-```text
-interfaces {
-    ge-0/0/0 {
-        description "OVHcloud Connect";
-        unit 0 {
-            family inet {
-                address 192.0.2.2/30;
-            }
-        }
-    }
-}
-
-routing-options {
-    static {
-        route 172.16.1.0/24 next-hop 192.0.2.1;
-        route 172.16.2.0/24 next-hop 192.0.2.1;
-        route 172.16.10.0/24 next-hop 192.0.2.1;
-    }
-}
-```
-
-### Étape 6 — Vérifier la connectivité
+## Vérifier la connectivité
 
 #### Depuis votre routeur
 
-**Cisco :**
-
-```bash
-show ip route static
-ping 172.16.1.1 source 192.0.2.2
-traceroute 172.16.1.1 source 192.0.2.2
-```
-
-**Juniper :**
-
-```bash
-show route protocol static
-ping 172.16.1.1 source 192.0.2.2
-traceroute 172.16.1.1 source 192.0.2.2
-```
+Consultez la documentation de votre constructeur pour vérifier les routes statiques et tester la connectivité vers les sous-réseaux d’AZ OVHcloud.
 
 **Résultats attendus :**
 
@@ -256,9 +231,9 @@ Vérifiez le statut de la configuration PoP :
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/diagnostic"} />
 
 
-Noms de diagnostics disponibles : `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
+Sélectionnez le diagnostic dont vous avez besoin — par exemple un test de peering BGP ou un diagnostic de routes. Consultez [Surveiller votre OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) pour les diagnostics disponibles, ainsi que la [console API](https://api.ovh.com/console/#/ovhCloudConnect) pour le corps exact de la requête.
 
-### Limites du routage statique
+## Limites du routage statique
 
 :::warning
 Le routage statique présente des limites importantes par rapport à BGP :
@@ -270,7 +245,7 @@ Le routage statique présente des limites importantes par rapport à BGP :
 
 :::
 
-### Supprimer les configurations
+## Supprimer les configurations
 
 Supprimez dans l’ordre inverse :
 

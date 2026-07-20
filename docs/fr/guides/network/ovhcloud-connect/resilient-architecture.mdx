@@ -19,12 +19,7 @@ Vous trouverez ci-dessous les prérequis et les instructions pour cinq cas d’u
 
 <a id="on-premises"></a>
 
-### Prérequis
-
-- Deux services OVHcloud Connect (Direct, Provider ou un mix) se terminant sur **des PoPs différents**
-- Un routeur (ou deux routeurs) capable de gérer **plusieurs sessions BGP** avec bascule
-- Un plan d’adressage IP couvrant **deux AZ** chez OVHcloud
-- Un vRack avec des ressources dans les deux AZ
+Il s’agit du scénario de référence recommandé par OVHcloud : deux services OVHcloud Connect en mode Layer 3 (BGP), tous deux associés au même vRack, avec vos ressources réparties sur deux Availability Zones (AZ).
 
 ### Architecture
 
@@ -36,76 +31,89 @@ Vous trouverez ci-dessous les prérequis et les instructions pour cinq cas d’u
 |---|---|
 | Production critique pour l’activité | Workloads ne tolérant aucune indisponibilité |
 | Environnements réglementés | Cadres de conformité exigeant la haute disponibilité |
-| Exigences de SLA ≥ 99,99 % | Architecture multi-chemins nécessaire pour un SLA premium |
+| Exigences de SLA de haute disponibilité | Une architecture multi-chemins est nécessaire pour atteindre les niveaux de SLA liés à la configuration (voir [SLA](/guides/network/ovhcloud-connect/slas)) |
 | Reprise après sinistre | Bascule automatique sans intervention manuelle |
 
-#### 1. Commander deux liens OVHcloud Connect
+### Prérequis
 
-Commandez deux services OVHcloud Connect distincts sur **des PoPs différents** pour assurer la diversité physique :
+Avant de commencer, assurez-vous de disposer de :
 
-- **Lien 1 (principal) :** commandez sur le PoP A — voir [Commander Direct](/guides/network/ovhcloud-connect/order-direct) ou [Commander Provider](/guides/network/ovhcloud-connect/order-provider).
-- **Lien 2 (secours) :** commandez sur le PoP B — même processus, PoP différent.
+- **Deux services OVHcloud Connect** (Direct, Provider ou un mix), chacun se terminant sur un **PoP différent** pour assurer la diversité physique.
+- **Un routeur compatible BGP** (ou deux routeurs) de votre côté, capable d’exécuter une session BGP par lien et d’appliquer des politiques de routage pour la bascule.
+- **Un vRack** auquel les deux services seront associés.
+- **Des ressources OVHcloud réparties sur deux AZ**, afin qu’une défaillance affectant une zone ne mette pas hors service l’intégralité de votre déploiement.
+- **Un plan d’adressage IP sans recouvrement** entre vos réseaux on-premises, les sous-réseaux d’appairage et vos sous-réseaux OVHcloud (vRack/AZ).
+
+### Configuration requise
+
+Suivez ces étapes pour bâtir l’installation résiliente à double lien en Layer 3.
+
+#### 1. Commander deux services OVHcloud Connect sur deux PoPs différents
+
+Commandez deux services OVHcloud Connect distincts, chacun sur un **PoP différent**, afin de garantir la diversité des chemins physiques :
+
+- **Service 1 (principal) :** commandé sur le PoP A — voir [Commander Direct](/guides/network/ovhcloud-connect/order-direct) ou [Commander Provider](/guides/network/ovhcloud-connect/order-provider).
+- **Service 2 (secours) :** commandé sur le PoP B — même processus, PoP différent.
+
+Installez ensuite les connexions physiques pour chaque service : pour **Direct**, commandez les cross-connects sur chaque PoP (voir [LOA Cross Connect](/guides/network/ovhcloud-connect/cross-connect-loa)) ; pour **Provider**, partagez chaque clé d’appairage avec votre ou vos opérateurs.
 
 > **Conseil de diversité :** utilisez des datacenters différents ou, à défaut, des chemins physiques distincts pour éviter un point de défaillance partagé.
 
-#### 2. Installer les deux connexions physiques
+#### 2. Créer la configuration PoP (L3) sur chaque service
 
-Pour chaque lien :
+Sur **chacun** des deux services, créez la **configuration PoP** en mode Layer 3 (BGP). Pour chaque service, vous définissez :
 
-- **Direct :** installez les cross-connects sur chaque PoP. Voir [LOA Cross Connect](/guides/network/ovhcloud-connect/cross-connect-loa).
-- **Provider :** partagez les clés d’appairage respectives avec votre ou vos opérateurs.
+- Votre **User ASN** (votre propre numéro de système autonome BGP).
+- L’**ASN OVHcloud** — n’importe quel ASN **sauf** les valeurs réservées **65501** (Europe), **65502** (Canada) et **65519** (Asie).
+- Un **sous-réseau d’appairage /30** pour l’appairage BGP point à point entre votre routeur et l’équipement OVHcloud sur ce PoP.
 
-#### 3. Configurer BGP avec bascule
+Voir [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) pour la procédure détaillée.
 
-Mettez en place **deux sessions BGP** — une par lien — avec des politiques de routage qui définissent le chemin préféré.
+#### 3. Créer la configuration AZ et la configuration BGP supplémentaire
 
-##### Exemple actif/passif (Cisco IOS)
+Toujours sur chaque service, configurez le routage côté vRack :
 
-```text
-router bgp 65001
- ! Primary link via PoP A
- neighbor 192.0.2.1 remote-as 35540
- neighbor 192.0.2.1 description OVHcloud-Primary
- neighbor 192.0.2.1 route-map PRIMARY-IN in
- neighbor 192.0.2.1 route-map PRIMARY-OUT out
+- Créez une **configuration AZ** en utilisant un **sous-réseau /28** pour cette Availability Zone.
+- Ajoutez une **configuration BGP supplémentaire** afin qu’une session BGP soit établie avec les **deux** équipements OVHcloud **A et B** de l’AZ, plutôt qu’avec un seul équipement. C’est ce qui rend le routage redondant à l’intérieur d’OVHcloud.
 
- ! Backup link via PoP B
- neighbor 198.51.100.1 remote-as 35540
- neighbor 198.51.100.1 description OVHcloud-Backup
- neighbor 198.51.100.1 route-map BACKUP-IN in
- neighbor 198.51.100.1 route-map BACKUP-OUT out
+Voir [Configurer votre réseau vRack](/guides/network/ovhcloud-connect/vrack-network-setup).
 
-! Prefer primary path using Local Preference
-route-map PRIMARY-IN permit 10
- set local-preference 200
+#### 4. Associer les deux services au même vRack
 
-route-map BACKUP-IN permit 10
- set local-preference 100
+Associez les **deux** services OVHcloud Connect au **même vRack** afin que les deux liens atteignent le même réseau privé. Voir [Associer à un vRack](/guides/network/ovhcloud-connect/associate-vrack).
 
-! Influence OVHcloud's return traffic using AS-path prepending on backup
-route-map PRIMARY-OUT permit 10
+#### 5. Choisir entre actif/passif et actif/actif
 
-route-map BACKUP-OUT permit 10
- set as-path prepend 65001 65001
-```
+Décidez de la manière dont le trafic doit être réparti entre les deux liens, puis appliquez la politique de routage correspondante.
 
-##### Attributs BGP clés pour la bascule
+**Actif/passif** — privilégiez le lien principal et rendez le lien de secours moins préféré :
 
-| Attribut | Effet | Cas d’usage |
+| Attribut | Où il s’applique | Effet |
 |---|---|---|
-| **Local Preference** | Contrôle la préférence du chemin sortant (plus élevé = préféré) | Rendre le chemin principal préféré pour le trafic sortant de votre réseau |
-| **AS-path prepending** | Fait paraître un chemin plus long (moins préféré) | Influencer le choix du chemin de retour par OVHcloud |
-| **MED** | Suggère une préférence au côté distant | Peut ne pas être pris en compte dans toutes les configurations OVHcloud |
+| **Local Preference** | Vos propres équipements uniquement | Sélectionne le chemin **sortant** préféré quittant votre réseau (plus élevé = préféré). N’influence pas la manière dont OVHcloud choisit son chemin vers vous. |
+| **AS-path prepending** | **Côté client uniquement** | Fait paraître un chemin plus long, donc moins préféré. Appliquez le prepend sur le chemin de secours pour orienter le trafic entrant vers le principal. Ne peut pas être appliqué côté OVHcloud. |
+| **MED** | Alternative côté OVHcloud | Signale un chemin préféré d’OVHcloud vers vous (plus bas = préféré). Utilisez-le comme contrepartie côté OVHcloud de l’AS-path prepending pour la sélection de chemin actif/passif. |
 
-#### 4. Associer les deux liens à votre vRack
+**Actif/actif** — répartissez la charge sur les deux liens :
 
-Associez les deux services OVHcloud Connect au **même vRack**. Voir [Associer à un vRack](/guides/network/ovhcloud-connect/associate-vrack).
+- **ECMP (Equal-Cost Multi-Path) est automatique** dès que vous disposez de **2 PoPs ou plus**, sur **jusqu’à 4 chemins**. Aucune configuration supplémentaire n’est requise pour l’activer ; conservez simplement des chemins de préférence égale.
+- Le trafic est réparti sur les deux liens et, si un lien tombe en panne, l’intégralité du trafic transite immédiatement par le lien restant.
 
-#### 5. Configurer les sous-réseaux dans les deux AZ
+> Le mode actif/actif offre une bande passante agrégée plus élevée mais nécessite une planification de capacité rigoureuse — chaque lien doit être en mesure d’absorber seul la totalité de la charge en cas de défaillance.
 
-Configurez des sous-réseaux privés dans les deux Availability Zones. Voir [Configurer votre réseau vRack](/guides/network/ovhcloud-connect/vrack-network-setup).
+### Contraintes
 
-#### 6. Tester la bascule
+Gardez à l’esprit ces contraintes OVHcloud Connect Layer 3 (BGP) lors de la conception de votre architecture résiliente :
+
+- **Une session BGP par PoP** — eBGP multihop n’est pas pris en charge.
+- Jusqu’à **4 peers BGP** par datacenter/AZ.
+- Jusqu’à **100 préfixes** annoncés par session BGP.
+- **BFD est activé par défaut** sur les sessions BGP OVHcloud Connect, ce qui accélère la détection des défaillances et la convergence.
+- **L’activation de BGP désactive VRRP** sur cette configuration.
+- Vous **ne pouvez pas combiner BGP et routage statique** dans le même datacenter.
+- Bande passante par lien : OVHcloud Connect **Direct** offre **1, 10 ou 100 Gbps** ; **Provider** offre de **50 Mbps jusqu’à 50 Gbps**.
+
+### Tester la bascule
 
 **Cette étape est critique.** Ne sautez pas les tests de bascule.
 
@@ -115,8 +123,8 @@ Configurez des sous-réseaux privés dans les deux Availability Zones. Voir [Con
 
 2. **Simulez la défaillance du lien principal :**
    - Arrêtez la session BGP principale ou déconnectez physiquement le lien principal.
-   - Vérifiez que le trafic bascule vers le lien de secours dans le délai de convergence BGP (généralement 30 à 90 secondes ; cela peut être plus rapide avec BFD).
-   - Confirmez l’absence de perte de paquets au-delà de la fenêtre de convergence.
+   - Vérifiez que le trafic bascule vers le lien de secours une fois que BGP a convergé. BFD est activé par défaut sur les sessions BGP OVHcloud Connect et accélère la convergence.
+   - Confirmez que la connectivité est rétablie via le chemin de secours.
 
 3. **Restaurez le lien principal :**
    - Remettez le lien principal en service.
@@ -125,7 +133,7 @@ Configurez des sous-réseaux privés dans les deux Availability Zones. Voir [Con
 4. **Testez l’inverse :**
    - Simulez une défaillance du lien de secours pendant que le principal est actif. Cela confirme que les deux liens fonctionnent indépendamment.
 
-#### 7. Mettre en place la supervision
+### Mettre en place la supervision
 
 Supervisez les **deux liens** indépendamment. Configurez des alertes pour :
 
@@ -134,17 +142,6 @@ Supervisez les **deux liens** indépendamment. Configurez des alertes pour :
 - La bande passante approchant la capacité maximale sur l’un ou l’autre lien
 
 Voir [Superviser](/guides/network/ovhcloud-connect/monitor).
-
-### Avancé : configuration actif/actif
-
-Pour un débit maximal et une bascule plus rapide, vous pouvez exploiter les deux liens en mode **actif/actif** :
-
-- Définissez une **Local Preference égale** sur les deux chemins.
-- Utilisez **ECMP (Equal-Cost Multi-Path)** s’il est pris en charge.
-- Le trafic est réparti sur les deux liens.
-- Si un lien tombe en panne, l’intégralité du trafic transite immédiatement par le lien restant.
-
-> Le mode actif/actif offre une bande passante agrégée plus élevée mais nécessite une planification de capacité rigoureuse — chaque lien doit être en mesure d’absorber seul la totalité de la charge en cas de défaillance.
 
 </Tab>
 <Tab label="WAN">
@@ -155,19 +152,14 @@ Pour un débit maximal et une bascule plus rapide, vous pouvez exploiter les deu
 
 - Un compte OVHcloud avec un vRack
 - Deux services OVHcloud Connect (Direct, Provider ou un mix) se terminant sur **des PoPs différents**
-- Un backbone WAN (MPLS ou SD-WAN) avec des circuits atteignant les deux PoPs
+- Un backbone WAN (par exemple MPLS) avec des circuits atteignant les deux PoPs
 - Des équipements de bordure WAN compatibles BGP
 - Un plan d’adressage IP sans recouvrement entre vos sous-réseaux WAN et OVHcloud
-
-### Architecture
-
-<img className="thumbnail" alt="Schéma d’architecture résiliente WAN" src="/images/network/ovhcloud-connect/resilient-architecture/fig-2.fr.svg" loading="lazy" />
 
 ### Quand utiliser cette architecture
 
 - **Connectivité WAN critique pour l’activité** — plusieurs sites dépendent de l’accès à OVHcloud.
-- **Exigences de SLA ≥ 99,99 %** — des liens redondants sont nécessaires pour des garanties de disponibilité premium.
-- **SD-WAN avec chemins diversifiés** — les plateformes SD-WAN peuvent router automatiquement sur le meilleur chemin disponible.
+- **Exigences de SLA de haute disponibilité** — des liens redondants répartis sur deux PoPs sont nécessaires pour atteindre les niveaux de SLA liés à la configuration (voir [SLA](/guides/network/ovhcloud-connect/slas)).
 
 ### Étape par étape
 
@@ -177,15 +169,14 @@ Commandez sur **des PoPs différents** pour assurer la diversité physique. Vous
 
 #### 2. Provisionner les deux circuits WAN
 
-Coordonnez-vous avec votre opérateur WAN pour livrer des circuits sur les deux PoPs. Si vous utilisez une plateforme SD-WAN, configurez les deux chemins comme connexions de transport (underlay).
+Coordonnez-vous avec votre opérateur WAN pour livrer des circuits sur les deux PoPs.
 
 #### 3. Configurer BGP avec bascule
 
 Mettez en place deux sessions BGP avec des politiques de routage adaptées :
 
-- **Actif/passif :** utilisez la Local Preference et l’AS-path prepending (voir l’onglet On-Premises pour des exemples BGP détaillés).
-- **Actif/actif :** utilisez ECMP pour répartir la charge sur les deux liens.
-- **Intégration SD-WAN :** de nombreuses plateformes SD-WAN détectent la qualité des liens et redirigent le trafic automatiquement, en complément de la bascule BGP.
+- **Actif/passif :** utilisez la Local Preference et l’AS-path prepending sur vos propres équipements (voir l’onglet On-Premises pour des exemples BGP détaillés).
+- **Actif/actif :** ECMP est activé automatiquement dès que vous disposez de 2 PoPs ou plus (jusqu’à 4 chemins) pour répartir la charge sur les deux liens.
 
 #### 4. Associer les deux liens à votre vRack
 
@@ -206,18 +197,14 @@ Répartissez les sous-réseaux entre les deux AZ pour une redondance complète. 
 
 Mettez en place une supervision indépendante pour chaque lien, chaque session BGP et chaque circuit WAN. Voir [Superviser](/guides/network/ovhcloud-connect/monitor).
 
-### Considérations SD-WAN
-
-Si vous utilisez un overlay SD-WAN :
-
-- Configurez les liens OVHcloud Connect comme **transports underlay** dans votre contrôleur SD-WAN.
-- La plateforme SD-WAN peut effectuer une **sélection de chemin** basée sur la latence, la gigue et la perte de paquets — plus rapidement que la convergence BGP.
-- Assurez-vous que les politiques BGP et SD-WAN sont **alignées** (évitez les décisions de routage contradictoires).
-
 </Tab>
 <Tab label="AWS">
 
 <a id="aws"></a>
+
+:::info
+Ces étapes s’effectuent dans la console du cloud ou de l’opérateur tiers et échappent au contrôle d’OVHcloud. Reportez-vous à la documentation de cet opérateur pour connaître les étapes exactes et à jour.
+:::
 
 ### Prérequis
 
@@ -225,7 +212,7 @@ Si vous utilisez un overlay SD-WAN :
 - Un **compte OVHcloud** avec un vRack
 - Deux connexions AWS Direct Connect sur **des emplacements différents**
 - Deux services OVHcloud Connect Provider sur **des PoPs différents**
-- Un opérateur partagé (Megaport ou Equinix) présent sur les deux emplacements
+- Un opérateur partagé présent sur les deux emplacements (voir [Opérateurs](/guides/network/ovhcloud-connect/providers))
 - Des plages IP non chevauchantes entre le VPC AWS et les sous-réseaux OVHcloud
 
 ### Architecture
@@ -237,7 +224,7 @@ Si vous utilisez un overlay SD-WAN :
 Pour une disponibilité maximale entre AWS et OVHcloud :
 
 1. **Deux connexions AWS Direct Connect** sur des emplacements AWS Direct Connect différents.
-2. **Deux VXC opérateur** (ou opérateurs distincts) reliant deux PoPs OVHcloud.
+2. **Deux circuits virtuels / connexions opérateur** (ou opérateurs distincts) reliant deux PoPs OVHcloud.
 3. **Deux services OVHcloud Connect** sur des PoPs différents, tous deux associés à votre vRack.
 4. **Bascule BGP** configurée sur les deux chemins.
 
@@ -265,14 +252,14 @@ Sur la plateforme de votre opérateur :
 - **Pont 1 :** AWS Direct Connect 1 ↔ OVHcloud PoP A
 - **Pont 2 :** AWS Direct Connect 2 ↔ OVHcloud PoP B
 
-Si vous utilisez un MCR (Cloud Router), créez des instances MCR séparées ou des sessions de peering pour chaque chemin.
+Si vous utilisez un cloud router opérateur, créez des instances de cloud router distinctes ou des sessions de peering pour chaque chemin.
 
 #### 4. Configurer la bascule BGP
 
 Assurez-vous que les préférences de routage BGP sont définies de telle sorte que le trafic privilégie le chemin principal et bascule sur le chemin de secours :
 
-- Utilisez la **Local Preference** côté OVHcloud.
-- Utilisez l'**AS-path prepending** sur le chemin de secours.
+- Utilisez la **Local Preference** sur vos propres équipements pour privilégier le chemin principal en sortie.
+- Utilisez l’**AS-path prepending** sur vos propres équipements (côté client) pour le chemin de secours ; le **MED** est l’alternative côté OVHcloud (un MED plus bas est préféré).
 - Sur AWS, utilisez **Direct Connect Gateway** avec des priorités de routes adaptées.
 
 Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) pour les instructions détaillées.
@@ -293,7 +280,7 @@ Associez les deux services OVHcloud Connect au même vRack. Voir [Associer à un
 Une connectivité résiliente entre AWS et OVHcloud nécessite :
 
 - 2× connexions AWS Direct Connect (facturation AWS)
-- 2× VXC opérateur ou sessions MCR (facturation opérateur)
+- 2× circuits virtuels / connexions opérateur ou sessions de cloud router (facturation opérateur)
 - 2× services OVHcloud Connect (facturation OVHcloud)
 
 Planifiez votre budget en conséquence. Le coût de la redondance est généralement justifié par la réduction du risque pour les workloads de production.
@@ -305,13 +292,17 @@ Planifiez votre budget en conséquence. Le coût de la redondance est générale
 
 <a id="azure"></a>
 
+:::info
+Ces étapes s’effectuent dans la console du cloud ou de l’opérateur tiers et échappent au contrôle d’OVHcloud. Reportez-vous à la documentation de cet opérateur pour connaître les étapes exactes et à jour.
+:::
+
 ### Prérequis
 
 - Un **abonnement Azure** avec les autorisations nécessaires pour créer des circuits ExpressRoute
 - Un **compte OVHcloud** avec un vRack
 - Deux circuits Azure ExpressRoute sur **des emplacements de peering différents**
 - Deux services OVHcloud Connect Provider sur **des PoPs différents**
-- Un opérateur partagé (Megaport ou Equinix) présent sur les deux emplacements
+- Un opérateur partagé présent sur les deux emplacements (voir [Opérateurs](/guides/network/ovhcloud-connect/providers))
 - Un vRack avec Multi-AZ activé ([guide Multi-AZ](/guides/network/ovhcloud-connect/multi-az))
 - Des plages IP non chevauchantes entre le VNet Azure et le vRack OVHcloud
 
@@ -326,7 +317,7 @@ Microsoft recommande **deux circuits ExpressRoute sur des emplacements de peerin
 | Composant | Principal | Secours |
 |---|---|---|
 | Azure ExpressRoute | Circuit 1 (emplacement A) | Circuit 2 (emplacement B) |
-| VXC opérateur | Set VXC 1 | Set VXC 2 |
+| Circuit opérateur | Ensemble de circuits 1 | Ensemble de circuits 2 |
 | OVHcloud Connect | Service 1 (PoP A) | Service 2 (PoP B) |
 | AZ OVHcloud | AZ 1 | AZ 2 |
 
@@ -338,9 +329,9 @@ Dans le **portail Azure** → **Créer ExpressRoute** (à répéter pour chaque 
 
 | Paramètre | Circuit 1 | Circuit 2 |
 |---|---|---|
-| Provider | Megaport (ou Equinix) | Megaport (ou Equinix) |
+| Provider | Votre opérateur OVHcloud Connect | Votre opérateur OVHcloud Connect |
 | Emplacement de peering | Emplacement A (par exemple, Paris) | Emplacement B (par exemple, Francfort) |
-| Bande passante | 1 Gbps | 1 Gbps |
+| Bande passante | Correspondant à votre lien OVHcloud Connect | Correspondant à votre lien OVHcloud Connect |
 | SKU | Standard ou Premium | Standard ou Premium |
 
 Notez la **clé de service** de chaque circuit.
@@ -358,17 +349,19 @@ Récupérez les deux **clés d’appairage**.
 
 #### 3. Créer les ponts opérateur pour chaque chemin
 
+Sur la plateforme de votre opérateur, créez un pont pour chaque chemin. Utilisez un cloud router opérateur si un routage Layer 3 au niveau de l’opérateur est nécessaire. Reportez-vous à la documentation de votre opérateur pour connaître les étapes exactes ; consultez [Opérateurs](/guides/network/ovhcloud-connect/providers) pour la liste.
+
 **Chemin 1 (principal) :**
 
-1. Créez un MCR ou un port à l’emplacement A.
-2. VXC : Azure ExpressRoute 1 (clé de service 1) → MCR A.
-3. VXC : MCR A → OVHcloud Connect 1 (clé d’appairage 1).
+1. Créez un cloud router opérateur ou un port à l’emplacement A.
+2. Circuit virtuel / connexion : Azure ExpressRoute 1 (clé de service 1) → cloud router opérateur A.
+3. Circuit virtuel / connexion : cloud router opérateur A → OVHcloud Connect 1 (clé d’appairage OVHcloud 1).
 
 **Chemin 2 (secours) :**
 
-1. Créez un MCR ou un port à l’emplacement B.
-2. VXC : Azure ExpressRoute 2 (clé de service 2) → MCR B.
-3. VXC : MCR B → OVHcloud Connect 2 (clé d’appairage 2).
+1. Créez un cloud router opérateur ou un port à l’emplacement B.
+2. Circuit virtuel / connexion : Azure ExpressRoute 2 (clé de service 2) → cloud router opérateur B.
+3. Circuit virtuel / connexion : cloud router opérateur B → OVHcloud Connect 2 (clé d’appairage OVHcloud 2).
 
 #### 4. Configurer le peering privé Azure sur les deux circuits
 
@@ -393,16 +386,16 @@ Azure utilise le **poids de connexion** pour privilégier un chemin par rapport 
 
 #### 6. Configurer BGP côté OVHcloud avec bascule
 
-Côté OVHcloud, utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) pour privilégier le chemin principal :
+Utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) pour privilégier le chemin principal. Pour construire une topologie actif/passif, ajustez l’AS-path prepending et/ou le MED (un MED plus bas est préféré). L’AS-path prepending s’applique uniquement côté client ; le MED est l’alternative côté OVHcloud :
 
-| Chemin | Local Preference | AS-path prepend |
+| Chemin | MED (plus bas = préféré) | AS-path prepend (vos équipements) |
 |---|---|---|
-| OVHcloud Connect 1 (principal) | 200 | Aucun |
-| OVHcloud Connect 2 (secours) | 100 | 1× prepend |
+| OVHcloud Connect 1 (principal) | 100 | Aucun |
+| OVHcloud Connect 2 (secours) | 200 | 1× prepend |
 
 #### 7. Associer les deux services à votre vRack
 
-[Associez les deux services OVHcloud Connect](/guides/network/ovhcloud-connect/associate-vrack) au même vRack. Les deux injecteront des routes ; le vRack utilisera le chemin avec la Local Preference la plus élevée.
+[Associez les deux services OVHcloud Connect](/guides/network/ovhcloud-connect/associate-vrack) au même vRack. Les deux injecteront des routes ; le vRack utilisera le chemin avec la Local Preference la plus élevée.
 
 #### 8. Tester la bascule
 
@@ -410,16 +403,16 @@ Côté OVHcloud, utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-
 |---|---|---|
 | Défaillance du lien principal | Désactiver la VIF ExpressRoute 1 dans Azure | Le trafic bascule vers ExpressRoute 2 dans le délai de convergence BGP |
 | Défaillance OCC principal | Désactiver OVHcloud Connect 1 | Le trafic bascule vers OVHcloud Connect 2 |
-| Défaillance opérateur | Mettre hors service les VXC du MCR A | Le trafic bascule sur le chemin via MCR B |
+| Défaillance opérateur | Mettre hors service les circuits virtuels / connexions du chemin A | Le trafic bascule sur la route du chemin B |
 | Récupération complète | Réactiver tous les liens | Le trafic revient sur le chemin principal |
 
-> **Temps de convergence :** la bascule BGP s’effectue généralement en **30 à 90 secondes** selon les hold timers et la configuration BFD.
+> **Convergence :** la bascule s’effectue une fois que BGP a convergé. BFD est activé par défaut sur les sessions BGP OVHcloud Connect et accélère la détection et la convergence.
 
 ### Considérations spécifiques à Azure
 
 - **ExpressRoute Global Reach :** si les deux PoPs OVHcloud sont dans des régions Azure différentes, envisagez d’activer [Global Reach](https://learn.microsoft.com/fr-fr/azure/expressroute/expressroute-global-reach) pour permettre la communication directe entre circuits.
 - **FastPath :** pour les passerelles Ultra Performance ou ErGw3AZ, activez [FastPath](https://learn.microsoft.com/fr-fr/azure/expressroute/about-fastpath) afin d’améliorer les performances réseau.
-- **Limites de routes :** Azure Private Peering prend en charge jusqu’à **4 000 routes** par circuit. Agrégez les préfixes OVHcloud pour rester dans la limite.
+- **Limites de routes :** Azure Private Peering possède sa propre limite de routes par circuit (reportez-vous à la documentation à jour de Microsoft). Côté OVHcloud, chaque session BGP accepte jusqu’à **100 préfixes** ; agrégez donc vos préfixes pour rester dans les deux limites.
 
 > Pour plus d’informations, veuillez consulter la [documentation Azure ExpressRoute](https://learn.microsoft.com/fr-fr/azure/expressroute/).
 
@@ -428,13 +421,17 @@ Côté OVHcloud, utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-
 
 <a id="gcp"></a>
 
+:::info
+Ces étapes s’effectuent dans la console du cloud ou de l’opérateur tiers et échappent au contrôle d’OVHcloud. Reportez-vous à la documentation de cet opérateur pour connaître les étapes exactes et à jour.
+:::
+
 ### Prérequis
 
 - Un **projet GCP** avec le rôle Compute Network Admin
 - Deux Cloud Routers (un par région ou domaine de disponibilité)
 - Un **compte OVHcloud** avec un vRack
 - Deux services OVHcloud Connect Provider sur **des PoPs différents**
-- Un opérateur partagé (Megaport ou Equinix) présent sur les deux emplacements
+- Un opérateur partagé présent sur les deux emplacements (voir [Opérateurs](/guides/network/ovhcloud-connect/providers))
 - Un vRack avec Multi-AZ activé
 - Des **plages IP non chevauchantes** entre le VPC GCP et le vRack OVHcloud
 
@@ -444,12 +441,12 @@ Côté OVHcloud, utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-
 
 ### Stratégie de résilience
 
-Google Cloud recommande d’utiliser des VLAN attachments dans **des edge availability domains différents** pour atteindre un SLA de 99,9 % à 99,99 %. Combiné à des liens OVHcloud Connect en double, vous obtenez une résilience complète de bout en bout :
+Google Cloud recommande d’utiliser des VLAN attachments dans **des edge availability domains différents** pour atteindre un SLA de 99,9 % à 99,99 %. Combiné à des liens OVHcloud Connect en double, vous obtenez une résilience complète de bout en bout :
 
 | Composant | Principal | Secours |
 |---|---|---|
 | GCP VLAN attachment | Edge domain zone1 | Edge domain zone2 |
-| VXC opérateur | Set VXC 1 | Set VXC 2 |
+| Circuit opérateur | Ensemble de circuits 1 | Ensemble de circuits 2 |
 | OVHcloud Connect | Service 1 (PoP A) | Service 2 (PoP B) |
 | AZ OVHcloud | AZ 1 | AZ 2 |
 
@@ -458,8 +455,8 @@ Google Cloud recommande d’utiliser des VLAN attachments dans **des edge availa
 | Configuration | SLA GCP |
 |---|---|
 | Un seul VLAN attachment | Aucun SLA |
-| Deux attachments dans des edge domains différents, même metro | 99,9 % |
-| Quatre attachments dans deux metros différents | 99,99 % |
+| Deux attachments dans des edge domains différents, même metro | 99,9 % |
+| Quatre attachments dans deux metros différents | 99,99 % |
 
 ### Étape par étape
 
@@ -518,23 +515,23 @@ Dans la console GCP :
 
 **Côté GCP :**
 
-Le Cloud Router de GCP utilise le **MED (Multi-Exit Discriminator)** pour influencer la sélection du chemin. Définissez des valeurs MED différentes :
+Au sein de GCP, le Cloud Router utilise le **MED (Multi-Exit Discriminator)** comme mécanisme natif pour influencer la sélection du chemin entre ses VLAN attachments. Définissez des valeurs MED différentes :
 
 | Attachment | MED annoncé |
 |---|---|
 | `attachment-1` (principal) | 100 (plus bas = préféré) |
 | `attachment-2` (secours) | 200 |
 
-Vous pouvez configurer le MED via les annonces de routes personnalisées dans les paramètres du peer BGP du Cloud Router.
+Vous pouvez configurer le MED via les annonces de routes personnalisées dans les paramètres du peer BGP du Cloud Router. Il s’agit d’un mécanisme interne à GCP qui n’influence pas la manière dont OVHcloud choisit son chemin vers vous.
 
 **Côté OVHcloud :**
 
 Utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) :
 
-| Chemin | Local Preference | AS-path prepend |
+| Chemin | MED (plus bas = préféré) | AS-path prepend (vos équipements) |
 |---|---|---|
-| OVHcloud Connect 1 (principal) | 200 | Aucun |
-| OVHcloud Connect 2 (secours) | 100 | 1× prepend |
+| OVHcloud Connect 1 (principal) | 100 | Aucun |
+| OVHcloud Connect 2 (secours) | 200 | 1× prepend |
 
 #### 7. Associer les deux services à votre vRack
 
@@ -546,7 +543,7 @@ Utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) 
 |---|---|---|
 | Défaillance du lien GCP | Désactiver le VLAN attachment 1 | Le trafic bascule vers l’attachment 2 |
 | Défaillance du lien OCC | Désactiver OVHcloud Connect 1 | Le trafic bascule vers OVHcloud Connect 2 |
-| Défaillance opérateur | Mettre hors service le MCR A | Le trafic bascule sur le chemin via MCR B |
+| Défaillance opérateur | Mettre hors service le cloud router opérateur du chemin A | Le trafic bascule sur la route du chemin B |
 | Récupération complète | Tout réactiver | Le trafic revient sur le chemin principal |
 
 ### Considérations spécifiques à GCP
@@ -554,14 +551,14 @@ Utilisez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) 
 - **Annonces de routes personnalisées :** utilisez les annonces de routes personnalisées du Cloud Router pour contrôler les sous-réseaux annoncés à OVHcloud. Évitez d’annoncer le VPC entier si seuls certains sous-réseaux sont nécessaires.
 - **Dataplane v2 :** si vous utilisez GKE avec Dataplane v2, veillez à inclure les plages CIDR des Pods dans les annonces de routes si les pods GKE doivent communiquer avec OVHcloud.
 - **Shared VPC :** si vous utilisez un Shared VPC, créez l’Interconnect dans le projet hôte et partagez-le avec les projets de service.
-- **MTU :** GCP Interconnect prend en charge un **MTU de 1440** pour Partner Interconnect. Assurez-vous qu’OVHcloud Connect et les VXC opérateur utilisent des paramètres MTU correspondants.
+- **MTU :** GCP Interconnect définit son propre MTU pour Partner Interconnect (reportez-vous à la documentation à jour de Google). Côté OVHcloud, les jumbo frames jusqu’à **9000 octets** sont prises en charge ; assurez-vous que le MTU est cohérent de bout en bout entre GCP, les circuits virtuels / connexions opérateur et OVHcloud Connect.
 
 > Pour plus d’informations, veuillez consulter la [documentation GCP Interconnect](https://docs.cloud.google.com/network-connectivity/docs/interconnect) et la [documentation GCP Cloud Router](https://docs.cloud.google.com/network-connectivity/docs/router).
 
 </Tab>
 </Tabs>
 
-### Et ensuite ?
+### Prochaines étapes
 
 - [Architecture simple](/guides/network/ovhcloud-connect/simple-architecture) pour les cas d’usage non critiques
 - [Superviser vos connexions](/guides/network/ovhcloud-connect/monitor)

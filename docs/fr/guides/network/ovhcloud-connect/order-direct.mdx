@@ -16,8 +16,9 @@ Avant de passer commande, préparez les informations suivantes :
 |---|---|
 | **Localisation du PoP** | Le datacenter dans lequel vous souhaitez vous connecter (consultez [Localisations des PoP](/guides/network/ovhcloud-connect/pop-locations-regions)) |
 | **Bande passante** | Le débit de la connexion (par exemple 1, 10 ou 100 Gbps) |
-| **Votre ASN** | Votre numéro de système autonome (public ou privé) pour le peering BGP |
-| **Plan d’adressage IP** | Les préfixes que vous comptez annoncer ainsi que le sous-réseau de peering |
+| **Votre ASN** (mode L3) | Votre numéro de système autonome (public ou privé) pour le peering BGP |
+| **Plan d’adressage IP** (mode L3) | Les préfixes que vous comptez annoncer ainsi que le sous-réseau de peering |
+| **VLAN** (mode L2) | Les VLAN que vous souhaitez étendre vers OVHcloud (aucun ASN ni plan d’adressage IP n’est requis en mode L2) |
 | **Coordonnées** | Contacts techniques et de facturation pour la commande |
 | **Instructions de cross-connect** | Références de cage/baie si vous disposez de votre propre espace dans le datacenter |
 
@@ -41,7 +42,7 @@ Vous recevrez un e-mail de confirmation contenant la référence de votre comman
 
 ## Commander via l’API
 
-Vous pouvez également passer commande de manière programmatique en utilisant l'[API OVHcloud](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1).
+Vous pouvez également passer commande de manière programmatique en utilisant l’[API OVHcloud](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1).
 
 ```python
 import ovh
@@ -56,7 +57,7 @@ print(result)
 
 Reportez-vous au [guide d’automatisation](/guides/network/ovhcloud-connect/automation) pour les instructions de configuration de l’API.
 
-## Que se passe-t-il après la commande ?
+## Que se passe-t-il après la commande ?
 
 <img className="thumbnail" alt="Étapes après la commande : commande confirmée, LOA livrée, cross-connect installé, port activé" src="/images/network/ovhcloud-connect/order-direct/fig-1.fr.svg" loading="lazy" />
 
@@ -81,8 +82,9 @@ Après la commande, vous disposez de **60 jours** pour finaliser l’interconnex
 ## Et ensuite ?
 
 - [Recevoir et utiliser votre LOA](/guides/network/ovhcloud-connect/cross-connect-loa)
-- [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp)
 - [Associer le service à votre vRack](/guides/network/ovhcloud-connect/associate-vrack)
+- [Configurer OCC L2](/guides/network/ovhcloud-connect/l2)
+- [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp)
 
 ## Aller plus loin
 

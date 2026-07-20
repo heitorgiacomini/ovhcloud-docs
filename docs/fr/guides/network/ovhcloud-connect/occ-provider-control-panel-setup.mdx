@@ -6,55 +6,80 @@ lastUpdated: 2026-06-15
 
 ## Objectif
 
-Ce guide vous accompagne dans la connexion à OVHcloud via un **opérateur réseau tiers** (par exemple Megaport, Equinix Fabric ou Console Connect). Un provider prend en charge la connectivité physique pour votre compte, ce qui vous évite d’avoir à être présent dans le même datacenter qu’OVHcloud.
+OVHcloud Connect Provider est l’option gérée par un opérateur : un opérateur réseau tiers établit le lien physique vers un PoP OVHcloud pour votre compte, ce qui vous évite d’avoir à être présent dans le même datacenter qu’OVHcloud. Il s’agit toujours d’un service Layer 3. Ce guide de démarrage rapide couvre le parcours de bout en bout — de la commande jusqu’à un lien configuré — afin qu’à la fin vous disposiez d’une connexion acheminant du trafic vers vos ressources OVHcloud.
 
 ## Avant de commencer
 
 Assurez-vous de disposer de :
 
-- Un **compte OVHcloud** avec une facturation configurée
-- D’un contrat ou d’un compte chez un **provider pris en charge** (consultez [Providers](/guides/network/ovhcloud-connect/providers))
-- D’un **routeur** prenant en charge le peering BGP (OVHcloud Connect Provider est toujours un service Layer 3)
-- D’un **plan d’adressage IP** prévu et d’un **ASN**
+- ✅ Un **compte OVHcloud** avec une facturation configurée
+- ✅ Un contrat ou un compte chez un **provider pris en charge** (consultez [Providers](/guides/network/ovhcloud-connect/providers))
+- ✅ Un **routeur** prenant en charge le peering BGP (OVHcloud Connect Provider est toujours un service Layer 3)
+- ✅ Un **plan d’adressage IP** prévu et un **ASN**
 
-Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>, ouvrez la section <code className="action">Bare Metal Cloud</code>, puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> et sélectionnez votre solution.
 
 ## Vue d’ensemble des étapes
 
-<img className="thumbnail" alt="Vue d’ensemble des étapes" src="/images/network/ovhcloud-connect/occ-provider-control-panel-setup/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d’ensemble des étapes de configuration d’OVHcloud Connect Provider depuis l’espace client" src="/images/network/ovhcloud-connect/occ-provider-control-panel-setup/fig-1.fr.svg" loading="lazy" />
 
 ### Étape 1 — Commander OVHcloud Connect Provider
 
 1. Sélectionnez <code className="action">OVHcloud Connect Provider</code>.
 2. Choisissez votre **provider**, votre **emplacement de PoP** et la **bande passante**.
 3. Vérifiez la tarification et soumettez la commande.
-4. OVHcloud génère une **clé d’appairage** (également appelée clé de service) destinée à votre provider.
+4. OVHcloud génère une **clé de service** destinée à votre provider.
 
 Pour les étapes détaillées, consultez [Commander OVHcloud Connect Provider](/guides/network/ovhcloud-connect/order-provider).
 
-### Étape 2 — Partager la clé d’appairage
+### Étape 2 — Partager la clé de service
 
-Communiquez la **clé d’appairage** à votre provider. Cette clé permet au provider d’identifier et d’activer la connexion vers OVHcloud pour votre compte.
+Communiquez la **clé de service** à votre provider. Cette clé permet au provider d’identifier et d’activer la connexion vers OVHcloud pour votre compte.
 
-- Sur **Megaport** : créez un VXC (Virtual Cross Connect) vers OVHcloud et saisissez la clé d’appairage.
-- Sur **Equinix Fabric** : créez une connexion vers OVHcloud et fournissez la clé de service.
-- Sur **Console Connect** : initiez une connexion vers OVHcloud et utilisez la clé d’appairage.
+Dans le portail de votre provider, créez la connexion vers OVHcloud et saisissez la clé de service. Consultez le guide [Providers](/guides/network/ovhcloud-connect/providers).
 
 ### Étape 3 — Le provider provisionne la connexion
 
-Le provider met en place le lien physique et logique entre son infrastructure et le PoP OVHcloud. Cela est généralement rapide (de quelques minutes à quelques heures pour les providers à la demande comme Megaport), mais les délais peuvent varier.
+Le provider met en place le lien physique et logique entre son infrastructure et le PoP OVHcloud. Cela est généralement rapide (de quelques minutes à quelques heures pour les providers à la demande), mais les délais peuvent varier.
 
-Vous pouvez suivre le statut de la connexion à la fois dans l'**espace client OVHcloud** et dans le **portail de votre provider**.
+Vous pouvez suivre le statut de la connexion à la fois dans l’**espace client OVHcloud** et dans le **portail de votre provider**.
 
-### Étape 4 — Associer à votre vRack
+### Étape 4 — Configurer votre service dans l’espace client OVHcloud
 
-Reliez le service OVHcloud Connect à votre **vRack** :
+Une fois votre solution affichée comme « Active », ouvrez-la depuis la section <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> et configurez-la. OVHcloud Connect Provider est toujours un service **Layer 3**.
 
-1. Dans l’espace client OVHcloud, rendez-vous sur <code className="action">vRack</code>.
-2. Ajoutez votre service OVHcloud Connect.
-3. Configurez les VLANs et sous-réseaux requis.
+#### Associer un vRack
+
+Cliquez sur <code className="action">Associer un vRack</code> et sélectionnez un vRack existant dans le menu déroulant. Un message confirme l’association.
 
 Consultez [Associer un OVHcloud Connect à votre vRack](/guides/network/ovhcloud-connect/associate-vrack).
+
+#### Ajouter une configuration de PoP (L3)
+
+Dans le tableau `PoP configuration`, cliquez sur <code className="action">Configurer le port</code> pour ouvrir le formulaire **Ajouter une configuration de PoP**. Le **Type** est **L3** (un service provider prend en charge le L3 uniquement). Saisissez :
+
+| Information | Description |
+|---|---|
+| User ASN | Votre numéro d’AS BGP, configuré sur votre routeur situé dans le PoP |
+| OVHcloud ASN | Le numéro d’AS configuré sur les routeurs OVHcloud Connect situés dans le PoP |
+| Subnetwork in /30 | Un bloc IPv4 en /30, utilisé pour le lien entre votre routeur et le routeur OVHcloud dans le PoP |
+
+#### Ajouter une configuration de zone de disponibilité (AZ)
+
+Dans la section `AZ configuration`, cliquez sur <code className="action">Ajouter un AZ</code>, sélectionnez une zone de disponibilité, puis saisissez :
+
+| Information | Description |
+|---|---|
+| OVHcloud ASN | Le numéro d’AS configuré sur les routeurs OVHcloud Connect dans l’AZ (peut différer de l’ASN du PoP) |
+| A /28 subnetwork | Un sous-réseau privé configuré dans votre vRack dans l’AZ sélectionnée (un bloc IPv4 en /28 ou plus grand) |
+
+#### Ajouter une configuration de routage
+
+Sur la zone de disponibilité, cliquez sur <code className="action">Règles de routage</code> pour ajouter une configuration de routage, puis choisissez **BGP** ou **Static** :
+
+- **BGP** — saisissez votre **User ASN** et l’**IP Neighbour** (l’adresse IP du voisin BGP de votre routeur dans l’AZ, comprise dans le sous-réseau de l’AZ).
+
+- **Static** — saisissez le **Network Focus** (un préfixe en notation CIDR) et le **Next hop** (une adresse IP de passerelle comprise dans la plage du sous-réseau).
 
 ### Étape 5 — Vérifier la session BGP et le routage
 
@@ -76,12 +101,12 @@ Consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) 
 
 | Problème | Que vérifier |
 |---|---|
-| Connexion bloquée en « Pending » | Vérifiez que la clé d’appairage a été correctement saisie côté provider |
+| Connexion bloquée en « Pending » | Vérifiez que la clé de service a été correctement saisie côté provider |
 | Le provider affiche « Active » mais OVHcloud affiche « Down » | Contactez le support OVHcloud — il peut s’agir d’un délai de provisionnement |
 | La session BGP ne s’établit pas | Vérifiez les IPs de peering, l’ASN et l’ID VLAN à la fois sur votre routeur et dans la configuration de PoP OVHcloud |
 | Latence élevée ou perte de paquets | Consultez la page de statut réseau du provider ; exécutez un traceroute pour identifier où se produisent les délais |
 
-## Et ensuite ?
+## Prochaines étapes
 
 - Pour une connexion auto-gérée, consultez [Quick Start : connexion Direct](/guides/network/ovhcloud-connect/occ-direct-control-panel-setup)
 - Mettez en place la [supervision](/guides/network/ovhcloud-connect/monitor)

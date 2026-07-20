@@ -6,23 +6,23 @@ lastUpdated: 2026-06-15
 
 ## Objectif
 
-Ce guide vous accompagne dans les étapes essentielles pour établir une **connexion privée et directe** entre votre infrastructure et OVHcloud — sans passer par un provider tiers.
+OVHcloud Connect Direct est l’option auto-gérée : vous êtes propriétaire du cross-connect physique dans un PoP OVHcloud et vous gérez vous-même les niveaux Layer 2 et Layer 3, sans provider tiers. Choisissez cette option lorsque votre équipement (ou un circuit) atteint déjà un datacenter où OVHcloud dispose d’un PoP. Ce guide de démarrage rapide couvre le parcours de bout en bout — de la commande à un lien configuré — afin qu’à la fin vous disposiez d’une connexion privée acheminant du trafic vers vos ressources OVHcloud.
 
 ## Avant de commencer
 
 Assurez-vous de disposer de :
 
-- Un **compte OVHcloud** avec une facturation configurée
-- D’un équipement (ou d’un circuit) dans un **datacenter où OVHcloud dispose d’un PoP** (consultez [Emplacements des PoPs](/guides/network/ovhcloud-connect/pop-locations-regions))
-- D’un **routeur** prenant en charge BGP et les interfaces fibre optique monomode
-- D’un **plan d’adressage IP** prévu (IPs de peering et préfixes à annoncer)
-- D’un **ASN** (Autonomous System Number) privé ou public
+- ✅ Un **compte OVHcloud** avec une facturation configurée
+- ✅ Un équipement (ou un circuit) dans un **datacenter où OVHcloud dispose d’un PoP** (consultez [Emplacements des PoPs](/guides/network/ovhcloud-connect/pop-locations-regions))
+- ✅ Un **routeur** doté d’interfaces fibre optique monomode (avec prise en charge de BGP pour le mode Layer 3)
+- ✅ Pour le **Layer 3** : un **plan d’adressage IP** prévu (IPs de peering et préfixes) et un **ASN** public ou privé
+- ✅ Pour le **Layer 2** : les **VLANs** que vous souhaitez étendre vers OVHcloud (aucun ASN ni plan d’adressage IP requis)
 
-Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>, ouvrez la section <code className="action">Bare Metal Cloud</code>, puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> et sélectionnez votre solution.
 
 ## Vue d’ensemble des étapes
 
-<img className="thumbnail" alt="Vue d’ensemble des étapes" src="/images/network/ovhcloud-connect/occ-direct-control-panel-setup/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Vue d’ensemble des étapes de configuration d’OVHcloud Connect Direct depuis l’espace client" src="/images/network/ovhcloud-connect/occ-direct-control-panel-setup/fig-1.fr.svg" loading="lazy" />
 
 ### Étape 1 — Commander OVHcloud Connect Direct
 
@@ -53,15 +53,52 @@ Reliez votre service OVHcloud Connect à votre **vRack** afin que vos ressources
 
 Consultez [Associer un OVHcloud Connect à votre vRack](/guides/network/ovhcloud-connect/associate-vrack).
 
-### Étape 5 — Configurer BGP
+### Étape 5 — Configurer votre service dans l’espace client OVHcloud
 
-Une fois le lien physique opérationnel :
+Une fois le lien physique opérationnel, ouvrez votre solution depuis la section <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> et configurez-la.
 
-1. Dans l’espace client OVHcloud, accédez à votre service OVHcloud Connect et **créez une configuration de PoP** avec les paramètres de session BGP.
-2. Sur **votre routeur**, configurez un voisin BGP en utilisant l’IP de peering et l’ASN d’OVHcloud fournis dans les détails de configuration.
-3. Annoncez les préfixes IP que vous souhaitez atteindre depuis OVHcloud.
+#### Associer un vRack
 
-Pour la configuration BGP détaillée, consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp).
+Si ce n’est pas déjà fait, cliquez sur <code className="action">Associer un vRack</code> et sélectionnez un vRack existant dans le menu déroulant. Un message confirme l’association.
+
+#### Ajouter une configuration de PoP
+
+Dans le tableau `PoP configuration`, cliquez sur <code className="action">Configurer le port</code> pour ouvrir le formulaire **Ajouter une configuration de PoP**, puis définissez le **Type** :
+
+- **L2** — sélectionnez L2 et confirmez. Il s’agit d’un lien point à point transparent (un PoP, une zone de disponibilité).
+
+- **L3** — sélectionnez L3 et renseignez :
+
+| Information | Description |
+|---|---|
+| User ASN | Votre numéro d’AS BGP, configuré sur votre routeur situé dans le PoP |
+| OVHcloud ASN | Le numéro d’AS configuré sur les routeurs OVHcloud Connect situés dans le PoP |
+| Subnetwork in /30 | Un bloc IPv4 en /30, utilisé pour le lien entre votre routeur et le routeur OVHcloud dans le PoP |
+
+#### Ajouter une configuration de zone de disponibilité (AZ)
+
+Sous la section `AZ configuration`, cliquez sur <code className="action">Ajouter un AZ</code>, sélectionnez une zone de disponibilité et (pour le L3) renseignez :
+
+| Information | Description |
+|---|---|
+| OVHcloud ASN | Le numéro d’AS configuré sur les routeurs OVHcloud Connect dans l’AZ (peut différer de l’ASN du PoP) |
+| A /28 subnetwork | Un sous-réseau privé configuré dans votre vRack dans l’AZ sélectionnée (un bloc IPv4 de /28 ou plus grand) |
+
+#### Ajouter une configuration de routage
+
+Sur la zone de disponibilité, cliquez sur <code className="action">Règles de routage</code> pour ajouter une configuration de routage, et choisissez **BGP** ou **Static** :
+
+- **BGP** — renseignez votre **User ASN** et l’**IP Neighbour** (l’IP du voisin BGP de votre routeur dans l’AZ, comprise dans le sous-réseau de l’AZ).
+
+- **Static** — renseignez le **Network Focus** (un préfixe en notation CIDR) et le **Next hop** (une IP de passerelle comprise dans la plage du sous-réseau).
+
+Vous pouvez ajouter plusieurs configurations de routage dans la même zone de disponibilité ; le type (BGP ou Static) choisi pour la première s’applique aux autres.
+
+Ensuite, sur **votre routeur**, configurez la session BGP correspondante (ou les routes statiques) et annoncez les préfixes que vous souhaitez atteindre depuis OVHcloud. Pour des conseils de routage détaillés, consultez [Configurer OCC L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) ou [Configurer OCC L3 avec des routes statiques](/guides/network/ovhcloud-connect/l3-static).
+
+:::info
+La configuration de routage s’applique uniquement au **Layer 3**. En mode **Layer 2**, il n’y a pas de configuration de routage — une fois la configuration de PoP L2 et la configuration de zone de disponibilité actives, vos VLANs sont pontés de manière transparente. Consultez [Configurer OCC L2](/guides/network/ovhcloud-connect/l2).
+:::
 
 ### Étape 6 — Tester et vérifier
 
@@ -69,11 +106,13 @@ Effectuez ces vérifications pour confirmer que tout fonctionne :
 
 | Vérification | Comment |
 |---|---|
-| **Lien physique** | Vérifiez que le port apparaît comme « up » dans l’espace client OVHcloud et sur votre routeur (`show interfaces`). |
-| **Session BGP** | Vérifiez que la session est **Established** : `show ip bgp summary` (Cisco) ou `show bgp summary` (Juniper). |
+| **Lien physique** | Vérifiez que le port apparaît comme « up » dans l’espace client OVHcloud et sur votre routeur. |
+| **Session BGP** | Vérifiez que la session est **Established** dans l’espace client OVHcloud et sur votre routeur. |
 | **Échange de routes** | Vérifiez que les routes d’OVHcloud apparaissent dans votre table de routage et inversement. |
 | **Connectivité** | Effectuez un ping vers une ressource OVHcloud connue (par exemple une VM dans votre vRack) depuis votre réseau on-premises. |
 | **Traceroute** | Exécutez un `traceroute` pour vérifier que le trafic emprunte bien le chemin privé (et non Internet). |
+
+Les vérifications de la **session BGP** et de l’**échange de routes** s’appliquent au Layer 3. Pour le **Layer 2**, vérifiez que le port est up et que vos VLANs atteignent vos ressources OVHcloud (vous pouvez également exécuter un diagnostic d’adresse MAC — consultez [Superviser](/guides/network/ovhcloud-connect/monitor)).
 
 ## Dépannage
 
@@ -86,8 +125,9 @@ Effectuez ces vérifications pour confirmer que tout fonctionne :
 
 Si vous ne parvenez pas à résoudre le problème, [ouvrez un ticket de support](/guides/network/ovhcloud-connect/incident-followup) en joignant la sortie BGP, le statut des interfaces et les résultats du traceroute.
 
-## Et ensuite ?
+## Prochaines étapes
 
+- Configurez votre service en [Layer 2](/guides/network/ovhcloud-connect/l2), ou en Layer 3 avec [BGP](/guides/network/ovhcloud-connect/l3-bgp) ou des [routes statiques](/guides/network/ovhcloud-connect/l3-static)
 - Pour une connexion managée, consultez [Quick Start : connexion via Provider](/guides/network/ovhcloud-connect/occ-provider-control-panel-setup)
 - Pour des montages résilients, consultez le [tutoriel On-Prem résilient](/guides/network/ovhcloud-connect/resilient-architecture)
 - Mettez en place la [supervision](/guides/network/ovhcloud-connect/monitor) de votre connexion
@@ -97,3 +137,5 @@ Si vous ne parvenez pas à résoudre le problème, [ouvrez un ticket de support]
 Pour une formation ou une assistance technique sur la mise en œuvre de nos solutions, contactez votre commercial ou consultez la page [Professional Services](/links/professional-services) pour obtenir un devis et faire analyser votre projet par nos experts.
 
 Échangez avec notre [communauté d’utilisateurs](/links/community).
+</content>
+</invoke>

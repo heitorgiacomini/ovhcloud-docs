@@ -8,10 +8,10 @@ import Api from '@components/Api';
 
 ## Objectif
 
-**Ce guide explique comment** configurer OVHcloud Connect en mode L3 avec BGP. Cela implique deux niveaux de configuration :
+BGP vous offre un échange dynamique de routes et une bascule automatique entre votre réseau et OVHcloud : les routes sont apprises et retirées automatiquement au lieu d’être maintenues à la main et, avec deux PoP ou plus, ECMP est activé automatiquement pour répartir le trafic sur plusieurs chemins. Choisissez BGP lorsque vous avez un ensemble de préfixes en croissance ou multiple, ou une architecture résiliente multi-chemins et multi-AZ. La configuration d’OVHcloud Connect en mode L3 avec BGP implique deux niveaux de configuration :
 
 1. **Configuration PoP** — La session eBGP entre votre routeur et OVHcloud au niveau du Point de présence.
-2. **Configuration supplémentaire AZ (BGP)** — Le peering BGP au sein de l’Availability Zone OVHcloud pour la distribution des routes.
+2. **Configuration supplémentaire AZ (BGP)** — Le peering BGP au sein de l’AZ OVHcloud pour la distribution des routes.
 
 :::info
 Si vous préférez le routage statique au lieu de BGP, consultez [Configurer OVHcloud Connect L3 avec routage statique](/guides/network/ovhcloud-connect/l3-static).
@@ -26,28 +26,48 @@ Si vous préférez le routage statique au lieu de BGP, consultez [Configurer OVH
 - Un sous-réseau de peering /30 (par exemple `192.0.2.0/30`)
 - Des identifiants de l’API OVHcloud (Application Key, Application Secret, Consumer Key). Consultez le guide [Premiers pas avec l’API OVHcloud](/guides/manage-and-operate/api/first-steps).
 
-Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis ouvrez la section <code className="action">Bare Metal Cloud</code> et accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
-## En pratique
+## Vue d’ensemble
 
-### Vue d’ensemble
+<img className="thumbnail" alt="Implémentation OVHcloud Connect L3 : un domaine L3 (sous-réseau et ASN BGP) est configuré sur chaque PoP et chaque Availability Zone" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-implementation.png" loading="lazy" />
 
-```text
-Votre routeur ── [ eBGP au PoP ] ── Routeur PoP OVHcloud ── [ iBGP au DC ] ── Routeur vRack ── Services
-   ASN 65001        peering /30         ASN 35540              AZ           (172.16.x.x)
-                                                          config supp.
-```
-
-- **Niveau PoP** : une session eBGP entre votre routeur (votre ASN) et OVHcloud (ASN 35540) sur un sous-réseau de peering /30.
+- **Niveau PoP** : une session eBGP entre votre routeur (votre ASN) et OVHcloud (l’ASN côté OVHcloud) sur un sous-réseau de peering /30.
 - **Niveau AZ** : un voisin BGP configuré au sein de l’AZ pour distribuer les routes vers vos services OVHcloud.
 
-### Étape 1 — Identifier l’ID de votre interface
+## Configurer le côté OVHcloud
+
+Vous pouvez configurer le côté OVHcloud de l’installation L3 BGP soit depuis l’**espace client OVHcloud**, soit avec l’**API OVHcloud**. Les deux méthodes aboutissent au même résultat. Ensuite, configurez la session BGP correspondante sur votre propre routeur.
+
+### Depuis l’espace client OVHcloud
+
+Configurez le service depuis la section <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>. Ouvrez votre solution, puis :
+
+1. **Associez un vRack** (si ce n’est pas déjà fait) : cliquez sur <code className="action">Associer un vRack</code> et sélectionnez un vRack existant.
+2. **Ajoutez une configuration PoP** : dans le tableau `PoP configuration`, cliquez sur <code className="action">Configurer le port</code> pour ouvrir le formulaire **Ajouter une configuration PoP**, réglez le **Type** sur **L3**, puis renseignez :
+
+   | Information | Description |
+   |---|---|
+   | User ASN | Votre numéro d’AS BGP, configuré sur votre routeur dans le PoP |
+   | OVHcloud ASN | Le numéro d’AS configuré sur les routeurs OVHcloud Connect dans le PoP |
+   | Subnetwork in /30 | Un bloc IPv4 /30 pour le lien entre votre routeur et le routeur OVHcloud dans le PoP |
+
+3. **Ajoutez une configuration d’Availability Zone (AZ)** : dans la section `AZ configuration`, cliquez sur <code className="action">Ajouter un AZ</code>, sélectionnez une Availability Zone, puis renseignez l’**OVHcloud ASN** et un **sous-réseau /28** (ou plus large) issu de votre vRack.
+4. **Ajoutez une configuration de routage** : sur l’Availability Zone, cliquez sur <code className="action">Règles de routage</code>, choisissez **BGP**, puis renseignez votre **User ASN** et l’**IP Neighbour** (l’IP du voisin BGP de votre routeur au sein du sous-réseau de l’AZ).
+
+Configurez ensuite la session eBGP correspondante sur votre propre routeur (voir **Configurer BGP sur votre routeur** ci-dessous).
+
+### Depuis l’API OVHcloud
+
+Les étapes suivantes configurent la même installation L3 BGP de manière programmatique.
+
+#### Étape 1 — Identifier l’ID de votre interface
 
 Récupérez l’ID de l’interface pour votre service OVHcloud Connect :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/interface"} />
 
-### Étape 2 — Créer la configuration PoP (L3)
+#### Étape 2 — Créer la configuration PoP (L3)
 
 La configuration PoP établit la session BGP L3 au niveau du Point de présence.
 
@@ -59,8 +79,8 @@ La configuration PoP établit la session BGP L3 au niveau du Point de présence.
 |---|---|---|---|
 | `interfaceId` | long | Oui | ID de l’interface OVHcloud Connect |
 | `type` | string | Oui | `l3` pour le mode Layer 3 |
-| `customerBgpArea` | long | Non | Votre numéro d’AS privé (par exemple `65001`) |
-| `ovhBgpArea` | long | Non | AS privé OVHcloud (généralement laissé vide — attribué automatiquement) |
+| `customerBgpArea` | long | Non | Votre numéro d’AS (un ASN public ou un ASN privé compris dans la plage 64512–65534, par exemple `64512`) |
+| `ovhBgpArea` | long | Non | L’ASN de l’instance de routage côté OVHcloud. Vous pouvez utiliser n’importe quel ASN sauf les valeurs réservées par OVHcloud par région (`65501` Europe, `65502` Canada, `65519` Asie) ; il doit différer de votre ASN client (par exemple `35540`). |
 | `subnet` | ipv4Block | Non | Sous-réseau de peering /30 (par exemple `192.0.2.0/30`). La première IP est OVHcloud, la seconde est la vôtre. |
 
 **Exemple de requête :**
@@ -69,14 +89,14 @@ La configuration PoP établit la session BGP L3 au niveau du Point de présence.
 {
   "interfaceId": 101,
   "type": "l3",
-  "customerBgpArea": 65001,
+  "customerBgpArea": 64512,
   "subnet": "192.0.2.0/30"
 }
 ```
 
-Le `resourceId` dans la réponse correspond à votre nouveau `popId`.
+Le `resourceId` dans la réponse correspond à votre nouveau `popId`. Vous pouvez également le récupérer à tout moment en listant vos configurations PoP avec `GET .../config/pop`.
 
-### Étape 3 — Vérifier la configuration PoP
+#### Étape 3 — Vérifier la configuration PoP
 
 Une fois la tâche terminée :
 
@@ -89,7 +109,7 @@ Une fois la tâche terminée :
   "id": 5678,
   "interfaceId": 101,
   "type": "l3",
-  "customerBgpArea": 65001,
+  "customerBgpArea": 64512,
   "ovhBgpArea": 35540,
   "subnet": "192.0.2.0/30",
   "status": "active"
@@ -102,16 +122,24 @@ Une fois la tâche terminée :
 |---|---|---|
 | **IP du pair OVHcloud** | `192.0.2.1` | Première IP du /30 — côté OVHcloud |
 | **Votre IP de pair** | `192.0.2.2` | Deuxième IP du /30 — votre routeur |
-| **ASN OVHcloud** | `35540` | La valeur `ovhBgpArea` |
-| **Votre ASN** | `65001` | La valeur `customerBgpArea` |
+| **ASN OVHcloud** | `35540` | La valeur `ovhBgpArea` (n’importe quel ASN sauf les valeurs réservées par région) |
+| **Votre ASN** | `64512` | La valeur `customerBgpArea` |
 
 Vérifiez l’état de la session BGP :
 
 <Api version="v1" section="/ovhCloudConnect" method="GET" route={"/ovhCloudConnect/\{serviceName\}/config/pop/\{popId\}/status"} />
 
-### Étape 4 — Créer la configuration supplémentaire AZ (BGP)
+#### Étape 4 — Créer la configuration supplémentaire AZ (BGP)
 
 Après la configuration PoP et la [configuration AZ](/guides/network/ovhcloud-connect/vrack-network-setup), créez une **configuration supplémentaire BGP** pour activer la distribution des routes BGP au sein de l’AZ.
+
+<img className="thumbnail" alt="Session BGP annonçant le réseau IP du vRack au routeur OVHcloud" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-bgpvrack.png" loading="lazy" />
+
+<img className="thumbnail" alt="Topologie globale OVHcloud Connect L3 BGP" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-bgpglobal.png" loading="lazy" />
+
+:::info
+La configuration AZ (datacenter) doit déjà exister avant de pouvoir créer la configuration supplémentaire. Créez-la d’abord avec `POST .../config/pop/{popId}/datacenter` (en fournissant le sous-réseau /28 issu de votre vRack) — voir [Configurer le réseau vRack](/guides/network/ovhcloud-connect/vrack-network-setup). C’est ce qui fournit le `{datacenterId}` utilisé dans l’appel `/extra` ci-dessous.
+:::
 
 :::warning
 L’activation de BGP au niveau de l’AZ **désactive VRRP** sur cette configuration AZ. BGP gère la bascule à la place. Vous devez établir une session BGP avec **les deux** équipements OVHcloud A et B (jusqu’à 4 pairs BGP par AZ). Par défaut, BFD (Bidirectional Forwarding Detection) est activé sur toutes les sessions BGP de l’AZ — il est fortement recommandé d’activer également BFD de votre côté pour une convergence plus rapide.
@@ -124,7 +152,7 @@ L’activation de BGP au niveau de l’AZ **désactive VRRP** sur cette configur
 | Paramètre | Type | Requis | Description |
 |---|---|---|---|
 | `type` | string | Oui | `bgp` pour le routage BGP |
-| `bgpNeighborArea` | long | Non | Numéro d’AS BGP du voisin de l’AZ |
+| `bgpNeighborArea` | long | Non | Votre numéro d’AS pour le voisin BGP de l’AZ (utilisez le même ASN client qu’au niveau du PoP, par exemple `64512`) |
 | `bgpNeighborIp` | ipv4 | Non | IP du routeur pour la session BGP au sein de l’AZ |
 
 **Exemple de requête :**
@@ -132,7 +160,7 @@ L’activation de BGP au niveau de l’AZ **désactive VRRP** sur cette configur
 ```json
 {
   "type": "bgp",
-  "bgpNeighborArea": 65501,
+  "bgpNeighborArea": 64512,
   "bgpNeighborIp": "172.16.1.1"
 }
 ```
@@ -147,7 +175,7 @@ Vérifiez la configuration supplémentaire :
 {
   "id": 4567,
   "type": "bgp",
-  "bgpNeighborArea": 65501,
+  "bgpNeighborArea": 64512,
   "bgpNeighborIp": "172.16.1.1",
   "nextHop": null,
   "subnet": null,
@@ -155,111 +183,17 @@ Vérifiez la configuration supplémentaire :
 }
 ```
 
-### Étape 5 — Configurer BGP sur votre routeur
+## Configurer BGP sur votre routeur
 
-Configurez votre routeur physique pour établir la session eBGP avec OVHcloud au niveau du PoP. **Remplacez les valeurs d’exemple** par vos paramètres réels issus de l’étape 3.
+Configurez votre routeur physique pour établir la session eBGP avec OVHcloud au niveau du PoP. **Remplacez les valeurs d’exemple** par vos paramètres réels de configuration PoP (l’IP du pair OVHcloud, votre IP de pair et les deux ASN).
 
-#### Cisco IOS / IOS-XE
+Configurez BGP (ou des routes statiques) sur votre routeur de périphérie conformément à la documentation de votre fournisseur, en utilisant l’ASN, l’adresse IP de pair et le sous-réseau indiqués ci-dessus.
 
-```text
-! Interface facing OVHcloud
-interface GigabitEthernet0/0
- description OVHcloud Connect
- ip address 192.0.2.2 255.255.255.252
- no shutdown
-
-! BGP configuration
-router bgp 65001
- bgp log-neighbor-changes
- neighbor 192.0.2.1 remote-as 35540
- neighbor 192.0.2.1 description OVHcloud-Peer
- !
- address-family ipv4 unicast
-  neighbor 192.0.2.1 activate
-  network 10.0.0.0 mask 255.255.0.0
-  ! Only advertise your own prefixes
-  neighbor 192.0.2.1 prefix-list MY-PREFIXES out
-  neighbor 192.0.2.1 prefix-list OVH-PREFIXES in
-  neighbor 192.0.2.1 maximum-prefix 100
-
-ip prefix-list MY-PREFIXES seq 10 permit 10.0.0.0/16
-ip prefix-list OVH-PREFIXES seq 10 permit 172.16.0.0/12 le 24
-```
-
-#### Juniper JunOS
-
-```text
-interfaces {
-    ge-0/0/0 {
-        description "OVHcloud Connect";
-        unit 0 {
-            family inet {
-                address 192.0.2.2/30;
-            }
-        }
-    }
-}
-
-protocols {
-    bgp {
-        group OVHcloud {
-            type external;
-            peer-as 35540;
-            local-address 192.0.2.2;
-            neighbor 192.0.2.1 {
-                description "OVHcloud Peer";
-                import OVH-IMPORT;
-                export MY-EXPORT;
-            }
-        }
-    }
-}
-
-policy-options {
-    policy-statement MY-EXPORT {
-        term allow {
-            from {
-                route-filter 10.0.0.0/16 exact;
-            }
-            then accept;
-        }
-        term reject {
-            then reject;
-        }
-    }
-    policy-statement OVH-IMPORT {
-        term accept-ovh {
-            from {
-                route-filter 172.16.0.0/12 orlonger;
-            }
-            then accept;
-        }
-        term reject {
-            then reject;
-        }
-    }
-}
-```
-
-### Étape 6 — Vérifier la session BGP
+## Vérifier la session BGP
 
 #### Depuis votre routeur
 
-**Cisco :**
-
-```bash
-show ip bgp summary
-show bgp ipv4 unicast neighbors 192.0.2.1
-show ip route bgp
-```
-
-**Juniper :**
-
-```bash
-show bgp summary
-show bgp neighbor 192.0.2.1
-show route protocol bgp
-```
+Consultez la documentation de votre fournisseur pour vérifier l’état de la session BGP et les routes échangées avec OVHcloud.
 
 **Résultats attendus :**
 
@@ -281,28 +215,29 @@ Si la session ne s’établit pas, lancez un diagnostic de peering :
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/diagnostic"} />
 
-Noms de diagnostics disponibles : `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
+Sélectionnez le diagnostic dont vous avez besoin — par exemple un test de peering BGP ou un diagnostic de routes. Consultez [Surveiller votre OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) pour connaître les diagnostics disponibles, et la [console API](https://api.ovh.com/console/#/ovhCloudConnect) pour le corps exact de la requête.
 
-### Bonnes pratiques
+## Bonnes pratiques
 
 - **Annoncez uniquement les préfixes que vous possédez.** Ne laissez pas fuiter des routes tierces via OVHcloud Connect.
 - **Appliquez des filtres de préfixes.** Utilisez des prefix-lists à l’import et à l’export pour éviter les fuites de routes accidentelles.
 - **Définissez des limites maximum-prefix.** Protégez votre routeur de la réception d’un nombre inattendu de routes.
-- **Utilisez l’authentification MD5.** Si nécessaire, configurez MD5 sur la session BGP pour renforcer la sécurité.
 - **Surveillez la session.** Configurez des alertes pour les flaps BGP et les coupures de session — voir [Surveiller votre connexion](/guides/network/ovhcloud-connect/monitor).
-- **Pour les configurations redondantes.** Utilisez la Local Preference ou l’AS-path prepending pour contrôler la sélection du chemin principal/secondaire — voir [Multi-AZ](/guides/network/ovhcloud-connect/multi-az).
+- **Pour les configurations redondantes.** Avec deux PoP ou plus, ECMP est activé automatiquement ; pour construire une topologie active/passive à la place, ajustez la sélection de chemin BGP avec l’AS-path prepending et/ou le MED (un MED plus faible est préféré) — voir [Multi-AZ](/guides/network/ovhcloud-connect/multi-az). L’AS-path prepending est uniquement côté client ; le MED est l’alternative côté OVHcloud.
 
-### Dépannage
+<img className="thumbnail" alt="Sélection de chemin active/passive sur deux PoP à l’aide de l’AS-path prepending et du MED" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-bgpasprepend-med.png" loading="lazy" />
+
+## Dépannage
 
 | Problème | Cause possible | Solution |
 |---|---|---|
 | BGP bloqué en `Active` | IP de pair ou ASN incorrect | Vérifiez les adresses IP et l’ASN des deux côtés. Utilisez `GET .../config/pop/{popId}` pour vérifier les valeurs côté OVHcloud. |
 | BGP bloqué en `Idle` | Interface inactive ou pare-feu bloquant le TCP 179 | Vérifiez le lien physique et les règles de pare-feu. Utilisez `GET .../interface/{id}/status` pour vérifier l’état du lien. |
-| Aucune route reçue | Instruction `network` manquante ou filtre de préfixes trop restrictif | Vérifiez la politique d’export et les commandes `network`. Lancez le diagnostic `diagRoutes`. |
+| Aucune route reçue | Instruction `network` manquante ou filtre de préfixes trop restrictif | Vérifiez la politique d’export et les commandes `network`. Lancez un diagnostic de routes (voir [Surveiller](/guides/network/ovhcloud-connect/monitor)). |
 | La session tombe fréquemment (flapping) | Lien physique instable ou MTU non cohérent | Vérifiez les erreurs d’interface et les paramètres MTU. Utilisez `GET .../interface/{id}/statistics` pour consulter les compteurs d’erreurs. |
 | Configuration PoP bloquée en statut `init` | Tâche encore en cours ou échouée | Vérifiez `GET .../task` pour les tâches en attente. |
 
-### Supprimer les configurations
+## Supprimer les configurations
 
 Pour supprimer la configuration BGP, supprimez dans l’ordre inverse :
 

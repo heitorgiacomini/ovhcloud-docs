@@ -4,11 +4,11 @@ description: Vue d’ensemble des concepts nécessaires à la compréhension de 
 lastUpdated: 2026-06-15
 ---
 
-## Qu’est-ce qu’OVHcloud Connect ?
+## Qu’est-ce qu’OVHcloud Connect ?
 
 OVHcloud Connect est une **connexion réseau privée et dédiée** entre votre infrastructure et OVHcloud. Au lieu d’acheminer le trafic via l’Internet public, OVHcloud Connect établit un lien direct qui offre une meilleure sécurité, une latence réduite et une bande passante garantie.
 
-## À qui s’adresse-t-elle ?
+## À qui s’adresse-t-elle ?
 
 OVHcloud Connect s’adresse aux organisations qui ont besoin de :
 
@@ -17,16 +17,16 @@ OVHcloud Connect s’adresse aux organisations qui ont besoin de :
 - **Performances prévisibles** grâce à une bande passante dédiée (sans goulets d’étranglement partagés).
 - Architectures **multi-cloud ou hybrides** reliant des datacenters sur site, différentes infrastructures cloud ou des réseaux WAN à OVHcloud.
 
-## Comment cela fonctionne-t-il ?
+## Comment cela fonctionne-t-il ?
 
 OVHcloud Connect relie votre réseau à OVHcloud via un **Point de présence (PoP)** — un emplacement physique où OVHcloud dispose d’équipements réseau. Vous pouvez établir cette liaison de deux manières :
 
-| Type de connexion | Fonctionnement | Idéal pour |
-|---|---|---|
-| **OVHcloud Connect Direct** | Vous gérez un câble physique (cross-connect) entre votre équipement et celui d’OVHcloud dans un Point de présence commun. | Les organisations déjà présentes dans un PoP OVHcloud. |
-| **OVHcloud Connect Provider** | Un opérateur réseau tiers parmi nos [partenaires](/guides/network/ovhcloud-connect/providers) prend en charge la connexion physique pour vous. | Les organisations qui ne sont pas colocalisées avec OVHcloud ou qui préfèrent un service de connectivité managé. |
+| Type de connexion | Fonctionnement | Couches réseau prises en charge | Idéal pour |
+|---|---|---|---|
+| **OVHcloud Connect Direct** | Vous gérez un câble physique (cross-connect)<br/>entre votre équipement et celui<br/>d’OVHcloud dans un Point de présence commun. | Layer 2 (L2)<br/>et Layer 3 (L3) | Les organisations déjà présentes<br/>dans un PoP OVHcloud. |
+| **OVHcloud Connect Provider** | Un opérateur réseau tiers parmi nos<br/>[partenaires](/guides/network/ovhcloud-connect/providers)<br/>prend en charge la connexion physique pour vous. | Layer 3 (L3)<br/>uniquement | Les organisations qui ne sont pas colocalisées avec<br/>OVHcloud ou qui préfèrent un service<br/>de connectivité managé. |
 
-### Service Layer 2 (L2) - OVHcloud Connect Direct uniquement
+### Service Layer 2 (L2)
 
 OVHcloud Connect L2 relie votre infrastructure aux services OVHcloud au niveau de la couche liaison de données (Layer 2). Il vous permet d’étendre votre réseau privé aux datacenters OVHcloud, créant un pont transparent entre votre réseau local et vos ressources cloud, sans routage. Contrairement au service Layer 3, il est transparent aux VLAN (802.1q).
 
@@ -40,6 +40,8 @@ OVHcloud Connect L2 relie votre infrastructure aux services OVHcloud au niveau d
 - Topologies hybrides simples
 - Migrations « Lift & Shift » sans changement d’adressage IP
 - Applications nécessitant l’adjacence L2 ou la transparence VLAN
+
+Pour configurer le L2, consultez le guide « [Configurer OVHcloud Connect L2](/guides/network/ovhcloud-connect/l2) ».
 
 ### Service Layer 3 (L3)
 
@@ -60,11 +62,40 @@ Une fois le lien physique établi, le routage est configuré via **BGP (Border G
 
 Pour configurer le routage L3, consultez le guide « [Configurer OVHcloud Connect L3 avec BGP](/guides/network/ovhcloud-connect/l3-bgp) » ou le guide « [Configurer OVHcloud Connect L3 avec des routes statiques](/guides/network/ovhcloud-connect/l3-static) ».
 
+## Topologies prises en charge
+
+La manière dont vous pouvez relier les PoPs et les availability zones (AZ) entre eux dépend de la couche de service. Comprendre ces règles en amont vous aide à concevoir une topologie adaptée à vos besoins de résilience.
+
+### Topologies Layer 2
+
+Un service OCC L2 est **strictement point à point** : il connecte **un seul PoP (point d’entrée) à une seule availability zone**, et rien d’autre. Un même vRack ne peut contenir **qu’un seul service OCC L2**.
+
+Comme le lien est point à point, la redondance s’obtient **uniquement par agrégation de liens (LACP) sur le même PoP** : vous regroupez plusieurs interfaces physiques en un seul lien logique. Un lien de secours passant par un *deuxième* PoP n’est **pas pris en charge** pour le L2.
+
+### Topologies Layer 3
+
+Un service OCC L3 construit un **réseau IP full-mesh entre n’importe quel PoP et n’importe quelle availability zone d’une même région**. Cela vous offre bien plus de liberté que le L2 :
+
+- Vous pouvez associer **plusieurs PoPs à une même AZ**, et **plusieurs AZ à un même PoP**.
+- Vous **ne pouvez pas** relier deux PoPs entre eux — aucun trafic n’est acheminé directement entre PoPs.
+- Un domaine L3 (sous-réseau) **correspond à une seule AZ** et ne peut pas être étendu sur deux AZ ni sur deux PoPs.
+- Vous pouvez exécuter **autant de services L3 que vous le souhaitez** dans le même vRack.
+
+Lorsqu’au moins deux PoPs sont attachés, **l’ECMP (Equal-Cost Multi-Path) est activé automatiquement** (jusqu’à 4 chemins), répartissant le trafic sur les liens disponibles pour la résilience.
+
+<img className="thumbnail" alt="Topologie multi-datacenter OVHcloud Connect L3 : un PoP atteignant plusieurs availability zones" src="/images/network/ovhcloud-connect/introduction/occ-l3-multidc.png" loading="lazy" />
+
+### Combiner L2 et L3
+
+Les services L2 et L3 peuvent **coexister dans le même vRack**, vous permettant ainsi de combiner un pont L2 transparent et une connectivité L3 routée lorsque votre architecture nécessite les deux.
+
+<img className="thumbnail" alt="Combinaison de services OVHcloud Connect L2 et L3 dans le même vRack" src="/images/network/ovhcloud-connect/introduction/occ-l3-mixl2.png" loading="lazy" />
+
 ## Vue d’ensemble de l’architecture
 
 <img className="thumbnail" alt="Schéma global d’OVHcloud Connect reliant le réseau d’un client à OVHcloud via un PoP" src="/images/network/ovhcloud-connect/introduction/image.png" loading="lazy" />
 
-## Et ensuite ?
+## Prochaines étapes
 
 - Consultez le [Glossaire](/guides/network/ovhcloud-connect/glossary) pour comprendre les termes clés.
 - Découvrez la liste des [Providers](/guides/network/ovhcloud-connect/providers) disponibles pour la connectivité managée.

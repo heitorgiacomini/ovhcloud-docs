@@ -11,15 +11,15 @@ Cette page définit les termes clés que vous rencontrerez tout au long de la do
 ### A
 
 **ASN (Autonomous System Number)**
-Numéro unique qui identifie un réseau sur internet, utilisé pour échanger des informations de routage via BGP. Votre réseau dispose de son propre ASN, et OVHcloud dispose de son propre ASN. Ces numéros sont utilisés lors de la configuration des sessions BGP.
+Numéro unique qui identifie un réseau sur internet, utilisé pour échanger des informations de routage via BGP. Votre réseau dispose de son propre ASN, et l'instance de routage côté OVHcloud dispose de son propre ASN. Ces numéros sont utilisés lors de la configuration des sessions BGP, et les deux côtés doivent être différents (eBGP). Vous pouvez utiliser n'importe quel ASN, à l'exception des valeurs réservées par OVHcloud pour chaque région (65501 Europe, 65502 Canada, 65519 Asie).
 
 **AZ (Availability Zone)**
-Datacenter physiquement séparé au sein d’une région, contenant un ou plusieurs datacenters hébergeant vos services. Les AZ sont à la fois suffisamment éloignées géographiquement les unes des autres pour être isolées en cas de sinistre, et suffisamment proches pour garantir une faible latence.
+Emplacement physiquement isolé au sein d’une région, hébergeant un ou plusieurs datacenters qui exécutent vos services. Les AZ sont à la fois suffisamment éloignées géographiquement les unes des autres pour être isolées en cas de sinistre, et suffisamment proches pour garantir une faible latence.
 
 ### B
 
 **Bande passante**
-Capacité de débit souscrite pour votre lien (de 50 Mbps à 10 Gbps). Contrairement à une connexion établie via internet, ce débit est garanti et assure des performances constantes.
+Capacité de débit souscrite pour votre lien. Les options disponibles dépendent de l'offre : OVHcloud Connect Direct : 1, 10 ou 100 Gbps. OVHcloud Connect Provider : de 50 Mbps jusqu'à 50 Gbps. Contrairement à une connexion établie via internet, ce débit est garanti et assure des performances constantes.
 
 **BGP (Border Gateway Protocol)**
 Protocole de routage standard utilisé pour échanger des routes réseau entre différents réseaux. Dans le cadre d’OVHcloud Connect, BGP est utilisé en mode L3 pour indiquer à chaque côté (votre réseau et OVHcloud) quelles plages d’adresses IP sont accessibles via la connexion.
@@ -83,13 +83,16 @@ Zone géographique où OVHcloud exploite un ou plusieurs datacenters et Availabi
 ### S
 
 **SLA (Service Level Agreement)**
-Engagement contractuel d’OVHcloud qui définit le niveau de service garanti — généralement exprimé en pourcentage de disponibilité (par exemple 99,9 %) ainsi qu’en délais de réponse du support.
+Engagement contractuel d’OVHcloud qui définit le niveau de service garanti, exprimé en pourcentage de disponibilité mensuelle. Le niveau dépend de votre configuration : par exemple, une architecture redondante avec deux connexions réparties sur deux PoP donne droit à un engagement de disponibilité de 99,9 %. Consultez le guide [SLA](/guides/network/ovhcloud-connect/slas) pour le détail des niveaux selon la configuration.
 
 
 ### V
 
 **VLAN (Virtual Local Area Network)**
 Réseau logique indépendant créé sur une infrastructure physique partagée, permettant de segmenter un réseau local en plusieurs groupes isolés afin d’améliorer la sécurité et les performances.
+
+**VRRP (Virtual Router Redundancy Protocol)**
+Protocole qui assure la redondance de la passerelle pour l’instance de routage L3 d’OVHcloud dans une zone de disponibilité. OVHcloud exploite deux équipements (A et B) qui partagent une adresse IP de passerelle virtuelle (la première IP utilisable du sous-réseau de l’AZ). Il existe une instance VRRP par AZ ; le VRID est fourni par OVHcloud ; l’équipement A est le maître par défaut. L’activation de BGP sur l’AZ désactive VRRP.
 
 **vRack**
 Réseau privé virtuel isolé fourni par OVHcloud, qui vous permet d’interconnecter vos autres services OVHcloud (serveurs Bare Metal, instances Public Cloud, Hosted Private Cloud, etc.) au sein d’un réseau privé isolé, indépendamment de leur emplacement. OVHcloud Connect est associé à un vRack pour étendre votre réseau privé jusque dans OVHcloud. Pour plus d’informations, veuillez consulter la [page produit sur notre site web](/links/network/vrack).

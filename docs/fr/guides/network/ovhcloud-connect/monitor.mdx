@@ -6,23 +6,24 @@ lastUpdated: 2026-06-15
 
 ## Objectif
 
-La surveillance de votre service OVHcloud Connect garantit que la connexion est saine, performante et conforme à vos attentes. Ce guide présente les outils et les métriques disponibles.
+La surveillance vous permet de vérifier que votre lien et votre session BGP sont sains et d’obtenir des diagnostics ponctuels, OVHcloud Connect ne disposant pas de tableau de bord permanent. Utilisez-la pour confirmer qu’une nouvelle configuration fonctionne comme prévu et pour recueillir des éléments lors d’un incident. Ce guide présente les outils et les métriques disponibles.
 
-Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez la section <code className="action">Bare Metal Cloud</code>, puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
 ## Outils de surveillance
 
 ### Espace client OVHcloud
 
-L’interface principale de surveillance de votre connexion donne accès aux métriques suivantes :
+L’interface principale de vérification de votre connexion donne accès aux informations suivantes :
 
-| Métrique | Description |
+| Élément | Description |
 |---|---|
-| **État de la connexion** | Indique si le lien physique est actif ou inactif |
-| **État de la session BGP** | Indique si le peering BGP est Established, Active ou Idle |
-| **Utilisation de la bande passante** | Débit actuel et historique (entrant/sortant) |
-| **État du port** | État de l’interface physique et compteurs d’erreurs |
-| **Détails du service** | PoP, niveau de bande passante, association vRack, configuration |
+| **Statut du lien** (tableau de configuration PoP) | Indique si le lien physique est actif ou inactif |
+| **Statuts optiques** (tableau de configuration PoP) | Niveaux de signal optique IN/OUT sur le port physique (vérifiés toutes les 5 minutes) |
+| **Statut BGP** (tableau de configuration PoP) | Indique si la session BGP est active ou inactive |
+| Panneau **Specifications** | PoP, vRack, bande passante, état et nombre de ports |
+
+L’état de la session BGP ainsi que les routes apprises/annoncées sont obtenus via les diagnostics à la demande décrits ci-dessous. OVHcloud Connect n’expose ni tableau de bord d’utilisation de la bande passante ni fonctionnalité d’alerte dans l’espace client.
 
 ### API OVHcloud
 
@@ -39,21 +40,24 @@ service_name = "your-occ-service-uuid"
 service = client.get(f"/ovhCloudConnect/{service_name}")
 print(f"Status: {service['status']}")
 
-# Get PoP configuration and BGP state
-pop_config = client.get(f"/ovhCloudConnect/{service_name}/config/pop")
-print(pop_config)
+# List PoP configuration IDs, then fetch each PoP's status
+pop_ids = client.get(f"/ovhCloudConnect/{service_name}/config/pop")
+for pop_id in pop_ids:
+    print(client.get(f"/ovhCloudConnect/{service_name}/config/pop/{pop_id}/status"))
 ```
 
 > Référence complète de l’API : [eu.api.ovh.com/console](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1)
 
 ### Vos propres outils de surveillance
 
-Complétez la surveillance d’OVHcloud avec votre propre infrastructure :
+OVHcloud ne fournit ni graphiques d’utilisation du trafic ni alertes pour OVHcloud Connect ; la surveillance continue s’effectue donc de votre côté. Sur votre routeur de périphérie et votre pile de surveillance, vous pouvez par exemple :
 
 - **SNMP** — Interrogez les interfaces de votre routeur pour obtenir les compteurs de trafic, les taux d’erreur et l’état des interfaces.
-- **Surveillance BGP** — Utilisez des outils tels que `bgpstream`, `exabgp` ou la surveillance intégrée de votre routeur pour suivre la stabilité des sessions BGP et les changements de préfixes.
+- **Surveillance BGP** — Utilisez des outils tels que `bgpstream`, `exabgp` ou la surveillance intégrée de votre routeur pour suivre la stabilité de la session BGP et les changements de préfixes.
 - **Sondes ping / latence** — Mettez en place des pings réguliers ou des mesures de latence entre votre réseau on-premises et les ressources OVHcloud.
-- **Plateformes tierces** — Des outils comme Datadog, Zabbix, PRTG ou Grafana peuvent agréger les métriques provenant à la fois de votre infrastructure et de l’API OVHcloud.
+- **Plateformes tierces** — Des outils comme Datadog, Zabbix, PRTG ou Grafana peuvent agréger les métriques provenant de votre propre infrastructure.
+
+Ces pratiques génériques, propres au client, ne sont pas des fonctionnalités OVHcloud.
 
 ## Diagnostics à la demande
 
@@ -65,7 +69,7 @@ Vous pouvez lancer des diagnostics à la demande depuis l’espace client OVHclo
 
 | Diagnostic | Description |
 |---|---|
-| **BGP Peering Test** | Récupère l’état de la session BGP et les informations associées. |
+| **Default** | Récupère l’état de la session BGP et les informations associées. Dans l’espace client, ce diagnostic est déclenché par l’action <code className="action">Check BGP peering</code> sur la configuration PoP. |
 | **Routes** | Récupère la table de routage apprise par OVHcloud via BGP (routes reçues de votre côté). |
 | **Advertised-Routes** | Récupère la table de routage annoncée par OVHcloud à votre côté. |
 
@@ -77,14 +81,13 @@ Vous pouvez lancer des diagnostics à la demande depuis l’espace client OVHclo
 
 ### Lancer un diagnostic
 
-1. Ouvrez le service OVHcloud Connect que vous souhaitez diagnostiquer.
-2. En bas du panneau « POP Configuration », dans la section « Diagnostic POP », cliquez sur le bouton points de suspension <code className="action">...</code>.
-3. Sélectionnez le diagnostic à exécuter — par exemple <code className="action">BGP Peering Test</code> en mode Layer 3, ou <code className="action">Obtenir la liste de mes adresses MAC</code> en mode Layer 2.
-4. Confirmez en cliquant sur <code className="action">Lancer le diagnostic</code>.
+1. Ouvrez le service OVHcloud Connect que vous souhaitez diagnostiquer, sur l’onglet <code className="action">Configure</code>.
+2. Dans le tableau `PoP configuration`, cliquez sur le bouton points de suspension <code className="action">...</code> sur la ligne du port.
+3. Sélectionnez le diagnostic à exécuter — par exemple <code className="action">Check BGP peering</code> en mode Layer 3, ou le diagnostic d’adresses MAC en mode Layer 2.
 
 ### Récupérer un résultat
 
-1. Ouvrez l’onglet <code className="action">Diagnostics</code> du service. Chaque diagnostic est listé avec son ID et son horodatage.
+1. Ouvrez l’onglet <code className="action">Diagnostics</code> du service. Chaque diagnostic est listé avec son **Diagnostic ID**, sa **Date**, son **Name**, son **Scope** et son **Status**.
 2. Cliquez sur le bouton points de suspension <code className="action">...</code> en regard de l’entrée.
 3. Sélectionnez <code className="action">Voir le résultat</code> pour ouvrir la sortie dans une nouvelle fenêtre, ou <code className="action">Télécharger le résultat</code> pour enregistrer un fichier `.txt`.
 
@@ -93,7 +96,7 @@ Vous pouvez lancer des diagnostics à la demande depuis l’espace client OVHclo
 | Limite | Valeur |
 |---|---|
 | **Rétention** | Seuls les diagnostics initiés **au cours des sept derniers jours** sont accessibles. Téléchargez et archivez ceux que vous souhaitez conserver. |
-| **Limite de débit** | **10 diagnostics par type, par service et par période de 24 heures.** Cela s’applique indépendamment à chaque type de diagnostic (BGP Peering Test, Routes, Advertised-Routes, MAC Address). |
+| **Limite de débit** | **10 diagnostics par type, par service et par période de 24 heures.** Cela s’applique indépendamment à chaque type de diagnostic (Default, Routes, Advertised-Routes, MAC Address). |
 
 :::info
 
@@ -101,48 +104,28 @@ Les diagnostics sont également disponibles de manière programmatique via l’A
 
 :::
 
-## Métriques clés à surveiller
+## Éléments à surveiller
 
-<img className="thumbnail" alt="Métriques clés à surveiller" src="/images/network/ovhcloud-connect/monitor/fig-1.fr.svg" loading="lazy" />
+<img className="thumbnail" alt="Éléments à surveiller" src="/images/network/ovhcloud-connect/monitor/fig-1.fr.svg" loading="lazy" />
 
-### Alertes critiques (à mettre en place immédiatement)
+Étant donné qu’OVHcloud Connect expose des diagnostics à la demande plutôt que des métriques en continu, surveillez les conditions suivantes depuis votre propre outil de supervision :
 
-| Alerte | Déclencheur | Action |
+| Condition | Comment la détecter | Action |
 |---|---|---|
-| **Lien down** | L’état du port physique passe à « down » | Vérifiez le cross-connect, le SFP et contactez le datacenter ou le fournisseur |
-| **Session BGP down** | L’état de la session BGP n’est plus « Established » | Vérifiez la configuration du routeur, l’accessibilité du pair et les règles de pare-feu |
-| **Utilisation élevée de la bande passante** | Le débit dépasse 80 % de la capacité provisionnée | Planifiez une montée en bande passante ou optimisez le trafic |
-| **Pic de latence** | Le RTT augmente significativement au-dessus de la référence | Lancez un traceroute et vérifiez la présence de congestion ou de changements de routage |
-| **Changement du nombre de préfixes** | Augmentation ou diminution inattendue des préfixes reçus/envoyés | Investiguez d’éventuelles fuites de routes ou modifications de configuration |
+| **Lien down** | L’état du port physique passe à « down » (espace client / votre routeur) | Vérifiez le cross-connect, le SFP et contactez le datacenter ou le fournisseur |
+| **Session BGP down** | L’état de la session BGP n’est plus « Established » (lancez le diagnostic **Default** ou vérifiez votre routeur) | Vérifiez la configuration du routeur, l’accessibilité du pair et les règles de pare-feu |
+| **Changement du nombre de préfixes** | Augmentation ou diminution inattendue des préfixes reçus/envoyés (lancez les diagnostics **Routes** / **Advertised-Routes** ou vérifiez votre routeur) | Investiguez d’éventuelles fuites de routes ou modifications de configuration |
 
 ## Commandes de surveillance sur votre routeur
 
-### Cisco IOS
-
-```bash
-show interfaces GigabitEthernet0/0
-show ip bgp summary
-show ip bgp neighbors 192.0.2.1 received-routes
-show ip bgp neighbors 192.0.2.1 advertised-routes
-show ip route bgp
-```
-
-### Juniper JunOS
-
-```bash
-show interfaces terse
-show bgp summary
-show route receive-protocol bgp 192.0.2.1
-show route advertising-protocol bgp 192.0.2.1
-show route protocol bgp
-```
+Vous pouvez également vérifier la session depuis votre propre routeur de périphérie à l’aide des commandes show BGP et interface standard de votre fournisseur.
 
 ## Bonnes pratiques
 
-- **Surveillez des deux côtés** — Vérifiez les métriques sur votre routeur et dans l’espace client OVHcloud.
+- **Surveillez des deux côtés** — Vérifiez le statut et les valeurs optiques dans l’espace client OVHcloud, ainsi que les métriques de trafic/BGP sur votre propre routeur.
 - **Établissez une référence pour vos métriques** — Enregistrez la bande passante, la latence et le nombre de préfixes en conditions normales afin de pouvoir détecter les anomalies.
-- **Automatisez les alertes** — Ne vous fiez pas aux contrôles manuels. Configurez des notifications automatiques pour les événements critiques.
-- **Faites des revues régulières** — Consultez les tableaux de bord de surveillance chaque semaine afin de repérer les tendances (croissance de la bande passante, augmentation de la latence).
+- **Automatisez les alertes de votre côté** — Configurez des notifications automatiques pour les événements critiques dans votre propre pile de surveillance.
+- **Lancez des diagnostics au besoin** — Utilisez les diagnostics à la demande pour confirmer l’état BGP et l’échange de routes lors de l’investigation d’un problème.
 - **Testez la bascule** — Si vous disposez d’une configuration Multi-AZ, testez périodiquement la bascule et vérifiez que la surveillance détecte le basculement.
 
 ## Et ensuite ?

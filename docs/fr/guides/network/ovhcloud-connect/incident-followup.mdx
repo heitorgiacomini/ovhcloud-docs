@@ -6,7 +6,7 @@ lastUpdated: 2026-06-15
 
 ## Objectif
 
-Si vous constatez une dégradation de service ou une interruption sur votre lien OVHcloud Connect, suivez ce guide pour signaler l’incident, fournir les bonnes informations de diagnostic et suivre la résolution.
+Lorsqu’un lien OVHcloud Connect se dégrade ou tombe, savoir comment signaler, suivre et faire escalader l’incident raccourcit la résolution et clarifie ce que couvre OVHcloud (le segment du PoP au datacentre) par rapport à ce qui vous appartient ou appartient à votre fournisseur. Cela détermine aussi la manière dont le SLA de disponibilité et les éventuels avoirs de service s’appliquent, puisque les avoirs sont liés à un ticket ouvert. Si vous constatez une dégradation de service ou une interruption, suivez ce guide pour signaler l’incident, fournir les bonnes informations de diagnostic et suivre la résolution jusqu’à un bilan post-incident.
 
 ## Étape 1 — Recueillir les informations de diagnostic
 
@@ -19,31 +19,15 @@ Avant de contacter le support, collectez les informations suivantes pour accél�
 | **Horodatage (UTC)** | Notez précisément le début du problème et sa durée |
 | **Service concerné** | Nom/ID du service OVHcloud Connect, PoP, ID de VLAN |
 | **Symptômes** | Lien down, chute de session BGP, perte de paquets, latence élevée, etc. |
-| **État de l’interface** | `show interfaces` (Cisco) ou `show interfaces terse` (Juniper) |
-| **État BGP** | `show ip bgp summary` (Cisco) ou `show bgp summary` (Juniper) |
+| **État de l’interface** | Vérifiez l’état de l’interface/BGP sur votre routeur (commandes propres à l’équipementier) |
+| **État BGP** | Vérifiez l’état de l’interface/BGP sur votre routeur (commandes propres à l’équipementier) |
 | **Traceroute** | À exécuter de votre côté vers une ressource OVHcloud, et inversement |
 | **Sortie MTR** | Si disponible, exécutez `mtr` pour combiner ping et traceroute avec le pourcentage de pertes |
 | **Changements récents** | Toute modification de configuration, maintenance ou mise à jour avant l’incident |
 
 ### Exemples de commandes de diagnostic
 
-**Cisco IOS :**
-
-```bash
-show ip bgp summary
-show interfaces GigabitEthernet0/0
-show ip route
-traceroute 172.16.1.10
-```
-
-**Juniper JunOS :**
-
-```bash
-show bgp summary
-show interfaces terse
-show route
-traceroute 172.16.1.10
-```
+Collectez l’état BGP, d’interface et de routage équivalent depuis votre propre routeur de périphérie à l’aide des commandes de votre équipementier.
 
 **Depuis un hôte Linux dans OVHcloud :**
 
@@ -57,16 +41,16 @@ mtr -r -c 50 10.0.0.1
 
 Avant d’ouvrir un ticket, vérifiez si le problème est déjà connu :
 
-- **Page de statut OVHcloud** — Consultez les pages de statut OVHcloud et de maintenances planifiées (accessibles depuis l’espace client).
-- **Page de statut du fournisseur** — Si vous utilisez un fournisseur (Megaport, Equinix, Console Connect), consultez ses pages de statut/maintenance.
+- **Page de statut OVHcloud** — Consultez les pages de statut OVHcloud et de maintenances planifiées.
+- **Page de statut du fournisseur** — Si vous utilisez un fournisseur, consultez ses pages de statut/maintenance.
 - **Votre propre supervision** — Confirmez que le problème ne se situe pas de votre côté (panne du routeur local, panne du FAI, etc.).
 
-Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
+Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink> et ouvrez la section <code className="action">Bare Metal Cloud</code>, puis accédez à <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
 ## Étape 3 — Ouvrir un ticket de support
 
-1. Allez dans <code className="action">Support</code> > <code className="action">Créer un ticket</code> (ou rendez-vous dans la section support).
-2. Sélectionnez la catégorie liée à <code className="action">Network</code> / <code className="action">OVHcloud Connect</code>.
+1. Ouvrez le **Centre d’aide** depuis le tableau de bord de votre espace client et démarrez une nouvelle demande de support.
+2. Sélectionnez votre service **OVHcloud Connect** comme service concerné.
 3. Indiquez un **objet** clair (par exemple : « OVHcloud Connect — session BGP down depuis 14h30 UTC »).
 4. Dans la description, incluez :
    - Le **nom/ID du service** OVHcloud Connect
@@ -85,7 +69,7 @@ Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>
 
 | Action | Quand |
 |---|---|
-| **Vérifier le statut du ticket** | Régulièrement, depuis l’espace client OVHcloud |
+| **Vérifier le statut du ticket** | Régulièrement, dans le Centre d’aide où vous avez ouvert la demande |
 | **Répondre aux demandes** | Si le support demande des informations complémentaires, fournissez-les rapidement |
 | **Escalader si nécessaire** | En cas d’impact métier critique, demandez un traitement prioritaire ou une escalade |
 | **Tenir une chronologie** | Conservez une chronologie des événements, communications et changements de statut |
@@ -105,7 +89,7 @@ Une fois l’incident résolu :
 1. **Demandez une analyse de cause racine (RCA)** — Demandez au support OVHcloud un rapport post-incident expliquant ce qu’il s’est passé et les mesures prises pour éviter une récidive.
 2. **Mettez à jour vos runbooks** — Documentez l’incident, les étapes de résolution et les enseignements tirés.
 3. **Mettez en place des mesures correctives** — Si l’incident a révélé une faiblesse (par exemple un manque de redondance, une supervision insuffisante), planifiez les améliorations.
-4. **Vérifiez la conformité au SLA** — Si l’incident a entraîné une indisponibilité supérieure à l’engagement SLA, vous pouvez être éligible à des avoirs (voir [SLA](/guides/network/ovhcloud-connect/slas)).
+4. **Vérifiez les avoirs de service** — Les avoirs de service ne s’appliquent qu’aux configurations couvertes par un SLA de disponibilité (2 connexions sur 2 PoP = 99,9 %, ou 4 connexions sur 2 PoP vers 2 datacentres = 99,99 %). Si vous y êtes éligible, l’avoir correspond à 10 %, 20 % ou 30 % du coût mensuel du service impacté selon la disponibilité atteinte, plafonné à 30 % par mois, et doit être réclamé dans un délai d’un mois après la clôture du ticket. Consultez la page [SLA](/guides/network/ovhcloud-connect/slas) pour les conditions exactes.
 
 ## Synthèse : flux de réponse à incident
 
