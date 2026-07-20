@@ -1,7 +1,7 @@
 ---
 title: Gérer les droits granulaires sur les objets vSphere
 description: Apprenez à attribuer ou retirer des droits utilisateurs sur des objets spécifiques de votre inventaire vSphere Hosted Private Cloud
-lastUpdated: 2025-10-06
+lastUpdated: 2026-07-17
 ---
 
 import Api from '@components/Api';
@@ -42,7 +42,16 @@ En complément des droits globaux au niveau du datacentre, vous pouvez attribuer
 
 3. Validez la requête. Une tâche de type `addUserObjectRight` est créée et appliquée sur l’objet vSphere.
 
-    <img className="thumbnail" alt="Ajouter un droit sur un objet" src="/images/hosted-private-cloud/powered-by-vmware/vsphere-granular-rights/add-object-right.png" loading="lazy" />
+    Par exemple, pour accorder un accès en lecture-écriture sur une VM :
+
+    ```json
+    {
+      "propagate": false,
+      "right": "readwrite",
+      "type": "vm",
+      "vmwareObjectId": "vm-92"
+    }
+    ```
 
 ### Supprimer des droits sur un objet vSphere
 
@@ -53,8 +62,6 @@ En complément des droits globaux au niveau du datacentre, vous pouvez attribuer
 2. Renseignez les champs avec l’`objectRightId` correspondant au droit que vous souhaitez retirer.
 
 3. Validez la requête. Une tâche de type `removeUserObjectRight` est créée et supprime le droit utilisateur sur l’objet vSphere.
-
-    <img className="thumbnail" alt="Supprimer un droit sur un objet" src="/images/hosted-private-cloud/powered-by-vmware/vsphere-granular-rights/remove-object-right.png" loading="lazy" />
 
 ### Afficher les droits dans l’Espace Client OVHcloud
 
