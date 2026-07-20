@@ -42,7 +42,16 @@ In addition to global datacenter rights, you can assign granular rights to users
 
 3. Confirm the request. A task of type `addUserObjectRight` is created and applied on the vSphere object.
 
-    ![Add object right](/images/guides/hosted-private-cloud/powered-by-vmware/vsphere-granular-rights/add-object-right.png)
+    For example, to grant read/write access on a VM:
+
+    ```json
+    {
+      "propagate": false,
+      "right": "readwrite",
+      "type": "vm",
+      "vmwareObjectId": "vm-92"
+    }
+    ```
 
 ### Remove rights from a vSphere object
 
@@ -53,8 +62,6 @@ In addition to global datacenter rights, you can assign granular rights to users
 2. Fill in the fields with the `objectRightId` corresponding to the right you want to remove.
 
 3. Confirm the request. A task of type `removeUserObjectRight` is created and removes the user right from the vSphere object.
-
-    ![Remove object right](/images/guides/hosted-private-cloud/powered-by-vmware/vsphere-granular-rights/remove-object-right.png)
 
 ### Viewing rights in the OVHcloud Control Panel
 

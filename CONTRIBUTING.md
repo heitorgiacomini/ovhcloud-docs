@@ -414,7 +414,10 @@ Without props, `<ApiLink>` targets the API gateway page (`https://api.{eu|ca}.ov
 
 **EU and CA API schemas differ per route.** Before deep-linking an operation (with `<Api>` or `<ApiLink>`), check it exists in both `https://api.eu.ovhcloud.com/1.0/<section>.json` and `https://api.ca.ovhcloud.com/1.0/<section>.json` — a console deep link to an operation the zone doesn't have falls back to the section root. If only one zone has it, add `regions={["eu"]}` (renders a plain single-zone link). EU-only *products* (SMS, Email Pro, …) are restricted automatically — no prop needed.
 
-One exception: when documenting an **API endpoint as a value to copy** into code (e.g. the OAuth2 token endpoints in a `curl` example), keep the explicit EU/CA URLs in backticks — a zone-aware component would hide the variant the reader needs to copy.
+Deliberate exceptions — keep these as plain URLs, do **not** convert to components:
+
+- an **API endpoint as a value to copy** into code (e.g. the OAuth2 token endpoints in a `curl` example) — explicit EU/CA URLs in backticks; a zone-aware component would hide the variant the reader needs to copy (code blocks are never touched anyway)
+- console **UI-anchor links** that don't target an operation (`#auth`, `#servers`, `?branch=v2` without a section)
 
 Pick the component by what you are pointing at:
 
