@@ -28,10 +28,8 @@
 | Terraform provider source `ovh/ovh`, registry + GitHub links | 80-81,88 | terraform.json / public registry |
 
 ## 3. New & not verifiable without testing
-| Claim | Line | Why unverifiable / test needed |
-|---|---|---|
-| "No dedicated OVHcloud CLI binary for OVHcloud Connect" | 58 | Absence claim; cannot confirm a negative from cache — needs PM confirmation (though consistent with no CLI in SOT) |
+_None — the unverifiable "no dedicated CLI binary" negative claim was removed from the guide (it added nothing and could not be confirmed)._
 
 ## Summary
-- Category 1: 3 · Category 2: 10 · Category 3: 1
-- Notes: Every OCC API endpoint cited (`/ovhCloudConnect`, `/{serviceName}`, `/config/pop`, `/serviceInfos`) is confirmed in api.json. The Terraform resource and its two required arguments match terraform.json exactly. The guide is deliberately conservative ("check the Registry for exact names"), so factual risk is minimal; the only category-3 item is the negative CLI-existence claim.
+- Category 1: 3 · Category 2: 10 · Category 3: 0
+- Notes: Fully reconciled. Every OCC API endpoint cited (`/ovhCloudConnect`, `/{serviceName}`, `/config/pop`, `/serviceInfos`) is confirmed in api.json, and the Terraform resource and its two required arguments match terraform.json exactly. The negative CLI-existence claim was removed, so no unverifiable content remains.

@@ -41,7 +41,7 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open
 
 ## Overview
 
-<img className="thumbnail" alt="OVHcloud Connect L3 static-routing topology: your router connects to the OVHcloud PoP router over an L3 /30 peering subnet, static routes reach the OVHcloud AZ routers A and B in your vRack, reaching your services" src="/images/network/ovhcloud-connect/l3-static/l3-static-topology.svg" loading="lazy" />
+<img className="thumbnail" alt="OVHcloud Connect L3 implementation with static routing at the availability zone" src="/images/network/ovhcloud-connect/l3-static/occ-l3-implementation.png" loading="lazy" />
 
 - **PoP level**: An L3 session with a /30 peering subnet between your router and OVHcloud.
 - **AZ level**: Static routes defined with a next-hop IP and destination subnet.
@@ -55,9 +55,9 @@ You can configure the OVHcloud side of the L3 static-routing setup either from t
 Configure the service from the <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> section. Open your solution, then:
 
 1. **Associate a vRack** (if not already done): click <code className="action">Attach a vRack</code> and select an existing vRack.
-2. **Add a PoP configuration**: in the `PoP configuration` menu, click <code className="action">Add a PoP configuration</code>, select **L3**, and enter your **Customer ASN**, the **OVHcloud ASN**, and a **/30 subnetwork** for the PoP link.
-3. **Add an availability zone (AZ) configuration**: under the `AZ configuration` menu, click <code className="action">Add a configuration</code>, select an availability zone, and enter the **OVHcloud ASN** and a **/28 subnetwork** (or larger) from your vRack.
-4. **Add a routing configuration**: click the <code className="action">...</code> button on the availability zone, then <code className="action">Add routing configuration</code>, choose **Static**, and enter:
+2. **Add a PoP configuration**: in the `PoP configuration` table, click <code className="action">Configure port</code> to open the **Add a PoP configuration** form, set the **Type** to **L3**, and enter your **User ASN**, the **OVHcloud ASN**, and a **/30 subnetwork** for the PoP link.
+3. **Add an availability zone (AZ) configuration**: under the `AZ configuration` section, click <code className="action">Add an AZ</code>, select an availability zone, and enter the **OVHcloud ASN** and a **/28 subnetwork** (or larger) from your vRack.
+4. **Add a routing configuration**: on the availability zone, click <code className="action">Routing rules</code>, choose **Static**, and enter:
 
    | Information | Description |
    |---|---|
@@ -231,7 +231,7 @@ Check PoP configuration status:
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/diagnostic"} />
 
 
-Available diagnostic names: `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
+Select the diagnostic you need — for example a BGP peering test or a routes diagnostic. See [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) for the available diagnostics, and the [API console](https://api.ovh.com/console/#/ovhCloudConnect) for the exact request body.
 
 ## Limitations of static routing
 

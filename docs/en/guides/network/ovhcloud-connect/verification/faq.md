@@ -18,6 +18,7 @@
 | Single-mode fibre; SFP 1000LX/LH or 10G-LR | (implied via Direct speeds) | previous faq.mdx L52 |
 | Reserved ASNs 65501 (EU) / 65502 (CA) / 65519 (Asia); customer & OVH ASN differ | 91 | previous troubleshooting L158-162 |
 | Redundancy: local within a PoP, geographical between two PoPs (Multi-AZ / BGP) | 150,152 | previous faq.mdx L42 (L3 redundancy mechanisms) |
+| IPv6 not supported on L3 | 99 | previous occ-limits.mdx L48 (IPv6 listed under L3 unsupported features) |
 
 ## 2. New (not in the previous docs) but verifiable
 | Claim | Line | Evidence |
@@ -36,20 +37,18 @@
 | Terraform via ovh/ovh provider manages OCC resources | 208 | terraform.json `ovh_vrack_ovhcloudconnect` |
 | Public Cloud: attach project to same vRack + private network on instances | 111 | vRack integration (standard OVHcloud) |
 | HPC/VMware: same vRack + port groups | 107 | vRack integration (standard OVHcloud) |
-| Bandwidth upgrade requires new service + migration (no in-place upgrade) | 73 | consistent with L2/L3 config-lock (api.mdx: switching requires deletion) — plausible/verifiable via product model |
+| Bandwidth can be changed via the CP "Change bandwidth" action (Direct port-speed change may still need new optics/cross-connect) | 73-76 | **Live-verified (authenticated CP):** the PoP-configuration row action menu includes **"Change bandwidth"**. **Fixed this pass:** the previous answer ("bandwidth changes require ordering a new service") was wrong and was rewritten to point to the Change bandwidth action. |
 | Multiple OCC services can share one vRack | 131 | authoritative facts (multi-service same vRack) |
+| Delivery/lead time: Direct on light detection or 60 days after order; Provider as soon as the service key is provisioned; times non-guaranteed | 20-23 | previous faq.mdx (Direct light/60-day, Provider service-key) + OCC contract Art. 4 (delivery times are non-guaranteed) |
 
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| IPv6 not supported on OCC L3 | 99 | Repeated claim; no explicit OVHcloud source in old docs/cache; PM confirm |
-| Reaching AWS/Azure/GCP is out of scope, handled by third-party providers | 127 | Provider-specific scope statement; no OVHcloud source — category 3 per spec (AWS/Azure/GCP) |
-| Links to AWS/Azure/GCP "resilient" tutorials | 158-160 | Point to resilient-architecture; the multi-cloud procedures themselves are third-party (category 3) |
-| "Days–weeks" Direct lead time vs "minutes–hours" Provider | 21 | Directional; delivery times are non-guaranteed objectives — not a firm SLA; PM confirm |
-| Support ticket flow Support → Create a ticket → Network → OVHcloud Connect | 195-197 | CP support-portal flow; needs live CP |
-| "Contact OVHcloud support if you need more than 100 prefixes" | 95 | Support-process claim; no source |
+| Reaching AWS/Azure/GCP is out of scope, handled by third-party providers | 127 | Correct scoping statement, but references third-party clouds — no OVHcloud source for the linked procedures |
+| Links to AWS/Azure/GCP "resilient" tutorials | 158-160 | Point to resilient-architecture; the multi-cloud procedures themselves are third-party |
+| Support-ticket flow (open the Help Centre, start a request, select the OVHcloud Connect service) | 195-201 | **Live-checked (Playwright, authenticated):** the Help Centre is the support entry point and is linked from the Manager dashboard ("Centre d'aide"). The ServiceNow ticket portal itself would not render under automation (its `spinnerLoading` script crashes, then the SSO session drops), so the exact in-portal category labels remain unconfirmed. Wording kept generic and service-based to match the real flow. |
 | Bandwidth-change "plan during a maintenance window" | 74 | Operational advice; no OVHcloud source |
 
 ## Summary
-- Category 1: 9 · Category 2: 16 · Category 3: 7
-- Notes: Solid overlap with the previous FAQ for the foundational concepts (vRack, delivery, no router hosting, ASN rules). New quantitative claims (bandwidth, SLA, prefixes, MTU, BFD) are all backed by the OCC contract / ovhcloud.com / authoritative facts. Category 3 concentrates on IPv6-negative, other-cloud (AWS/Azure/GCP) scope, and support-process wording — flag the multi-cloud links for live validation.
+- Category 1: 10 · Category 2: 17 · Category 3: 4
+- Notes: Solid overlap with the previous FAQ (vRack, delivery, no router hosting, ASN rules, IPv6-not-supported). Quantitative claims (bandwidth, SLA, prefixes, MTU, BFD) are backed by the contract / ovhcloud.com / authoritative facts. Fixed this pass: lead time reframed to the contract's non-guaranteed delivery + old-doc facts (→ verifiable); the unsupported "contact support for >100 prefixes" claim removed; the support-ticket steps reworded to the verified entry point (the Help Centre, linked from the Manager dashboard) and kept service-based. Live Playwright note: login and the Manager dashboard were verified authenticated, but the ServiceNow ticket portal crashes under automation (`spinnerLoading` error → `session_timeout`), so exact in-portal labels stay unconfirmed — the item remains category 3.

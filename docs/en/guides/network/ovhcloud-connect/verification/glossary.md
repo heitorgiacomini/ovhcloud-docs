@@ -38,7 +38,7 @@
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| AZ = "physically separate data centre within a region … geographically distant to be disaster-isolated, yet close enough for low latency" | 16-17 | precise geographic-distance/latency wording is a marketing/architectural characterisation not stated in the old OCC docs or SOT; needs PM confirmation of exact phrasing |
+| AZ = "physically isolated location within a region … geographically distant to be disaster-isolated, yet close enough for low latency" | 16-17 | precise geographic-distance/latency wording is a marketing/architectural characterisation not stated in the old OCC docs or SOT; needs PM confirmation of exact phrasing. **Fixed this pass:** the old wording was self-contradictory ("a data centre … containing data centres") — reworded to "a physically isolated location … hosting one or more data centres". |
 | Region = OVHcloud regions deployed in Europe, North America, and Asia-Pacific | 77-78 | zone list is consistent with the PoP/region tables, but the generic "Region" wording is new; low risk, but not verbatim in SOT — confirm via website regions page |
 
 ## Summary

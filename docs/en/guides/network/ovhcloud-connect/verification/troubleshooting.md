@@ -21,6 +21,7 @@
 | Reserved ASNs 65501 (EU) / 65502 (CA) / 65519 (Asia); customer & OVH ASN must differ | 110,282 | previous troubleshooting L158-162 |
 | IP address conflict from using OVHcloud-reserved IPs | 280 | previous troubleshooting L146 |
 | Cross-connect is customer responsibility; open ticket to PoP first | 40,45 | previous troubleshooting L51-53 |
+| Unsupported features (Issue 12): IPv6, QoS/CoS (802.1p), Multi-VRF, Spanning Tree, Multicast/IGMP, FCoE | 294-303 | **previous occ-limits** unsupported lists — L3: IPv6, any QoS, Multi-VRF; L2: 802.1p CoS, Spanning Tree, IGMP/Multicast, FCoE (confirmed at the limits.md review). **Reclassified from category 3 this pass.** |
 
 ## 2. New (not in the previous docs) but verifiable
 | Claim | Line | Evidence |
@@ -46,18 +47,12 @@
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| IPv6 not supported | 294 | Plausible & repeated in faq, but no explicit OVHcloud source in old docs/cache; PM/live confirm |
-| QoS / CoS (802.1p) not supported | 295 | Not in old docs or cache; needs PM confirmation |
-| Multi-VRF not supported (single routing instance) | 297 | Not documented in old docs/cache; PM confirmation |
-| Spanning Tree (L2) not supported / no BPDUs | 301 | Not in old docs/cache; needs live/PM |
-| Multicast / IGMP (L2) not supported | 302 | Not in old docs/cache; needs live/PM |
-| FCoE (L2) not supported | 303 | Not in old docs/cache; needs live/PM |
 | Port "locked" state + "OUT DOWN may mean cancellation" phrasing tied to CP button | 44 | Old docs mention locked port; exact CP behaviour needs live check |
 | Provider portal statuses "Active"/"Provisioned"/"Pending" wording | 224,230 | Third-party provider-portal specifics — no OVHcloud source |
 | "80% of provisioned bandwidth" upgrade threshold | 197 | Operational rule of thumb; no OVHcloud source |
-| Support ticket path: Support → Create a ticket → Network → OVHcloud Connect | 328-329 | CP support flow not verified in cache; needs live CP |
+| Support-ticket flow (open the Help Centre, start a request, select the OVHcloud Connect service) | 326-329 | **Fixed this pass:** was "Support → Create a ticket → Network → OVHcloud Connect". Reworded to the live-verified Help Centre / service-based flow (see faq.md); exact in-portal labels still unconfirmed (portal crashes under automation). |
 | Flap dampening / hold-timer behaviour specifics | 149,151 | Generic BGP but OVHcloud-side timers unconfirmed |
 
 ## Summary
-- Category 1: 12 · Category 2: 18 · Category 3: 11
-- Notes: The physical-layer / SFP / LOA / auto-negotiation / IP-reservation content is a faithful, verifiable carryover from the previous troubleshooting guide. The bulk of new material (BGP limits, BFD, MTU, optics, failover) is confirmed by authoritative facts. Category 3 is dominated by the "unsupported features" table (Issue 12) and provider-portal specifics, which need PM or live validation.
+- Category 1: 18 · Category 2: 18 · Category 3: 5
+- Notes: The physical-layer / SFP / LOA / auto-negotiation / IP-reservation content is a faithful, verifiable carryover from the previous troubleshooting guide. The bulk of new material (BGP limits, BFD, MTU, optics, failover) is confirmed by authoritative facts. **Fixed this pass:** the "unsupported features" table (Issue 12: IPv6, QoS/CoS, Multi-VRF, STP, Multicast/IGMP, FCoE) was reclassified category 3 → category 1 (all present in the previous occ-limits unsupported lists), and the support-ticket flow was corrected to the live-verified Help Centre / service-based flow. Remaining category-3 (5): CP "locked" port behaviour, provider-portal status strings, the 80%-bandwidth rule of thumb, the exact in-portal support labels, and OVHcloud-side BGP timer specifics.

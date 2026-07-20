@@ -56,17 +56,17 @@ See [Associate an OVHcloud Connect to your vRack](/guides/network/ovhcloud-conne
 
 #### Add a PoP configuration (L3)
 
-In the `PoP configuration` menu, click <code className="action">Add a PoP configuration</code>, select the L3 configuration, and enter:
+In the `PoP configuration` table, click <code className="action">Configure port</code> to open the **Add a PoP configuration** form. The **Type** is **L3** (a provider service supports L3 only). Enter:
 
 | Information | Description |
 |---|---|
-| Customer ASN | Your BGP AS number, configured on your router located in the PoP |
+| User ASN | Your BGP AS number, configured on your router located in the PoP |
 | OVHcloud ASN | The AS number configured on the OVHcloud Connect routers located in the PoP |
 | Subnetwork in /30 | A /30 IPv4 block, used for the link between your router and the OVHcloud router in the PoP |
 
 #### Add an availability zone (AZ) configuration
 
-Under the `AZ configuration` menu, click <code className="action">Add a configuration</code>, select an availability zone, and enter:
+Under the `AZ configuration` section, click <code className="action">Add an AZ</code>, select an availability zone, and enter:
 
 | Information | Description |
 |---|---|
@@ -75,9 +75,10 @@ Under the `AZ configuration` menu, click <code className="action">Add a configur
 
 #### Add a routing configuration
 
-Click the <code className="action">...</code> button on the availability zone, then <code className="action">Add routing configuration</code>, and choose **BGP** or **Static**:
+On the availability zone, click <code className="action">Routing rules</code> to add a routing configuration, and choose **BGP** or **Static**:
 
-- **BGP** — enter your **Customer ASN** and the **IP Neighbour** (the BGP neighbour IP of your router in the AZ, within the AZ subnetwork).
+- **BGP** — enter your **User ASN** and the **IP Neighbour** (the BGP neighbour IP of your router in the AZ, within the AZ subnetwork).
+
 - **Static** — enter the **Network Focus** (a prefix in CIDR notation) and the **Next hop** (a gateway IP within the subnetwork range).
 
 ### Step 5 — Verify BGP session and routing

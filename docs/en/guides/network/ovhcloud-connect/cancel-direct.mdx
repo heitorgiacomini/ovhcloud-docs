@@ -13,9 +13,9 @@ An OVHcloud Connect Direct service renews automatically until you disable auto-r
 Consider the following before proceeding:
 
 - **Traffic disruption** — Cancelling the service will permanently interrupt all traffic flowing through this connection. Ensure you have migrated workloads or set up alternative connectivity.
-- **Minimum contract term** — Check whether your contract has a minimum commitment period. Early cancellation may incur fees.
+- **Committed term** — You commit to the initial term selected when ordering, after which the service renews automatically. Cancelling stops the renewal; the service is not terminated mid-term.
 - **Cross-connect removal** — The physical cross-connect in the data centre needs to be decommissioned separately.
-- **Billing** — Understand the billing cycle. Cancellation typically takes effect at the end of the current billing period.
+- **Effective date** — Cancelling (disabling auto-renewal) takes effect at the **end of the current term**: the service keeps running until its expiration date, then stops.
 
 Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
 
@@ -33,8 +33,11 @@ Before cancelling the OVHcloud Connect service:
 
 1. Go to the <ManagerLink to="/#/billing/autorenew/services">My offers and services</ManagerLink> page.
 2. To the right of your **OVHcloud Connect Direct** service, click <code className="action">...</code>, then select <code className="action">Cancel my subscription</code>.
-3. Confirm the cancellation. You may be asked to provide a reason.
-4. You will receive a **confirmation email** with the effective cancellation date.
+3. Confirm the cancellation.
+
+:::info
+To prevent the next renewal, cancel at least **24 hours before the end of the current term**. The service then stops at the end of that term (its expiration date), not immediately.
+:::
 
 ### 3. Decommission the cross-connect
 

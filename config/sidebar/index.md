@@ -2533,6 +2533,7 @@
             + [Cancel OVHcloud Connect Provider](network/ovhcloud-connect/cancel-provider)
             + [Associate an OVHcloud Connect to your vRack](network/ovhcloud-connect/associate-vrack)
             + [Set up the vRack network](network/ovhcloud-connect/vrack-network-setup)
+            + [Configure L2](network/ovhcloud-connect/l2)
             + [Configure L3 with BGP](network/ovhcloud-connect/l3-bgp)
             + [Configure L3 with static routes](network/ovhcloud-connect/l3-static)
             + [Monitor your OVHcloud Connect](network/ovhcloud-connect/monitor)

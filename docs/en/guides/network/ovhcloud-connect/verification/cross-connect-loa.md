@@ -24,16 +24,17 @@
 | DC operator may charge install fee + monthly recurring fee | 41 | standard DC colocation billing practice |
 | After patching, verify port status = Up in CP before BGP config | 46,75 | api.json interface/status; previous troubleshooting (light UP before peering) |
 | Cancel the OCC service before removing the physical cable | 52-53 | logical ordering; cancel-direct/cancel-provider guides |
+| LOA downloadable from the Control Panel via the PoP-row **"Download LOA"** action | 30 | **Live-verified (authenticated CP):** the PoP-configuration row action menu includes "Download LOA". Added to the guide this pass as an LOA source. |
+| Named DC operators (Equinix, Interxion/Digital Realty, Telehouse, Global Switch) as examples | 34 | **Live-corroborated (authenticated CP):** real test-service PoP values are "FR - Paris - Telehouse - TH2", "SP – Madrid – Interxion – MAD2", "FR - Paris - GlobalSwitch - Clichy" — confirming these facility operators. |
 
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| Named DC operators (Equinix, Interxion/Digital Realty, Telehouse) as examples | 34 | Illustrative operator names; Digital Realty is a listed provider, others need confirmation as DC operators |
 | Some data centres require an LOA for removal | 59 | DC-operator-specific policy; no OVHcloud source |
 | Provider "typically handles the cross-connect for you" | 73 | Provider-specific behaviour; no OVHcloud source |
 | A-end / Z-end submission fields to the DC operator | 37-39 | Third-party DC ordering process; no OVHcloud source |
 | Cross-connect installation timelines "vary by data centre" | 44,72 | Third-party lead-time claim; no OVHcloud source |
 
 ## Summary
-- Category 1: 4 · Category 2: 7 · Category 3: 5
-- Notes: The LOA-content and delivery-trigger facts carry over verifiably from the previous troubleshooting/faq guides. New procedural material about ordering from the DC operator is inherently third-party (data-centre-operator process), landing several rows in category 3 — expected for an LOA-ordering workflow.
+- Category 1: 4 · Category 2: 9 · Category 3: 3
+- Notes: The LOA-content and delivery-trigger facts carry over verifiably from the previous troubleshooting/faq guides. New procedural material about ordering from the DC operator is inherently third-party (data-centre-operator process). **Live CP pass:** the **"Download LOA"** action was confirmed (and added to the guide as an LOA source), and the named DC operators (Telehouse, Interxion/Digital Realty, GlobalSwitch, Equinix) were corroborated by real test-service PoP values → both moved to category 2. Remaining category-3 (3): DC-operator LOA-for-removal policy, provider-handles-cross-connect behaviour, and cross-connect lead times — all third-party.

@@ -20,15 +20,13 @@
 | API: POST /ovhCloudConnect/{serviceName}/terminate terminates the service | 69 | SOT api.json: /ovhCloudConnect/{serviceName}/terminate exists |
 | Direct = physical cross-connect owned by customer, decommissioned separately with PoP operator | 9, 17, 39-45 | Authoritative facts: Direct = customer-managed cross-connect; consistent with order-direct/cross-connect-loa |
 | Some facilities require an LOA for cross-connect removal | 44 | Standard data-centre cross-connect practice; cross-connect-loa guide |
+| Service renews automatically until you disable auto-renewal | 9 | **OCC contract Art. 5**: the service "se renouvèle automatiquement… sauf résiliation" |
+| Cancelling takes effect at the end of the current term (service runs to its expiration date) | 18, 39 | **OCC contract Art. 5**: disable auto-payment ≥24h before term end; service terminated at the "Date d'Expiration" |
+| Committed initial term; no mid-term termination (replaces the old "early fees" wording) | 16 | **OCC contract Art. 5**: the Durée Initiale is committed and the offer cannot be modified during execution; cancellation only stops renewal |
 
 ## 3. New & not verifiable without testing
-| Claim | Line | Why unverifiable / test needed |
-|---|---|---|
-| Service "renews automatically until you disable auto-renewal or request cancellation" | 9 | Auto-renew behaviour specific to OCC Direct billing terms; not in old docs/contract excerpt — needs PM/billing confirmation |
-| "Cancellation typically takes effect at the end of the current billing period" | 18, 37 | Effective-date/billing-cycle behaviour for OCC cancellation not documented; needs PM/billing confirmation |
-| "Minimum contract term / early cancellation may incur fees" | 16 | Depends on commitment terms; not in the contract facts provided — needs PM confirmation |
-| Confirmation email sent with effective cancellation date; may be asked for a reason | 36, 37 | Cancellation UI behaviour not in old docs/manager-beta cache; needs live manager walk |
+_None — the unverifiable confirmation-email / "provide a reason" UI wording was removed from the guide._
 
 ## Summary
-- Category 1: 3 · Category 2: 4 · Category 3: 4
-- Notes: New guide with no previous cancellation equivalent. Config-removal and CP nav carry over (category 1); the terminate API and manager autorenew flow are verifiable (category 2). Billing-cycle, auto-renew, and cancellation-UI specifics need PM/live validation (category 3).
+- Category 1: 3 · Category 2: 7 · Category 3: 0
+- Notes: The OCC contract (Article 5) settles the renewal/cancellation mechanics — auto-renewal, cancel-by-disabling-auto-payment ≥24h before term end, and cancellation taking effect at the end of the current term are all confirmed (category 2). The misleading "early cancellation may incur fees" wording was corrected to the contract's actual mechanic (committed term, no mid-term termination), and the "≥24h before term end" precision was added to the guide. Only the cancellation-UI email/reason behaviour still needs a live-manager walk.

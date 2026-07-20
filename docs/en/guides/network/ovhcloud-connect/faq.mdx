@@ -18,8 +18,10 @@ See [What is OVHcloud Connect?](/guides/network/ovhcloud-connect/introduction) f
 |---|---|---|
 | Physical connection | You manage the cross-connect at the PoP | Provider manages the last-mile connection |
 | Speed | 1, 10 or 100 Gbps | 50 Mbps to 50 Gbps |
-| Lead time | Days–weeks (cross-connect provisioning) | Minutes–hours (provider virtual circuit) |
+| Lead time | Depends on the cross-connect — delivered on light detection, or 60 days after the order | As soon as the service key is provisioned by your provider |
 | Best for | Organisations with colocation presence | Multi-cloud, remote sites, faster deployment |
+
+Delivery times are indicative and **non-guaranteed** (per the OVHcloud Connect contract).
 
 ### Which providers are supported?
 
@@ -69,9 +71,9 @@ OVHcloud Connect is billed monthly based on:
 
 Provider connections may also incur charges from your provider. Check the [OVHcloud pricing page](/links/network/ovhcloud-connect) for current rates.
 
-### Can I upgrade bandwidth without downtime?
+### Can I change the bandwidth of my connection?
 
-No. Bandwidth changes require ordering a new service at the desired speed and migrating traffic. Plan the migration during a maintenance window.
+Yes. You can change the bandwidth from the OVHcloud Control Panel using the <code className="action">Change bandwidth</code> action on the PoP configuration. Note that for a **Direct** connection, moving to a different physical port speed (for example 1 Gbps to 10 Gbps) may still require new optics and a new cross-connect. Plan any change during a maintenance window to limit disruption.
 
 ### How do I cancel a service?
 
@@ -92,7 +94,7 @@ You can use any BGP ASN, except the values reserved by OVHcloud per region: **65
 
 ### What is the maximum number of BGP prefixes?
 
-OVHcloud supports a maximum of **100 prefixes** per BGP session. Aggregate your routes to stay within this limit. If you need more, contact OVHcloud support.
+OVHcloud supports a maximum of **100 prefixes** per BGP session. Aggregate your routes to stay within this limit.
 
 ### Does OVHcloud Connect support IPv6?
 
@@ -192,9 +194,9 @@ BFD is enabled by default on all BGP sessions and brings failover down to **unde
 
 ### How do I open a support ticket?
 
-1. Go to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
-2. Click **Support** → **Create a ticket**.
-3. Select **Network** → **OVHcloud Connect**.
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the **Help Centre** (linked from your dashboard).
+2. Start a new support request.
+3. Select your **OVHcloud Connect** service as the affected service.
 4. Include your service name, error details, and any diagnostic output.
 
 See [Incident follow-up](/guides/network/ovhcloud-connect/incident-followup) for detailed escalation procedures.

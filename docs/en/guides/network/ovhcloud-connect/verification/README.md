@@ -17,33 +17,34 @@ contract + ovhcloud.com**. One report per guide in this folder. Guides were **no
 | Guide | 1. Present & verifiable | 2. New & verifiable | 3. New, needs testing | Report |
 |---|---:|---:|---:|---|
 | overview | 4 | 2 | 0 | [overview.md](overview.md) |
-| introduction | 17 | 4 | 1 | [introduction.md](introduction.md) |
+| introduction | 17 | 5 | 0 | [introduction.md](introduction.md) |
 | glossary | 9 | 12 | 2 | [glossary.md](glossary.md) |
 | providers | 0 | 5 | 11 | [providers.md](providers.md) |
-| pop-locations-regions | 11 | 2 | 2 | [pop-locations-regions.md](pop-locations-regions.md) |
-| multi-az | 3 | 7 | 2 | [multi-az.md](multi-az.md) |
+| pop-locations-regions | 11 | 4 | 2 | [pop-locations-regions.md](pop-locations-regions.md) |
+| multi-az | 3 | 8 | 1 | [multi-az.md](multi-az.md) |
 | slas | 0 | 12 | 4 | [slas.md](slas.md) |
 | limits | 24 | 9 | 1 | [limits.md](limits.md) |
-| l3-bgp | 25 | 12 | 4 | [l3-bgp.md](l3-bgp.md) |
-| l3-static | 20 | 12 | 4 | [l3-static.md](l3-static.md) |
+| l2 | 13 | 1 | 0 | [l2.md](l2.md) |
+| l3-bgp | 25 | 14 | 1 | [l3-bgp.md](l3-bgp.md) |
+| l3-static | 20 | 14 | 1 | [l3-static.md](l3-static.md) |
 | vrack-network-setup | 20 | 8 | 6 | [vrack-network-setup.md](vrack-network-setup.md) |
 | order-direct | 3 | 10 | 2 | [order-direct.md](order-direct.md) |
 | order-provider | 5 | 5 | 2 | [order-provider.md](order-provider.md) |
-| cancel-direct | 3 | 4 | 4 | [cancel-direct.md](cancel-direct.md) |
-| cancel-provider | 4 | 3 | 4 | [cancel-provider.md](cancel-provider.md) |
-| associate-vrack | 5 | 4 | 3 | [associate-vrack.md](associate-vrack.md) |
-| occ-direct-control-panel-setup | 11 | 7 | 3 | [occ-direct-control-panel-setup.md](occ-direct-control-panel-setup.md) |
-| occ-provider-control-panel-setup | 11 | 4 | 4 | [occ-provider-control-panel-setup.md](occ-provider-control-panel-setup.md) |
-| monitor | 9 | 10 | 3 | [monitor.md](monitor.md) |
-| troubleshooting | 12 | 18 | 11 | [troubleshooting.md](troubleshooting.md) |
+| cancel-direct | 3 | 7 | 0 | [cancel-direct.md](cancel-direct.md) |
+| cancel-provider | 4 | 4 | 2 | [cancel-provider.md](cancel-provider.md) |
+| associate-vrack | 5 | 5 | 0 | [associate-vrack.md](associate-vrack.md) |
+| occ-direct-control-panel-setup | 11 | 8 | 2 | [occ-direct-control-panel-setup.md](occ-direct-control-panel-setup.md) |
+| occ-provider-control-panel-setup | 11 | 5 | 3 | [occ-provider-control-panel-setup.md](occ-provider-control-panel-setup.md) |
+| monitor | 9 | 11 | 2 | [monitor.md](monitor.md) |
+| troubleshooting | 18 | 18 | 5 | [troubleshooting.md](troubleshooting.md) |
 | incident-followup | 0 | 8 | 5 | [incident-followup.md](incident-followup.md) |
-| cross-connect-loa | 4 | 7 | 5 | [cross-connect-loa.md](cross-connect-loa.md) |
-| logs-forwarding | 21 | 2 | 0 | [logs-forwarding.md](logs-forwarding.md) |
-| automation | 3 | 10 | 1 | [automation.md](automation.md) |
-| faq | 9 | 16 | 7 | [faq.md](faq.md) |
+| cross-connect-loa | 4 | 9 | 4 | [cross-connect-loa.md](cross-connect-loa.md) |
+| logs-forwarding | 22 | 1 | 0 | [logs-forwarding.md](logs-forwarding.md) |
+| automation | 3 | 10 | 0 | [automation.md](automation.md) |
+| faq | 10 | 17 | 4 | [faq.md](faq.md) |
 | simple-architecture | 0 | 15 | 15 | [simple-architecture.md](simple-architecture.md) |
 | resilient-architecture | 0 | 19 | 20 | [resilient-architecture.md](resilient-architecture.md) |
-| **Total** | **233** | **227** | **126** | — |
+| **Total** (28 guides) | **254** | **246** | **95** | — |
 
 ## Recurring category-3 themes (what still needs live validation)
 

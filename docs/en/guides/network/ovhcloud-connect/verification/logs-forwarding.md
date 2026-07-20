@@ -30,12 +30,12 @@
 | Forwarding activation free; LDP billed per standard price plan | 56 | previous logs-to-customers L54 |
 | Graylog usage: retrieve logs-xxxx username/password, open Graylog web-UI (e.g. gra1.logs.ovh.com), search | 149-152 | previous logs-to-customers L159-162 (verbatim) |
 | Cancelling subscription stops forwarding; stored logs immutable/not deleted | 164-166 | previous logs-to-customers L174-176 |
+| Requirement: LDP account + OCC account in the same OVHcloud account | 27 | previous logs-to-customers L27 (present); echoed in the glossary "Logs forwarding" definition |
 
 ## 2. New (not in the previous docs) but verifiable
 | Claim | Line | Evidence |
 |---|---|---|
 | CP nav: Bare Metal Cloud → Network → OVHcloud Connect | 29 | manager-beta cache path; consistent across new OCC guides |
-| Requirement: LDP account + OCC account in the same OVHcloud account | 27 | previous logs-to-customers L27 (present — actually category-1 carryover, still verifiable) |
 
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
@@ -43,5 +43,5 @@
 | _(none)_ | — | All substantive claims trace to the previous logs-to-customers guide or api.json |
 
 ## Summary
-- Category 1: 21 · Category 2: 2 · Category 3: 0
+- Category 1: 22 · Category 2: 1 · Category 3: 0
 - Notes: Near-verbatim, clean carryover from logs-to-customers. All `/ovhCloudConnect/.../log/*` endpoints confirmed in api.json; the `/dbaas/logs/.../graylog/stream` and `/operation/{operationId}` endpoints could not be re-fetched (dbaas node = HTTP 404 in the cache snapshot) but are present verbatim in the authoritative previous guide, so they are classified category 1. No category-3 items.

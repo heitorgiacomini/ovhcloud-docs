@@ -19,12 +19,7 @@ Below are prerequisites and instructions for five use cases; choose the one matc
 
 <a id="on-premises"></a>
 
-### Prerequisites
-
-- Two OVHcloud Connect services (Direct, Provider, or a mix) terminating at **different PoPs**
-- A router (or two routers) capable of running **multiple BGP sessions** with failover
-- An IP plan covering **two AZs** in OVHcloud
-- A vRack with resources in both AZs
+This is the OVHcloud-grounded reference scenario: two OVHcloud Connect services in Layer 3 (BGP) mode, both attached to the same vRack, with your resources spread across two Availability Zones (AZs).
 
 ### Architecture
 
@@ -39,45 +34,86 @@ Below are prerequisites and instructions for five use cases; choose the one matc
 | High availability SLA requirements | A multi-path architecture is needed to reach the config-based SLA tiers (see [SLAs](/guides/network/ovhcloud-connect/slas)) |
 | Disaster recovery | Automatic failover without manual intervention |
 
-#### 1. Order two OVHcloud Connect links
+### Prerequisites
 
-Order two separate OVHcloud Connect services at **different PoPs** for physical diversity:
+Before you start, make sure you have:
 
-- **Link 1 (Primary):** Order at PoP A — See [Order Direct](/guides/network/ovhcloud-connect/order-direct) or [Order Provider](/guides/network/ovhcloud-connect/order-provider).
-- **Link 2 (Backup):** Order at PoP B — Same process, different PoP.
+- **Two OVHcloud Connect services** (Direct, Provider, or a mix), each terminating at a **different PoP** for physical diversity.
+- **A BGP-capable router** (or two routers) on your side, able to run one BGP session per link and to apply routing policies for failover.
+- **A vRack** to which both services will be attached.
+- **OVHcloud resources spread across two AZs**, so that a failure affecting one zone does not take down your whole deployment.
+- **An IP addressing plan with no overlaps** between your on-premises networks, the peering subnets, and your OVHcloud (vRack/AZ) subnets.
 
-> **Diversity tip:** Use different data centres or at minimum different physical paths to avoid a shared failure point.
+### Required configuration
 
-#### 2. Install both physical connections
+Follow these steps to build the resilient dual-link Layer 3 setup.
 
-For each link:
+#### 1. Order two OVHcloud Connect services at two different PoPs
 
-- **Direct:** Install cross-connects at each PoP. See [Cross Connect LOA](/guides/network/ovhcloud-connect/cross-connect-loa).
-- **Provider:** Share the respective service keys with your provider(s).
+Order two separate OVHcloud Connect services, each at a **different PoP**, to guarantee physical path diversity:
 
-#### 3. Configure BGP with failover
+- **Service 1 (Primary):** ordered at PoP A — see [Order Direct](/guides/network/ovhcloud-connect/order-direct) or [Order Provider](/guides/network/ovhcloud-connect/order-provider).
+- **Service 2 (Backup):** ordered at PoP B — same process, different PoP.
 
-Set up **two BGP sessions** — one per link — with routing policies that define which path is preferred.
+Then install the physical connections for each service: for **Direct**, order the cross-connects at each PoP (see [Cross Connect LOA](/guides/network/ovhcloud-connect/cross-connect-loa)); for **Provider**, share each service key with your provider(s).
 
-Configure your edge routers so the primary path is preferred and the backup path is used only on failure (for example using local-preference for outbound and prepending on the backup for inbound), following your vendor's documentation.
+> **Diversity tip:** use different data centres, or at minimum different physical paths, to avoid a shared failure point.
 
-##### Key BGP attributes for failover
+#### 2. Create the PoP configuration (L3) on each service
 
-| Attribute | Effect | Use case |
+On **each** of the two services, create the **PoP configuration** in Layer 3 (BGP) mode. For each service you define:
+
+- Your **User ASN** (your own BGP autonomous system number).
+- The **OVHcloud ASN** — any ASN **except** the reserved values **65501** (Europe), **65502** (Canada) and **65519** (Asia).
+- A **/30 peering subnet** for the point-to-point BGP peering between your router and the OVHcloud device at that PoP.
+
+See [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) for the detailed procedure.
+
+#### 3. Create the AZ configuration and BGP extra configuration
+
+Still on each service, configure the vRack side of the routing:
+
+- Create an **AZ configuration** using a **/28 subnet** for that Availability Zone.
+- Add a **BGP extra configuration** so that a BGP session is established with **both** OVHcloud devices **A and B** in the AZ, rather than a single device. This is what makes the routing inside OVHcloud redundant.
+
+See [Set up the vRack network](/guides/network/ovhcloud-connect/vrack-network-setup).
+
+#### 4. Associate both services with the same vRack
+
+Associate **both** OVHcloud Connect services with the **same vRack** so that both links reach the same private network. See [Associate with vRack](/guides/network/ovhcloud-connect/associate-vrack).
+
+#### 5. Choose active/standby or active/active
+
+Decide how traffic should be distributed across the two links, then apply the matching routing policy.
+
+**Active/standby** — prefer the primary link and make the backup less preferred:
+
+| Attribute | Where it applies | Effect |
 |---|---|---|
-| **Local Preference** | Controls outbound path preference (higher = preferred) | Make primary path preferred for traffic leaving your network |
-| **AS-path prepending** | Makes a path look longer (less preferred). Configurable only on your own devices — it cannot be applied on the OVHcloud side | Influence the return path chosen from your side |
-| **MED** | Signals a preferred path (lower = preferred) | The OVHcloud-side alternative to AS-path prepending (which is customer-side only) for active/passive path selection |
+| **Local Preference** | Your own devices only | Selects the preferred **outbound** path leaving your network (higher = preferred). It does not influence how OVHcloud chooses its path toward you. |
+| **AS-path prepending** | **Customer-side only** | Makes a path look longer, so it is less preferred. Prepend on the backup path to steer inbound traffic to the primary. It cannot be applied on the OVHcloud side. |
+| **MED** | OVHcloud-side alternative | Signals a preferred path from OVHcloud toward you (lower = preferred). Use it as the OVHcloud-side counterpart to AS-path prepending for active/passive path selection. |
 
-#### 4. Associate both links with your vRack
+**Active/active** — load-balance across both links:
 
-Associate both OVHcloud Connect services with the **same vRack**. See [Associate with vRack](/guides/network/ovhcloud-connect/associate-vrack).
+- **ECMP (Equal-Cost Multi-Path) is automatic** as soon as you have **2 or more PoPs**, across **up to 4 paths**. No extra configuration is required to enable it; simply keep the paths equally preferred.
+- Traffic is balanced across both links, and if one link fails all traffic immediately flows through the surviving link.
 
-#### 5. Configure subnets in both AZs
+> Active/active provides higher aggregate bandwidth but requires careful capacity planning — each link must be able to handle the full traffic load alone during a failure.
 
-Set up private subnets in both Availability Zones. See [Set up your vRack network](/guides/network/ovhcloud-connect/vrack-network-setup).
+### Constraints
 
-#### 6. Test failover
+Keep these OVHcloud Connect Layer 3 (BGP) constraints in mind when designing your resilient architecture:
+
+- **One BGP session per PoP** — eBGP multihop is not supported.
+- Up to **4 BGP peers** per datacentre/AZ.
+- Up to **100 prefixes** advertised per BGP session.
+- **BFD is enabled by default** on OVHcloud Connect BGP sessions, which speeds up failure detection and convergence.
+- **Enabling BGP disables VRRP** on that configuration.
+- You **cannot mix BGP and static routing** in the same datacentre.
+- Bandwidth per link: OVHcloud Connect **Direct** offers **1, 10 or 100 Gbps**; **Provider** offers **50 Mbps up to 50 Gbps**.
+
+### Test failover
 
 **This is critical.** Do not skip failover testing.
 
@@ -97,7 +133,7 @@ Set up private subnets in both Availability Zones. See [Set up your vRack networ
 4. **Test the reverse:**
    - Simulate failure of the backup link while the primary is up. This confirms both links work independently.
 
-#### 7. Set up monitoring
+### Set up monitoring
 
 Monitor **both links** independently. Set alerts for:
 
@@ -106,27 +142,6 @@ Monitor **both links** independently. Set alerts for:
 - Bandwidth approaching capacity on either link
 
 See [Monitor](/guides/network/ovhcloud-connect/monitor).
-
-### Advanced: Active/Active configuration
-
-For maximum throughput and faster failover, you can run both links in **Active/Active** mode:
-
-- Set **equal Local Preference** on both paths.
-- **ECMP (Equal-Cost Multi-Path)** is automatically enabled with 2 or more PoPs, across up to 4 paths.
-- Traffic is load-balanced across both links.
-- If one link fails, all traffic immediately flows through the surviving link.
-
-> Active/Active provides higher aggregate bandwidth but requires careful capacity planning — each link must be able to handle the full traffic load alone during a failure.
-
-:::info
-Keep these OVHcloud Connect BGP constraints in mind when designing resilience:
-
-- **One BGP session per PoP** (no eBGP multihop), with up to **4 BGP peers** per datacentre/AZ.
-- Up to **100 prefixes** advertised per BGP session.
-- You cannot mix BGP and static routing in the same datacentre.
-- Enabling BGP disables VRRP on that configuration.
-- Bandwidth per link: OVHcloud Connect Direct offers **1, 10 or 100 Gbps**; Provider offers **50 Mbps up to 50 Gbps**.
-:::
 
 </Tab>
 <Tab label="WAN">

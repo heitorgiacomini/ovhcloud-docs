@@ -47,7 +47,7 @@
 |---|---|---|
 | No VLAN support / no 802.1Q tagging on the vRack router; all traffic untagged | 91 | previous occ-limits lists "802.1q tag" unsupported for L3, but the per-AZ-router "no VLAN/no trunk" framing is new; router-level behaviour needs live/PM confirmation |
 | No trunk support (cannot carry multiple VLANs over one trunk) | 92 | Not in previous docs; router capability claim — needs live/PM validation |
-| GET .../datacenter response fields: name, region, regionType "3-AZ", available | 106–112 | `regionType`/`3-AZ`/`eu-west-gra` not found in api.json, docs, or manager-beta; response schema needs live API |
+| GET .../datacenter response fields: name, region, regionType "3-AZ", available | 106–112 | `regionType`/`3-AZ`/`eu-west-gra` not in api.json/docs/manager-beta; response schema needs a live `GET .../datacenter` call. **Live-corroborated (authenticated CP):** the AZ-configuration tabs display **"3-AZ"** region badges (e.g. "Europe (Italy - Milan) 3-AZ", region code `eu-south-mil-c`), so the `regionType` = "3-AZ" concept is real; only the exact API field names remain to confirm. |
 | "Only AZs where available is true can receive a new configuration" | 115 | Depends on the `available` response field above; needs live API confirmation |
 | POST .../datacenter response fields: function=addDatacenterConfiguration, resourceId, status todo→doing→done | 141–149 | Task response schema/enum not in SOT cache; needs live API |
 | Verify response fields: id/datacenterId/subnet/ovhBgpArea/status | 160–166 | DC GET response schema not in SOT cache; illustrative — needs live API |

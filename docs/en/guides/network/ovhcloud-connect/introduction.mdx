@@ -41,6 +41,8 @@ OVHcloud Connect L2 links your infrastructure to OVHcloud services at the data l
 - "Lift & Shift" migrations without IP changes
 - Applications requiring L2 adjacency or VLAN transparency
 
+To configure L2, see the [Configure OVHcloud Connect L2](/guides/network/ovhcloud-connect/l2) guide.
+
 ### Layer 3 (L3) service
 
 OVHcloud Connect L3 links your infrastructure to OVHcloud services at the network layer (Layer 3). It allows routing and requires routes exchange.
@@ -81,9 +83,13 @@ An OCC L3 service builds a **full-mesh IP network between any PoP and any availa
 
 When at least two PoPs are attached, **ECMP (Equal-Cost Multi-Path) is enabled automatically** (up to 4 paths), distributing traffic across the available links for resiliency.
 
+<img className="thumbnail" alt="OVHcloud Connect L3 multi-datacentre topology: one PoP reaching several availability zones" src="/images/network/ovhcloud-connect/introduction/occ-l3-multidc.png" loading="lazy" />
+
 ### Mixing L2 and L3
 
 L2 and L3 services can **coexist in the same vRack**, so you can combine a transparent L2 bridge with routed L3 connectivity when your architecture needs both.
+
+<img className="thumbnail" alt="Mixing L2 and L3 OVHcloud Connect services in the same vRack" src="/images/network/ovhcloud-connect/introduction/occ-l3-mixl2.png" loading="lazy" />
 
 ## Architecture overview
 

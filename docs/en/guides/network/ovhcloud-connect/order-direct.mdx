@@ -8,7 +8,7 @@ lastUpdated: 2026-06-15
 
 OVHcloud Connect Direct suits organisations already present in an OVHcloud PoP, or able to reach one, that manage their own physical cross-connect. It delivers a dedicated Layer 2 and Layer 3 connection to OVHcloud. Placing the order starts delivery: OVHcloud issues a Letter of Authorization (LOA), you (or your data centre operator) run the physical cross-connect, and the service then appears in the OVHcloud Control Panel for configuration.
 
-OVHcloud Connect Direct is ordered from the [OVHcloud website](https://www.ovhcloud.com/). Once the order is validated and the service is delivered, it appears in the OVHcloud Control Panel, where you configure it (BGP, static routing, vRack association, and so on).
+OVHcloud Connect Direct is ordered from the [OVHcloud website](https://www.ovhcloud.com/). Once the order is validated and the service is delivered, it appears in the OVHcloud Control Panel, where you configure it in **Layer 2** or **Layer 3** mode — after associating a vRack, you set up either a transparent L2 bridge or L3 routing (BGP or static routes).
 
 ## What you will need
 
@@ -18,8 +18,9 @@ Before starting the order, prepare the following:
 |---|---|
 | **PoP location** | The data centre where you want to connect (see [PoP Locations](/guides/network/ovhcloud-connect/pop-locations-regions)) |
 | **Bandwidth** | The speed of the connection (e.g. 1, 10 or 100 Gbps) |
-| **Your ASN** | Your Autonomous System Number (public or private) for BGP peering |
-| **IP plan** | The prefixes you intend to advertise and the peering subnet |
+| **Your ASN** (L3 mode) | Your Autonomous System Number (public or private) for BGP peering |
+| **IP plan** (L3 mode) | The prefixes you intend to advertise and the peering subnet |
+| **VLANs** (L2 mode) | The VLANs you want to extend to OVHcloud (no ASN or IP plan is required in L2 mode) |
 | **Contact details** | Technical and billing contacts for the order |
 | **Cross-connect instructions** | Cage/cabinet references if you have your own space in the data centre |
 
@@ -33,7 +34,7 @@ After the order is validated, OVHcloud issues a **Letter of Authorization (LOA)*
 
 Once the service is delivered, it appears in your Control Panel, where all post-delivery configuration takes place.
 
-Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>. Select your service to configure it (BGP, static routing, vRack association).
+Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>. Select your service to configure it — in Layer 2 mode (a transparent VLAN bridge) or Layer 3 mode (BGP or static routing) — after associating it with your vRack.
 
 You can also manage your services programmatically using the [OVHcloud API](https://eu.api.ovh.com/console/?section=%2FovhCloudConnect&branch=v1).
 
@@ -75,8 +76,9 @@ You have **60 days** after the order to finalize the interconnection (order the 
 ## What's next?
 
 - [Receive and use your LOA](/guides/network/ovhcloud-connect/cross-connect-loa)
-- [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp)
 - [Associate with your vRack](/guides/network/ovhcloud-connect/associate-vrack)
+- [Configure OCC L2](/guides/network/ovhcloud-connect/l2)
+- [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp)
 
 ## Go further
 

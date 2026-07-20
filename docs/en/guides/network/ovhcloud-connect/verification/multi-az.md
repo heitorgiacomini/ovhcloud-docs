@@ -23,13 +23,13 @@
 | Distribute OVHcloud resources across multiple AZs in the same region | 25 | consistent with L3 full-mesh within a region (previous occ-layer3) |
 | Local Preference: set higher LocalPref on primary-link routes | 32 | universal BGP standard (LocalPref is a valid, standard attribute for primary/backup selection) |
 | When-to-use matrix (test=single, non-critical=single+monitoring, business-critical/regulated=Multi-AZ) | 40-45 | advisory guidance consistent with the SLA tiering; not a hard technical claim |
+| Architecture-overview image (multi-az/image.png) depicts redundant PoP/AZ topology | 19 | **Visually verified this pass:** the diagram correctly shows a 3-AZ region (AZ-1/2/3, ~30 km / <1 ms apart), OVHcloud Connect fanning to two PoPs (A & B) each with an OVHcloud Connect Router → customer routers → Customer Network, labelled "Layer 3 mode, SLA up to 99.99%". Accurate; also corroborates the SLA tier and the glossary AZ definition. |
 
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
 | "Test failover by simulating a link outage and verifying traffic switches to the backup path" as an operational step | 26 | procedural/operational guidance; correctness of the observed failover behaviour needs live validation (/walk-guide) |
-| Architecture-overview image (multi-az/image.png) accurately depicts redundant PoP/AZ topology | 19 | image content not verifiable from text sources; needs visual review |
 
 ## Summary
-- Category 1: 3 · Category 2: 7 · Category 3: 2
-- Notes: The path-selection facts (AS-path prepend customer-side only, MED as OVHcloud-side alternative) are verbatim carryovers from occ-layer3. The Multi-AZ framing, two-PoP redundancy recommendation, and LocalPref usage are all confirmed by the spec's redundancy/SLA facts and universal BGP standards. Only the live failover-test step and the diagram need testing/visual review.
+- Category 1: 3 · Category 2: 8 · Category 3: 1
+- Notes: The path-selection facts (AS-path prepend customer-side only, MED as OVHcloud-side alternative) are verbatim carryovers from occ-layer3. The Multi-AZ framing, two-PoP redundancy recommendation, and LocalPref usage are all confirmed by the spec's redundancy/SLA facts and universal BGP standards. The architecture diagram was visually reviewed this pass and is accurate (→ category 2). The only remaining category-3 item is the live failover-test step, which is operational by nature.

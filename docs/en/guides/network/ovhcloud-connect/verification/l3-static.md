@@ -42,15 +42,14 @@
 | API: GET .../config/pop/{popId}/status | 227 | api.json route exists |
 | API: POST .../diagnostic | 231 | api.json route exists |
 | Static routing not recommended for multi-AZ (use BGP) | 244 | Consistent with previous occ-layer3 multi-DC/BGP resilience model |
+| PoP GET response schema: `id`/`interfaceId`/`type`/`customerBgpArea`/`ovhBgpArea`/`subnet`/`status` | 114–122 | **Live-confirmed** via the l3-bgp session (same `GET /config/pop/{popId}` endpoint): all 7 field names match exactly. Only illustrative values differ. |
+| Extra (network) GET response schema: `id`/`type`/`bgpNeighborArea`/`bgpNeighborIp`/`nextHop`/`subnet`/`status` | 183–191 | **Live-confirmed** via the l3-bgp session (same `GET .../extra/{extraId}` endpoint — one 7-field object). The static example is the logical inverse of the confirmed BGP one: `bgpNeighborArea`/`bgpNeighborIp` `null`, `nextHop`/`subnet` populated. |
 
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| PoP GET response example fields (id/interfaceId/customerBgpArea/ovhBgpArea/subnet/status) | 114–122 | Response-body schema not in SOT api.json (routes only); illustrative — needs live API |
-| Extra (network) GET response fields (id/type/bgpNeighborArea/bgpNeighborIp/nextHop/subnet/status) | 183–191 | Extra GET response schema not in SOT cache; needs live API confirmation |
-| Diagnostic enum names: diagPeering, diagPeeringExtra, diagRoutes, diagMacs | 234 | Not in api.json / manager-beta / docs; previous diagnostics guide uses Default/Routes/Advertised-Routes/MAC Address — needs live API/PM validation |
 | Verify-connectivity expected outputs (traceroute via 192.0.2.1, ping reply) | 213–217 | Illustrative example values; environment-specific — needs live test |
 
 ## Summary
-- Category 1: 20 · Category 2: 12 · Category 3: 4
-- Notes: Clean carryover of the CP static-routing procedure, /30 and /28 IP rules, VRRP-remains-active-with-static behaviour, and the network extra params. All API routes verified in api.json. Category-3 items are limited to example response-body schemas (not stored in the SOT cache) and the diagnostic enum spellings that diverge from the previous UI labels. The static-vs-BGP comparison table is standard networking knowledge.
+- Category 1: 20 · Category 2: 14 · Category 3: 1
+- Notes: Clean carryover of the CP static-routing procedure, /30 and /28 IP rules, VRRP-remains-active-with-static behaviour, and the network extra params. All API routes verified in api.json. Fixed this pass: the fabricated diagnostic enum names (`diagPeering`/`diagPeeringExtra`/`diagRoutes`/`diagMacs`) were removed (same as l3-bgp) and replaced with a pointer to the Monitor guide + API console. The PoP and Extra response schemas were both live-confirmed via the l3-bgp API session (identical endpoints) → moved to category 2. The one remaining category-3 item is the illustrative traceroute/ping expected output, which is environment-specific by nature. **CP walkthrough live-verified & corrected this pass** (authenticated Manager): `Customer ASN` → **`User ASN`**; PoP config opened via **`Configure port`** ("Add a PoP configuration" modal); AZ button **`Add an AZ`**; routing added via **`Routing rules`**. The Static routing fields ("Network Focus" / "Next hop") could **not** be re-confirmed live — the Static type is disabled once an AZ already has a BGP rule — so they remain old-doc-sourced.

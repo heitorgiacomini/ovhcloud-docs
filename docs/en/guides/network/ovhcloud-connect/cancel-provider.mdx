@@ -12,7 +12,7 @@ An OVHcloud Connect Provider service spans two separately billed contracts: your
 
 - **Traffic disruption** — All traffic over this connection will be permanently interrupted.
 - **Provider contract** — Check your provider's terms for minimum commitment, notice periods, and early termination fees.
-- **OVHcloud contract** — Check your OVHcloud commitment period and billing cycle.
+- **OVHcloud commitment** — The OVHcloud service is committed for its initial term, then renews automatically; cancelling stops the renewal and takes effect at the **end of the current term**.
 - **Alternative connectivity** — Ensure workloads are migrated or an alternative path is available.
 
 Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code>.
@@ -29,7 +29,11 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open
 
 1. Go to the <ManagerLink to="/#/billing/autorenew/services">My offers and services</ManagerLink> page.
 2. To the right of your **OVHcloud Connect Provider** service, click <code className="action">...</code>, then select <code className="action">Cancel my subscription</code>.
-3. Confirm and note the effective cancellation date.
+3. Confirm the cancellation.
+
+:::info
+To prevent the next renewal, cancel at least **24 hours before the end of the current term**. The OVHcloud service then stops at the end of that term (its expiration date), not immediately.
+:::
 
 ### 3. Cancel on the provider side
 
@@ -49,7 +53,7 @@ In your provider's portal, cancel the virtual circuit / connection to OVHcloud. 
 ## Important reminders
 
 - **Cancel on both sides** — OVHcloud and the provider are separate services with separate billing. Cancelling one does not automatically cancel the other.
-- **Keep records** — Save cancellation confirmation emails from both OVHcloud and the provider.
+- **Keep records** — Save all cancellation confirmations from both OVHcloud and the provider.
 - **Cross-connect clean-up** — If the provider installed a physical cross-connect on your behalf, coordinate with them to ensure it is removed from the data centre.
 
 ## What's next?

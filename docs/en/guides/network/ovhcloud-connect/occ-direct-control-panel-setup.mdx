@@ -14,9 +14,9 @@ Make sure you have:
 
 - ✅ An **OVHcloud account** with billing configured
 - ✅ Equipment (or a circuit) in a **data centre where OVHcloud has a PoP** (see [PoP Locations](/guides/network/ovhcloud-connect/pop-locations-regions))
-- ✅ A **router** that supports BGP and single-mode fibre optic interfaces
-- ✅ A planned **IP addressing scheme** (peering IPs and prefixes to advertise)
-- ✅ A private or public **ASN** (Autonomous System Number)
+- ✅ A **router** with single-mode fibre optic interfaces (with BGP support for Layer 3 mode)
+- ✅ For **Layer 3**: a planned **IP addressing scheme** (peering IPs and prefixes) and a public or private **ASN**
+- ✅ For **Layer 2**: the **VLANs** you want to extend to OVHcloud (no ASN or IP plan required)
 
 Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, open the <code className="action">Bare Metal Cloud</code> section, then go to <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> and select your solution.
 
@@ -63,20 +63,21 @@ If you have not done so already, click <code className="action">Attach a vRack</
 
 #### Add a PoP configuration
 
-In the `PoP configuration` menu, click <code className="action">Add a PoP configuration</code> and choose the level:
+In the `PoP configuration` table, click <code className="action">Configure port</code> to open the **Add a PoP configuration** form, then set the **Type**:
 
-- **L2** — select L2 from the drop-down menu and confirm. This is a transparent point-to-point link (one PoP, one availability zone).
+- **L2** — select L2 and confirm. This is a transparent point-to-point link (one PoP, one availability zone).
+
 - **L3** — select L3 and enter:
 
 | Information | Description |
 |---|---|
-| Customer ASN | Your BGP AS number, configured on your router located in the PoP |
+| User ASN | Your BGP AS number, configured on your router located in the PoP |
 | OVHcloud ASN | The AS number configured on the OVHcloud Connect routers located in the PoP |
 | Subnetwork in /30 | A /30 IPv4 block, used for the link between your router and the OVHcloud router in the PoP |
 
 #### Add an availability zone (AZ) configuration
 
-Under the `AZ configuration` menu, click <code className="action">Add a configuration</code>, select an availability zone, and (for L3) enter:
+Under the `AZ configuration` section, click <code className="action">Add an AZ</code>, select an availability zone, and (for L3) enter:
 
 | Information | Description |
 |---|---|
@@ -85,14 +86,19 @@ Under the `AZ configuration` menu, click <code className="action">Add a configur
 
 #### Add a routing configuration
 
-Click the <code className="action">...</code> button on the availability zone, then <code className="action">Add routing configuration</code>, and choose **BGP** or **Static**:
+On the availability zone, click <code className="action">Routing rules</code> to add a routing configuration, and choose **BGP** or **Static**:
 
-- **BGP** — enter your **Customer ASN** and the **IP Neighbour** (the BGP neighbour IP of your router in the AZ, within the AZ subnetwork).
+- **BGP** — enter your **User ASN** and the **IP Neighbour** (the BGP neighbour IP of your router in the AZ, within the AZ subnetwork).
+
 - **Static** — enter the **Network Focus** (a prefix in CIDR notation) and the **Next hop** (a gateway IP within the subnetwork range).
 
 You can add several routing configurations in the same availability zone; the type (BGP or Static) chosen for the first one applies to the others.
 
 Then, on **your router**, configure the matching BGP session (or static routes) and advertise the prefixes you want to reach from OVHcloud. For detailed routing guidance, see [Configure OCC L3 with BGP](/guides/network/ovhcloud-connect/l3-bgp) or [Configure OCC L3 with static routes](/guides/network/ovhcloud-connect/l3-static).
+
+:::info
+The routing configuration applies to **Layer 3** only. In **Layer 2** mode there is no routing configuration — once the L2 PoP configuration and the availability zone configuration are active, your VLANs are bridged transparently. See [Configure OCC L2](/guides/network/ovhcloud-connect/l2).
+:::
 
 ### Step 6 — Test and verify
 
@@ -105,6 +111,8 @@ Run these checks to confirm everything is working:
 | **Route exchange** | Confirm routes from OVHcloud appear in your routing table and vice versa. |
 | **Connectivity** | Ping a known OVHcloud resource (e.g. a VM in your vRack) from your on-premises network. |
 | **Traceroute** | Run `traceroute` to confirm traffic takes the private path (not the internet). |
+
+The **BGP session** and **route exchange** checks apply to Layer 3. For **Layer 2**, confirm the port is up and that your VLANs reach your OVHcloud resources (you can also run a MAC-address diagnostic — see [Monitor](/guides/network/ovhcloud-connect/monitor)).
 
 ## Troubleshooting
 
@@ -119,6 +127,7 @@ If you cannot resolve the issue, [open a support ticket](/guides/network/ovhclou
 
 ## What's next?
 
+- Configure your service in [Layer 2](/guides/network/ovhcloud-connect/l2), or Layer 3 with [BGP](/guides/network/ovhcloud-connect/l3-bgp) or [static routes](/guides/network/ovhcloud-connect/l3-static)
 - For a managed connection, see [Quick Start: Provider Connection](/guides/network/ovhcloud-connect/occ-provider-control-panel-setup)
 - For resilient setups, see [Resilient on-premises tutorial](/guides/network/ovhcloud-connect/resilient-architecture)
 - Set up [monitoring](/guides/network/ovhcloud-connect/monitor) for your connection

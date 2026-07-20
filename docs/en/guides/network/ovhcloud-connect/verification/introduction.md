@@ -34,12 +34,13 @@
 | Provider best for orgs not co-located with OVHcloud / preferring managed connectivity | 27 | website Provider positioning; logically consistent with L3-only managed model |
 | ECMP enabled automatically with ≥2 PoPs, up to 4 paths | 82 | previous occ-layer3 says ECMP auto with 2+ PoPs; "up to 4 paths" confirmed by spec authoritative fact (≤4 paths) — the "4" figure is new phrasing but verifiable |
 | A single vRack can hold only one OCC L2 service | 69 | previous occ-layer2 states "one L2 per vRack" (present in old docs) — carryover-adjacent; kept here as it is verifiable |
+| Architecture-overview image (introduction/image.png) depicts correct topology | 96 | **Visually verified this pass:** the diagram correctly shows vRack → Region → Availability Zone (Dedicated Servers / Instances / any vRack-compatible service) → OVHcloud Connect → Point of Presence → Network Equipment → Customer Network. Accurate conceptual topology; no live-product test needed. |
 
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| Architecture-overview image (introduction/image.png) depicts correct topology | 90 | image content not verifiable from text sources; needs visual review vs live product |
+| _(none — the architecture-overview image was visually verified and moved to category 2)_ | — | — |
 
 ## Summary
-- Category 1: 17 · Category 2: 4 · Category 3: 1
-- Notes: Strong carryover from the previous overview + occ-layer2/occ-layer3 + faq. Most topology rules are verbatim from occ-layer3. New material (Provider = L3-only, explicit "up to 4 paths") is confirmed by the spec's authoritative facts. Only the diagram content needs visual validation.
+- Category 1: 17 · Category 2: 5 · Category 3: 0
+- Notes: Strong carryover from the previous overview + occ-layer2/occ-layer3 + faq. Most topology rules are verbatim from occ-layer3. New material (Provider = L3-only, explicit "up to 4 paths") is confirmed by the spec's authoritative facts. The architecture-overview diagram was visually reviewed this pass and is topologically correct, so it moves from category 3 to category 2 (no category-3 items remain).

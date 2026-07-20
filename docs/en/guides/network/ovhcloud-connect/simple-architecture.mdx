@@ -37,6 +37,18 @@ Below are prerequisites and instructions for five use cases; choose the one matc
 | Proof of concept or pilot projects | Applications requiring a high availability SLA |
 | Small offices with a single site | Multi-site organisations needing failover |
 
+### Layer 2 or Layer 3?
+
+For a simple extension of your on-premises network into a single OVHcloud region, you can connect at **Layer 3 (routing with BGP)** or **Layer 2 (a transparent Ethernet bridge)**. The rest of this tab describes the Layer 3 / BGP flow; use the table below to decide which model fits your case.
+
+| Choose **Layer 3 (BGP)** when you need… | Choose **Layer 2** when you need… |
+|---|---|
+| IP routing between your network and OVHcloud | An extension of the same broadcast domain (L2 adjacency) |
+| To reach subnets across multiple PoPs | A lift-and-shift migration keeping IPs and VLANs unchanged |
+| Redundancy and resilience across PoPs | VLAN transparency, with no routing in between |
+
+**Layer 2** is a transparent, VLAN-preserving Ethernet bridge with no routing. It is available on **OVHcloud Connect Direct only** and is strictly **point-to-point** (one PoP to one availability zone). You can have only one Layer 2 per vRack, and redundancy is limited to LACP on the same PoP. If you choose Layer 2, follow [Configure OVHcloud Connect L2](/guides/network/ovhcloud-connect/l2) instead of the BGP steps below; the remaining vRack association steps still apply.
+
 #### 1. Order OVHcloud Connect
 
 Choose **Direct** or **Provider** depending on your situation:

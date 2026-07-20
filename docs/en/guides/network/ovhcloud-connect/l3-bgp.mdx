@@ -30,7 +30,7 @@ Log in to your <ManagerLink to="/">OVHcloud Control Panel</ManagerLink> and open
 
 ## Overview
 
-<img className="thumbnail" alt="OVHcloud Connect L3 BGP topology: your router peers with the OVHcloud PoP router over eBGP on a /30 subnet, then BGP to the OVHcloud AZ routers A and B in your vRack, reaching your services" src="/images/network/ovhcloud-connect/l3-bgp/l3-bgp-topology.svg" loading="lazy" />
+<img className="thumbnail" alt="OVHcloud Connect L3 implementation: an L3 domain (subnet and BGP ASN) is configured on each PoP and availability zone" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-implementation.png" loading="lazy" />
 
 - **PoP level**: An eBGP session between your router (your ASN) and OVHcloud (the OVHcloud-side ASN) over a /30 peering subnet.
 - **AZ level**: A BGP neighbour configured inside the AZ to distribute routes to your OVHcloud services.
@@ -44,16 +44,16 @@ You can configure the OVHcloud side of the L3 BGP setup either from the **OVHclo
 Configure the service from the <code className="action">Bare Metal Cloud</code> > <code className="action">Network</code> > <code className="action">OVHcloud Connect</code> section. Open your solution, then:
 
 1. **Associate a vRack** (if not already done): click <code className="action">Attach a vRack</code> and select an existing vRack.
-2. **Add a PoP configuration**: in the `PoP configuration` menu, click <code className="action">Add a PoP configuration</code>, select **L3**, and enter:
+2. **Add a PoP configuration**: in the `PoP configuration` table, click <code className="action">Configure port</code> to open the **Add a PoP configuration** form, set the **Type** to **L3**, and enter:
 
    | Information | Description |
    |---|---|
-   | Customer ASN | Your BGP AS number, configured on your router in the PoP |
+   | User ASN | Your BGP AS number, configured on your router in the PoP |
    | OVHcloud ASN | The AS number configured on the OVHcloud Connect routers in the PoP |
    | Subnetwork in /30 | A /30 IPv4 block for the link between your router and the OVHcloud router in the PoP |
 
-3. **Add an availability zone (AZ) configuration**: under the `AZ configuration` menu, click <code className="action">Add a configuration</code>, select an availability zone, and enter the **OVHcloud ASN** and a **/28 subnetwork** (or larger) from your vRack.
-4. **Add a routing configuration**: click the <code className="action">...</code> button on the availability zone, then <code className="action">Add routing configuration</code>, choose **BGP**, and enter your **Customer ASN** and the **IP Neighbour** (your router's BGP neighbour IP within the AZ subnetwork).
+3. **Add an availability zone (AZ) configuration**: under the `AZ configuration` section, click <code className="action">Add an AZ</code>, select an availability zone, and enter the **OVHcloud ASN** and a **/28 subnetwork** (or larger) from your vRack.
+4. **Add a routing configuration**: on the availability zone, click <code className="action">Routing rules</code>, choose **BGP**, and enter your **User ASN** and the **IP Neighbour** (your router's BGP neighbour IP within the AZ subnetwork).
 
 Then configure the matching eBGP session on your own router (see **Configure BGP on your router** below).
 
@@ -94,7 +94,7 @@ The PoP configuration establishes the L3 BGP session at the Point of Presence.
 }
 ```
 
-The `resourceId` in the response is your new `popId`.
+The `resourceId` in the response is your new `popId`. You can also retrieve it at any time by listing your PoP configurations with `GET .../config/pop`.
 
 #### Step 3 — Verify the PoP configuration
 
@@ -132,6 +132,10 @@ Check the BGP session state:
 #### Step 4 — Create AZ extra configuration (BGP)
 
 After the PoP configuration and the [AZ configuration](/guides/network/ovhcloud-connect/vrack-network-setup), create a **BGP extra configuration** to enable BGP route distribution within the AZ.
+
+<img className="thumbnail" alt="BGP session announcing the vRack IP network to the OVHcloud router" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-bgpvrack.png" loading="lazy" />
+
+<img className="thumbnail" alt="OVHcloud Connect L3 BGP global topology" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-bgpglobal.png" loading="lazy" />
 
 :::info
 The AZ (datacenter) configuration must already exist before you can create the extra configuration. Create it first with `POST .../config/pop/{popId}/datacenter` (providing the /28 subnet from your vRack) — see [Set up vRack networking](/guides/network/ovhcloud-connect/vrack-network-setup). This is what provides the `{datacenterId}` used in the `/extra` call below.
@@ -211,7 +215,7 @@ If the session does not come up, run a peering diagnostic:
 
 <Api version="v1" section="/ovhCloudConnect" method="POST" route={"/ovhCloudConnect/\{serviceName\}/diagnostic"} />
 
-Available diagnostic names: `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `diagMacs`.
+Select the diagnostic you need — for example a BGP peering test or a routes diagnostic. See [Monitor your OVHcloud Connect](/guides/network/ovhcloud-connect/monitor) for the available diagnostics, and the [API console](https://api.ovh.com/console/#/ovhCloudConnect) for the exact request body.
 
 ## Best practices
 
@@ -221,13 +225,15 @@ Available diagnostic names: `diagPeering`, `diagPeeringExtra`, `diagRoutes`, `di
 - **Monitor the session.** Set up alerts for BGP flaps and session drops — see [Monitor your connection](/guides/network/ovhcloud-connect/monitor).
 - **For redundant setups.** With two or more PoPs, ECMP is enabled automatically; to build an active/passive topology instead, tune BGP path selection with AS-path prepending and/or MED (a lower MED is preferred) — see [Multi-AZ](/guides/network/ovhcloud-connect/multi-az). AS-path prepending is customer-side only; MED is the OVHcloud-side alternative.
 
+<img className="thumbnail" alt="Active/passive path selection across two PoPs using AS-path prepending and MED" src="/images/network/ovhcloud-connect/l3-bgp/occ-l3-bgpasprepend-med.png" loading="lazy" />
+
 ## Troubleshooting
 
 | Issue | Possible cause | Solution |
 |---|---|---|
 | BGP stuck in `Active` | Incorrect peer IP or ASN | Verify IP addresses and ASN on both sides. Use `GET .../config/pop/{popId}` to check OVHcloud-side values. |
 | BGP stuck in `Idle` | Interface down or firewall blocking TCP 179 | Check physical link and firewall rules. Use `GET .../interface/{id}/status` to check link status. |
-| No routes received | Missing `network` statement or prefix filter too restrictive | Verify export policy and `network` commands. Run `diagRoutes` diagnostic. |
+| No routes received | Missing `network` statement or prefix filter too restrictive | Verify export policy and `network` commands. Run a routes diagnostic (see [Monitor](/guides/network/ovhcloud-connect/monitor)). |
 | Session drops frequently (flapping) | Unstable physical link or MTU mismatch | Check interface errors and MTU settings. Use `GET .../interface/{id}/statistics` to check error counters. |
 | PoP config stuck in `init` status | Task still in progress or failed | Check `GET .../task` for pending tasks. |
 

@@ -26,12 +26,12 @@
 ## 3. New & not verifiable without testing
 | Claim | Line | Why unverifiable / test needed |
 |---|---|---|
-| Support ticket flow: Support → Create a ticket → select Network / OVHcloud Connect category | 52-53 | CP support-portal flow not in old docs/cache; needs live CP |
+| Support ticket flow: open the Help Centre, start a request, select the OVHcloud Connect service | 52-53 | **Fixed this pass:** was "Support → Create a ticket → Network / OVHcloud Connect category". Live Playwright check (see faq.md) confirmed the entry point is the Help Centre (linked from the Manager dashboard) and the flow is service-based, not a fixed category tree; reworded to match. Exact in-portal labels still unconfirmed (portal crashes under automation). |
 | RCA / post-incident report can be requested from OVHcloud support | 89 | Support-process claim; no OVHcloud doc source; PM confirm |
 | Escalation via support portal + account manager for priority handling | 79-83 | Support-process claim; no source; PM confirm |
-| Status & scheduled-maintenance pages "accessible from the Control Panel" | 44 | Exact CP location unverified; needs live CP |
-| "Ticket status checked regularly through the Control Panel" | 72 | CP ticket-tracking specifics unverified |
+| Status & scheduled-maintenance pages | 44 | **Fixed this pass:** dropped the unverified "(accessible from the Control Panel)" location qualifier; the reference to the OVHcloud status/maintenance pages itself is standard. |
+| Ticket status checked regularly in the Help Centre | 72 | **Fixed this pass:** was "through the OVHcloud Control Panel". Tickets are created and tracked in the Help Centre ("My requests"), not the Manager Control Panel; reworded to match the Step 3 support flow. |
 
 ## Summary
 - Category 1: 0 · Category 2: 8 · Category 3: 5
-- Notes: No mapped previous guide (section 1 empty, as expected). The SLA / service-credit facts are fully backed by the OCC contract; the rest is standard triage. Category 3 is entirely support-process / CP-flow wording that needs live CP or PM confirmation, not a factual risk to networking claims.
+- Notes: No mapped previous guide (section 1 empty, as expected). The SLA / service-credit facts are fully backed by the OCC contract; the rest is standard triage. Category 3 is entirely support-process / CP-flow wording that needs live CP or PM confirmation, not a factual risk to networking claims. Fixed this pass: the support-ticket flow was aligned with the live-verified Help Centre / service-based flow (see faq.md), and the unverified "status page accessible from the Control Panel" qualifier was dropped.
