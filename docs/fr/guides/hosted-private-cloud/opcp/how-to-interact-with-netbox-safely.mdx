@@ -1,7 +1,7 @@
 ---
 title: "NetBox Automation - Interagir avec votre instance NetBox en toute sécurité"
-description: "Découvrez comment identifier les objets NetBox gérés automatiquement, ceux dont vous avez la charge, et comment effectuer des modifications sans entrer en conflit avec l'automatisation"
-lastUpdated: 2026-07-15
+description: "Découvrez comment identifier les objets NetBox gérés automatiquement et effectuer vos modifications sans entrer en conflit avec l'automatisation"
+lastUpdated: 2026-07-20
 ---
 
 ## Objectif
@@ -10,7 +10,7 @@ lastUpdated: 2026-07-15
 
 ## Prérequis
 
-- Avoir accès à l'interface web de votre NetBox.
+- Disposer d'un accès en écriture à votre interface NetBox (rôle `dc_operator` ou supérieur, voir le guide « [Gestion des droits IAM](/guides/hosted-private-cloud/opcp/iam-rights-management) »).
 
 ## En pratique
 
@@ -22,8 +22,7 @@ Votre instance NetBox contient deux types d'objets :
 
 - **Les objets que vous gérez vous-même.** Ils ne portent pas le tag `automation-managed`. Ils vous appartiennent : créez, modifiez, supprimez, retaguez, commentez — selon les besoins de votre workflow.
 
-
-Le tag `automation-managed` est le seul indicateur qui vous permet de savoir à quel côté appartient un objet. En cas de doute, vérifiez le tag.
+Le tag `automation-managed` est le seul indicateur qui vous permet de savoir de quel côté se trouve un objet. En cas de doute, vérifiez le tag.
 
 :::warning
 Ne retirez pas le tag `automation-managed` des objets qui le portent, et ne l'ajoutez pas aux objets que vous créez vous-même. L'une comme l'autre de ces actions conduira l'automatisation à écraser vos modifications lors de sa prochaine exécution.
@@ -31,7 +30,7 @@ Ne retirez pas le tag `automation-managed` des objets qui le portent, et ne l'aj
 
 ### Effectuer des modifications
 
-La méthode pour modifier un objet dépend de son caractère géré ou non par l'automatisation.
+La méthode pour modifier un objet dépend du fait qu'il soit géré ou non par l'automatisation.
 
 **Pour les objets sans le tag `automation-managed` :**
 
@@ -42,7 +41,7 @@ Effectuez vos modifications directement dans l'interface de NetBox, comme d'habi
 Ils sont pilotés par la Source of Truth externe.
 
 :::info
-Si vous modifiez un objet `automation-managed` directement dans NetBox, la prochaine exécution de l'automatisation annulera votre modification. La SoT fait référence pour ces objets.
+Si vous modifiez un objet `automation-managed` directement dans NetBox, la prochaine exécution de l'automatisation annulera votre modification. La SoT fait autorité pour ces objets.
 :::
 
 Ces modifications persistent d'une exécution de l'automatisation à l'autre.
