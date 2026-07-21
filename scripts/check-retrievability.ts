@@ -14,12 +14,18 @@
  * For a SAMPLE of built guides (auto-discovered per locale), it asserts:
  *   1. A substantial run of body prose is present in the built `.html`
  *      (raw, no JS) — proves the body is server-rendered.
- *   2. The same prose is present in the sibling `.md` file — proves the
+ *   2. That body appears BEFORE the sidebar tree in SOURCE ORDER, within a byte
+ *      budget — proves a top-down, size-bounded fetcher (the paste-a-URL agent
+ *      case) reaches content, not just that content exists somewhere after the
+ *      ~1.2MB nav. This is the assertion that actually guards the body-first
+ *      reorder; an "exists somewhere" check passes on a page that fails in
+ *      practice.
+ *   3. The same prose is present in the sibling `.md` file — proves the
  *      machine-readable markdown endpoint carries real content.
- *   3. The `<link rel="alternate" type="text/markdown">` hint is in the
+ *   4. The `<link rel="alternate" type="text/markdown">` hint is in the
  *      `<head>` — proves agents can discover the clean `.md` before the payload
  *      is truncated by size.
- *   4. Root `/llms.txt` and each sampled locale's `/<locale>/llms.txt` exist.
+ *   5. Root `/llms.txt` and each sampled locale's `/<locale>/llms.txt` exist.
  *
  * Exit code 0 = all assertions pass. Non-zero = at least one failed (CI red).
  *
@@ -46,6 +52,11 @@ const DIST_DIR = path.resolve(process.argv[2] ?? 'dist');
 // check fast; the failure mode is systemic (whole build regresses), so a
 // handful per locale reliably catches it.
 const SAMPLE_PER_LOCALE = Number(process.env.SAMPLE_PER_LOCALE ?? '8');
+// Max byte offset at which a size-bounded, JS-free fetcher must find the start
+// of the article body. Generous — the reorder puts content at ~14KB; this
+// leaves headroom for <head> growth, topbar and breadcrumbs, while still
+// failing hard if the ~1.2MB nav ever precedes content again.
+const BODY_BYTE_BUDGET = Number(process.env.BODY_BYTE_BUDGET ?? '102400'); // 100 KB
 
 type Failure = { where: string; msg: string };
 const failures: Failure[] = [];
@@ -229,38 +240,66 @@ function checkGuide(htmlPath: string): void {
   const mdPath = htmlPath.replace(/\.html$/, '.md');
   const rel = path.relative(DIST_DIR, htmlPath);
   const html = fs.readFileSync(htmlPath, 'utf-8');
-
-  // Skip custom-layout pages (pageType: elearning-course, landing, …). These
-  // render their content via bespoke React components (course-curriculum cards,
-  // hero grids), not the standard article container, so their `.md` export is
-  // flattened structured data that legitimately doesn't line-match the HTML.
-  // They are the wrong shape for a prose probe; the standard-guide body-render
-  // assertion below does not apply to them. Detected by the absence of the
-  // standard doc container (present on every normal guide).
-  if (!html.includes('rp-doc-layout__doc-container')) return;
-
-  const md = fs.readFileSync(mdPath, 'utf-8');
-  const mdText = canonical(md);
-  const htmlText = htmlToText(html);
-
-  // Anchor on the .md (ground truth for this page's text): use the first probe
-  // that is actually present in the canonicalized .md. A probe absent from the
-  // .md is a bad probe (an atypical line our normalization didn't model) — try
-  // the next, don't fail. This is what keeps the check free of false alarms
-  // while still catching the real failure below.
-  const probes = pickBodyProbes(mdPath);
-  const probe = probes.find((p) => mdText.includes(p));
-  if (!probe) return; // no clean, .md-confirmed prose probe → nothing to assert
   checkedGuides++;
 
-  // THE REAL ASSERTION: prose confirmed in the .md source must ALSO appear in
-  // the server-rendered HTML. If it doesn't, the body is client-only —
-  // precisely the regression this smoke test exists to catch.
-  if (!htmlText.includes(probe)) {
-    fail(
-      rel,
-      `body prose present in .md but MISSING from server-rendered HTML (client-only render?): "${probe}"`,
-    );
+  // BODY-FIRST assertion (applies to EVERY sidebar-bearing page — standard
+  // guides AND overview/landing/migration index pages, all of which had the
+  // nav-before-content problem and all of which the reorder now covers). We
+  // measure where the CONTENT COLUMN STARTS, not where prose lands: the content
+  // column is the element right after the sidebar — `rp-doc-layout__doc`
+  // (standard) or `rp-*-layout__content` (index layouts). Without this, the
+  // check passes on a page where the body is buried after the ~1.2MB nav —
+  // retrievable in theory but not for a top-down, size-bounded fetcher (the
+  // paste-a-URL agent case). Pages with no sidebar (home, elearning-course) are
+  // exempt — nothing to get behind.
+  const sidebarOffset = html.indexOf('rp-doc-layout__sidebar');
+  const contentMatch = html.match(
+    /class="(?:[^"]*\s)?(?:rp-doc-layout__doc|rp-[\w-]*-layout__content)(?:\s[^"]*)?"/,
+  );
+  const contentStart = contentMatch?.index ?? -1;
+  // Only pages that use the STANDARD shell (a `*-layout__content`/`__doc`
+  // column) are subject to the position check. A sidebar-bearing page with no
+  // such column is a fully-bespoke layout (e.g. elearning-course, which renders
+  // a custom two-column curriculum) — the reorder doesn't target it and there's
+  // no standard content column to locate, so skip rather than false-alarm.
+  if (sidebarOffset !== -1 && contentStart !== -1) {
+    if (contentStart > sidebarOffset) {
+      fail(
+        rel,
+        `content column (byte ${contentStart}) starts AFTER the sidebar (byte ${sidebarOffset}) in source order — a top-down fetcher hits nav first. Body-first reorder missing/regressed.`,
+      );
+    } else if (contentStart > BODY_BYTE_BUDGET) {
+      fail(
+        rel,
+        `content column starts at byte ${contentStart}, beyond the ${BODY_BYTE_BUDGET}-byte budget a size-bounded fetcher reads.`,
+      );
+    }
+  }
+
+  // PROSE assertion — scoped to STANDARD guides only. Custom-layout pages
+  // (overview/landing/migration/elearning) render content via bespoke React
+  // components, so their `.md` export is flattened structured data that
+  // legitimately doesn't line-match the HTML; a prose probe is the wrong shape
+  // for them. They still got the body-first + head-hint checks above.
+  if (html.includes('rp-doc-layout__doc-container')) {
+    const md = fs.readFileSync(mdPath, 'utf-8');
+    const mdText = canonical(md);
+    const htmlText = htmlToText(html);
+
+    // Anchor on the .md (ground truth for this page's text): use the first
+    // probe that is actually present in the canonicalized .md. A probe absent
+    // from the .md is a bad probe (an atypical line our normalization didn't
+    // model) — try the next, don't fail.
+    const probes = pickBodyProbes(mdPath);
+    const probe = probes.find((p) => mdText.includes(p));
+    if (probe && !htmlText.includes(probe)) {
+      // THE REAL ASSERTION: prose confirmed in the .md must ALSO appear in the
+      // server-rendered HTML. If not, the body is client-only.
+      fail(
+        rel,
+        `body prose present in .md but MISSING from server-rendered HTML (client-only render?): "${probe}"`,
+      );
+    }
   }
 
   // Machine-readable markdown-alternate hint in <head>.
