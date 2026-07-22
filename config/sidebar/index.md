@@ -1691,8 +1691,7 @@
                 + [Configure the DNS of your Domain Name](web-cloud/domains/api-domain-dns)
             + [Migration](web-cloud-domains-api-migration)
                 + [Transfer a Domain Name](web-cloud/domains/api-domain-transfer)
-        + [Domain names](products/web-cloud-domains-domain-names)
-            + [Overview](web-cloud/domains/domain-names/overview)
+        + [Domain names](products/web-cloud-domains-domain-names){landing=web-cloud/domains/landing-page-domain-names}
             + [Getting started](web-cloud-domains-domain-names-getting-started)
                 + [FAQ Domain names and DNS](web-cloud/domains/faq-domain-dns)
                 + [How to create a subdomain](web-cloud/domains/domain-create-subdomains)
@@ -1729,8 +1728,7 @@
                 + [How to connect an OVHcloud domain name to a GoDaddy hosting plan](web-cloud/domains/how-to-connect-domain-to-godaddy)
                 + [How to connect an OVHcloud domain name to a Webflow hosting plan](web-cloud/domains/how-to-connect-domain-to-webflow)
                 + [How to use an OVHcloud domain with iCloud Mail](web-cloud/domains/domain-icloud)
-        + [DNS (Domain Name System)](products/web-cloud-domains-dns)
-            + [Overview](web-cloud/domains/dns/overview)
+        + [DNS (Domain Name System)](products/web-cloud-domains-dns){landing=web-cloud/domains/dns/landing-page-dns}
             + [Key concepts](web-cloud-domains-dns-key-concepts)
                 + [Everything you need to know about DNS servers](web-cloud/domains/dns-server-general-information)
                 + [Everything you need to know about DNS zone](web-cloud/domains/dns-zone-general-information)
