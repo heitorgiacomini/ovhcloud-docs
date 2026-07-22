@@ -3,10 +3,13 @@
 ## 2026.07.22
 
 ### Features
+- **components:** sticky tab label row + anchored tab switching (#440)
+- **mks:** add instructions about driver version (#439)
+- rich illustrated DNS (Domain Name System) landing page (7 locales) (#420)
 - **scripts:** Add PDF generation (#435)
 
 ### Documentation
-- 6 guides updated across en, fr
+- 48 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.21
 
