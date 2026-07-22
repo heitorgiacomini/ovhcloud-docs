@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.07.22
+
+### Features
+- **scripts:** Add PDF generation (#435)
+
+### Documentation
+- 4 guides updated across en, fr
+
 ## 2026.07.21
 
 ### Features
