@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.07.23.1
+
+### Fixes
+- **docs:** normalize community links - stragglers
+
+### Maintenance
+- distinguish action buttons from inline code (#452)
+
+### Documentation
+- 77 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.07.23
 
 ### Features
