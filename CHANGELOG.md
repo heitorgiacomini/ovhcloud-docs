@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.07.23
+
+### Features
+- **build:** serve guide body before nav for AI retrievability
+
 ## 2026.07.22
 
 ### Features
