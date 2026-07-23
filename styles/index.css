@@ -285,6 +285,30 @@ body {
   display: none;
 }
 
+/* Body-first source order (AI/LLM retrievability).
+   A post-build step (scripts/preprocess-html-worker.ts) moves the content
+   column ahead of the sidebar in the SERVED HTML so JS-free, size-bounded
+   fetchers reach content in the first few KB instead of after the ~1.2MB nav.
+   `.rp-doc-layout__container` is display:flex; these explicit `order` values
+   pin the VISUAL layout (sidebar left, content centre, outline right)
+   regardless of that source order, so the human-facing layout is unchanged.
+   The content selectors cover every layout that shares the shell — standard
+   docs (`__doc`) plus overview/landing/migration index pages
+   (`*-layout__content`), matching the generalized reorder. Harmless if the
+   reorder didn't run (source order already matches these values). */
+.rp-doc-layout__sidebar,
+.rp-doc-layout__sidebar-placeholder {
+  order: 0;
+}
+.rp-doc-layout__doc,
+[class*="-layout__content"] {
+  order: 1;
+}
+.rp-doc-layout__outline,
+.rp-doc-layout__outline-placeholder {
+  order: 2;
+}
+
 /* Style plain <details> elements like :::details containers */
 details:not(.rp-callout) {
   border-radius: var(--rp-radius);

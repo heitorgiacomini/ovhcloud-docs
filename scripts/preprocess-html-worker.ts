@@ -37,6 +37,85 @@ function readMdxFrontmatter(mdxPath: string): Record<string, string> | null {
   }
 }
 
+/**
+ * Given `html` and the index of an element's opening `<tag`, return the index
+ * just past its matching closing `</tag>`, accounting for nested same-name
+ * elements. Returns -1 if unbalanced (caller then leaves the HTML untouched).
+ */
+function endOfElement(html: string, openStart: number): number {
+  const nameMatch = /^<([a-zA-Z][\w-]*)/.exec(
+    html.slice(openStart, openStart + 40),
+  );
+  if (!nameMatch) return -1;
+  const tag = nameMatch[1];
+  const re = new RegExp(`<(/?)${tag}(\\s|>|/)`, 'gi');
+  re.lastIndex = openStart;
+  let depth = 0;
+  for (let m = re.exec(html); m; m = re.exec(html)) {
+    if (m[1] === '') {
+      depth++;
+    } else {
+      depth--;
+      if (depth === 0) {
+        const close = html.indexOf('>', m.index);
+        return close === -1 ? -1 : close + 1;
+      }
+    }
+  }
+  return -1;
+}
+
+/**
+ * Move the content column to BEFORE the sidebar `<aside>` in source order, so a
+ * JS-free, size-bounded fetcher (AI agent) reaches real content in the first
+ * few KB instead of after the ~1.2MB fully-expanded nav tree.
+ *
+ * Works across ALL Rspress layouts that share the same shell: the sidebar
+ * `<aside class="rp-doc-layout__sidebar">` is immediately followed by a content
+ * `<div class="rp-{doc,overview,landing,migration,…}-layout__content"|
+ * "rp-doc-layout__doc">` wrapping `<main>`, then the outline aside. We swap the
+ * first two → content, sidebar, outline. A companion CSS rule (styles) uses
+ * flexbox `order` to keep the sidebar visually leftmost, so the human layout is
+ * unchanged — only the byte order differs.
+ *
+ * Matching the content div by "the element immediately after the sidebar"
+ * rather than a fixed class means overview/landing/migration index pages (which
+ * had the SAME nav-before-content problem) are covered too, without enumerating
+ * every layout's class. Returns the input unchanged if the structure isn't this
+ * sidebar-then-content shell (e.g. home page, elearning-course two-column
+ * layout, or a page with no sidebar). Idempotent: after the swap the element
+ * after the sidebar is the outline, not a content div, so a second pass is a
+ * no-op.
+ */
+function moveContentBeforeSidebar(html: string): string {
+  const sidebarOpen = html.indexOf('<aside class="rp-doc-layout__sidebar');
+  if (sidebarOpen === -1) return html;
+  const sidebarEnd = endOfElement(html, sidebarOpen);
+  if (sidebarEnd === -1) return html;
+
+  // The content column must be the immediate next sibling (adjacent, no gap)
+  // and must be a content wrapper: a <div> whose class ends in
+  // `-layout__content`, or the standard-doc `rp-doc-layout__doc`. Guarding on
+  // the class (not just "next <div>") avoids mangling any unexpected structure.
+  const nextTag = html.slice(sidebarEnd).match(/^\s*<div class="([^"]*)"/);
+  if (!nextTag) return html;
+  const cls = nextTag[1];
+  const isContent =
+    /(?:^|\s)rp-[\w-]*-layout__content(?:\s|$)/.test(cls) ||
+    /(?:^|\s)rp-doc-layout__doc(?:\s|$)/.test(cls);
+  if (!isContent) return html;
+
+  const docOpen = html.indexOf('<div class="', sidebarEnd);
+  const docEnd = endOfElement(html, docOpen);
+  if (docEnd === -1) return html;
+
+  const sidebar = html.slice(sidebarOpen, sidebarEnd);
+  const doc = html.slice(docOpen, docEnd);
+  // Reassemble: everything up to sidebar, then content, then sidebar, then the
+  // rest (which begins with the outline aside).
+  return html.slice(0, sidebarOpen) + doc + sidebar + html.slice(docEnd);
+}
+
 function processDir(
   dir: string,
   locale: string,
@@ -179,6 +258,18 @@ function processDir(
           '</head>',
           `<link rel="alternate" type="text/markdown" href="${mdHref}"></head>`,
         );
+        changed = true;
+      }
+
+      // --- Body-first source order (see moveContentBeforeSidebar) ---
+      // The <head> hint above helps agents that look for it; this makes the
+      // article reachable for a naive top-down reader too, by putting content
+      // ahead of the ~1.2MB nav in the served bytes. Idempotent: once the doc
+      // column precedes the sidebar, the second sidebar-then-doc pattern no
+      // longer matches. Only rewrites the standard doc layout.
+      const reordered = moveContentBeforeSidebar(content);
+      if (reordered !== content) {
+        content = reordered;
         changed = true;
       }
 
