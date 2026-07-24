@@ -3,7 +3,7 @@
 ## 2026.07.24
 
 ### Documentation
-- 72 guides updated across de, en, es, fr, it, pl, pt
+- 91 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.07.23.1
 
