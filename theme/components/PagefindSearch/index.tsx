@@ -1025,9 +1025,8 @@ export function PagefindSearch() {
               </div>
 
               <div className="pagefind-filters">
-                <div
+                <fieldset
                   className="pagefind-filter-row"
-                  role="group"
                   aria-label={t.filterByUniverse}
                 >
                   <button
@@ -1077,11 +1076,10 @@ export function PagefindSearch() {
                       </button>
                     );
                   })}
-                </div>
+                </fieldset>
                 {productOptions.length > 0 && (
-                  <div
+                  <fieldset
                     className="pagefind-filter-row pagefind-filter-row--products"
-                    role="group"
                     aria-label={t.filterByProduct}
                   >
                     {productOptions.map((p) => (
@@ -1097,7 +1095,7 @@ export function PagefindSearch() {
                         {p.label}
                       </button>
                     ))}
-                  </div>
+                  </fieldset>
                 )}
               </div>
 
