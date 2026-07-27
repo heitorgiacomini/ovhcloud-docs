@@ -116,6 +116,14 @@ Example of specific questions for Debian 12 (Bookworm):
             "mandatory": false,
             "type": "keyValue",
             "enum": []
+        },
+        {
+            "name": "enableLacpBonding",
+            "description": "Enable LACP to aggregate multiple network interfaces (if applicable)",
+            "default": "false",
+            "mandatory": false,
+            "type": "boolean",
+            "enum": []
         }
     ]
 }
@@ -155,6 +163,14 @@ Example of specific questions for Windows Server 2022 Standard (Core):
                 "ps1",
                 "cmd"
             ]
+        },
+        {
+            "name": "enableLacpBonding",
+            "description": "Enable LACP to aggregate multiple network interfaces (if applicable)",
+            "default": "false",
+            "mandatory": false,
+            "type": "boolean",
+            "enum": []
         }
     ]
 }
@@ -172,6 +188,11 @@ Each question has the following attributes:
 |enum|Possible values (only applicable for `enum` `type`)|
 
 ¹ If a mandatory question without default value is not answered, the API will return an error.
+
+:::info
+Questions of the `boolean` type are answered with a JSON boolean, not with a string: use `true`, not `"true"`. Note that in the question description above, `default` is always returned as a string.
+:::
+
 
 ### Create an OS reinstallation task <a name="install-task"></a>
 
@@ -197,7 +218,7 @@ With the following parameters:
 
 #### Linux payload example
 
-The following payload will install Debian 12 (Bookworm) with SSH key-based authentication and a custom bash post-installation script:
+The following payload will install Debian 12 (Bookworm) with SSH key-based authentication, a custom bash post-installation script, and LACP bonding enabled:
 
 ```json
 {
@@ -205,7 +226,8 @@ The following payload will install Debian 12 (Bookworm) with SSH key-based authe
   "customizations": {
     "hostname": "mon-tux",
     "sshKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC9xPpdqP3sx2H+gcBm65tJEaUbuifQ1uGkgrWtNY0PRKNNPdy+3yoVOtxk6Vjo4YZ0EU/JhmQfnrK7X7Q5vhqYxmozi0LiTRt0BxgqHJ+4hWTWMIOgr+C2jLx7ZsCReRk+fy5AHr6h0PHQEuXVLXeUy/TDyuY2JPtUZ5jcqvLYgQ== my-nuclear-power-plant",
-    "postInstallationScript": "IyEvYmluL2Jhc2gKZWNobyAiY291Y291IHBvc3RJbnN0YWxsYXRpb25TY3JpcHQiID4gL29wdC9jb3Vjb3UKY2F0IC9ldGMvbWFjaGluZS1pZCAgPj4gL29wdC9jb3Vjb3UKZGF0ZSAiKyVZLSVtLSVkICVIOiVNOiVTIiAtLXV0YyA+PiAvb3B0L2NvdWNvdQo="
+    "postInstallationScript": "IyEvYmluL2Jhc2gKZWNobyAiY291Y291IHBvc3RJbnN0YWxsYXRpb25TY3JpcHQiID4gL29wdC9jb3Vjb3UKY2F0IC9ldGMvbWFjaGluZS1pZCAgPj4gL29wdC9jb3Vjb3UKZGF0ZSAiKyVZLSVtLSVkICVIOiVNOiVTIiAtLXV0YyA+PiAvb3B0L2NvdWNvdQo=",
+    "enableLacpBonding": true
   }
 }
 ```
