@@ -198,7 +198,10 @@ Each question has the following attributes:
 ¹ If a mandatory question without default value is not answered, the API will return an error.
 
 :::info
-Questions of the `boolean` type are answered with a JSON boolean, not with a string: use `true`, not `"true"`. Note that in the question description above, `default` is always returned as a string.
+Answers must use the JSON type declared by the question:
+
+- `boolean`: use a JSON boolean, not a string, i.e. `true` and not `"true"`. Note that, in the question description above, `default` is always returned as a string.
+- `keyValue`: use a JSON object with string values, for example `{"foo": "bar"}`.
 :::
 
 
