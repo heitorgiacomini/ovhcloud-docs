@@ -1,1 +1,110 @@
-../../../../en/guides/hosted-private-cloud/powered-by-vmware/vsphere-granular-rights.mdx
+---
+title: Gerir os direitos granulares nos objetos do vSphere
+description: Saiba como conceder ou retirar direitos de utilizador em objetos específicos do seu inventário vSphere Hosted Private Cloud
+lastUpdated: 2026-07-30
+---
+
+import Api from '@components/Api';
+
+
+## Objetivo
+
+Para além dos [direitos globais do datacenter](/guides/hosted-private-cloud/powered-by-vmware/vsphere-global-rights), pode atribuir direitos granulares aos utilizadores em objetos específicos do seu inventário vSphere Hosted Private Cloud (por exemplo, uma VM ou um datastore). Este guia explica como adicionar, consultar e remover estes direitos através da API OVHcloud.
+
+> [!warning]
+> Os direitos granulares nos objetos do vSphere não podem ser geridos a partir da Área de Cliente OVHcloud. Devem ser configurados através da API OVHcloud.
+
+## Requisitos
+
+- Um [serviço Hosted Private Cloud](/links/hosted-private-cloud/vmware) com a versão vSphere 6.5 ou superior
+- Acesso à <ApiLink>API OVHcloud</ApiLink>
+- Um [utilizador](/guides/hosted-private-cloud/powered-by-vmware/vsphere-interface-connexion) já criado no seu serviço Hosted Private Cloud
+
+{/* CP-NAV-START:privatecloud-vmware-vsphere */}
+---
+
+### Acesso à Área de Cliente OVHcloud
+
+- **Link direto:** [VMware vSphere](/links/control-panel/privatecloud-vmware-vsphere)
+- **Caminho de navegação:** <code className="action">Hosted Private Cloud</code> > <code className="action">Managed VMware vSphere</code> > Selecione o seu serviço vSphere
+
+---
+{/* CP-NAV-END:privatecloud-vmware-vsphere */}
+
+## Instruções
+
+### Adicionar direitos a um objeto do vSphere
+
+1. Chame o seguinte endpoint da API:
+
+    <Api version="v1" section="/dedicatedCloud" method="POST" route={"/dedicatedCloud/\\{serviceName\\}/user/\\{userId\\}/objectRight"} />
+
+2. Preencha o corpo do pedido com o objeto e o utilizador a quem pretende conceder acesso.
+
+    Pode escolher se pretende ou não propagar o direito aos objetos subordinados, de forma semelhante aos direitos nativos do vSphere.
+
+3. Valide o pedido. É criada uma tarefa do tipo `addUserObjectRight` e aplicada ao objeto do vSphere.
+
+    Por exemplo, para conceder acesso de leitura/escrita a uma VM:
+
+    ```json
+    {
+      "propagate": false,
+      "right": "readwrite",
+      "type": "vm",
+      "vmwareObjectId": "vm-92"
+    }
+    ```
+
+### Consultar os direitos de um utilizador num objeto do vSphere
+
+Para consultar um direito específico, tem de conhecer primeiro o seu identificador `objectRightId`.
+
+1. Liste todos os direitos concedidos ao utilizador, chamando o seguinte endpoint:
+
+    <Api version="v1" section="/dedicatedCloud" method="GET" route={"/dedicatedCloud/\\{serviceName\\}/user/\\{userId\\}/objectRight"} />
+
+    Preencha os campos com o `serviceName` (domínio do serviço) e o `userId` (identificador do utilizador). A resposta devolve a lista de identificadores `objectRightId` dos direitos concedidos ao utilizador:
+
+    ```json
+    [
+      42,
+      57,
+      63
+    ]
+    ```
+
+2. Chame o seguinte endpoint da API para consultar o detalhe de um direito:
+
+    <Api version="v1" section="/dedicatedCloud" method="GET" route={"/dedicatedCloud/\\{serviceName\\}/user/\\{userId\\}/objectRight/\\{objectRightId\\}"} />
+
+3. Preencha os campos com o `objectRightId` correspondente ao direito que pretende consultar.
+
+4. Valide o pedido. A resposta devolve as informações relativas ao direito concedido ao utilizador no objeto do vSphere:
+
+    ```json
+    {
+      "name": "string",
+      "objectRightId": 0,
+      "propagate": false,
+      "right": "admin",
+      "type": "cluster",
+      "vmwareObjectId": "string"
+    }
+    ```
+
+### Remover direitos de um objeto do vSphere
+
+1. Chame o seguinte endpoint da API:
+
+    <Api version="v1" section="/dedicatedCloud" method="DELETE" route={"/dedicatedCloud/\\{serviceName\\}/user/\\{userId\\}/objectRight/\\{objectRightId\\}"} />
+
+2. Preencha os campos com o `objectRightId` correspondente ao direito que pretende remover.
+
+3. Valide o pedido. É criada uma tarefa do tipo `removeUserObjectRight` e remove o direito do utilizador do objeto do vSphere.
+
+## Quer saber mais?
+
+Para uma formação ou uma assistência técnica na implementação das nossas soluções, contacte o seu comercial ou consulte a página [Professional Services](/links/professional-services) para obter um orçamento e ter o seu projeto analisado pelos nossos especialistas.
+
+Fale com a nossa [comunidade de utilizadores](/links/community).
