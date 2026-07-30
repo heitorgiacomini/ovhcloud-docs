@@ -473,6 +473,7 @@
                 + [Configuring NTP on the Private Gateway](hosted-private-cloud/powered-by-vmware/private-gateway-ntp)
             + [vSphere Features](hosted-private-cloud-managed-vmware-configuration-vsphere)
                 + [Using the vSphere SDK](hosted-private-cloud/powered-by-vmware/vmware-installation-api)
+                + [Managing global vSphere permissions](hosted-private-cloud/powered-by-vmware/vsphere-global-rights)
                 + [Managing granular rights on vSphere objects](hosted-private-cloud/powered-by-vmware/vsphere-granular-rights)
                 + [Cluster creation and EVC activation](hosted-private-cloud/powered-by-vmware/create-cluster-enable-evc)
             + [Backup and Replication](hosted-private-cloud-managed-vmware-configuration-backup)
@@ -1714,6 +1715,7 @@
             + [Migration](products/web-cloud-domains-domain-names-migration)
                 + [Incoming transfer to OVHcloud](web-cloud-domains-domain-names-migration-incoming-transfer-to-ovhcloud)
                     + [Transferring a domain name to OVHcloud](web-cloud/domains/transfer-incoming-generic-domain)
+                    + [Importing an external DNS zone to OVHcloud](web-cloud/domains/dns-zone-import)
                     + [Transferring a .uk domain name to OVHcloud](web-cloud/domains/transfer-incoming-couk)
                     + [Transferring a .pl domain name to OVHcloud](web-cloud/domains/transfer-pl)
                     + [Transferring a domain name from Hostinger to OVHcloud](web-cloud/domains/transfer-incoming-hostinger)
@@ -2065,6 +2067,7 @@
                 + [Configuring your ActiveSync Zimbra account in Mail for iOS](web-cloud/email-and-collaborative-solutions/zimbra/zimbra-mail-app-ios)
                 + [Configuring your ActiveSync Zimbra account in Outlook for Android](web-cloud/email-and-collaborative-solutions/zimbra/zimbra-outlook-app-android)
                 + [Configuring your ActiveSync Zimbra account in Gmail for Android](web-cloud/email-and-collaborative-solutions/zimbra/zimbra-gmail-app-android)
+                + [Configuring your Zimbra Pro account on the Zimbra mobile app](web-cloud/email-and-collaborative-solutions/zimbra/zimbra-app-android-ios)
     + [Internet](products/web-cloud-internet)
         + [Internet access](products/web-cloud-internet-internet-access){landing=web-cloud/internet/internet-access/landing-page-internet-access}
             + [Key concepts](web-cloud-internet-internet-access-key-concepts)
