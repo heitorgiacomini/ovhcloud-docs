@@ -380,6 +380,7 @@
                 + [Deploy a Hytale server on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-quick-start-hytale)
                 + [Deploy a Minecraft server on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-quick-start-minecraft)
                 + [Deploy a Palworld server on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-quick-start-palworld)
+                + [Deploy a Project Zomboid server on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-quick-start-project-zomboid)
                 + [Deploy a Team Fortress 2 server on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-quick-start-tf2)
                 + [Deploy a TeamSpeak 3 server on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-quick-start-teamspeak-3)
                 + [Deploy a Valheim server on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-quick-start-valheim)
@@ -388,6 +389,7 @@
                 + [Edit Minecraft server configuration on the Game Panel](bare-metal-cloud/virtual-private-servers/game-panel-edit-minecraft-config)
                 + [Install mods and plugins on your Minecraft server](bare-metal-cloud/virtual-private-servers/game-panel-install-mods-plugins)
                 + [Uploading a custom world to your Minecraft server](bare-metal-cloud/virtual-private-servers/game-panel-upload-minecraft-world)
+                + [Install mods on your Project Zomboid server](bare-metal-cloud/virtual-private-servers/game-panel-install-mods-project-zomboid)
 + Private Cloud
     + [Public VCF as-a-Service](products/hosted-private-cloud-public-VCF)
         + [Overview](hosted-private-cloud/powered-by-vmware/public-vcf/overview)
@@ -1625,6 +1627,7 @@
                 + [AI Endpoints - Structured Output](public-cloud/ai-machine-learning/ai-endpoints-structured-output)
                 + [AI Endpoints - Function Calling](public-cloud/ai-machine-learning/ai-endpoints-function-calling)
                 + [AI Endpoints - Responses API](public-cloud/ai-machine-learning/ai-endpoints-responses-api)
+                + [AI Endpoints - Catalog API](public-cloud/ai-machine-learning/ai-endpoints-catalog-api)
                 + [AI Endpoints - Batch mode](public-cloud/ai-machine-learning/ai-endpoints-batch-mode)
             + [Getting started](public-cloud-ai-and-machine-learning-ai-endpoints-getting-started)
                 + [AI Endpoints - Getting started](public-cloud/ai-machine-learning/ai-endpoints-getting-started)
