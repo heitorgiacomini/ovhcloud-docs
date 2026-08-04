@@ -502,6 +502,8 @@ By default, if the `erase` parameter is not specified for a disk group involved 
 
 Disk groups other than the one on which the OS is installed can also be declared, but only to control whether their data is erased (`erase: true`) or kept (`erase: false`).
 
+The OS is installed on the disk group carrying the installation attributes (`partitioning`, `hardwareRaid`), the other declared disk groups carrying only `erase`. If none of them carries an installation attribute, the OS is installed on the default disk group, as described in the [Disk Groups](#disk-group) section.
+
 Example with a server that has 2 disk groups: a simple OS installation on `diskGroupId` 1 (implicitly erased), and `diskGroupId` 2 declared only to keep its existing data:
 
 <Api version="v1" section="/dedicated/server" method="POST" route={"/dedicated/server/\{serviceName\}/reinstall"} />
