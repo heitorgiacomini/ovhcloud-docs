@@ -498,7 +498,7 @@ A custom partitioning layout, while valid and accepted by the <ApiLink>OVHcloud 
 
 ### Data erasure <a name="data-erasure"></a>
 
-By default, if the `erase` parameter is not specified for a disk group involved in the `storage` request, it is set to `true`: all disks of that disk group are erased during the OS installation.
+By default, the disks of every disk group of the server are erased during the OS installation, whether their disk group is declared in the `storage` request or not. Setting `erase` to `false` on a disk group is the only way to keep its data.
 
 Disk groups other than the one on which the OS is installed can also be declared, but only to control whether their data is erased (`erase: true`) or kept (`erase: false`).
 
