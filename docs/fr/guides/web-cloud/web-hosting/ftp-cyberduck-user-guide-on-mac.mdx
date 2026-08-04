@@ -27,7 +27,7 @@ Nous mettons à votre disposition ce guide afin de vous accompagner au mieux sur
 
 ## Prérequis
 
-- Disposer d’une offre d’[hébergement web](https://www.ovhcloud.com/fr/web-hosting/).
+- Disposer d’une offre d’[hébergement web](/links/web/hosting).
 - Avoir téléchargé et installé l’application Cyberduck sur votre ordinateur.
 
 :::info
@@ -41,7 +41,7 @@ Pour les hébergements web, il n’est plus possible de se connecter à l’espa
 Lorsque vous démarrez l’application, l’interface ci-dessous s’affiche.
 
 - La partie supérieure, entourée en orange, correspond à la barre d’outils. Elle vous permet d’établir une connexion à votre espace d’hébergement, de naviguer dans l’arborescence de vos dossiers et fichiers, de consulter l’historique de vos actions, ainsi que de nombreuses autres actions.
-- En-dessous se trouve le contenu que vous souhaitez afficher. Par exemple, si vous cliquez sur l’icône <code className="action">History</code>, la liste des vos actions y apparaitra.
+- En-dessous se trouve le contenu que vous souhaitez afficher. Par exemple, si vous cliquez sur l’icône <code className="action">History</code>, la liste de vos actions y apparaitra.
 
 <img className="thumbnail" alt="hosting" src="/images/assets/screens/other/web-tools/cyberduck/start-page.png" loading="lazy" />
 
@@ -80,7 +80,7 @@ Afin de pouvoir vous connecter à votre espace d’hébergement web, suivez les 
 
 <img className="thumbnail" alt="hosting" src="/images/assets/screens/other/web-tools/cyberduck/sftp-connection.png" loading="lazy" />
 
-:::tip[Success]
+:::tip
 - Vous avez la possibilité d’enregistrer votre mot de passe dans Cyberduck en cochant <code className="action">Add to keychain</code>. Si vous ne cochez pas la case, vous devrez renseigner le mot de passe afin de vous reconnecter à votre espace d’hébergement web.
 - Si vous ne connaissez pas toutes vos informations FTP (serveur, identifiants etc.), reportez-vous au guide « [Se connecter à l’espace de stockage FTP de son hébergement web](/guides/web-cloud/web-hosting/ftp-connection) ».
 
@@ -88,7 +88,7 @@ Afin de pouvoir vous connecter à votre espace d’hébergement web, suivez les 
 
 Lorsque vous effectuez une première connexion vers votre espace d’hébergement web, une fenêtre portant le titre <code className="action">Modified fingerprint</code> s’affiche. Cochez la case <code className="action">Always</code> puis validez. Ceci vous permettra de certifier définitivement l’hôte de connexion (OVHcloud).
 
-:::tip[Success]
+:::tip
 - Nous vous conseillons d’enregistrer vos informations de connexion via un signet. Cela vous permettra de garder en mémoire certaines informations de connexion.
 - Consultez cette partie du guide : [Qu’est-ce qu’un signet ?](#signet)
 
@@ -104,7 +104,7 @@ Dans la majorité des cas, cette erreur est liée aux identifiants que vous avez
 
 <img className="thumbnail" alt="hosting" src="/images/assets/screens/other/web-tools/cyberduck/open-session-failed.png" loading="lazy" />
 
-:::tip[Success]
+:::tip
 - Si vous ne connaissez pas toutes vos informations FTP (serveur, identifiants, etc.), reportez-vous au guide « [Se connecter à l’espace de stockage FTP de son hébergement web](/guides/web-cloud/web-hosting/ftp-connection) ».
 
 :::
@@ -131,7 +131,7 @@ Pour faciliter l’accès à votre espace d’hébergement web, nous vous recomm
 
 Pour effectuer cet ajout :
 
-1. Connectez-vous à l’espace FRP de votre hébergement web.
+1. Connectez-vous à l’espace FTP de votre hébergement web.
 2. En haut de l’interface, dans la barre d’outils, cliquez sur l’onglet <code className="action">Bookmarks</code> (cadre orange dans l’image ci-dessous).
 3. En bas à gauche de la fenêtre, cliquez sur l’icône <code className="action">+</code> pour ajouter un nouveau signet.
 
@@ -214,7 +214,7 @@ Dans le menu de Cyberduck, cliquez sur <code className="action">Go</code> puis s
 
 <img className="thumbnail" alt="hosting" src="/images/assets/screens/other/web-tools/cyberduck/send-ftp-command.png" loading="lazy" />
 
-Dans la nouvelle fenêtre, insérez la commande `CHMOD 705 /` puis cliquez sur <code className="action">Send</code> pour éxécuter la commande. En confirmation, le message `200 Permissions changed on /` devrait apparaître dans l’encadré du dessous.
+Dans la nouvelle fenêtre, insérez la commande `CHMOD 705 /` puis cliquez sur <code className="action">Send</code> pour exécuter la commande. En confirmation, le message `200 Permissions changed on /` devrait apparaître dans l’encadré du dessous.
 
 Pour vérifier que la réouverture est bien effective, connectez-vous à votre site web depuis un navigateur web.
 

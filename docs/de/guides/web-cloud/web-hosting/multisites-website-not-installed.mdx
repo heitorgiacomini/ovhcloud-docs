@@ -1,7 +1,7 @@
 ---
 title: "Fehler \"Seite nicht installiert\" beheben"
 description: "Erfahren Sie hier, wie Sie den Fehler \"Seite nicht installiert\" beheben"
-lastUpdated: 2026-06-19
+lastUpdated: 2026-08-04
 availableIn: [eu, ca, apac]
 ---
 
@@ -30,7 +30,7 @@ Eine Erinnerung wird zu Beginn jedes betreffenden Abschnitts angezeigt.
 
 ## Voraussetzungen
 
-- Sie haben ein [OVHcloud Webhosting](https://www.ovhcloud.com/de/web-hosting/) in Ihrem Kunden-Account.
+- Sie haben ein [OVHcloud Webhosting](/links/web/hosting) in Ihrem Kunden-Account.
 - Sie verfügen über die erforderlichen Berechtigungen zum Verwalten der [DNS-Zone](/guides/web-cloud/domains/dns-zone-edit) des Domainnamens.
 
 {/* CP-NAV-START:web-hosting */}
@@ -147,7 +147,7 @@ Klicken Sie auf die Tabs, um die **3** Schritte anzuzeigen.
     :::info
     Wenn der Tab <code className="action">DNS-Zone</code> Ihres Domainnamens wie folgt angezeigt wird:<br/><br/><img className="thumbnail" alt="zone-without-domain-top-of-the-page" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/zone-without-domain-top-of-the-page.png" loading="lazy" /><br/>
 
-    Dies bedeutet, dass Ihr Domainname nicht über Ihr OVHcloud Kundencenter verwaltet wird.<br/> Ermitteln Sie den zuständigen "Registrierungsstelle" sowie die zugehörigen DNS-Server mithilfe unseres [WHOIS](https://www.ovhcloud.com/de/domains/whois/)-Tools.<br/> Rufen Sie die entsprechende DNS-Zone ab und passen Sie sie ggf. an, indem Sie sich die dafür vorgesehene Rubrik in der Anleitung "[Wie verknüpfe ich einen Domainnamen mit einer bestehenden Webseite? - Externer Domainname hinzufügen](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website)" ansehen.
+    Dies bedeutet, dass Ihr Domainname nicht über Ihr OVHcloud Kundencenter verwaltet wird.<br/> Ermitteln Sie den zuständigen "Registrierungsstelle" sowie die zugehörigen DNS-Server mithilfe unseres [WHOIS](/links/web/domains-whois)-Tools.<br/> Rufen Sie die entsprechende DNS-Zone ab und passen Sie sie ggf. an, indem Sie sich die dafür vorgesehene Rubrik in der Anleitung "[Wie verknüpfe ich einen Domainnamen mit einer bestehenden Webseite? - Externer Domainname hinzufügen](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website)" ansehen.
 
     :::
 
@@ -156,7 +156,7 @@ Klicken Sie auf die Tabs, um die **3** Schritte anzuzeigen.
   <Tab label="Schritt 3">
     |Mögliche Szenarien|Auszuführende Aktion|
     |---|---|
-    |In der aktiven DNS-Zone verweist Ihr Domainname oder Ihre Subdomain auf die IP-Adresse Ihres Webhostings mit einem A-Eintrag (für eine IPv4-Adresse) oder AAAA-Eintrag (für eine IPv6-Adresse).<br/><br/><img className="thumbnail" alt="DNS-Zone_IP2" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/dashboard-entry-a.png" loading="lazy" />|Dies weist darauf hin, dass die Konfiguration Ihres Domainnamens korrekt ist.<br/>Warten Sie, bis die DNS Propagation abgeschlossen ist. Die Änderung wurde vor kurzem vorgenommen.<br/><br/>Starten Sie Ihre Geräte neu (PC, Smartphone, Box), und leeren Sie den Cache Ihres Browsers. Es ist möglich, dass die alte Konfiguration Ihrer Domain noch im Cache gespeichert ist, was die Anzeige Ihres Updates verzögern kann.|
+    |In der aktiven DNS-Zone verweist Ihr Domainname oder Ihre Subdomain auf die IP-Adresse Ihres Webhostings mit einem A-Eintrag (für eine IPv4-Adresse) oder AAAA-Eintrag (für eine IPv6-Adresse).<br/><br/><img className="thumbnail" alt="DNS-Zone gefiltert nach A-Einträgen" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/nx-filter-a.png" loading="lazy" />|Dies weist darauf hin, dass die Konfiguration Ihres Domainnamens korrekt ist.<br/>Warten Sie, bis die DNS Propagation abgeschlossen ist. Die Änderung wurde vor kurzem vorgenommen.<br/><br/>Starten Sie Ihre Geräte neu (PC, Smartphone, Box), und leeren Sie den Cache Ihres Browsers. Es ist möglich, dass die alte Konfiguration Ihrer Domain noch im Cache gespeichert ist, was die Anzeige Ihres Updates verzögern kann.|
     |Die aktive DNS-Zone enthält keine A- oder AAAA-Einträge, die Ihre Domain oder Subdomain mit der IP-Adresse Ihres Webhostings verbinden.|Fügen Sie den neuen A- oder AAAA-Eintrag hinzu, oder korrigieren Sie den vorhandenen Eintrag, indem Sie [diese Anleitung](/guides/web-cloud/domains/dns-zone-edit) befolgen.|
     |Der vorhandene DNS-Eintrag vom Typ A oder AAAA in der DNS-Zone für Ihre Domain oder Subdomain verweist auf eine andere IP-Adresse als die Ihres Webhostings.|Fügen Sie den neuen DNS-Eintrag vom Typ A oder AAAA hinzu, oder korrigieren Sie den vorhandenen Eintrag, indem Sie [diese Anleitung](/guides/web-cloud/domains/dns-zone-edit) befolgen.|
     |Diese Warnung erscheint im Tab <code className="action">DNS-Zone</code>:<br/><br/><img className="thumbnail" alt="message-other-ovh-dns-servers" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/message-other-ovh-dns-servers.png" loading="lazy" />|Ändern Sie die DNS-Server Ihrer Domain entsprechend unserer Anleitung "[DNS-Server einer OVHcloud Domain bearbeiten](/guides/web-cloud/domains/dns-server-edit)."|

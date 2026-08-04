@@ -1,7 +1,7 @@
 ---
 title: Web Hosting FAQ
 description: Find the answers to the most frequently asked questions about OVHcloud web hosting plans
-lastUpdated: 2026-06-19
+lastUpdated: 2026-08-04
 availableIn: [eu, ca, apac]
 ---
 
@@ -32,7 +32,7 @@ Click on the tabs below to view each of the **2** steps.
 {/* CP-STEPS-END:configure-hosting */}
 
 :::tip
-To help you configure your web hosting plan, please refer to the sections *Getting started* and *Configuring a web hosting plan* of [this page](/guides/web-cloud/web-hosting/overview).
+To help you configure your web hosting plan, please refer to the sections *Getting started* and *Configuring a web hosting plan* of [this page](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -171,8 +171,8 @@ If you have any further questions on the *MX Plan* email solution, please refer 
 
 To put your website online, you will need the following information:
 
-- A [domain name](https://www.ovhcloud.com/en-gb/domains/) that will correspond to the web address from which your website will be accessible via a web browser (example: *domain.tld*). This domain name must also be associated with your web hosting plan to view the website.
-- A [web hosting plan](https://www.ovhcloud.com/en-gb/web-hosting/) on which to install your website.
+- A [domain name](/links/web/domains) that will correspond to the web address from which your website will be accessible via a web browser (example: *domain.tld*). This domain name must also be associated with your web hosting plan to view the website.
+- A [web hosting plan](/links/web/hosting) on which to install your website.
 
 Here are the main steps to follow:
 
@@ -188,7 +188,7 @@ If you choose to install a CMS (WordPress, Joomla!, PrestaShop, Drupal) with our
 
 If your website already exists with another provider, and you would like to migrate it to OVHcloud, please read our detailed guide on "[Migrating your website and associated services to OVHcloud](/guides/web-cloud/web-hosting/hosting-migrating-to-ovh)".
 
-To help you configure your web hosting plan, you can refer to the full set of [guides for our web hosting solutions](/guides/web-cloud/web-hosting/overview).
+To help you configure your web hosting plan, you can refer to the full set of [guides for our web hosting solutions](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -223,7 +223,7 @@ Find all the details in our guide "[Migrating your website and associated servic
 <summary>How do I host multiple websites on a single web hosting plan?</summary>
 
 {/* CP-STEPS-START:host-multiple-websites */}
-If your [web hosting plan is compatible](https://www.ovhcloud.com/en-gb/web-hosting/), click on the tabs below to view each of the **2** steps.
+If your [web hosting plan is compatible](/links/web/hosting), click on the tabs below to view each of the **2** steps.
 
 :::info
 This section applies to the <ManagerLink to="/beta/#/">new version of the OVHcloud Control Panel</ManagerLink>.
@@ -263,7 +263,7 @@ In order for your website to be accessible with a URL in “HTTPS” (e.g.: `htt
 - You must have an active SSL certificate for your domain name (or installed on your Web Hosting plan).
 - In your website’s source code, it must force URLs to be rewritten to HTTPS.
 
-OVHcloud offers [several SSL certificates](https://www.ovhcloud.com/en-gb/web-hosting/options/) on web hosting plans.
+OVHcloud offers [several SSL certificates](/links/web/hosting-options) on web hosting plans.
 
 {/* CP-STEPS-START:enable-https */}
 To activate an SSL certificate on your Web Hosting plan for your website, click on the tabs below to view each of the **4** steps.
@@ -306,7 +306,7 @@ Once you have installed and set up an SSL certificate of your choice on the OVHc
 
 <summary>How do I change my web hosting plan?</summary>
 
-To order the web hosting plan that best suits your needs, check out our offers on [this page](https://www.ovhcloud.com/en-gb/web-hosting/).
+To order the web hosting plan that best suits your needs, check out our offers on [this page](/links/web/hosting).
 
 :::info
 Depending on your current web hosting plan, some plans may not be available. Read our guide on [Upgrading a web hosting plan](/guides/web-cloud/web-hosting/how-to-upgrade-web-hosting-offer) for more information on this topic.
@@ -429,7 +429,7 @@ If necessary, please also refer to the “*Modifying your Web Cloud Databases* s
 ## Diagnostic
 
 :::tip
-If you encounter any issues that are not listed in this FAQ, please refer to the “*Troubleshooting*” section of our [guides on web hosting solutions](/guides/web-cloud/web-hosting/overview).
+If you encounter any issues that are not listed in this FAQ, please refer to the “*Troubleshooting*” section of our [guides on web hosting solutions](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -459,7 +459,7 @@ Then check out the [current events on our infrastructure](https://www.status-ovh
 If all your services are active and are not affected by any incidents or maintenance, please carry out a more in-depth diagnostic.
 
 :::tip
-See the “*Troubleshooting*” section of our [guides on web hosting solutions](/guides/web-cloud/web-hosting/overview).
+See the “*Troubleshooting*” section of our [guides on web hosting solutions](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -671,7 +671,7 @@ To correct this, click on the tabs below to view each of the **4** steps.
     On the page that appears, click on the <code className="action">DNS servers</code> tab.
   </Tab>
   <Tab label="Step 3">
-    Note down the names of the DNS servers listed, and go to the <code className="action">DNS Zone</code> tab (to the right of the <code className="action">DNS Servers</code> tab).
+    Note down the names of the DNS servers listed, and go to the <code className="action">DNS zone</code> tab (to the right of the <code className="action">DNS servers</code> tab).
   </Tab>
   <Tab label="Step 4">
     In the table (representing the DNS zone of the domain name) that appears, compare the `Targets` of the `NS` type entries present in the DNS zone with the names of the DNS servers retrieved earlier.
@@ -690,11 +690,11 @@ There are three possible scenarios. Click on the tabs below to view the solution
     In this case, this means that your domain name (or its *www* sub-domain) points to the IP address of our redirection server (213.186.33.5).
 
     1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>, then go to the <code className="action">Web Cloud</code> section.
-    2. Click on the <code className="action">Domain names</code> menu (or on the <code className="action">DNS zones</code> menu if you are using the beta version of the OVHcloud Control Panel), then select the domain name concerned.
-    3. On the page that opens, click on the <code className="action">DNS Zone</code> tab.
+    2. Click on the <code className="action">Domain names</code> menu, then select the domain name concerned.
+    3. On the page that opens, open the <code className="action">DNS zone</code> tab.
     4. In the table that appears (representing your domain name’s DNS zone), identify the entry of type `A` whose `Target` is set to the IP address `213.186.33.5`.
-    5 Click the <code className="action">...</code> button to the right of the line, then <code className="action">Modify record</code>.
-    6. In the window that opens, replace the IP address `213.186.33.5` in the `Target*` form with the IP address of the web hosting plan where your website is located.
+    5. On the row concerned, open the actions menu <code className="action">⋮</code> and click <code className="action">Edit the entry</code>.
+    6. In the edit form, replace the IP address `213.186.33.5` in the `Target` field with the IP address of the web hosting plan where your website is located, then confirm your changes.
 
     :::tip
     If necessary, also refer to the following detailed guides:
@@ -710,7 +710,7 @@ There are three possible scenarios. Click on the tabs below to view the solution
 
     - `nsXX.ovh.net` and `dnsXX.ovh.net` **or** `nsXXX.ovh.net` and `dnsXXX.ovh.net` (where each `X` designates a number between **0** and **9**)
     - `nsXX.ovh.ca` and `dnsXX.ovh.ca` **or** `nsXXX.ovh.ca` and `dnsXXX.ovh.ca` (where each `X` denotes a number between **0** and **9**)
-    - `ns200.anycast.me` and `dns200.anycast.me` (if you have subscribed to the [DNS anycast](https://www.ovhcloud.com/en-gb/domains/options/) option)
+    - `ns200.anycast.me` and `dns200.anycast.me` (if you have subscribed to the [DNS anycast](/links/web/domains-options) option)
 
     :::info
     If one of your DNS servers declared in the <code className="action">DNS servers</code> tab has the following form: `sdnsX.ovh.net`, `sdnsX.ovh.ca`, `vpsXXXXXX.ovh.net` or `vpsXXXXXX.ovh.ca` (where each `X` designates a number between **0** and **9**), please refer to the **Case 3**.
@@ -870,7 +870,7 @@ In this situation, several actions are required:
 
 - Check that your web browser is up to date.
 - Retrieve the URL called (for example: `https://www.domain.tld`) as well as all the information present on the page “Your request has been blocked” (`IP address`, `Date` and `Request ID`).
-- Send this information to support by creating a [support ticket](https://help.ovhcloud.com/csm?id=csm_get_help).
+- Send this information to support by creating a [support ticket](/links/support-contact).
 
 If you are unsure about the changes you need to make, contact your webmaster or one of our [partners](/links/partner).
 
@@ -895,7 +895,7 @@ The “Your IP has been banned” page may appear for a number of reasons (non-e
 In this situation, several actions are required:
 
 - Retrieve the URL called (for example: `https://www.domain.tld`) as well as all the information present on the page “Your IP has been banned” (`IP address`, `Date` and `Request ID`).
-- Send this information to support by creating a [support ticket](https://help.ovhcloud.com/csm?id=csm_get_help).
+- Send this information to support by creating a [support ticket](/links/support-contact).
 
 If you are unsure about the changes you need to make, contact your webmaster or one of our [partners](/links/partner).
 

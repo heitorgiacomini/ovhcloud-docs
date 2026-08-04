@@ -1,7 +1,7 @@
 ---
 title: Resolver o erro “Site não instalado”
 description: Saiba como resolver o erro da página “Site não instalado”
-lastUpdated: 2026-06-19
+lastUpdated: 2026-08-04
 availableIn: [eu, ca, apac]
 ---
 
@@ -30,7 +30,7 @@ Existe um lembrete no início de cada secção afetada.
 
 ## Requisitos
 
-- Dispor de um serviço [de alojamento partilhado](https://www.ovhcloud.com/pt/web-hosting/)
+- Dispor de um serviço [de alojamento partilhado](/links/web/hosting)
 - Dispor igualmente da gestão da [Zona DNS](/guides/web-cloud/domains/dns-zone-edit) à qual está associada o seu domínio.
 
 {/* CP-NAV-START:web-hosting */}
@@ -147,7 +147,7 @@ Para isso, clique nos separadores abaixo para visualizar cada uma das **3** etap
     :::info
     Se o separador <code className="action">Zona DNS</code> do seu domínio aparecer da seguinte forma:<br/><br/> <img className="thumbnail" alt="zone-without-domain-top-of-the-page" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/zone-without-domain-top-of-the-page.png" loading="lazy" /><br/>
 
-    Isto significa que o seu nome de domínio não é gerido a partir da sua área de cliente OVHcloud.<br/> Determine o seu "gabinete de registo" e os servidores DNS aos quais está associado através do nosso ferramenta [WHOIS](https://www.ovhcloud.com/pt/domains/whois/).<br/> Encontre e modifique a zona DNS relevante, seguindo a secção dedicada do guia "[Como associar um nome de domínio a um site web existente? - Adicionar um nome de domínio externo](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website)".
+    Isto significa que o seu nome de domínio não é gerido a partir da sua área de cliente OVHcloud.<br/> Determine o seu "gabinete de registo" e os servidores DNS aos quais está associado através do nosso ferramenta [WHOIS](/links/web/domains-whois).<br/> Encontre e modifique a zona DNS relevante, seguindo a secção dedicada do guia "[Como associar um nome de domínio a um site web existente? - Adicionar um nome de domínio externo](/guides/web-cloud/web-hosting/my-websites-add-domain-existing-website)".
     :::
 
     Vá para a etapa 4 para visualizar os diferentes cenários possíveis e as ações a realizar.
@@ -155,7 +155,7 @@ Para isso, clique nos separadores abaixo para visualizar cada uma das **3** etap
   <Tab label="Etapa 3">
     |Cenários possíveis|Ação a ser realizada|
     |---|---|
-    |Na zona DNS ativa, o seu domínio ou subdomínio aponta para o endereço IP do seu alojamento web com um registo de tipo A (para um endereço IPv4) ou AAAA (para um endereço IPv6).<br/><br/><img className="thumbnail" alt="zoneDNS_IP2" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/dashboard-entry-a.png" loading="lazy" />|Isto indica que a configuração do seu domínio está correta.<br/>Aguarde o tempo para a propagação DNS recente alteração.<br/><br/>Reinicie os seus dispositivos (PC, smartphone, box, etc.) e esvazie a cache do seu browser. A antiga configuração do domínio pode ainda ser conservada em cache, o que pode atrasar a apresentação da atualização.|
+    |Na zona DNS ativa, o seu domínio ou subdomínio aponta para o endereço IP do seu alojamento web com um registo de tipo A (para um endereço IPv4) ou AAAA (para um endereço IPv6).<br/><br/><img className="thumbnail" alt="Zona DNS filtrada pelos registos A" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/nx-filter-a.png" loading="lazy" />|Isto indica que a configuração do seu domínio está correta.<br/>Aguarde o tempo para a propagação DNS recente alteração.<br/><br/>Reinicie os seus dispositivos (PC, smartphone, box, etc.) e esvazie a cache do seu browser. A antiga configuração do domínio pode ainda ser conservada em cache, o que pode atrasar a apresentação da atualização.|
     |A zona DNS ativa não contém registos do tipo A ou AAAA que liguem o seu domínio ou subdomínio ao endereço IP do seu alojamento web.|Adicione o novo registo DNS do tipo A ou AAAA ou corrija o registo existente seguindo [este manual](/guides/web-cloud/domains/dns-zone-edit).|
     |O registo DNS de tipo A ou AAAA existente na zona DNS para o seu domínio ou subdomínio aponta para um endereço IP diferente do do seu alojamento web.|Adicione o novo registo DNS de tipo A ou AAAA ou corrija o registo existente seguindo [este manual](/guides/web-cloud/domains/dns-zone-edit).|
     |Este aviso aparece no separador <code className="action">Zona DNS</code>:<br/><br/><img className="thumbnail" alt="message-other-ovh-dns-servers" src="/images/assets/screens/control-panel/product-selection/web-cloud/domain-dns/dns-zone/message-other-ovh-dns-servers.png" loading="lazy" />|Modifique os servidores DNS do seu domínio de acordo com o nosso guia "[Alterar os servidores DNS de um nome de domínio OVHcloud](/guides/web-cloud/domains/dns-server-edit)"|.
