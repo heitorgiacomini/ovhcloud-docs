@@ -28,7 +28,7 @@ OVHcloud Connect Edge est disponible selon deux topologies de lien :
 | Variante | Description | Recommandée pour |
 |---|---|---|
 | **Lien simple** | Une boucle locale vers un seul PoP OVHcloud. | Une connectivité standard, lorsqu'un seul accès suffit. |
-| **Lien double** | Deux boucles locales indépendantes, délivrées par deux fournisseurs différents vers deux PoP différents. | Une connectivité résiliente pour les sites critiques qui doivent survivre à la perte d'un accès. |
+| **Lien double** | Deux boucles locales indépendantes, délivrées par deux opérateurs de boucle locale différents via deux PoP différents. | Une connectivité résiliente pour les sites critiques qui doivent survivre à la perte d'un accès. |
 
 ```mermaid
 flowchart LR
@@ -52,7 +52,7 @@ Le dernier kilomètre est l'accès fibre entre votre site physique et le réseau
 
 ### Lien simple et lien double
 
-Un lien simple utilise une seule boucle locale vers un PoP OVHcloud. Un lien double utilise deux boucles locales indépendantes, délivrées par deux fournisseurs différents vers deux PoP différents, de sorte que la panne d'un accès n'interrompt pas la connectivité. Un lien double nécessite que votre site soit éligible auprès de deux fournisseurs distincts.
+Un lien simple utilise une seule boucle locale vers un PoP OVHcloud. Un lien double utilise deux boucles locales indépendantes, délivrées par deux opérateurs de boucle locale différents via deux PoP différents, de sorte que la panne d'un accès n'interrompt pas la connectivité. Un lien double nécessite que votre site soit éligible auprès de deux opérateurs distincts. Il améliore la résilience sans garantir une diversité physique intégrale des chemins : les deux boucles locales peuvent emprunter des infrastructures de génie civil communes ou un même nœud de raccordement optique (NRO).
 
 ### uCPE (boîtier géré en option)
 
@@ -79,26 +79,31 @@ OVHcloud Connect Edge propose une gamme de débits selon l'éligibilité de votr
 
 ### Niveaux de service
 
-OVHcloud Connect Edge est proposé en deux niveaux de service.
+OVHcloud Connect Edge s'engage sur un taux de disponibilité de bout en bout — du point de démarcation sur votre site jusqu'à votre vRack — qui dépend de la topologie de la connexion. La garantie de temps de rétablissement (GTR) court à compter de l'ouverture d'un ticket d'incident.
 
-{/* DRAFT: To verify — confirm the SLA percentages and restoration-time commitments per tier before GA. */}
+{/* DRAFT: To verify — the single-link availability rate (99.5%) is still to be validated by the product and legal teams, and the out-of-business-hours GTR is a planned option not available at launch. Confirm before GA. */}
 
-| Niveau | SLA de disponibilité | Garantie de temps de rétablissement (GTR) | Support |
-|---|---|---|---|
-| **Basic** | 99,9 % | 4 heures, heures ouvrées | Support complet à l'installation, puis support en heures ouvrées. |
-| **Advanced** | 99,95 % | 4 heures, 24/7 | Support complet à l'installation, puis support 24/7. |
+| Configuration | Taux de disponibilité de bout en bout (mensuel) | Garantie de temps de rétablissement (GTR) |
+|---|---|---|
+| **Lien simple** | 99,5 % | 4 heures, heures ouvrées |
+| **Lien double** | 99,9 % | 4 heures, heures ouvrées |
+
+Les heures ouvrées s'entendent du lundi au vendredi, de 8h00 à 18h00 (heure de Paris), hors jours fériés légaux en France métropolitaine. Une GTR de 4 heures hors heures ouvrées est prévue en option, mais n'est pas disponible au lancement.
+
+OVHcloud recommande de conserver un moyen d'accès alternatif à votre vRack (par exemple un VPN) en cas d'interruption du service.
 
 ### Capacités du uCPE
 
-Le uCPE en option fournit les éléments suivants, gérés par OVHcloud :
+Le uCPE en option est préconfiguré et géré par OVHcloud. Il fournit :
 
-- Session BGP automatique avec OVHcloud Connect Edge.
-- Routage LAN, avec un client DHCP sur le port LAN.
+- Une session BGP automatique avec OVHcloud Connect Edge.
+- Le routage LAN, avec un client DHCP sur le port LAN.
 - Un serveur DHCP sur le port LAN.
 - Une politique de pare-feu basique (filtrage IP et ports).
-- Configuration à distance, logs et supervision.
+- Le routage statique.
+- La configuration à distance, les logs et la supervision.
 
-{/* DRAFT: To verify — some device capabilities (for example static routes and 4G backup) are on the roadmap. Confirm which are available at launch before publishing. */}
+Le uCPE est vendu, et non loué : vous en devenez propriétaire une fois le prix payé. Son administration à distance nécessite un accès à Internet que vous fournissez (il n'est pas compris dans le service). Chaque modèle de uCPE prend en charge un débit maximal et ne peut pas être associé à un service de débit supérieur.
 
 ## Disponibilité
 
@@ -108,7 +113,8 @@ OVHcloud Connect Edge est disponible dans les zones ci-dessous.
 
 | Élément | Valeur |
 |---|---|
-| Géographie | France |
+| Géographie | France métropolitaine |
+| Délai de livraison | Jusqu'à 12 semaines à compter de la validation de la commande (meilleurs efforts) |
 | Durée d'engagement | 12, 24 ou 36 mois |
 
 ## Prérequis et limitations
@@ -126,7 +132,7 @@ OVHcloud Connect Edge est disponible dans les zones ci-dessous.
 
 | Limitation | Détails |
 |---|---|
-| Géographie | Disponible en France. |
+| Géographie | Disponible en France métropolitaine. |
 | Type de connexion | Niveau 3 (BGP) uniquement. |
 | Sites par client | Limité pendant la phase bêta ; la limite augmente à la disponibilité générale. |
 | Niveaux de service | Les SLA s'appliquent à la disponibilité générale ; une connexion en bêta peut ne pas bénéficier d'un SLA officiel. |

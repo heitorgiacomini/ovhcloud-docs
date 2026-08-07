@@ -28,7 +28,7 @@ OVHcloud Connect Edge is available in two link topologies:
 | Variant | Description | Best for |
 |---|---|---|
 | **Single link** | One local loop to a single OVHcloud PoP. | Standard connectivity where a single access is sufficient. |
-| **Dual link** | Two independent local loops, delivered by two different providers to two different PoPs. | Resilient connectivity for critical sites that must survive the loss of one access. |
+| **Dual link** | Two independent local loops, delivered by two different local-loop operators through two different PoPs. | Resilient connectivity for critical sites that must survive the loss of one access. |
 
 ```mermaid
 flowchart LR
@@ -52,7 +52,7 @@ The last mile is the fibre access between your physical site and the OVHcloud ne
 
 ### Single link and dual link
 
-A **single link** uses one local loop to one OVHcloud PoP. A **dual link** uses two independent local loops, delivered by two different providers to two different PoPs, so that the failure of one access does not interrupt connectivity. A dual link requires that your site is eligible with two distinct providers.
+A **single link** uses one local loop to one OVHcloud PoP. A **dual link** uses two independent local loops, delivered by two different local-loop operators through two different PoPs, so that the failure of one access does not interrupt connectivity. A dual link requires that your site is eligible with two distinct operators. It improves resilience without guaranteeing fully diverse physical paths: the two local loops may share civil infrastructure or a common optical junction (NRO).
 
 ### uCPE (optional managed device)
 
@@ -79,26 +79,31 @@ OVHcloud Connect Edge offers a range of bandwidths depending on the eligibility 
 
 ### Service levels
 
-OVHcloud Connect Edge is offered in two service tiers.
+OVHcloud Connect Edge commits to an end-to-end availability SLA — from the demarcation point on your site to your vRack — that depends on the connection topology. The guaranteed time to restore (GTR) runs from the moment you open an incident ticket.
 
-{/* DRAFT: To verify — confirm the SLA percentages and restoration-time commitments per tier before GA. */}
+{/* DRAFT: To verify — the single-link availability rate (99.5%) is still to be validated by the product and legal teams, and the out-of-business-hours GTR is a planned option not available at launch. Confirm before GA. */}
 
-| Tier | Availability SLA | Guaranteed restoration time (GTR) | Support |
-|---|---|---|---|
-| **Basic** | 99.9% | 4 hours, business hours | Full support during setup, then business-hours support. |
-| **Advanced** | 99.95% | 4 hours, 24/7 | Full support during setup, then 24/7 support. |
+| Configuration | End-to-end availability SLA (monthly) | Guaranteed time to restore (GTR) |
+|---|---|---|
+| **Single link** | 99.5% | 4 hours, business hours |
+| **Dual link** | 99.9% | 4 hours, business hours |
+
+Business hours are Monday to Friday, 08:00–18:00 (Paris time), excluding French public holidays. A 4-hour GTR outside business hours is planned as an option but is not available at launch.
+
+OVHcloud recommends keeping an alternative means of access to your vRack (for example a VPN) in case of a service disruption.
 
 ### uCPE capabilities
 
-The optional uCPE provides the following, managed by OVHcloud:
+The optional uCPE is pre-configured and managed by OVHcloud, and provides:
 
-- Automatic BGP session with OVHcloud Connect Edge.
+- An automatic BGP session with OVHcloud Connect Edge.
 - LAN routing, with a DHCP client on the LAN port.
 - A DHCP server on the LAN port.
 - Basic firewall policy (IP and port filtering).
+- Static routing.
 - Remote configuration, logs, and monitoring.
 
-{/* DRAFT: To verify — some device capabilities (for example static routes and 4G backup) are on the roadmap. Confirm which are available at launch before publishing. */}
+The uCPE is sold, not rented: you own it once it is paid for. Remote administration requires an Internet access that you provide (it is not part of the service). Each uCPE model supports a maximum bandwidth and cannot be paired with a higher-bandwidth service.
 
 ## Availability
 
@@ -108,7 +113,8 @@ OVHcloud Connect Edge is available in the locations below.
 
 | Item | Value |
 |---|---|
-| Geography | France |
+| Geography | Metropolitan France |
+| Delivery lead time | Up to 12 weeks from order validation (best efforts) |
 | Commitment duration | 12, 24, or 36 months |
 
 ## Prerequisites and limitations
@@ -126,7 +132,7 @@ OVHcloud Connect Edge is available in the locations below.
 
 | Limitation | Details |
 |---|---|
-| Geography | Available in France. |
+| Geography | Available in metropolitan France. |
 | Connection type | Layer 3 (BGP) only. |
 | Sites per customer | Limited during the beta phase; the limit increases at general availability. |
 | Service levels | SLAs apply at general availability; a beta connection may not carry an official SLA. |
