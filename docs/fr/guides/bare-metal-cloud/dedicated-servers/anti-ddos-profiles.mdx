@@ -1,0 +1,343 @@
+---
+title: Configurer les profils Anti-DDoS
+description: Configurez les profils Anti-DDoS pour adapter la mitigation OVHcloud à votre charge de travail et réduire les faux positifs sur vos adresses IP protégées.
+lastUpdated: 2026-08-07
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+:::warning
+Les profils Anti-DDoS (Anti-DDoS Customer Profiles) sont actuellement en phase **Alpha**, ouverte sur demande à un nombre limité de participants. Le modèle objet, les écrans de l'espace client et les routes d'API décrits dans ce guide peuvent évoluer avant la mise à disposition générale. N'utilisez pas cette fonctionnalité pour modifier la protection d'un service en production sans prévoir une solution de repli.
+:::
+
+## Objectif
+
+L'infrastructure Anti-DDoS d'OVHcloud protège vos services contre les attaques volumétriques et protocolaires par défaut, à l'aide de règles de détection génériques. Ces règles ne connaissent pas la nature de votre service : un trafic légitime mais atypique — tunnels VPN à fort débit de paquets, protocoles de diffusion blockchain, ou hausse soudaine de l'audience d'un flux vidéo — peut donc être mitigé comme s'il s'agissait d'une attaque. Les profils Anti-DDoS vous permettent de déclarer la nature de votre charge de travail afin que la mitigation y soit adaptée.
+
+**Ce guide vous explique comment :**
+
+- Comprendre l'articulation entre profils, sensibilité et cibles.
+- Créer une politique à partir du catalogue de profils OVHcloud et l'associer à vos adresses IP.
+- Appliquer les trois profils disponibles pendant la phase Alpha : VPN/UDP, Blockchain/Solana et VoIP/RTC/Streaming.
+- Modifier la sensibilité d'une politique, la désactiver temporairement ou déplacer des adresses IP d'une politique à une autre.
+- Suivre l'effet d'un profil sur les attaques détectées.
+
+## Prérequis
+
+- Au moins un service OVHcloud disposant d'une adresse IP protégée par l'infrastructure Anti-DDoS (serveur dédié, VPS, instance Public Cloud ou OVHcloud Load Balancer).
+- Un accès à l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>.
+- Votre inscription au programme Alpha des profils Anti-DDoS. Les profils sont filtrés par identifiant client (NIC handle) : le catalogue n'est visible que par les comptes admis dans le programme.
+- Pour les procédures via l'API : avoir [créé vos identifiants d'API OVHcloud](/guides/manage-and-operate/api/first-steps) et être connecté à l'<ApiLink>API OVHcloud</ApiLink>.
+
+## Introduction
+
+Les profils Anti-DDoS constituent un catalogue de descriptions de trafic maintenu par OVHcloud, à raison d'un profil par famille de charge de travail. Chaque profil décrit le comportement légitime d'un protocole — les ports qu'il utilise, les débits de paquets et les schémas de connexion qui lui sont normaux — afin que les moteurs de mitigation puissent distinguer ce comportement d'une attaque. Vous ne construisez pas les profils vous-même : vous en choisissez un dans le catalogue, vous définissez son degré de filtrage, puis vous l'associez aux adresses IP qui portent cette charge de travail.
+
+Le profilage s'applique à la couche **VAC**, l'infrastructure Anti-DDoS généraliste placée devant vos services. Il ne remplace pas le [Edge Network Firewall](/guides/bare-metal-cloud/dedicated-servers/firewall-network) et ne modifie pas le tarif de vos services.
+
+## En pratique
+
+**Sommaire :**
+
+- [Présentation du modèle objet](#overview)
+- [Configuration commune](#common-setup)
+- [Cas A : serveurs VPN/UDP](#scenario-a)
+- [Cas B : nœuds blockchain et Solana](#scenario-b)
+- [Cas C : VoIP, RTC et streaming](#scenario-c)
+- [Gérer vos politiques](#manage)
+- [Suivre l'effet d'un profil](#monitoring)
+- [Limitations](#limitations)
+- [Résolution des incidents](#troubleshooting)
+
+### Présentation du modèle objet <a name="overview"></a>
+
+Cette section décrit les quatre objets que vous manipulez. Comprendre leur imbrication fait gagner du temps par la suite, car l'espace client et l'API exposent la même hiérarchie.
+
+| Objet | Propriétaire | Rôle |
+|---|---|---|
+| **Profil** | OVHcloud | Une entrée de catalogue en lecture seule décrivant une famille de charge de travail. Vous y faites référence, sans pouvoir la créer ni la modifier. |
+| **Ressource** | Vous | Le conteneur qui héberge votre configuration. Une ressource est incluse sans surcoût. |
+| **Politique** | Vous | Un profil associé à un niveau de sensibilité, que vous pouvez activer ou désactiver. C'est l'objet effectivement appliqué au réseau. |
+| **Cible** | Vous | Les adresses IP ou les blocs auxquels s'applique une politique. |
+
+En résumé : une **politique** associe un **profil** à une **sensibilité**, réside dans votre **ressource** et s'applique aux **cibles** que vous lui attachez.
+
+#### Profils disponibles pendant la phase Alpha
+
+Trois profils sont ouverts pendant la phase Alpha. Ils ont été retenus parce qu'ils couvrent les faux positifs les plus fréquemment signalés.
+
+| Profil | Charge de travail décrite | Symptôme traité |
+|---|---|---|
+| VPN/UDP | Concentrateurs WireGuard, OpenVPN et IPsec. | Trafic UDP à fort débit de paquets vers une seule adresse, interprété comme une attaque par saturation UDP, et fragments UDP rejetés. |
+| Blockchain/Solana | Nœuds validateurs et RPC Solana. | Ports spécifiques au protocole et schémas de connexion *gossip* classés comme une attaque. |
+| VoIP/RTC/Streaming | Voix, WebRTC et diffusion HLS. | Hausses soudaines et légitimes de l'audience assimilées à une attaque volumétrique. |
+
+Un profil Custom UDP est prévu pour les phases suivantes, à destination des services UDP ne correspondant à aucun des profils ci-dessus.
+
+#### Sensibilité
+
+Chaque profil propose des niveaux de sensibilité ordonnés. La sensibilité détermine le point d'équilibre entre un filtrage trop large et un filtrage trop permissif.
+
+| Sensibilité | Effet | Quand la choisir |
+|---|---|---|
+| `LOW` | Filtrage le moins agressif. Moins de faux positifs : le trafic légitime a moins de risques d'être rejeté. | Votre trafic est irrégulier par nature et la disponibilité importe davantage que la profondeur du filtrage. |
+| `MEDIUM` | Équilibré. Le point de départ recommandé. | Vous appliquez un profil pour la première fois. |
+| `HIGH` | Filtrage le plus agressif. Moins de faux négatifs : davantage de trafic d'attaque est intercepté. | Vous subissez une attaque sophistiquée que les niveaux inférieurs ne mitigent pas complètement. |
+
+#### Détermination de la politique appliquée à une adresse IP
+
+Une adresse IP est couverte par exactement une politique. Lorsqu'un bloc d'adresses et une adresse plus spécifique contenue dans ce bloc sont associés à deux politiques différentes, c'est l'entrée la plus spécifique qui s'applique — la même logique de correspondance du préfixe le plus long qu'en routage. Par exemple, si `203.0.113.0/24` est associé à une politique VoIP et `203.0.113.10` à une politique VPN/UDP, alors `203.0.113.10` utilise la politique VPN/UDP et le reste du bloc utilise la politique VoIP.
+
+### Configuration commune <a name="common-setup"></a>
+
+Cette section couvre les étapes valables quel que soit le profil visé : la création de votre ressource et l'accès aux écrans de profilage.
+
+{/* DRAFT: To verify — l'intégralité de cette section est issue de la PRD Anti-DDoS Profiles (v1.9) et non de l'espace client livré ni de l'API publique. Chaque chemin de menu, libellé de bouton et route ci-dessous doit être revérifié sur la version Alpha avant publication. Les libellés de boutons sont laissés dans leur forme française probable et doivent être confirmés dans l'interface. */}
+
+#### Étape 1 — Commander votre ressource
+
+La ressource est commandée sans surcoût, sous le nom commercial **VAC Anti-DDoS profiling**. Cette commande ne modifie pas la protection déjà appliquée à vos services.
+
+<Tabs>
+  <Tab label="Espace client OVHcloud">
+
+1. Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>.
+2. Rendez-vous dans la section **Network** > **Anti-DDoS**. La page est intitulée **Network Security**.
+3. Sélectionnez la rubrique `VAC`.
+4. Cliquez sur le bouton <code className="action">Commander</code> pour créer votre ressource de profilage. [TODO: confirmer le point d'entrée exact et le libellé du bouton pour la commande gratuite de la ressource sur la version Alpha]
+
+  </Tab>
+  <Tab label="API OVHcloud">
+
+La ressource est créée au moyen d'une commande gratuite. [TODO: confirmer si la version Alpha expose une route de création directe ou impose une commande Agora — la PRD spécifie une commande Agora gratuite, ce qui implique généralement une route de commande plutôt qu'un POST sur la ressource]
+
+  </Tab>
+</Tabs>
+
+#### Étape 2 — Consulter le catalogue de profils
+
+Le catalogue est filtré par identifiant client : vous ne voyez que les profils auxquels votre compte est éligible. Si le catalogue est vide, votre compte n'a pas encore été inscrit au programme Alpha.
+
+<Tabs>
+  <Tab label="Espace client OVHcloud">
+
+1. Dans **Network** > **Anti-DDoS**, sélectionnez la rubrique `VAC`.
+2. Ouvrez l'onglet `Profils`. [TODO: confirmer le nom de l'onglet — l'espace client définit actuellement un libellé d'onglet `Profils`, mais l'écran de profils effectivement implémenté relève d'Anti-DDoS Game et non de VAC]
+3. Consultez les profils disponibles et leurs options de sensibilité.
+
+{/* DRAFT: To screenshot — l'onglet Profils de la rubrique VAC affichant le catalogue. Capture impossible avant le déploiement de la version Alpha. */}
+
+  </Tab>
+  <Tab label="API OVHcloud">
+
+Le catalogue est une collection de référence en lecture seule de l'API Network Defense. [TODO: confirmer la route du catalogue — la PRD décrit une collection `reference/profile` sous `/v2/networkDefense/vac`, absente de l'API publique à ce jour]
+
+  </Tab>
+</Tabs>
+
+### Cas A : serveurs VPN/UDP <a name="scenario-a"></a>
+
+Utilisez ce cas pour les concentrateurs WireGuard, OpenVPN ou IPsec. Un serveur VPN portant de nombreux tunnels clients produit un flux UDP soutenu et à fort débit de paquets vers une seule adresse, que la détection générique interprète comme une attaque par saturation UDP. Le trafic UDP fragmenté constitue un second mode de défaillance, car des fragments arrivant dans le désordre sont facilement considérés comme du trafic malformé.
+
+#### Étape 1 — Créer la politique
+
+<Tabs>
+  <Tab label="Espace client OVHcloud">
+
+1. Dans l'onglet `Profils`, cliquez sur le bouton <code className="action">Créer une politique</code>. [TODO: confirmer le libellé du bouton]
+2. Saisissez un nom identifiant la charge de travail, par exemple `vpn-concentrators`.
+3. Sélectionnez le profil **VPN/UDP**.
+4. Définissez la sensibilité sur `MEDIUM`.
+5. Confirmez la création.
+
+  </Tab>
+  <Tab label="API OVHcloud">
+
+[TODO: confirmer la route et la charge utile de création d'une politique. La PRD spécifie un POST sur la collection des politiques de `/v2/networkDefense/vac`, avec les champs `name`, `profile` et `sensitivity`, mais la route n'est pas encore publiée.]
+
+  </Tab>
+</Tabs>
+
+#### Étape 2 — Associer vos adresses VPN
+
+Les cibles sont ajoutées une par une. La propriété de chaque adresse est vérifiée avant acceptation, et la modification est appliquée de façon asynchrone : la politique ne prend pas effet sur le réseau à l'instant où la requête aboutit.
+
+<Tabs>
+  <Tab label="Espace client OVHcloud">
+
+1. Ouvrez la politique que vous venez de créer.
+2. Cliquez sur le bouton <code className="action">Ajouter une IP</code>. [TODO: confirmer le libellé du bouton]
+3. Saisissez l'adresse IP du serveur VPN, ou le bloc contenant vos concentrateurs.
+4. Répétez l'opération pour chaque adresse. L'interface parcourt les adresses que vous sélectionnez.
+
+  </Tab>
+  <Tab label="API OVHcloud">
+
+[TODO: confirmer la route de création d'une cible. La PRD spécifie une sous-ressource typée de la politique, de type `PREFIX` pour les adresses IP et les blocs.]
+
+  </Tab>
+</Tabs>
+
+#### Vérifier le cas A
+
+| Contrôle | Méthode | Résultat attendu |
+|---|---|---|
+| La politique est appliquée | Ouvrez la politique et consultez son statut d'application. | Le statut indique la modification comme appliquée pour chaque préfixe résolu. |
+| L'adresse est associée | Consultez la liste des cibles de la politique. | Vos adresses VPN y figurent et sont actives. |
+| Les tunnels tiennent la charge | Générez votre trafic de pointe habituel. | Les tunnels clients restent établis, sans les coupures périodiques constatées avant le profilage. |
+| La fragmentation est prise en charge | Émettez un trafic suffisamment volumineux pour être fragmenté. | Les fragments sont acheminés. Dans le cas contraire, abaissez la sensibilité d'un niveau avant de modifier votre MTU. |
+
+### Cas B : nœuds blockchain et Solana <a name="scenario-b"></a>
+
+Utilisez ce cas pour les nœuds validateurs et RPC Solana. Solana répartit son trafic sur une large plage de ports UDP pour la diffusion *gossip* et la propagation des blocs, et les nœuds RPC acceptent un grand nombre de connexions clientes de courte durée. La détection générique interprète mal ces deux schémas.
+
+En attendant la disponibilité générale des profils, le réglage Solana reste possible par demande d'assistance. Cette voie est décrite dans le guide [Configurer l'Anti-DDoS pour Solana sur un serveur dédié](/guides/bare-metal-cloud/dedicated-servers/blockchain-anti-ddos) et demeure la procédure prise en charge pour les comptes hors programme Alpha.
+
+#### Étape 1 — Créer la politique
+
+Suivez la même procédure que pour le cas A, en sélectionnant le profil **Blockchain/Solana**. Nommez la politique d'après le rôle dans le cluster, par exemple `solana-validators`, afin de pouvoir séparer ultérieurement les nœuds validateurs et RPC s'ils nécessitent des sensibilités différentes.
+
+#### Étape 2 — Associer les adresses de vos nœuds
+
+Associez les adresses de vos nœuds validateurs et RPC. Si vos nœuds occupent un bloc contigu, associez le bloc plutôt que chaque adresse : un bloc compte pour une seule cible.
+
+> [!TIP]
+> Conservez les nœuds validateurs et RPC dans des politiques distinctes. Leurs profils de trafic diffèrent, et cette séparation vous permet d'augmenter la sensibilité sur les nœuds RPC, exposés à l'Internet public, sans toucher au trafic de consensus.
+
+#### Vérifier le cas B
+
+| Contrôle | Méthode | Résultat attendu |
+|---|---|---|
+| La politique est appliquée | Consultez le statut d'application de la politique. | La modification est signalée comme appliquée. |
+| Le consensus n'est pas affecté | Vérifiez le taux de votes et de slots manqués de votre validateur. | Les crédits de vote s'accumulent normalement, sans augmentation des slots manqués. |
+| La diffusion *gossip* atteint le cluster | Contrôlez le nombre de pairs de votre nœud. | Le nombre de pairs est stable et correspond à la taille attendue du cluster. |
+| Le service RPC reste joignable | Interrogez le point d'accès JSON-RPC du nœud. | Les requêtes aboutissent, sans nouveaux dépassements de délai. |
+
+### Cas C : VoIP, RTC et streaming <a name="scenario-c"></a>
+
+Utilisez ce cas pour les services de voix, les applications WebRTC et la diffusion HLS. Le problème caractéristique n'est pas ici un débit soutenu mais une rupture : un événement en direct ou un contenu viral multiplie le nombre de spectateurs simultanés en quelques secondes, ce qui correspond exactement à la signature du début d'une attaque volumétrique.
+
+#### Étape 1 — Créer la politique
+
+Suivez la procédure du cas A, en sélectionnant le profil **VoIP/RTC/Streaming**.
+
+Pour un événement planifié, créez la politique à l'avance plutôt que pendant l'événement. Les modifications s'appliquent de façon asynchrone : une politique créée alors que l'audience monte déjà risque de ne pas prendre effet à temps.
+
+#### Étape 2 — Associer vos adresses de diffusion
+
+Associez les adresses qui reçoivent le trafic client, c'est-à-dire vos nœuds de diffusion ou de périphérie. Si votre diffusion est placée derrière un OVHcloud Load Balancer, associez les points d'accès du Load Balancer : ils sont pris en charge comme cibles du profilage VAC.
+
+#### Étape 3 — Ajuster la sensibilité autour de l'événement
+
+La sensibilité peut être modifiée sur une politique active sans détacher ses cibles, et la modification s'applique à toutes les adresses associées en une seule opération.
+
+1. Avant l'événement, abaissez la sensibilité d'un niveau afin d'élargir la tolérance aux pics légitimes.
+2. Après l'événement, ramenez la politique à son niveau habituel.
+
+#### Vérifier le cas C
+
+| Contrôle | Méthode | Résultat attendu |
+|---|---|---|
+| La politique est appliquée | Consultez le statut d'application. | La modification est signalée comme appliquée sur toutes les adresses associées. |
+| Les pics sont tolérés | Comparez un pic au pic précédent sans profil. | Aucun événement de mitigation ne coïncide avec la montée d'audience. |
+| Les flux ne sont pas dégradés | Surveillez la remise en mémoire tampon côté client. | Elle reste à son niveau de référence pendant la montée en charge. |
+
+### Gérer vos politiques <a name="manage"></a>
+
+Cette section couvre les modifications les plus fréquentes une fois vos politiques en place.
+
+| Action | Effet | Remarques |
+|---|---|---|
+| Modifier la sensibilité | S'applique à toutes les cibles de la politique en une seule opération. | L'ajustement le plus courant. Procédez niveau par niveau et observez avant de poursuivre. |
+| Désactiver la politique | Les adresses concernées reviennent à la protection Anti-DDoS par défaut. Les cibles sont conservées. | Utilisez cette action pour écarter ou confirmer le rôle du profil lors d'un diagnostic, plutôt que de supprimer la politique. |
+| Réactiver la politique | Le profil est de nouveau appliqué aux cibles conservées. | |
+| Déplacer une cible | Détachez l'adresse d'une politique et associez-la à une autre. | Une adresse appartient à exactement une politique. |
+| Supprimer la politique | Supprime la configuration. Les adresses concernées reviennent à la protection par défaut. | |
+
+> [!INFO]
+> Renommer une politique ne la réapplique pas au réseau. Modifier son profil ou sa sensibilité, si.
+
+Si votre compte a participé à la phase interne qui a précédé la phase Alpha, certaines associations de profils peuvent apparaître signalées comme obsolètes. Elles ne sont pas appliquées silencieusement : vous pouvez les remplacer par une politique de votre choix, et revenir en arrière pendant la fenêtre de retour arrière si la modification pose problème. [TODO: confirmer la durée de la fenêtre de retour arrière]
+
+### Suivre l'effet d'un profil <a name="monitoring"></a>
+
+Le profilage modifie le trafic rejeté : la façon d'évaluer un profil consiste donc à comparer l'activité de mitigation avant et après son application. Les routes de cette section sont disponibles dès aujourd'hui et ne sont pas spécifiques à la phase Alpha.
+
+#### Attaques détectées
+
+Récupérez les événements de mitigation enregistrés pour vos sous-réseaux protégés.
+
+<Api version="v2" section="/networkDefense" method="GET" route={"/networkDefense/vac/event"} />
+
+Chaque événement décrit une mitigation :
+
+| Champ | Description |
+|---|---|
+| `startedAt` | Moment où le système de détection a déclenché l'alerte. |
+| `endedAt` | Moment où l'événement s'est achevé. Valeur nulle tant que l'événement est en cours. |
+| `subnet` | Sous-réseau concerné par l'événement. |
+| `vectors` | Vecteurs d'attaque identifiés, par exemple `DNS`, `NTP` ou `TCP_SYN`. |
+
+> [!INFO]
+> Les adresses IP sources ne sont pas communiquées. Pour la plupart des types d'attaques, elles sont usurpées ou réfléchies : elles ne peuvent donc pas être considérées comme fiables.
+
+#### Trafic rejeté et trafic acheminé
+
+Récupérez les statistiques de trafic mesurées au niveau de la couche de mitigation.
+
+<Api version="v2" section="/networkDefense" method="GET" route={"/networkDefense/vac/traffic"} />
+
+La réponse renvoie des séries `bps` et `pps`, chacune répartie entre `dropped` et `passed`, ainsi qu'un tableau `timestamps`. Tous les tableaux ont la même longueur : la Nième valeur de `dropped` correspond au Nième horodatage. Un profil qui remplit son rôle se traduit par une baisse de `dropped` lors des pics légitimes, sans baisse de `dropped` pendant les attaques réelles.
+
+#### Depuis l'espace client
+
+1. Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>.
+2. Rendez-vous dans la section **Network** > **Anti-DDoS**. La page est intitulée **Network Security**.
+3. Sélectionnez la rubrique `VAC`, puis choisissez l'adresse IP à examiner.
+4. Ouvrez l'onglet `Vue d'ensemble` pour les statistiques d'attaques, ou l'onglet `Trafic` pour les séries de trafic rejeté et acheminé.
+
+Pour une description plus complète de ces écrans, consultez le guide [Monitoring des attaques DDoS avec le Network Security Dashboard](/guides/bare-metal-cloud/dedicated-servers/network-security-dashboard).
+
+{/* DRAFT: To verify — la PRD ajoute une colonne de profil au Network Security Dashboard ainsi qu'un filtre par profil sur les événements de mitigation. Ni l'un ni l'autre ne sont présents dans l'espace client à ce jour : ils ne sont donc volontairement pas documentés ici. À ajouter dès la livraison de la version Alpha. */}
+
+### Limitations <a name="limitations"></a>
+
+| Limitation | Détails |
+|---|---|
+| Disponibilité en phase Alpha | Le catalogue est filtré par identifiant client. Les comptes hors programme Alpha ne voient aucun profil. |
+| Politiques par ressource | 20. |
+| Ressources par compte | Une, incluse sans surcoût. |
+| Types de cibles | Adresses IP et blocs uniquement : une adresse IPv4, un bloc IPv4, ou un bloc IPv6 en `/64` ou `/56`. |
+| Adresses par politique | [TODO: confirmer le nombre maximal d'adresses et de blocs par politique — non défini dans la spécification] |
+| Politiques par adresse | Une. Lorsqu'un bloc et une adresse qu'il contient sont associés à deux politiques, la plus spécifique s'applique. |
+| Serveurs dédiés GAME | Les adresses IP principales et les Additional IP pointant vers des serveurs dédiés GAME ne peuvent pas servir de cibles. Elles conservent leur protection existante — consultez le guide [Protéger un serveur Game avec le firewall applicatif](/guides/bare-metal-cloud/dedicated-servers/firewall-game-ddos). |
+| Projets Public Cloud | Une politique ne peut pas encore cibler un projet Public Cloud entier. Les Floating IP doivent être associées individuellement, et une politique ne suit pas une adresse libérée puis réattribuée. |
+| Noms de service | Une politique ne peut pas cibler un nom de service ni un domaine. |
+| Délai d'application | Les modifications s'appliquent de façon asynchrone. [TODO: confirmer le délai de convergence attendu] |
+| Terraform | Aucune ressource du provider Terraform OVHcloud n'existe encore pour le profilage. |
+| Réglages personnalisés existants | Si l'assistance OVHcloud a déjà appliqué des seuils personnalisés à vos adresses, le chemin de migration vers les politiques n'est pas encore défini. Contactez l'assistance avant toute modification. |
+
+### Résolution des incidents <a name="troubleshooting"></a>
+
+| Problème | Cause possible | Solution |
+|---|---|---|
+| Le catalogue de profils est vide | Votre compte n'est pas inscrit au programme Alpha, ou l'éligibilité n'est pas encore propagée. | Vérifiez votre inscription. Le catalogue est filtré par identifiant client. |
+| Du trafic légitime est encore rejeté | La sensibilité est trop élevée, ou la charge de travail ne correspond pas au profil. | Abaissez la sensibilité d'un niveau et observez. Si le comportement persiste en `LOW`, le profil n'est probablement pas le bon : signalez-le. |
+| Une attaque n'a pas été entièrement mitigée | La sensibilité est trop faible. | Augmentez la sensibilité d'un niveau. Comparez la valeur `dropped` des statistiques de trafic avant et après. |
+| Une adresse ne peut pas être ajoutée comme cible | L'adresse n'est pas éligible, ou la vérification de propriété a échoué. | Vérifiez que l'adresse n'est pas rattachée à un serveur dédié GAME et qu'elle appartient au compte qui crée la politique. |
+| Une cible apparaît désactivée sans intervention | L'adresse a été déplacée vers un service ne prenant pas en charge le profilage. | Le statut des cibles est défini par le système, non par vous. Ramenez l'adresse vers un service pris en charge et la cible est réactivée automatiquement. |
+| Une modification ne prend pas effet | La modification est encore en cours d'application. | Consultez le statut d'application de la politique. S'il ne converge pas, [contactez l'assistance](https://help.ovhcloud.com/csm?id=csm_get_help). |
+| Du trafic est rejeté sans qu'aucune politique l'explique | Le trafic est peut-être filtré par une autre couche. | Vérifiez vos règles [Edge Network Firewall](/guides/bare-metal-cloud/dedicated-servers/firewall-network) ainsi que votre état [Anti-Hack](/guides/bare-metal-cloud/dedicated-servers/anti-hack-dedicated-vps). Les profils ne se substituent ni à l'un ni à l'autre. |
+
+## Aller plus loin
+
+[Configurer l'Anti-DDoS pour Solana sur un serveur dédié](/guides/bare-metal-cloud/dedicated-servers/blockchain-anti-ddos)
+
+[Monitoring des attaques DDoS avec le Network Security Dashboard](/guides/bare-metal-cloud/dedicated-servers/network-security-dashboard)
+
+[Activer et configurer le Edge Network Firewall](/guides/bare-metal-cloud/dedicated-servers/firewall-network)
+
+[Informations Anti-Hack - Serveur dédié et VPS](/guides/bare-metal-cloud/dedicated-servers/anti-hack-dedicated-vps)
+
+Échangez avec notre [communauté d'utilisateurs](/links/community).

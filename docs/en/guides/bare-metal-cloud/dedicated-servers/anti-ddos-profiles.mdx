@@ -1,0 +1,343 @@
+---
+title: Configure Anti-DDoS Customer Profiles
+description: Configure Anti-DDoS Customer Profiles to tune OVHcloud mitigation to your workload and reduce false positives on your protected IP addresses.
+lastUpdated: 2026-08-07
+---
+
+import Api from '@components/Api';
+import { Tab, Tabs } from '@rspress/core/theme';
+
+:::warning
+Anti-DDoS Customer Profiles are currently in **Alpha**, available to a limited number of participants on request. The object model, the Control Panel screens and the API routes described in this guide may change before general availability. Do not rely on this feature for production protection changes without a fallback plan.
+:::
+
+## Objective
+
+The OVHcloud Anti-DDoS Infrastructure protects your services against volumetric and protocol attacks by default, using generic detection rules. Those rules do not know what your service does, so traffic that is legitimate but unusual — high packet-rate VPN tunnels, blockchain gossip protocols, or a sudden streaming audience spike — can be mitigated as if it were an attack. Anti-DDoS Customer Profiles let you declare the nature of your workload so that mitigation is tuned to it.
+
+**In this guide, you will learn how to:**
+
+- Understand how profiles, sensitivity and targets fit together.
+- Create a policy from the OVHcloud profile catalogue and attach it to your IP addresses.
+- Apply the three profiles available during the Alpha: VPN/UDP, Blockchain/Solana, and VoIP/RTC/Streaming.
+- Change the sensitivity of a policy, disable it temporarily, or move IP addresses between policies.
+- Monitor the effect of a profile on detected attacks.
+
+## Requirements
+
+- At least one OVHcloud service with an IP address protected by the Anti-DDoS Infrastructure (Dedicated Server, VPS, Public Cloud instance, or OVHcloud Load Balancer).
+- Access to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+- Enrolment in the Anti-DDoS Customer Profiles Alpha programme. Profiles are filtered per NIC handle, so the catalogue is only visible to accounts accepted into the programme.
+- For the API procedures: having [created your OVHcloud API credentials](/guides/manage-and-operate/api/first-steps) and being connected to the <ApiLink>OVHcloud API</ApiLink>.
+
+## Introduction
+
+Anti-DDoS Customer Profiles are an OVHcloud-maintained catalogue of traffic descriptions, one per workload family. Each profile encodes the legitimate behaviour of a protocol — which ports it uses, what packet rates and connection patterns are normal — so that the mitigation engines can distinguish that behaviour from an attack. You do not build profiles yourself: you pick one from the catalogue, choose how aggressively it should filter, and attach it to the IP addresses running that workload.
+
+Profiling applies to the **VAC** layer, which is the general-purpose Anti-DDoS infrastructure in front of your services. It does not replace the [Edge Network Firewall](/guides/bare-metal-cloud/dedicated-servers/firewall-network), and it does not change the price of your services.
+
+## Instructions
+
+**Contents:**
+
+- [Overview of the object model](#overview)
+- [Common setup](#common-setup)
+- [Scenario A: VPN/UDP servers](#scenario-a)
+- [Scenario B: Blockchain and Solana nodes](#scenario-b)
+- [Scenario C: VoIP, RTC and streaming](#scenario-c)
+- [Managing your policies](#manage)
+- [Monitoring the effect of a profile](#monitoring)
+- [Limitations](#limitations)
+- [Troubleshooting](#troubleshooting)
+
+### Overview of the object model <a name="overview"></a>
+
+This section describes the four objects you work with. Understanding how they nest saves time later, because the Control Panel and the API expose the same hierarchy.
+
+| Object | Who owns it | What it does |
+|---|---|---|
+| **Profile** | OVHcloud | A read-only catalogue entry describing one workload family. You reference it; you cannot create or edit one. |
+| **Resource** | You | The container holding your configuration. One resource is included at no cost. |
+| **Policy** | You | A chosen profile plus a sensitivity level, which you can enable or disable. This is the object that gets applied to the network. |
+| **Target** | You | The IP addresses or blocks a policy applies to. |
+
+In short: a **policy** pairs a **profile** with a **sensitivity**, lives inside your **resource**, and applies to the **targets** you attach to it.
+
+#### Profiles available during the Alpha
+
+Three profiles are open during the Alpha, chosen because they cover the most frequently reported false positives.
+
+| Profile | Workload it describes | Typical symptom it addresses |
+|---|---|---|
+| VPN/UDP | WireGuard, OpenVPN and IPsec concentrators. | High packet-rate UDP from a single address read as a UDP flood, and UDP fragmentation being dropped. |
+| Blockchain/Solana | Solana validator and RPC nodes. | Protocol-specific ports and gossip connection patterns classified as an attack. |
+| VoIP/RTC/Streaming | Voice, WebRTC and HLS delivery. | Sudden legitimate audience spikes resembling a volumetric attack. |
+
+A Custom UDP profile is planned for later phases, for UDP services that do not match any of the above.
+
+#### Sensitivity
+
+Each profile offers ordered sensitivity levels. Sensitivity sets where the profile sits on the trade-off between filtering too much and filtering too little.
+
+| Sensitivity | Effect | Choose it when |
+|---|---|---|
+| `LOW` | Least aggressive filtering. Fewer false positives — legitimate traffic is less likely to be dropped. | Your traffic is bursty by nature and availability matters more than filtering depth. |
+| `MEDIUM` | Balanced. The recommended starting point. | You are applying a profile for the first time. |
+| `HIGH` | Most aggressive filtering. Fewer false negatives — more attack traffic is caught. | You are under a sophisticated attack that the lower levels do not fully mitigate. |
+
+#### How an IP address resolves to a policy
+
+An IP address is covered by exactly one policy. When both an IP block and a more specific address inside it are attached to different policies, the most specific entry wins — the same longest-prefix-match logic used in routing. For example, if `203.0.113.0/24` is attached to a VoIP policy and `203.0.113.10` is attached to a VPN/UDP policy, then `203.0.113.10` uses the VPN/UDP policy and the rest of the block uses the VoIP policy.
+
+### Common setup <a name="common-setup"></a>
+
+This section covers the steps that apply whichever profile you intend to use: creating your resource and locating the profiling screens.
+
+{/* DRAFT: To verify — the whole of this section is derived from the Anti-DDoS Profiles PRD (v1.9), not from the shipped Control Panel or public API. Every menu path, button label and route below must be re-checked against the Alpha build before this guide is published. */}
+
+#### Step 1 — Order your resource
+
+The resource is ordered at no cost, under the commercial name **VAC Anti-DDoS profiling**. Ordering it does not change the protection already applied to your services.
+
+<Tabs>
+  <Tab label="OVHcloud Control Panel">
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Navigate to **Network** > **Anti-DDoS**. The page is titled **Network Security**.
+3. Select the `VAC` section.
+4. Click the <code className="action">Order</code> button to create your profiling resource. [TODO: confirm the exact entry point and button label for the free resource order in the Alpha build]
+
+  </Tab>
+  <Tab label="OVHcloud API">
+
+The resource is created through a free order. [TODO: confirm whether the Alpha exposes a direct creation route or requires an Agora order — the PRD specifies an Agora free order, which usually means an order route rather than a resource POST]
+
+  </Tab>
+</Tabs>
+
+#### Step 2 — Browse the profile catalogue
+
+The catalogue is filtered per NIC handle: you only see the profiles your account is eligible for. If the catalogue is empty, your account has not yet been enrolled in the Alpha.
+
+<Tabs>
+  <Tab label="OVHcloud Control Panel">
+
+1. In **Network** > **Anti-DDoS**, select the `VAC` section.
+2. Open the `Profiles` tab. [TODO: confirm the tab name — the Control Panel currently defines a `Profiles` tab label, but the implemented profiles screen belongs to Anti-DDoS Game, not to VAC]
+3. Review the available profiles and their sensitivity options.
+
+{/* DRAFT: To screenshot — the VAC Profiles tab showing the catalogue. Not capturable until the Alpha build is deployed. */}
+
+  </Tab>
+  <Tab label="OVHcloud API">
+
+The catalogue is a read-only reference collection under the Network Defense API. [TODO: confirm the catalogue route — the PRD describes a `reference/profile` collection under `/v2/networkDefense/vac`, which is not yet present in the public API]
+
+  </Tab>
+</Tabs>
+
+### Scenario A: VPN/UDP servers <a name="scenario-a"></a>
+
+Use this scenario for WireGuard, OpenVPN or IPsec concentrators. A VPN server carrying many client tunnels produces a sustained, high packet-rate UDP flow towards a single address, which generic detection reads as a UDP flood. Fragmented UDP adds a second failure mode, because fragments arriving out of order are easily treated as malformed traffic.
+
+#### Step 1 — Create the policy
+
+<Tabs>
+  <Tab label="OVHcloud Control Panel">
+
+1. In the `Profiles` tab, click the <code className="action">Create policy</code> button. [TODO: confirm button label]
+2. Enter a name that identifies the workload, for example `vpn-concentrators`.
+3. Select the **VPN/UDP** profile.
+4. Set the sensitivity to `MEDIUM`.
+5. Confirm the creation.
+
+  </Tab>
+  <Tab label="OVHcloud API">
+
+[TODO: confirm the policy creation route and payload. The PRD specifies a POST on the policy collection of `/v2/networkDefense/vac` with `name`, `profile` and `sensitivity` fields, but the route is not yet published.]
+
+  </Tab>
+</Tabs>
+
+#### Step 2 — Attach your VPN addresses
+
+Targets are added one at a time. Each address is ownership-verified before it is accepted, and the change is applied asynchronously — the policy does not take effect on the network the instant the request returns.
+
+<Tabs>
+  <Tab label="OVHcloud Control Panel">
+
+1. Open the policy you created.
+2. Click the <code className="action">Add IP</code> button. [TODO: confirm button label]
+3. Enter the IP address of the VPN server, or the block containing your concentrators.
+4. Repeat for each address. The interface iterates over the addresses you select.
+
+  </Tab>
+  <Tab label="OVHcloud API">
+
+[TODO: confirm the target creation route. The PRD specifies a typed target sub-resource of a policy, with type `PREFIX` for IP addresses and blocks.]
+
+  </Tab>
+</Tabs>
+
+#### Verify Scenario A
+
+| Check | How | Expected result |
+|---|---|---|
+| The policy is applied | Open the policy and read its render status. | The status reports the change as applied for every resolved prefix. |
+| The address is attached | Check the target list of the policy. | Your VPN addresses are listed and enabled. |
+| Tunnels stay up under load | Run your normal peak traffic. | Client tunnels remain established, without the periodic drops seen before profiling. |
+| Fragmentation is handled | Send traffic large enough to fragment. | Fragments are delivered. If they are not, lower the sensitivity one level before changing your MTU. |
+
+### Scenario B: Blockchain and Solana nodes <a name="scenario-b"></a>
+
+Use this scenario for Solana validator and RPC nodes. Solana spreads traffic across a wide UDP port range for gossip and block propagation, and RPC nodes accept large numbers of short-lived client connections. Both patterns are misread by generic detection.
+
+Until profiles are generally available, Solana tuning is also possible through a support request. That path is documented in [Configure Anti-DDoS for Solana on Dedicated Servers](/guides/bare-metal-cloud/dedicated-servers/blockchain-anti-ddos), and remains the supported route for accounts outside the Alpha.
+
+#### Step 1 — Create the policy
+
+Follow the same procedure as Scenario A, selecting the **Blockchain/Solana** profile. Name the policy after the cluster role, for example `solana-validators`, so that validator and RPC nodes can later be separated if they need different sensitivities.
+
+#### Step 2 — Attach your node addresses
+
+Attach the addresses of your validator and RPC nodes. If your nodes sit in a contiguous block, attach the block rather than each address — a block counts as a single target.
+
+> [!TIP]
+> Keep validator and RPC nodes in separate policies. Their traffic profiles differ, and separating them lets you raise sensitivity on the RPC nodes, which are exposed to the public Internet, without touching consensus traffic.
+
+#### Verify Scenario B
+
+| Check | How | Expected result |
+|---|---|---|
+| The policy is applied | Read the render status of the policy. | The change is reported as applied. |
+| Consensus is unaffected | Check your validator's vote and skip rate. | Vote credits accrue normally, with no rise in skipped slots. |
+| Gossip reaches the cluster | Inspect your node's peer count. | The peer count is stable and matches the cluster's expected size. |
+| RPC stays reachable | Query the node's JSON-RPC endpoint. | Requests are answered without new timeouts. |
+
+### Scenario C: VoIP, RTC and streaming <a name="scenario-c"></a>
+
+Use this scenario for voice services, WebRTC applications and HLS delivery. The characteristic problem here is not a sustained rate but a step change: a live event or a viral moment multiplies concurrent viewers within seconds, which is exactly the shape of the onset of a volumetric attack.
+
+#### Step 1 — Create the policy
+
+Follow the procedure in Scenario A, selecting the **VoIP/RTC/Streaming** profile.
+
+For a scheduled event, create the policy in advance rather than during the event. Changes render asynchronously, so a policy created while an audience is already building may not take effect in time.
+
+#### Step 2 — Attach your delivery addresses
+
+Attach the addresses that receive client traffic — your edge or delivery nodes. If your delivery sits behind an OVHcloud Load Balancer, attach the Load Balancer endpoints: they are supported as targets for VAC profiling.
+
+#### Step 3 — Adjust sensitivity around the event
+
+Sensitivity can be changed on a live policy without detaching its targets, and the change applies to every attached address at once.
+
+1. Before the event, lower the sensitivity one level to widen the tolerance for legitimate spikes.
+2. After the event, return the policy to its normal level.
+
+#### Verify Scenario C
+
+| Check | How | Expected result |
+|---|---|---|
+| The policy is applied | Read the render status. | The change is reported as applied on all attached addresses. |
+| Spikes are tolerated | Compare a peak against the previous unprofiled peak. | No mitigation event coincides with the audience ramp. |
+| Streams are not degraded | Monitor client-side rebuffering. | Rebuffering stays at its baseline during the ramp. |
+
+### Managing your policies <a name="manage"></a>
+
+This section covers the changes you will make most often once your policies are in place.
+
+| Action | Effect | Notes |
+|---|---|---|
+| Change the sensitivity | Applies to every target of the policy at once. | The most common adjustment. Move one level at a time and observe before moving again. |
+| Disable the policy | The affected addresses fall back to default Anti-DDoS protection. Targets are kept. | Use this to rule the profile in or out while troubleshooting, rather than deleting the policy. |
+| Re-enable the policy | The profile is applied again to the retained targets. | |
+| Move a target | Detach the address from one policy and attach it to another. | An address belongs to exactly one policy. |
+| Delete the policy | Removes the configuration. Affected addresses return to default protection. | |
+
+> [!INFO]
+> Renaming a policy does not re-apply it to the network. Changing its profile or its sensitivity does.
+
+If your account took part in the internal phase that preceded the Alpha, you may see profile associations flagged as obsolete. These are not applied silently: you can override them with a policy of your own, and roll back within the rollback window if the change causes a problem. [TODO: confirm the duration of the rollback window]
+
+### Monitoring the effect of a profile <a name="monitoring"></a>
+
+Profiling changes which traffic is dropped, so the way to judge a profile is to compare mitigation activity before and after applying it. The routes in this section are available today and are not specific to the Alpha.
+
+#### Detected attacks
+
+Retrieve the mitigation events recorded for your protected subnets.
+
+<Api version="v2" section="/networkDefense" method="GET" route={"/networkDefense/vac/event"} />
+
+Each event describes one mitigation:
+
+| Field | Description |
+|---|---|
+| `startedAt` | When the detection system raised the alert. |
+| `endedAt` | When the event finished. Null while the event is ongoing. |
+| `subnet` | The subnet affected by the event. |
+| `vectors` | The attack vectors identified, for example `DNS`, `NTP` or `TCP_SYN`. |
+
+> [!INFO]
+> Source IP addresses are not reported. For most attack types they are spoofed or reflected, so they cannot be trusted.
+
+#### Dropped and passed traffic
+
+Retrieve the traffic statistics measured at the mitigation layer.
+
+<Api version="v2" section="/networkDefense" method="GET" route={"/networkDefense/vac/traffic"} />
+
+The response returns `bps` and `pps` series, each split into `dropped` and `passed`, alongside a `timestamps` array. All arrays share the same length, so the Nth value of `dropped` corresponds to the Nth timestamp. A profile that is doing its job shows a fall in `dropped` for legitimate peaks, with no fall in `dropped` during genuine attacks.
+
+#### In the Control Panel
+
+1. Log in to the <ManagerLink to="/">OVHcloud Control Panel</ManagerLink>.
+2. Navigate to **Network** > **Anti-DDoS**. The page is titled **Network Security**.
+3. Select the `VAC` section, then choose the IP address you want to inspect.
+4. Open the `Overview` tab for attack statistics, or the `Traffic` tab for the dropped and passed series.
+
+For a fuller description of these screens, see [Monitoring DDoS attacks with the Network Security Dashboard](/guides/bare-metal-cloud/dedicated-servers/network-security-dashboard).
+
+{/* DRAFT: To verify — the PRD adds a profile column to the Network Security Dashboard and a profile filter on mitigation events. Neither is present in the Control Panel yet, so they are deliberately not documented here. Add them once the Alpha build ships. */}
+
+### Limitations <a name="limitations"></a>
+
+| Limitation | Details |
+|---|---|
+| Alpha availability | The catalogue is filtered per NIC handle. Accounts outside the Alpha see no profiles. |
+| Policies per resource | 20. |
+| Resources per account | One, included at no cost. |
+| Target types | IP addresses and blocks only: an IPv4 address, an IPv4 block, or an IPv6 `/64` or `/56`. |
+| Addresses per policy | [TODO: confirm the maximum number of addresses and blocks per policy — undefined in the specification] |
+| Policies per address | One. Where a block and an address inside it are attached to different policies, the most specific wins. |
+| Game bare metal servers | Primary and Additional IP addresses pointing to GAME bare metal servers cannot be used as targets. They keep their existing protection — see [How to protect a Game server with the application firewall](/guides/bare-metal-cloud/dedicated-servers/firewall-game-ddos). |
+| Public Cloud projects | A policy cannot yet target a whole Public Cloud project. Floating IP addresses must be attached individually, and a policy does not follow an address that is released and reallocated. |
+| Service names | A policy cannot target a service name or a domain. |
+| Application time | Changes render asynchronously. [TODO: confirm the expected convergence time] |
+| Terraform | No OVHcloud Terraform provider resources exist for profiling yet. |
+| Existing custom tuning | If OVHcloud support has already applied custom thresholds to your addresses, the migration path to policies is not yet defined. Contact support before changing anything. |
+
+### Troubleshooting <a name="troubleshooting"></a>
+
+| Issue | Possible cause | Solution |
+|---|---|---|
+| The profile catalogue is empty | Your account is not enrolled in the Alpha, or eligibility has not propagated. | Confirm your enrolment. The catalogue is filtered per NIC handle. |
+| Legitimate traffic is still dropped | The sensitivity is too high, or the workload does not match the profile. | Lower the sensitivity one level and observe. If the behaviour persists at `LOW`, the profile is probably the wrong match — report it. |
+| An attack was not fully mitigated | The sensitivity is too low. | Raise the sensitivity one level. Compare `dropped` in the traffic statistics before and after. |
+| An address cannot be added as a target | The address is not eligible, or ownership verification failed. | Check that the address is not on a GAME bare metal server, and that it belongs to the account creating the policy. |
+| A target shows as disabled without being changed | The address was moved to a service that does not support profiling. | Target status is set by the system, not by you. Move the address back to a supported service and the target is re-enabled automatically. |
+| A change does not take effect | The change is still rendering. | Check the render status of the policy. If it does not converge, [contact support](https://help.ovhcloud.com/csm?id=csm_get_help). |
+| Traffic is dropped and no policy explains it | The traffic may be filtered by another layer. | Check your [Edge Network Firewall](/guides/bare-metal-cloud/dedicated-servers/firewall-network) rules and your [Anti-Hack](/guides/bare-metal-cloud/dedicated-servers/anti-hack-dedicated-vps) status. Profiles do not override either. |
+
+## Go further
+
+[Configure Anti-DDoS for Solana on Dedicated Servers](/guides/bare-metal-cloud/dedicated-servers/blockchain-anti-ddos)
+
+[Monitoring DDoS attacks with the Network Security Dashboard](/guides/bare-metal-cloud/dedicated-servers/network-security-dashboard)
+
+[Enabling and configuring the Edge Network Firewall](/guides/bare-metal-cloud/dedicated-servers/firewall-network)
+
+[Anti-Hack information - Dedicated Server and VPS](/guides/bare-metal-cloud/dedicated-servers/anti-hack-dedicated-vps)
+
+Join our [community of users](/links/community).
