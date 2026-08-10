@@ -71,7 +71,7 @@ export function LinkCard({
       )}
       <div className="link-card__content">
         <h3 className="link-card__title">
-          {title}
+          <span className="link-card__title-text">{title}</span>
           <span className="link-card__arrow">→</span>
         </h3>
         {description && <p className="link-card__description">{description}</p>}
