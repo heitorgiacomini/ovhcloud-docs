@@ -6,7 +6,7 @@
 - Improvement to the ‘ISSUE_TEMPLATE’ template
 
 ### Documentation
-- 14 guides updated across de, en, es, fr, it, pl, pt
+- 16 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.06.1
 
