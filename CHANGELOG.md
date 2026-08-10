@@ -2,11 +2,14 @@
 
 ## 2026.08.10
 
+### Fixes
+- **theme:** use semantic fieldsets for search filters
+
 ### Maintenance
 - Improvement to the ‘ISSUE_TEMPLATE’ template
 
 ### Documentation
-- 16 guides updated across de, en, es, fr, it, pl, pt
+- 37 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.06.1
 
