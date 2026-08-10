@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.08.10.1
+
+### Fixes
+- **components:** prevent explorer card arrow overlap on tablet/mobile
+
 ## 2026.08.10
 
 ### Fixes
