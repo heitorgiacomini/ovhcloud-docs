@@ -4,6 +4,10 @@
 
 ### Fixes
 - **components:** prevent explorer card arrow overlap on tablet/mobile
+- **pdf:** tolerate cache transport failures
+
+### Documentation
+- 21 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.10
 
