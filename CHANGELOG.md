@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.08.12
+
+### Features
+- create guides for backup licenses (#558)
+
+### Documentation
+- 78 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.10.1
 
 ### Fixes
