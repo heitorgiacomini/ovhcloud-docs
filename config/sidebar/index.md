@@ -404,7 +404,7 @@
             + [Technical capabilities and limitations of Public VCF as-a-Service](hosted-private-cloud/powered-by-vmware/vcd-limitations)
         + [Getting started](hosted-private-cloud-public-VCF-getting-started)
             + [Introduction to the Hosted Private Cloud Control Panel](hosted-private-cloud/powered-by-vmware/manager-ovh-private-cloud)
-            + [Logging in to the vSphere interface](hosted-private-cloud/powered-by-vmware/vsphere-interface-connexion)
+            + [Logging in to the vSphere interface](hosted-private-cloud/powered-by-vmware/vsphere-interface-connection)
             + [Public VCF as-a-Service - Logging in to your organization](hosted-private-cloud/powered-by-vmware/vcd-logging)
             + [Public VCF as-a-Service - How to use the Public VCF as-a-Service user interface](hosted-private-cloud/powered-by-vmware/vcd-getting-started-dashboard-overview)
         + [Configuration](hosted-private-cloud-public-VCF-configuration)
