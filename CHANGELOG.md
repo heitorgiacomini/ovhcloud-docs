@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.08.12.1
+
+### Fixes
+- **theme:** correct PDF, Claude and Perplexity menu icons
+
+### Documentation
+- 1 guides updated across fr
+
 ## 2026.08.12
 
 ### Features
