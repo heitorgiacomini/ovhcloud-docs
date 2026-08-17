@@ -77,6 +77,14 @@ const CMP_CONFIG = {
 export default defineConfig({
   root: path.join(BASE_DIR, 'docs', locale),
   base: `/${locale}/`,
+  // Absolute origin used by Rspress to emit fully-qualified URLs. Without it,
+  // llms.txt / llms-full.txt and the per-page `.md` links are relative
+  // (`/en/guides/….md`), which is useless for the external LLM crawlers those
+  // files exist for. It also makes the AI-agent hint injected below the H1
+  // (LlmsHint, active because `llms: true`) point at absolute URLs.
+  // Keep in sync with SITE_URL in scripts/combine-builds.ts and the same
+  // constant in theme/components/SEOHead.
+  siteOrigin: 'https://docs.ovhcloud.com',
   outDir: path.join(BASE_DIR, 'dist', locale),
   publicDir: path.join(BASE_DIR, 'docs', 'public'),
 
