@@ -185,6 +185,21 @@ export default defineConfig({
         imports: true,
       },
     },
+    tools: {
+      rspack: {
+        // react-router guards a code path with Vite's `import.meta.hot`. Rspack
+        // implements HMR through `import.meta.webpackHot`, so it reports `hot`
+        // as an unknown `import.meta` property and substitutes `undefined` —
+        // which is exactly what the guard wants (the branch is dead outside
+        // Vite, and it is additionally gated on `isSpaMode`, never set here).
+        // Harmless, but printed on every dev start, so filter it out.
+        //
+        // Not needed in rspress.config.build.ts: that config sets
+        // `logLevel: 'error'`, which already hides build warnings.
+        // Remove once react-router stops shipping the Vite-only guard.
+        ignoreWarnings: [/Accessing unknown `import\.meta` property 'hot'/],
+      },
+    },
   },
   globalStyles: path.join(__dirname, 'styles/index.css'),
   // Default zoom applies to every `.rspress-doc img`. Let images opt out with

@@ -1,5 +1,78 @@
 # Changelog
 
+## 2026.08.17.1
+
+### Fixes
+- **web-hosting:** lay out putty login table as image-left / steps-right
+- **hosted-private-cloud:** rename vsphere-interface-connexion slug to -connection
+- **account:** make public-administration guide FR-only
+- **public-cloud:** close vrack details block before 'Removing a network interface'
+
+### Documentation
+- 100 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.17
+
+### Features
+- update stack
+
+### Fixes
+- **voip:** restore content wrongly replaced by the support-scope fragment
+
+### Documentation
+- 509 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.12.1
+
+### Fixes
+- **theme:** correct PDF, Claude and Perplexity menu icons
+
+### Documentation
+- 1 guides updated across fr
+
+## 2026.08.12
+
+### Features
+- create guides for backup licenses (#558)
+
+### Documentation
+- 78 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.10.1
+
+### Fixes
+- **components:** prevent explorer card arrow overlap on tablet/mobile
+- **pdf:** tolerate cache transport failures
+
+### Documentation
+- 21 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.10
+
+### Fixes
+- **theme:** use semantic fieldsets for search filters
+
+### Maintenance
+- Improvement to the ‘ISSUE_TEMPLATE’ template
+
+### Documentation
+- 37 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.06.1
+
+### Documentation
+- 7 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.06
+
+### Documentation
+- 23 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.05
+
+### Documentation
+- 143 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.03
 
 ### Features
