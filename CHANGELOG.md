@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.08.17.1
+
+### Fixes
+- **web-hosting:** lay out putty login table as image-left / steps-right
+- **hosted-private-cloud:** rename vsphere-interface-connexion slug to -connection
+- **account:** make public-administration guide FR-only
+- **public-cloud:** close vrack details block before 'Removing a network interface'
+
+### Documentation
+- 100 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.17
 
 ### Features
