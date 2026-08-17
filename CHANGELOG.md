@@ -5,6 +5,9 @@
 ### Features
 - update stack
 
+### Fixes
+- **voip:** restore content wrongly replaced by the support-scope fragment
+
 ### Documentation
 - 509 guides updated across de, en, es, fr, it, pl, pt
 
