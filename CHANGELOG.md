@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.08.18
+
+### Features
+- glossary-backed tooltips for documentation terms (#580)
+
+### Fixes
+- **components:** stop the doc column clipping tooltip popups
+
+### Documentation
+- 29 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.17.1
 
 ### Fixes
