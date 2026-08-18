@@ -18,14 +18,13 @@
 }
 
 .tooltip-popup {
-  position: absolute;
+  /* `fixed`, not `absolute`: the popup is portalled to <body> so it escapes the
+     doc column's `overflow-x: auto` clip (which no z-index can defeat). left/top
+     are written by the positioning effect in viewport coordinates. */
+  position: fixed;
   left: 0;
-  /* Horizontal clamp set by the positioning effect; folded into every
-     transform below so the show/hide animation and the edge-clamp coexist
-     instead of overwriting each other. */
-  --tooltip-shift: 0px;
-  transform: translateX(var(--tooltip-shift)) translateY(4px);
-  z-index: 200;
+  top: 0;
+  z-index: 1200;
   /* Never wider than the viewport (minus the 8px edge gutter the clamp
      targets), so the popup stays readable on phones where a fixed 320px
      min-width plus an indented trigger would overflow. */
@@ -47,26 +46,25 @@
     transform 0.15s ease;
 }
 
-/* Placement: top (default) */
+/* Placement no longer sets top/bottom: the popup is portalled and `fixed`, so
+   the positioning effect writes both left and top in viewport coordinates.
+   A `top: auto` / `bottom: calc(100% + …)` here would fight (and win against)
+   the inline top, leaving the popup detached from its trigger.
+   These rules now only carry the entry animation's direction. */
 .tooltip-popup[data-placement="top"] {
-  bottom: calc(100% + 8px);
-  top: auto;
-  transform: translateX(var(--tooltip-shift)) translateY(4px);
+  transform: translateY(4px);
 }
 
 .tooltip-popup[data-placement="top"].tooltip-popup--visible {
-  transform: translateX(var(--tooltip-shift)) translateY(0);
+  transform: translateY(0);
 }
 
-/* Placement: bottom */
 .tooltip-popup[data-placement="bottom"] {
-  top: calc(100% + 8px);
-  bottom: auto;
-  transform: translateX(var(--tooltip-shift)) translateY(-4px);
+  transform: translateY(-4px);
 }
 
 .tooltip-popup[data-placement="bottom"].tooltip-popup--visible {
-  transform: translateX(var(--tooltip-shift)) translateY(0);
+  transform: translateY(0);
 }
 
 .tooltip-popup--visible {
