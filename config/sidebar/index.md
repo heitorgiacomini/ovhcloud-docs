@@ -325,6 +325,7 @@
             + [How to use PuTTY for SSH connections and authentication](web-cloud/web-hosting/ssh-using-putty-on-windows)
             + [How to use SFTP to transfer files](bare-metal-cloud/dedicated-servers/transfer-data-via-sftp)
             + [How to retrieve databases in rescue mode](bare-metal-cloud/dedicated-servers/restore-bdd-rescue)
+            + [How to update the OS on a VPS](bare-metal-cloud/virtual-private-servers/update-os-on-a-vps)
             + [How to create a Minecraft server on a VPS](bare-metal-cloud/virtual-private-servers/minecraft-server-on-vps)
             + [How to create a Palworld server](bare-metal-cloud/virtual-private-servers/palworld-server-on-vps)
             + [How to set up a web server (LAMP) on Debian or Ubuntu](bare-metal-cloud/dedicated-servers/installing-lamp-debian9-ubuntu18)
