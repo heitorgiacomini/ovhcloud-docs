@@ -6,10 +6,12 @@
 - glossary-backed tooltips for documentation terms (#580)
 
 ### Fixes
+- **i18n:** rename legacy `updated:`/`excerpt:` frontmatter keys across 546 guides (#591)
+- **i18n:** correct source defects found while translating the databases guides (#590)
 - **components:** stop the doc column clipping tooltip popups
 
 ### Documentation
-- 29 guides updated across de, en, es, fr, it, pl, pt
+- 857 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.17.1
 
