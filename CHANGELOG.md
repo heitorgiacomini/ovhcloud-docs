@@ -6,10 +6,11 @@
 - **i18n:** translate Public Cloud Analytics guides to French
 
 ### Fixes
+- **account:** correct CP-NAV button label in VAT guide
 - **docs:** correct EN source defects in Public Cloud Analytics guides
 
 ### Documentation
-- 76 guides updated across de, en, es, fr, it, pl, pt
+- 77 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.18
 
