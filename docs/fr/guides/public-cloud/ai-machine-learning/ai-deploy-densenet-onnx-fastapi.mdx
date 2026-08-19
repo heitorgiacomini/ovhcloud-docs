@@ -210,7 +210,7 @@ docker buildx build --platform linux/amd64 -t densenet-onnx-fastapi:latest .
 
 - La **première commande** construit l'image en utilisant l'architecture par défaut de votre système. Cela peut fonctionner si votre machine utilise déjà l'architecture `linux/amd64`, qui est requise pour exécuter des containers avec nos produits AI. Cependant, sur des systèmes avec une architecture différente (par exemple `ARM64` sur `Apple Silicon`), l'image résultante ne sera pas compatible et ne pourra pas être déployée.
 
-- La **seconde commande** cible explicitement l'architecture `linux/AMD64` afin de garantir la compatibilité avec nos services AI. Elle nécessite `buildx`, qui n'est pas installé par défaut. Si vous n'avez jamais utilisé `buildx` auparavant, vous pouvez l'installer en exécutant : `docker buildx install`
+- La **seconde commande** cible explicitement l'architecture `linux/amd64` afin de garantir la compatibilité avec nos services AI. Elle nécessite `buildx`, qui n'est pas installé par défaut. Si vous n'avez jamais utilisé `buildx` auparavant, vous pouvez l'installer en exécutant : `docker buildx install`
 
 :::info
 L'argument point `.` indique que votre contexte de build (emplacement du **Dockerfile** et des autres fichiers nécessaires) est le répertoire courant.
@@ -228,7 +228,7 @@ Le registre partagé d'AI Deploy ne doit être utilisé qu'à des fins de test. 
 
 
 :::warning
-Afin d'exécuter des containers utilisant les produits AI, veuillez vous assurer que l'image Docker que vous allez envoyer respecte l'architecture cible **linux/AMD64**. Vous pouvez, par exemple, construire votre image en utilisant **buildx** comme suit :
+Afin d'exécuter des containers utilisant les produits AI, veuillez vous assurer que l'image Docker que vous allez envoyer respecte l'architecture cible **linux/amd64**. Vous pouvez, par exemple, construire votre image en utilisant **buildx** comme suit :
 
 `docker buildx build --platform linux/amd64 ...`
 :::

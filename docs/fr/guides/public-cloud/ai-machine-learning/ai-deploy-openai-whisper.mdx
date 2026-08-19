@@ -227,7 +227,7 @@ docker buildx build --platform linux/amd64 -t whisper_app:latest .
 
 - La **première commande** construit l’image en utilisant l’architecture par défaut de votre système. Cela peut fonctionner si votre machine utilise déjà l’architecture `linux/amd64`, requise pour exécuter des containers avec nos produits AI. Cependant, sur des systèmes ayant une architecture différente (par exemple `ARM64` sur `Apple Silicon`), l’image obtenue ne sera pas compatible et ne pourra pas être déployée.
 
-- La **seconde commande** cible explicitement l’architecture `linux/AMD64` afin de garantir la compatibilité avec nos services AI. Elle nécessite `buildx`, qui n’est pas installé par défaut. Si vous n’avez jamais utilisé `buildx`, vous pouvez l’installer en exécutant : `docker buildx install`
+- La **seconde commande** cible explicitement l’architecture `linux/amd64` afin de garantir la compatibilité avec nos services AI. Elle nécessite `buildx`, qui n’est pas installé par défaut. Si vous n’avez jamais utilisé `buildx`, vous pouvez l’installer en exécutant : `docker buildx install`
 
 :::info
 L’argument point `.` indique que votre contexte de build (emplacement du **Dockerfile** et des autres fichiers nécessaires) est le répertoire courant.
