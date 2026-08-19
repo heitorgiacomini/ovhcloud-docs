@@ -19,13 +19,7 @@ Para utilizar corretamente o ficheiro ".htaccess", deve conhecer e respeitar as 
 - o ficheiro ".htaccess" é invisível para os internautas que visitam o seu website;
 - as regras declaradas num ficheiro ".htaccess" aplicam-se a todo o diretório onde o ficheiro ".htaccess" está instalado, bem como a todos os subdiretórios desse mesmo diretório.
 
-:::warning
-A OVHcloud disponibiliza serviços cuja configuração, gestão e responsabilidade lhe incumbem. Assim, deverá certificar-se de que estes funcionam corretamente.
-
-Este manual fornece as instruções necessárias para realizar as operações mais habituais. No entanto, se encontrar dificuldades, recomendamos que recorra a um [fornecedor especializado](/links/partner) e/ou que contacte o editor do serviço. Não poderemos proporcionar-lhe assistência técnica. Para mais informações, aceda à secção ["Quer saber mais?"](#go-further) deste manual.
-
-Os exemplos que se seguirão serão colocados num ficheiro ".htaccess". Atenção, as regras que define neste ficheiro têm consequências diretas no seu website. Verifique sempre as regras que adicionou antes de as aplicar ao seu website. 
-:::
+[[fragment:support-scope]]
 
 **Descubra as principais operações que podem ser realizadas com um ficheiro ".htaccess".**
 
@@ -110,13 +104,13 @@ Encontre aqui dois exemplos concretos:
 ErrorDocument 403 "Lamentamos, não tem direito de aceder a este ficheiror"
 ```
 
-- Deseja reenviar os erros **404** para a sua página personalizada *404.html* (para o seu domínio : domain.tld). Adicione a linha abaixo no ficheiro ".htaccess":
+- Deseja reenviar os erros **404** para a sua página personalizada *404.html* (para o seu domínio: domain.tld). Adicione a linha abaixo no ficheiro ".htaccess":
 
 ```bash
 ErrorDocument 404 http://domain.tld/404.html
 ```
 
-Também pode reencaminhar um erro para um script **C**ommon **G**ateway **I**Interface (**CGI**). Pode codificar um script em **CGI** para, por exemplo, efetuar as seguintes ações:
+Também pode reencaminhar um erro para um script **C**ommon **G**ateway **I**nterface (**CGI**). Pode codificar um script em **CGI** para, por exemplo, efetuar as seguintes ações:
 
 - mostrar uma mensagem;
 - reencaminhar o visitante para outro ficheiro de acordo com o URL inicialmente solicitado (disponível na variável de ambiente **REQUEREST_URI**);

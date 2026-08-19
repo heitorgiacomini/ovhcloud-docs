@@ -1,7 +1,7 @@
 ---
 title: Tutorial - Jak zablokować dostęp do mojej strony dla niektórych adresów IP za pomocą pliku .htaccess?
 description: Odkryj operacje możliwe przy użyciu pliku .htaccess, w celu zablokowania dostępu do Twojej strony WWW dla niektórych adresów IP
-lastUpdated: 2026-07-23
+lastUpdated: 2026-08-07
 availableIn: [eu, ca, apac]
 ---
 
@@ -15,11 +15,7 @@ Możesz utworzyć kilka plików ".htaccess" w [przestrzeni FTP](/guides/web-clou
 
 **Dowiedz się, jak zablokować dostęp do Twojej strony WWW dla niektórych adresów IP poprzez plik ".htaccess".**
 
-:::warning
-OVHcloud oddaje do Twojej dyspozycji usługi, których konfiguracja, zarządzanie i odpowiedzialność spoczywa na Ciebie. W związku z tym należy zapewnić ich prawidłowe funkcjonowanie.
-
-Oddajemy w Twojej ręce niniejszy przewodnik, którego celem jest pomoc w jak najlepszym wykonywaniu bieżących zadań. W przypadku trudności zalecamy skorzystanie z pomocy [wyspecjalizowanego usługodawcy](/links/partner). Niestety firma OVHcloud nie będzie mogła udzielić wsparcia w tym zakresie. Więcej informacji znajduje się w sekcji [Sprawdź również](#go-further) niniejszego przewodnika.
-:::
+[[fragment:support-scope]]
 
 ## Wymagania początkowe
 
@@ -101,6 +97,7 @@ Aby zablokować domenę, wprowadź poniższy kod do pliku ".htaccess":
 
 ```bash
 <RequireAll>
+Require all granted
 Require not host domain
 </RequireAll>
 ```
@@ -109,6 +106,7 @@ Require not host domain
 
 ```bash
 <RequireAll>
+Require all granted
 Require not host domain.tld
 </RequireAll>
 ```

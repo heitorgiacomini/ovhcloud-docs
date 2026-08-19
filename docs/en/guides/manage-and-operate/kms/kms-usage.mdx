@@ -1,8 +1,11 @@
 ---
 title: Using OVHcloud Key Management Service (KMS)
 description: Encrypt or sign your data with the OVHcloud Key Management Service (KMS) regional REST API
-lastUpdated: 2026-07-16
+lastUpdated: 2026-08-12
 ---
+
+import Api from '@components/Api';
+
 
 ## Objective
 
@@ -36,13 +39,21 @@ To test API calls interactively, use the [OKMS Swagger UI](/guides/manage-and-op
 
 ### Creating an encryption key via API
 
-Key creation can be performed either through the <ApiLink section="/okms" version="v2">OVHcloud API</ApiLink> or on the specific OVHcloud KMS API. There is no difference on the result from the creation method.
+Key creation can be performed either through the <ApiLink section="/okms" version="v2" method="POST" route={"/okms/resource/\{okmsId\}/serviceKey"}>OVHcloud API</ApiLink> or on the specific OVHcloud KMS API. There is no difference on the result from the creation method.
+
+:::info
+The routes below take your OKMS domain identifier. It is returned by the following API call:
+
+<Api version="v2" section="/okms" method="GET" route={"/okms/resource"} />
+
+It also appears, together with the regional endpoint, in the **General information** tab of your <ManagerLink to="/#/okms/key-management-service">OKMS domain dashboard</ManagerLink>.
+:::
 
 In the case of the specific OVHcloud KMS API, you can create a key using the following API:
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|POST|/v1/servicekey|Create or import a CMK|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey|Create or import a CMK|
 
 The API expects the following values:
 
@@ -54,6 +65,7 @@ The API expects the following values:
 |size|Integer|Key size - see lookup below|
 |operations|Array|Key Usage - see lookup below|
 |curve|P-256, P-384, P-521|(optional) Cryptographic curve for EC type keys|
+|extractable|boolean|(optional) Whether the key material can be exported later - see the [Service key sensitivity attributes](#service-key-sensitivity-attributes) section below|
 
 **Example of symmetric key creation:**
 
@@ -109,15 +121,25 @@ Depending on the key type, the possible sizes and operations are:
         - wrapKey, unwrapKey
 - **RSA**:
     - size: 2048, 3072, 4096
-    - operations: sign, verify
+    - operations:
+        - sign, verify
+        - wrapKey, unwrapKey
 - **EC**:
     - size: do not specify
     - curve: P-256, P-384, P-521
     - operations: sign, verify
 
+:::info
+For RSA keys, `wrapKey` / `unwrapKey` are mutually exclusive with `sign` / `verify`.
+:::
+
 #### Importing an encryption key
 
-When you create a key, you can import an existing key.
+When you create a key, you can import an existing key in plaintext JWK form.
+
+:::warning
+Importing key material in plaintext is not recommended for keys that must remain trusted. Prefer [secure BYOK with asymmetric RSA wrapping](/guides/manage-and-operate/kms/import-export-keys-byok).
+:::
 
 To do this, you can add an additional **keys** field in the body of the request:
 
@@ -158,10 +180,10 @@ In order to manage encryption keys, several APIs are available:
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|GET|/v1/servicekey|Lists the available encryption keys|
-|DELETE|/v1/servicekey/&#123;keyId&#125;/delete|Deletes an encryption key|
-|POST|/v1/servicekey/&#123;keyId&#125;/activate|Activates an encryption key|
-|POST|/v1/servicekey/&#123;keyId&#125;/deactivate|Deactivates an encryption key|
+|GET|/api/&#123;okmsId&#125;/v1/servicekey|Lists the available encryption keys|
+|DELETE|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;|Deletes an encryption key|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/activate|Activates an encryption key|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/deactivate|Deactivates an encryption key|
 
 Disabling an encryption key means that it will no longer be usable, even though the key remains in the KMS.
 
@@ -172,6 +194,35 @@ Deleting an encryption key is permanent. All data encrypted using it will be per
 
 :::
 
+#### Service key sensitivity attributes
+
+When you create or retrieve a service key, sensitivity and extractability flags are returned in the `attributes` object of the GET response (alongside other metadata such as `state`). Only `extractable` is user-settable (at creation or via PATCH). The other flags are set by the KMS. Setting `extractable` to `true` permanently sets `never_extractable` to `false`.
+
+| Attribute | User-settable? | Description |
+| --- | --- | --- |
+| `extractable` | Yes (create / PATCH) | If `true`, the key material can be exported in plaintext or wrapped form, depending on the key class. Default: `false` — except public-only keys, which default to `true`. |
+| `never_extractable` | No | `true` if the key has never been extractable since creation inside the KMS. Keys [imported with BYOK](/guides/manage-and-operate/kms/import-export-keys-byok) or via plaintext import have `never_extractable` set to `false`, because the material existed outside the KMS before import. Enabling extraction also clears this flag permanently. |
+| `sensitive` | No | `true` when the key can only be extracted after being wrapped (which also requires `extractable` to be `true`). Secret and private keys (AES/`oct` and private RSA/EC material) are always considered sensitive. |
+| `always_sensitive` | No | `true` if the key has always been sensitive since creation. |
+
+Example GET response shape (fields abbreviated):
+
+```json
+{
+  "id": "<key-id>",
+  "name": "aes-to-export",
+  "type": "oct",
+  "attributes": {
+    "state": "active",
+    "extractable": true,
+    "never_extractable": false,
+    "sensitive": true,
+    "always_sensitive": true
+  }
+}
+```
+
+To extract a key securely, set `extractable` to `true` only for the export operation, export with RSA wrapping, then set it back to `false`. See [Export a wrapped key](/guides/manage-and-operate/kms/import-export-keys-byok#export-a-wrapped-key).
 
 ### Encrypting data with the KMS
 
@@ -183,7 +234,7 @@ This is the easiest method, but it does not have the best performance.
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|POST|/v1/servicekey/&#123;keyId&#125;/encrypt|Data encryption with a CMK|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/encrypt|Data encryption with a CMK|
 
 The API expects the following values:
 
@@ -213,7 +264,7 @@ The decryption of the data is done in reverse via the API:
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|POST|/v1/servicekey/&#123;keyId&#125;/decrypt|Decrypting data with a CMK|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/decrypt|Decrypting data with a CMK|
 
 The API expects the following values:
 
@@ -227,7 +278,7 @@ The **context** field must have the same value as the one given during encryptio
 #### Encryption with a Data Key (DK)
 
 For better performance, you can generate a Data Key (DK) from a Symmetric Key (AES) to use from your application.
-The AES key used must have been generated with the "wrapKey, unwrapKey" operations.
+The AES key used must have been generated with the `wrapKey` and `unwrapKey` operations.
 
 <img className="thumbnail" alt="Encryption with DK" src="/images/manage-and-operate/kms/kms-usage/Datakey_encrypt.png" loading="lazy" />
 
@@ -235,7 +286,7 @@ You can generate a DK using the following API:
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|POST|/v1/servicekey/&#123;keyId&#125;/datakey|Generates a DK derived from a CMK|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/datakey|Generates a DK derived from a CMK|
 
 The API expects the following values:
 
@@ -273,7 +324,7 @@ Conversely, you can retrieve the decrypted version of a Data Key via the followi
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|POST|/v1/servicekey/&#123;keyId&#125;/datakey/decrypt|Decrypting a DK|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/datakey/decrypt|Decrypting a DK|
 
 The API expects the following values:
 
@@ -323,11 +374,11 @@ Following the documentation in [RFC 7518](https://www.rfc-editor.org/rfc/rfc7518
 
 #### Message signature
 
-Since the private key cannot be extracted from the KMS, the signature can only be done directly with the KMS.
+Since the private key cannot be extracted in plaintext from the KMS, the signature can only be done directly with the KMS.
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|POST|/v1/servicekey/&#123;keyId&#125;/sign|File signature|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/sign|File signature|
 
 The API expects the following values:
 
@@ -363,7 +414,7 @@ With the KMS, you can use the following API:
 
 |**Method**|**Path**|**Description**|
 | :-: | :-: | :-: |
-|POST|/v1/servicekey/&#123;keyId&#125;/verify|Verifying a signature|
+|POST|/api/&#123;okmsId&#125;/v1/servicekey/&#123;keyId&#125;/verify|Verifying a signature|
 
 The API expects the following values:
 
@@ -394,6 +445,8 @@ The API will then return the result of the verification:
 ```
 
 ## Go further
+
+[Import and export keys on OVHcloud KMS using BYOK](/guides/manage-and-operate/kms/import-export-keys-byok)
 
 [OKMS authentication methods](/guides/manage-and-operate/kms/okms-authentication-methods)
 

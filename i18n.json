@@ -23398,5 +23398,50 @@
     "it": "Rifiutato: usurpazione di dominio",
     "pl": "Odrzucono: cross-domain spoofing",
     "pt": "Rejeitado: usurpação de domínio"
+  },
+  "sidebar.gen.storageBackupAndDisasterRecoverySolutionBackupLicenses": {
+    "fr": "Backup Licenses",
+    "en": "Backup Licenses",
+    "de": "Backup Licenses",
+    "es": "Backup Licenses",
+    "it": "Backup Licenses",
+    "pl": "Backup Licenses",
+    "pt": "Backup Licenses"
+  },
+  "sidebar.gen.storageBackupAndDisasterRecoverySolutionBackupLicensesAdditionalResources": {
+    "fr": "Ressources additionnelles",
+    "en": "Additional resources",
+    "de": "Zusätzliche Ressourcen",
+    "es": "Recursos adicionales",
+    "it": "Risorse aggiuntive",
+    "pl": "Dodatkowe zasoby",
+    "pt": "Recursos adicionais"
+  },
+  "sidebar.gen.storageBackupAndDisasterRecoverySolutionBackupLicensesGettingStarted": {
+    "fr": "Premiers pas",
+    "en": "Getting started",
+    "de": "Erste Schritte",
+    "es": "Primeros pasos",
+    "it": "Per iniziare",
+    "pl": "Pierwsze kroki",
+    "pt": "Primeiros passos"
+  },
+  "sidebar.gen.storageBackupAndDisasterRecoverySolutionBackupLicensesKeyConcepts": {
+    "fr": "Concepts clés",
+    "en": "Key concepts",
+    "de": "Schlüsselkonzepte",
+    "es": "Conceptos clave",
+    "it": "Concetti chiave",
+    "pl": "Kluczowe pojęcia",
+    "pt": "Conceitos-chave"
+  },
+  "sidebar.gen.storageBackupAndDisasterRecoverySolutionBackupLicensesTroubleshooting": {
+    "fr": "Diagnostic et dépannage",
+    "en": "Troubleshooting",
+    "de": "Störungsbehebung",
+    "es": "Resolución de problemas",
+    "it": "Risoluzione dei problemi",
+    "pl": "Rozwiązywanie problemów",
+    "pt": "Diagnóstico"
   }
 }

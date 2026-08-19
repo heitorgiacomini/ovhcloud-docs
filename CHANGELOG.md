@@ -1,5 +1,125 @@
 # Changelog
 
+## 2026.08.19
+
+### Features
+- **i18n:** translate Public Cloud Analytics guides to French
+
+### Fixes
+- **docs:** correct EN source defects in Public Cloud Analytics guides
+
+### Documentation
+- 76 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.18
+
+### Features
+- glossary-backed tooltips for documentation terms (#580)
+
+### Fixes
+- **i18n:** rename legacy `updated:`/`excerpt:` frontmatter keys across 546 guides (#591)
+- **i18n:** correct source defects found while translating the databases guides (#590)
+- **components:** stop the doc column clipping tooltip popups
+
+### Documentation
+- 857 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.17.1
+
+### Fixes
+- **web-hosting:** lay out putty login table as image-left / steps-right
+- **hosted-private-cloud:** rename vsphere-interface-connexion slug to -connection
+- **account:** make public-administration guide FR-only
+- **public-cloud:** close vrack details block before 'Removing a network interface'
+
+### Documentation
+- 100 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.17
+
+### Features
+- update stack
+
+### Fixes
+- **voip:** restore content wrongly replaced by the support-scope fragment
+
+### Documentation
+- 509 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.12.1
+
+### Fixes
+- **theme:** correct PDF, Claude and Perplexity menu icons
+
+### Documentation
+- 1 guides updated across fr
+
+## 2026.08.12
+
+### Features
+- create guides for backup licenses (#558)
+
+### Documentation
+- 78 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.10.1
+
+### Fixes
+- **components:** prevent explorer card arrow overlap on tablet/mobile
+- **pdf:** tolerate cache transport failures
+
+### Documentation
+- 21 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.10
+
+### Fixes
+- **theme:** use semantic fieldsets for search filters
+
+### Maintenance
+- Improvement to the ‘ISSUE_TEMPLATE’ template
+
+### Documentation
+- 37 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.06.1
+
+### Documentation
+- 7 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.06
+
+### Documentation
+- 23 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.05
+
+### Documentation
+- 143 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.08.03
+
+### Features
+- **transverse:** add info (#510)
+
+### Documentation
+- 20 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.07.31.1
+
+### Documentation
+- 28 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.07.31
+
+### Documentation
+- 86 guides updated across de, en, es, fr, it, pl, pt
+
+## 2026.07.30
+
+### Documentation
+- 600 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.07.29
 
 ### Documentation

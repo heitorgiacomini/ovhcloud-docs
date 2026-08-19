@@ -1,7 +1,7 @@
 ---
 title: "Tutorial - Come bloccare l'accesso al mio sito per alcuni indirizzi IP tramite un file .htaccess?"
 description: "Scopri le azioni possibili tramite un file .htaccess per bloccare l'accesso al tuo sito ad alcuni indirizzi IP"
-lastUpdated: 2026-07-23
+lastUpdated: 2026-08-07
 availableIn: [eu, ca, apac]
 ---
 
@@ -15,11 +15,7 @@ Puoi creare diversi file ".htaccess" in [lo spazio FTP](/guides/web-cloud/web-ho
 
 **Questa guida ti mostra come bloccare l'accesso al tuo sito per alcuni indirizzi IP tramite un file.htaccess.**
 
-:::warning
-OVHcloud mette a tua disposizione servizi di cui tu sei responsabile per la configurazione e la gestione. Assicurarne il corretto funzionamento è quindi responsabilità dell'utente.
-
-Questa guida ti aiuta a eseguire le operazioni necessarie. Tuttavia, in caso di difficoltà o dubbi, ti consigliamo di rivolgerti a uno [specialista del settore](/links/partner). OVHcloud non potrà fornirti alcuna assistenza. Per maggiori informazioni consulta la sezione [Per saperne di più](#go-further) di questa guida.
-:::
+[[fragment:support-scope]]
 
 ## Prerequisiti
 
@@ -101,6 +97,7 @@ Per bloccare un dominio, inserisci il seguente codice nel tuo file ".htaccess":
 
 ```bash
 <RequireAll>
+Require all granted
 Require not host domain
 </RequireAll>
 ```
@@ -109,6 +106,7 @@ Require not host domain
 
 ```bash
 <RequireAll>
+Require all granted
 Require not host domain.tld
 </RequireAll>
 ```
@@ -116,7 +114,7 @@ Require not host domain.tld
 ##### Blocca gli IP di un Paese
 
 :::info
-Tutti gli indirizzi IP (in particolare gli indirizzi IP pubblici) dispongono di una geolocalizzazione su scala nazionale. per avere un'idea della provenienza dei flussi di un IP e identificare fisicamente l'IP. 
+Tutti gli indirizzi IP (in particolare gli indirizzi IP pubblici) dispongono di una geolocalizzazione su scala nazionale. Per avere un'idea della provenienza dei flussi di un IP e identificare fisicamente l'IP. 
 
 Il ".htaccess" permette, grazie a questo elemento, di bloccare l'insieme degli IP geolocalizzati in un Paese. 
 In altre parole, tutte le persone che cercheranno di visitare il tuo sito da questo Paese saranno bloccate (tranne se utilizzano una connessione VPN con un IP geolocalizzato in un altro paese).

@@ -228,6 +228,15 @@ body {
   min-width: 0 !important;
 }
 
+/* Collapse a table's header row when EVERY header cell is empty. GFM requires a
+   header row, so image-left / steps-right layout tables carry a blank `|  |  |`
+   header purely to satisfy the parser; without this rule it renders as an empty
+   strip above the content. Scoped to theads whose cells are all empty, so any
+   table with a real header is untouched. */
+.rspress-doc table thead:has(th:empty):not(:has(th:not(:empty))) {
+  display: none;
+}
+
 .rp-tabs__label__item {
   border: none !important;
   border-radius: 0 !important;
