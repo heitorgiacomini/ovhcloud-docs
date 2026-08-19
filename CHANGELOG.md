@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026.08.19
+
+### Features
+- **i18n:** translate Public Cloud Analytics guides to French
+
+### Fixes
+- **docs:** correct EN source defects in Public Cloud Analytics guides
+
+### Documentation
+- 76 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.18
 
 ### Features
