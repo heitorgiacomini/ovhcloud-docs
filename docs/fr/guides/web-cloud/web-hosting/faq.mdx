@@ -1,7 +1,7 @@
 ---
 title: Hébergement Web - FAQ
 description: Retrouvez les principales questions posées sur les hébergements web OVHcloud
-lastUpdated: 2026-06-17
+lastUpdated: 2026-07-30
 availableIn: [eu, ca, apac]
 ---
 
@@ -29,7 +29,7 @@ Cliquez sur les onglets ci-dessous pour afficher successivement chacune des **2*
 </Tabs>
 
 :::tip
-Pour vous aider à configurer votre hébergement web, n'hésitez pas à consulter les rubriques « *Premiers pas* » et « *Configurer son hébergement web* » de [cette page](/guides/web-cloud/web-hosting/overview).
+Pour vous aider à configurer votre hébergement web, n'hésitez pas à consulter les rubriques « *Premiers pas* » et « *Configurer son hébergement web* » de [cette page](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -156,7 +156,7 @@ Si vous avez d'autres questions sur la solution e-mail *MX Plan*, consultez notr
 
 Pour mettre en ligne votre site web, vous devez d'abord disposer des éléments suivants :
 
-- Un [nom de domaine](/links/web/domains) qui correspondra à l'adresse Web depuis laquelle votre site web sera accessible via un navigateur internet (exemple : *domain.tld*). Ce nom de domaine doit égalament être associé à votre hébergement web pour afficher le site web.
+- Un [nom de domaine](/links/web/domains) qui correspondra à l'adresse Web depuis laquelle votre site web sera accessible via un navigateur internet (exemple : *domain.tld*). Ce nom de domaine doit également être associé à votre hébergement web pour afficher le site web.
 - Un [hébergement web](/links/web/hosting) sur lequel installer votre site web.
 
 Voici les principales étapes à suivre :
@@ -173,7 +173,7 @@ Si vous choisissez d'installer un CMS (WordPress, Joomla!, PrestaShop, Drupal) a
 
 Si votre site web existe déjà chez un autre fournisseur et si vous souhaitez le migrer chez OVHcloud, consultez notre guide détaillé « [Migrer son site web et ses services associés vers OVHcloud](/guides/web-cloud/web-hosting/hosting-migrating-to-ovh) ».
 
-Pour vous aider à configurer votre hébergement web, vous pouvez vous aider de l'ensemble des [guides relatifs à nos solutions d'hébergement web](/guides/web-cloud/web-hosting/overview).
+Pour vous aider à configurer votre hébergement web, vous pouvez vous aider de l'ensemble des [guides relatifs à nos solutions d'hébergement web](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -384,7 +384,7 @@ Si besoin, consultez également la partie « *Modifier votre offre Web Cloud Dat
 ## Diagnostic
 
 :::tip
-Si vous rencontrez un dysfonctionnement non-répertorié dans cette FAQ, consultez la rubrique « *Dépanner* » de nos [guides sur les solutions d'hébergement web](/guides/web-cloud/web-hosting/overview).
+Si vous rencontrez un dysfonctionnement non-répertorié dans cette FAQ, consultez la rubrique « *Dépanner* » de nos [guides sur les solutions d'hébergement web](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -411,7 +411,7 @@ Consultez ensuite les [évènements en cours sur notre infrastructure](https://w
 Si tous vos services sont actifs et qu'ils ne sont affectés par aucun incident ou maintenance, réalisez un diagnostic plus approfondi.
 
 :::tip
-Consultez la rubrique « *Dépanner* » de nos [guides sur les solutions d'hébergement web](/guides/web-cloud/web-hosting/overview).
+Consultez la rubrique « *Dépanner* » de nos [guides sur les solutions d'hébergement web](/guides/web-cloud/web-hosting/landing-page-web-hosting).
 
 :::
 
@@ -626,11 +626,11 @@ Trois cas de figure peuvent survenir. Cliquez sur les onglets ci-dessous pour af
     Dans ce cas, cela signifie que votre nom de domaine (ou son sous-domaine en *www*) pointe vers l'adresse IP de notre serveur de redirection (213.186.33.5).
 
     1. Connectez-vous à votre <ManagerLink to="/">espace client OVHcloud</ManagerLink>, puis rendez-vous dans la partie <code className="action">Web Cloud</code>.
-    2. Cliquez sur le menu <code className="action">Noms de domaine</code> (ou sur le menu <code className="action">Zones DNS</code> si vous utilisez la version bêta de l'espace client OVHcloud), puis choisissez le nom de domaine concerné.
+    2. Cliquez sur le menu <code className="action">Noms de domaine</code>, puis sélectionnez le nom de domaine concerné.
     3. Sur la page qui s'affiche, cliquez sur l'onglet <code className="action">Zone DNS</code>.
     4. Dans le tableau qui apparaît (représentant la zone DNS de votre nom de domaine), identifiez l'entrée de type `A` dont la `Cible` a pour valeur l'adresse IP `213.186.33.5`.
-    5. Cliquez sur le bouton <code className="action">...</code> situé à droite de la ligne, puis sur <code className="action">Modifier l'entrée</code>.
-    6. Dans la fenêtre qui s'ouvre, remplacez, dans le champ `Cible *`, l'adresse IP `213.186.33.5` par l'adresse IP de l'hébergement web où se trouve votre site web.
+    5. Sur la ligne concernée, ouvrez le menu d'actions <code className="action">⋮</code> et cliquez sur <code className="action">Modifier l'entrée</code>.
+    6. Dans le formulaire d'édition, remplacez l'adresse IP `213.186.33.5` dans le champ `Cible` par l'adresse IP de l'hébergement web où se trouve votre site web, puis confirmez vos modifications.
 
     :::tip
     Si besoin, consultez également les guides détaillés suivants :

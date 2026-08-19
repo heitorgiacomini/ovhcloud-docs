@@ -30,12 +30,7 @@ Die OVHcloud Webhosting-Angebote basieren auf einer geteilten Infrastruktur (*sh
 
 ## In der praktischen Anwendung
 
-:::warning
-OVHcloud stellt Ihnen Dienstleistungen zur Verfügung, für deren Konfiguration und Verwaltung Sie die alleinige Verantwortung tragen. Es liegt somit bei Ihnen, sicherzustellen, dass diese ordnungsgemäß funktionieren.
-
-Diese Anleitung soll Sie bei allgemeinen Aufgaben bestmöglich unterstützen. Dennoch empfehlen wir Ihnen, falls Sie Hilfe brauchen, einen [spezialisierten Dienstleister](/links/partner) oder den Herausgeber der verwendeten Software zu kontaktieren, falls Sie auf Schwierigkeiten stoßen. Leider können wir Ihnen keine weitergehende technische Unterstützung hierzu anbieten. Weitere Informationen finden Sie am [Ende dieser Anleitung](#go-further).
-
-:::
+[[fragment:support-scope]]
 
 ### FTP
 
@@ -98,7 +93,7 @@ Weitere Informationen hierzu finden Sie auf der [Webhosting Produktseite](/links
 
 #### Verbindungen über einen externen Server
 
-Aus Sicherheitsgründen ist es nicht möglich, sich über einen externen Server mit der Datenbank eines OVHcloud Webhostings zu verbinde. Nur OVHcloud Webhosting Server können eine Verbindung zu den Datenbankservern herstellen. Jeder andere Verbindungsversuch führt zu folgendem Fehler:
+Aus Sicherheitsgründen ist es nicht möglich, sich über einen externen Server mit der Datenbank eines OVHcloud Webhostings zu verbinden. Nur OVHcloud Webhosting Server können eine Verbindung zu den Datenbankservern herstellen. Jeder andere Verbindungsversuch führt zu folgendem Fehler:
 
 ```bash
 Warning: MySQL Connection Failed: Host ip.your.connection is not allowed to connect ...
@@ -197,7 +192,7 @@ OVHcloud stellt einen Dienst zur automatischen Datensicherung und zur Wiederhers
 
 :::
 
-Für in Webhostings enthalten Datenbanken oder Datenbankserver (Web Cloud Databases) in Gravelines (GRA), Frankreich und Beauharnois (BHS), Kanada wird täglich ein Backup der Datenbanken durchgeführt. Diese Backups sind verfügbar (über das <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> oder über die [OVHcloud API](/links/api)). Die Backups werden zusätzlich auf einer anderen Infrastruktur gespeichert. Diese Daten werden in einem Rechenzentrum in Straßburg (SBG) repliziert. Die Aufbewahrungsfrist für Backups beträgt 30 Tage.
+Für in Webhostings enthalten Datenbanken oder Datenbankserver (Web Cloud Databases) in Gravelines (GRA), Frankreich und Beauharnois (BHS), Kanada wird täglich ein Backup der Datenbanken durchgeführt. Diese Backups sind verfügbar (über das <ManagerLink to="/">OVHcloud Kundencenter</ManagerLink> oder über die <ApiLink>OVHcloud API</ApiLink>). Die Backups werden zusätzlich auf einer anderen Infrastruktur gespeichert. Diese Daten werden in einem Rechenzentrum in Straßburg (SBG) repliziert. Die Aufbewahrungsfrist für Backups beträgt 30 Tage.
 
 In unserer Dokumentation erfahren Sie, wie Sie [Backups einer Webhosting-Datenbank abrufen](/guides/web-cloud/web-hosting/sql-database-export).
 
