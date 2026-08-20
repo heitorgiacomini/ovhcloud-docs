@@ -7,6 +7,8 @@
 - **i18n:** translate AI & Machine Learning guides to French
 
 ### Fixes
+- **account:** clarify invoice re-issue requires a support request
+- **account:** clarify SIRET update does not re-issue past invoices
 - **logs-data-platform:** formalise the register of the EN guides
 - **logs-data-platform:** correct EN source defects found while translating
 - **i18n:** align FR with the source-defect fixes for the AI guides
@@ -20,7 +22,7 @@
 - update installation architecture notes
 
 ### Documentation
-- 760 guides updated across de, en, es, fr, it, pl, pt
+- 761 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.19
 
