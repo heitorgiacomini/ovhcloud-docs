@@ -171,7 +171,7 @@ $ curl --oauth2-bearer `<iam-token-value>` -XGET 'https://<ldp-cluster>.logs.ovh
 {"_shards":{"failed":0,"skipped":0,"successful":1,"total":1},"hits":{"hits":[{"_id":"1","_index":"`<service_name>-i-<suffix>`","_score":0.2876821,"_source":{"company":"OVH","message":"Hello World !","post_date":"1999-11-02T23:01:00","user":"Oles"},"_type":"_doc"}],"max_score":0.2876821,"total":1},"timed_out":false,"took":31}
 ```
 
-### Use case&#58; Enrich Logs Data on the fly
+### Use case: Enrich Logs Data on the fly
 
 The following shows how your e-commerce application logs can be sent to the Logs Data Platform whenever a product is ordered. It logs the customer order by using ID for the customer's name. For performance reasons or maybe by design, the application doesn't fetch the full name of the client or other information from the customer database just to produce a log. You can add this information on the fly by using an OpenSearch Index and a Logstash collector on the Logs Data Platform.
 
@@ -488,7 +488,7 @@ The size in bytes used to compute your billing is the one under the following pa
 
 ### Management through OpenSearch API
 
-On Logs Data Platform, we allow users to use OpenSearch API to handle the lifecycle of their indices. You can create and delete indices directly with the OpenSearch API. You can also create aliases and them. We even support templates to allow users to create their mapping a the creation of the index automatically!
+On Logs Data Platform, we allow users to use OpenSearch API to handle the lifecycle of their indices. You can create and delete indices directly with the OpenSearch API. You can also create aliases and delete them. We even support templates to allow users to create their mapping a the creation of the index automatically!
 
 #### Index creation and deletion
 
@@ -592,4 +592,4 @@ Index as a service has some specificities on our platforms. This additional and 
 - Getting Started: [Quick Start](/guides/manage-and-operate/observability/logs-data-platform/getting-started-quick-start)
 - Documentation: Guides
 - Community hub: [community of users](/links/community)
-- Create an account: [Try it!](https://www.ovhcloud.com/de/identity-security-operations/logs-data-platform/)
+- Create an account: [Try it!](/links/manage-operate/logs-data-platform)
