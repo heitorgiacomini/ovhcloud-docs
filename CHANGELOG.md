@@ -4,18 +4,23 @@
 
 ### Features
 - **i18n:** translate the Logs Data Platform family to French
+- **i18n:** translate AI & Machine Learning guides to French
 
 ### Fixes
 - **logs-data-platform:** formalise the register of the EN guides
 - **logs-data-platform:** correct EN source defects found while translating
+- **i18n:** align FR with the source-defect fixes for the AI guides
 - **docs:** normalise heading, casing and boilerplate defects in AI guides
+- **i18n:** correct three typos in AI guide descriptions
+- **i18n:** correct a typo in the transfer-learning guide description
+- **i18n:** close unbalanced backtick in the FR flux-models placeholder
 - **docs:** correct EN source defects in AI & Machine Learning guides
 
 ### Maintenance
 - update installation architecture notes
 
 ### Documentation
-- 631 guides updated across de, en, es, fr, it, pl, pt
+- 760 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.19
 
