@@ -2,12 +2,18 @@
 
 ## 2026.08.20
 
+### Features
+- **i18n:** translate the Logs Data Platform family to French
+
 ### Fixes
 - **docs:** normalise heading, casing and boilerplate defects in AI guides
 - **docs:** correct EN source defects in AI & Machine Learning guides
 
+### Maintenance
+- update installation architecture notes
+
 ### Documentation
-- 501 guides updated across de, en, es, it, pl, pt
+- 539 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.19
 
