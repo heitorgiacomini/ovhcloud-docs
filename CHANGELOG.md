@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026.08.20
+
+### Fixes
+- **docs:** normalise heading, casing and boilerplate defects in AI guides
+- **docs:** correct EN source defects in AI & Machine Learning guides
+
+### Documentation
+- 501 guides updated across de, en, es, it, pl, pt
+
 ## 2026.08.19
 
 ### Features
