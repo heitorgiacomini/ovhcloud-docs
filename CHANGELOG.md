@@ -3,6 +3,7 @@
 ## 2026.08.20
 
 ### Features
+- **sidebar:** cross-list VMware key concepts under Managed VMware
 - **i18n:** translate the Logs Data Platform family to French
 - **i18n:** translate AI & Machine Learning guides to French
 
