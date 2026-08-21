@@ -147,6 +147,11 @@ openstack port create --network <network-name> <sub-port-name>
 openstack port create --network network-1 sub-port-1
 ```
 
+:::warning
+A sub-port's network must be **different** from the parent port's network. The sub-port inherits the parent port's MAC address (the guest OS vlan sub-interface inherits it too, which is required for DHCP). Since two ports on the same network cannot share a MAC address, a sub-port created on the parent port's network causes the node deployment to fail.
+:::
+
+
 #### 5. Add Sub-Port to the Trunk
 
 Attach the sub-port to the trunk, specifying the segmentation type (`vlan`) and the segmentation ID matching the network's vlan tag:
