@@ -6,11 +6,12 @@
 - **mass-translate:** translate the Managed Kubernetes family to FR (#613)
 
 ### Fixes
+- **managed-kubernetes:** repoint FR in-page anchors to translated headings
 - **mass-translate:** correct MKS source defects found while translating to FR (#614)
 - **occ:** remove duplicate body fragment PT
 
 ### Documentation
-- 1010 guides updated across de, en, es, fr, it, pl, pt
+- 1021 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.20
 
