@@ -1109,7 +1109,7 @@ Odbiorca musi zignorować tę rejestrację, jeśli nie został określony odpowi
 Znacznik "s=" ma na celu ograniczenie wykorzystania kluczy do innych celów, w przypadku gdy wykorzystanie DKIM byłoby określone dla innych usług w przyszłości.<br/>
 Typami usług obecnie zdefiniowanymi są: "\*" (wszystkie rodzaje usług), "e-mail" (e-mail).
 
-- **Tryb testowy (t=y)**: umożliwia abonentom domeny przetestowanie wdrożenia DKIM bez ryzyka, że wiadomości odrzucone lub oznaczone jako SPAM zostaną wykryte w przypadku niepowodzenia weryfikacji podpisu DKIM.<br/>
+- **Tryb testowy (t=y)**: umożliwia abonentom domeny przetestowanie wdrożenia DKIM bez ryzyka, że wiadomości odrzucone lub oznaczone jako spam zostaną wykryte w przypadku niepowodzenia weryfikacji podpisu DKIM.<br/>
 W przypadku gdy stosowany jest flag "t=y", odbiorca nie może przetwarzać w inny sposób podpisanych wiadomości w trybie testowym i niepodpisanych komunikatów. Odbiorca może jednak śledzić wynik testu, aby pomóc sygnatariuszom.
 
 - **Subdomeny (t=s)**: pozwala na ograniczenie używania podpisu DKIM wyłącznie w nazwie domeny (np.: @mydomain.ovh) lub zezwolić na wysyłkę z nazwy domeny i jej subdomen (na przykład: @mydomain.ovh, @test.mydomain.ovh, @other.mydomain.ovh, etc.)

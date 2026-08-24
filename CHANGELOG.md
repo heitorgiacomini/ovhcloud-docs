@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026.08.24
+
+### Features
+- **mass-translate:** translate the Managed Kubernetes family to FR (#613)
+
+### Fixes
+- **hosted-private-cloud:** delete the KMS CipherTrust Manager guide
+- **hosted-private-cloud:** hide the KMS CipherTrust Manager guide
+- **managed-kubernetes:** repoint FR in-page anchors to translated headings
+- **scripts:** correct locale-availability route keys on Windows
+- **mass-translate:** correct MKS source defects found while translating to FR (#614)
+- **occ:** remove duplicate body fragment PT
+
+### Documentation
+- 1061 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.20
 
 ### Features
