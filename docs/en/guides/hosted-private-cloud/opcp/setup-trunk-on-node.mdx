@@ -148,7 +148,7 @@ openstack port create --network network-1 sub-port-1
 ```
 
 :::warning
-A sub-port's network must be **different** from the parent port's network. The sub-port inherits the parent port's MAC address, and so does the guest OS vlan sub-interface, which is required for DHCP. Since two ports on the same network cannot share a MAC address, a sub-port created on the parent port's network causes the node deployment to fail.
+A sub-port's network must be **different** from the parent port's network. The sub-port inherits the parent port's MAC address, and so does the guest OS vlan sub-interface, which is required for DHCP. Since two ports on the same network cannot share a MAC address, a sub-port created on the parent port's network causes the instance deployment to fail.
 :::
 
 
