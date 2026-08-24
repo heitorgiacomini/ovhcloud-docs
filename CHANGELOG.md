@@ -8,11 +8,12 @@
 ### Fixes
 - **hosted-private-cloud:** hide the KMS CipherTrust Manager guide
 - **managed-kubernetes:** repoint FR in-page anchors to translated headings
+- **scripts:** correct locale-availability route keys on Windows
 - **mass-translate:** correct MKS source defects found while translating to FR (#614)
 - **occ:** remove duplicate body fragment PT
 
 ### Documentation
-- 1040 guides updated across de, en, es, fr, it, pl, pt
+- 1047 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.20
 
