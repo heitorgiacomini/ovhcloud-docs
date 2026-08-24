@@ -69,7 +69,7 @@ Si vous tentez une mise à niveau sans avoir migré au préalable, une erreur se
 :::
 
 
-Il existe deux méthodes pour passer d'un [Load Balancer pour Managed Kubernetes](/links/public-cloud/load-balancer-kubernetes) à un [Load Balancer Public Cloud](/links/public-cloud/load-balancer) : vous pouvez soit **[migrer](#migration)**, soit **[remplacer](#replacement)** votre Load Balancer.
+Il existe deux méthodes pour passer d'un [Load Balancer pour Managed Kubernetes](/links/public-cloud/load-balancer-kubernetes) à un [Load Balancer Public Cloud](/links/public-cloud/load-balancer) : vous pouvez soit **[migrer](#migration)**, soit **[remplacer](#remplacement)** votre Load Balancer.
 
 Votre Service Load Balancer existant utilisant [Load Balancer for Kubernetes](/links/public-cloud/load-balancer-kubernetes) devrait comporter l'annotation suivante :
 
@@ -79,7 +79,7 @@ annotations:
 ```
 
 :::danger
-Chacune des deux méthodes décrites ci-dessous ([migration](#migration) ou [remplacement](#replacement)) nécessite un changement DNS pour lequel une propagation DNS de 24 à 48 heures est requise **avant** d'effectuer la migration.
+Chacune des deux méthodes décrites ci-dessous ([migration](#migration) ou [remplacement](#remplacement)) nécessite un changement DNS pour lequel une propagation DNS de 24 à 48 heures est requise **avant** d'effectuer la migration.
 
 Par conséquent, veuillez **lire l'intégralité de ce guide** (et notamment la section « Comment effectuer un changement DNS ? ») avant de procéder aux étapes ci-dessous.
 :::
