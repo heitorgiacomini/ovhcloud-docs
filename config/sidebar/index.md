@@ -545,7 +545,6 @@
                 + [Enabling Virtual Machine Encryption with external KMS](hosted-private-cloud/powered-by-vmware/vm-encrypt)
                 + [KMS for VMware on OVHcloud - VM encryption use case scenarios](hosted-private-cloud/powered-by-vmware/vmware-overall-vm-encrypt)
                 + [KMS for VMware on OVHcloud - Configuring VM encryption](hosted-private-cloud/powered-by-vmware/okms-vm-encrypt)
-                + [Mise en route du KMS CipherTrust Manager](hosted-private-cloud/powered-by-vmware/kms-cipher-trust)
             + [Network Security (NSX)](hosted-private-cloud-managed-vmware-security-nsx)
                 + [Distributed Firewall Management in NSX](hosted-private-cloud/powered-by-vmware/nsx-manage-distributed-firewall)
                 + [Gateway Firewall Management in NSX](hosted-private-cloud/powered-by-vmware/nsx-manage-gateway-firewall)
