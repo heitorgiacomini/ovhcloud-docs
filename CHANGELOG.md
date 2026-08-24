@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026.08.24
+
+### Features
+- **mass-translate:** translate the Managed Kubernetes family to FR (#613)
+
+### Fixes
+- **mass-translate:** correct MKS source defects found while translating to FR (#614)
+- **occ:** remove duplicate body fragment PT
+
+### Documentation
+- 825 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.20
 
 ### Features
