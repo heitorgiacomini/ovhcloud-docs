@@ -10,7 +10,7 @@
 - **occ:** remove duplicate body fragment PT
 
 ### Documentation
-- 825 guides updated across de, en, es, fr, it, pl, pt
+- 980 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.20
 
