@@ -343,7 +343,7 @@ Valeurs autorisées : `octavia` = Load Balancer Public Cloud, `iolb` = Loadbalan
 
   Cette annotation est automatiquement ajoutée au Service si elle n'est pas spécifiée lors de la création. Une fois le Service créé avec succès, elle ne doit pas être modifiée, sous peine que le Service ne se comporte pas comme attendu.
 
-  Si cette annotation est spécifiée avec un ID de load balancer cloud valide lors de la création du Service, le Service réutilise ce load balancer plutôt que d'en créer un nouveau. Plus de détails [ci-dessous](#sharing-an-octavia-loadbalancer-between-multiple-kubernetes-loadbalancer-service).
+  Si cette annotation est spécifiée avec un ID de load balancer cloud valide lors de la création du Service, le Service réutilise ce load balancer plutôt que d'en créer un nouveau. Plus de détails [ci-dessous](#partager-un-loadbalancer-octavia-entre-plusieurs-services-loadbalancer-kubernetes).
 
   Si cette annotation est spécifiée, les autres annotations définissant les fonctionnalités du load balancer seront ignorées.
 
@@ -555,7 +555,7 @@ Error syncing load balancer: failed to ensure load balancer: Network is not matc
 
 Consultez le guide : [Comment définir un GatewayIP sur un Subnet OpenStack](/guides/public-cloud/network-services/update-subnet-properties).
 
-Si vous ne souhaitez pas déployer de routeur OpenStack dans votre subnet (par exemple, si vous gérez votre propre routeur), vous devez configurer le `LoadBalancerSubnetId` de votre cluster MKS. [Plus d'informations ici](#network-prerequisite-to-expose-your-load-balancers-publicly).
+Si vous ne souhaitez pas déployer de routeur OpenStack dans votre subnet (par exemple, si vous gérez votre propre routeur), vous devez configurer le `LoadBalancerSubnetId` de votre cluster MKS. [Plus d'informations ici](#prérequis-réseau-pour-exposer-vos-load-balancers-publiquement).
 
 ### Network is not matching requirements for Public LoadBalancer: Cannot deploy an OpenStack Router
 
@@ -565,7 +565,7 @@ Lorsque vous essayez de déployer un LoadBalancer public, vous devez disposer d'
 Error syncing load balancer: failed to ensure load balancer: Network is not matching requirement for Public LoadBalancer (cannot deploy an OpenStack Router)
 ```
 
-Dans votre cas, le GatewayIP est déjà utilisé par autre chose et nous ne pouvons pas déployer de routeur OpenStack pour votre LoadBalancer public. Si vous n'êtes pas en mesure de libérer l'IP (par exemple, si elle est utilisée par un routeur que vous avez déployé), vous devez configurer le `LoadBalancerSubnetId` de votre cluster MKS. [Plus d'informations ici](#network-prerequisite-to-expose-your-load-balancers-publicly)
+Dans votre cas, le GatewayIP est déjà utilisé par autre chose et nous ne pouvons pas déployer de routeur OpenStack pour votre LoadBalancer public. Si vous n'êtes pas en mesure de libérer l'IP (par exemple, si elle est utilisée par un routeur que vous avez déployé), vous devez configurer le `LoadBalancerSubnetId` de votre cluster MKS. [Plus d'informations ici](#prérequis-réseau-pour-exposer-vos-load-balancers-publiquement)
 
 ## Convention de nommage des ressources
 
