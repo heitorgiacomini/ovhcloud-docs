@@ -2,6 +2,9 @@
 
 ## 2026.08.25.1
 
+### Features
+- upgrade stack
+
 ### Fixes
 - **components:** improve tooltip pagefind, parsing, search, react
 
