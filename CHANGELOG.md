@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.08.25.1
+
+### Fixes
+- **components:** improve tooltip pagefind, parsing, search, react
+
+### Documentation
+- 28 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.25
 
 ### Features
