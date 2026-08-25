@@ -1,7 +1,7 @@
 ---
 title: OVHcloud API and Storage
 description: Find out what the OVHcloud API provides in order to customise the disks, hardware/software RAID and partitioning configuration during the server OS reinstallation
-lastUpdated: 2026-06-29
+lastUpdated: 2026-08-26
 ---
 
 import Api from '@components/Api';
@@ -502,7 +502,7 @@ By default, the disks of every disk group of the server are erased during the OS
 
 Disk groups other than the one on which the OS is installed can also be declared, but only to control whether their data is erased (`erase: true`) or kept (`erase: false`).
 
-The OS is installed on the disk group carrying the installation attributes (`partitioning`, `hardwareRaid`), the other declared disk groups carrying only `erase`. If none of them carries an installation attribute, the OS is installed on the default disk group, as described in the [Disk Groups](#disk-group) section.
+The OS is installed on the disk group carrying the installation attributes (`partitioning`, `hardwareRaid`); the other declared disk groups carry only `erase`. If none of them carries an installation attribute, the OS is installed on the default disk group, as described in the [Disk Groups](#disk-group) section.
 
 Example with a server that has 2 disk groups: a simple OS installation on `diskGroupId` 1 (implicitly erased), and `diskGroupId` 2 declared only to keep its existing data:
 
@@ -529,9 +529,9 @@ Example with a server that has 2 disk groups: a simple OS installation on `diskG
 :::warning
 The following restrictions apply to the `storage` array:
 
-- It is not possible to set `erase: false` for the disk group on which the OS is installed.
-- It is not possible to declare the same `diskGroupId` more than once.
-- It is not possible to declare more than one disk group on which to install the OS. For any additional disk group, only the `erase` attribute can be set — without OS installation, partitioning, or hardware RAID configuration.
+- You cannot set `erase: false` for the disk group on which the OS is installed.
+- You cannot declare the same `diskGroupId` more than once.
+- You cannot declare more than one disk group on which to install the OS. For any additional disk group, only the `erase` attribute can be set — without OS installation, partitioning, or hardware RAID configuration.
 
 :::
 
