@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.08.25
+
+### Fixes
+- **account:** update SIRET guide after review feedback
+
+### Documentation
+- 9 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.24
 
 ### Features
