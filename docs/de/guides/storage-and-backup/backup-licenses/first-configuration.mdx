@@ -1,7 +1,7 @@
 ---
 title: Backup Licenses - Ihre erste Lizenz bestellen und konfigurieren
 description: "Erfahren Sie, wie Sie Ihre erste Backup Licenses-Lizenz über das OVHcloud Kundencenter bestellen und Ihren Veeam Backup & Replication-Server mit der OVHcloud Veeam Service Provider Console verbinden"
-lastUpdated: 2026-08-12
+lastUpdated: 2026-08-25
 ---
 
 ## Ziel
@@ -28,8 +28,15 @@ Lesen Sie vor der Bestellung die Anleitung "[Bekannte Einschränkungen](/guides/
 
 Backup Licenses ist in zwei Universen Ihres Kundencenters verfügbar, mit identischer Oberfläche:
 
-- **Direkter Link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Bare Metal Cloud</code> > <code className="action">Backup Licenses</code>
-- **Direkter Link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Hosted Private Cloud</code> > <code className="action">Backup Licenses</code>
+**Bare Metal Cloud:**
+
+- **Direkter Link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigationspfad:** <code className="action">Bare Metal Cloud</code> > <code className="action">Storage und Backup</code> > <code className="action">Backup Licenses</code>
+
+**Hosted Private Cloud:**
+
+- **Direkter Link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigationspfad:** <code className="action">Hosted Private Cloud</code> > <code className="action">Storage und Backup</code> > <code className="action">Backup Licenses</code>
 
 ---
 {/* CP-NAV-END:storage-backup-licenses */}
@@ -68,7 +75,7 @@ Wenn Ihr VBR-Server auf einer **Veeam Software Appliance** (Linux) läuft, sind 
 
 ### Schritt 2: Bestellen Sie Ihre Lizenz
 
-Öffnen Sie im OVHcloud Kundencenter das Produkt <code className="action">Backup Licenses</code> und klicken Sie im Tab <code className="action">Verknüpfte Server</code> auf <code className="action">Server hinzufügen</code>.
+Öffnen Sie im OVHcloud Kundencenter den Bereich <code className="action">Storage und Backup</code> und dann <code className="action">Backup Licenses</code> und klicken Sie im Tab <code className="action">Verknüpfte Server</code> auf <code className="action">Server hinzufügen</code>.
 
 <img className="thumbnail" alt="Tab Verknüpfte Server des Produkts Backup Licenses" src="/images/storage-and-backup/backup-licenses/control-panel/bl_home_en.png" loading="lazy" />
 
@@ -78,7 +85,7 @@ Wählen Sie im Schritt <code className="action">Lizenztyp</code> die Lizenz aus,
 
 Geben Sie im Schritt <code className="action">VBR-Server</code> anschließend die Daten Ihres Servers ein:
 
-- **Name des Dienstes**: die Kennung Ihres VBR-Servers im OVHcloud Kundencenter. Dieser Name dient ausschließlich zur Identifizierung Ihres Servers in unseren Oberflächen und kann vom tatsächlichen Hostnamen der Maschine abweichen.
+- **Servicename**: die Kennung Ihres VBR-Servers im OVHcloud Kundencenter. Dieser Name dient ausschließlich zur Identifizierung Ihres Servers in unseren Oberflächen und kann vom tatsächlichen Hostnamen der Maschine abweichen.
 - **Öffentliche IP-Adresse**: die öffentliche IP-Adresse Ihres VBR-Servers. Sie wird verwendet, um den Datenaustausch zwischen unserer Infrastruktur und Ihrem Server zu erlauben.
 - **IP-Adresse des Veeam Clients**: optional. Die öffentliche IP-Adresse der Maschine, auf der Ihr Veeam Client ausgeführt wird, falls dieser nicht direkt auf dem VBR läuft.
 - **Mein Veeam Server befindet sich hinter einem NAT**: Aktivieren Sie diese Option, wenn die öffentliche IP-Adresse Ihres Servers von seiner lokalen IP-Adresse im internen Netzwerk abweicht.
@@ -203,7 +210,7 @@ Sobald die Verbindung hergestellt ist, überprüfen Sie, ob die von OVHcloud ber
 
 1. Öffnen Sie in der Konsole Veeam Backup & Replication das Hauptmenü und klicken Sie auf <code className="action">License</code>.
 
-<img className="thumbnail" alt="Eintrag License im Hauptmenü der VBR-Konsole" src="/images/storage-and-backup/backup-licenses/vbr/bl_show_license_menu.png" loading="lazy" />
+    <img className="thumbnail" alt="Eintrag License im Hauptmenü der VBR-Konsole" src="/images/storage-and-backup/backup-licenses/vbr/bl_show_license_menu.png" loading="lazy" />
 
 2. Überprüfen Sie im Fenster <code className="action">License Information</code> die folgenden Angaben:
 
@@ -226,7 +233,7 @@ Sie können die Verbindung auch über das VSPC-Portal überprüfen, mit dem Kont
 
 1. Melden Sie sich am VSPC-Portal an. Der Zugangslink befindet sich im Tab <code className="action">Allgemeine Informationen</code> des Produkts Backup Licenses unter <code className="action">VSPC-Zugriff</code>.
 
-<img className="thumbnail" alt="Tab Allgemeine Informationen mit dem Zugangslink zur VSPC" src="/images/storage-and-backup/backup-licenses/control-panel/bl_information_en.png" loading="lazy" />
+    <img className="thumbnail" alt="Tab Allgemeine Informationen mit dem Zugangslink zur VSPC" src="/images/storage-and-backup/backup-licenses/control-panel/bl_information_en.png" loading="lazy" />
 
 2. Öffnen Sie den Bereich <code className="action">Managed Computers</code>, Tab <code className="action">Backup Servers</code>.
 3. Überprüfen Sie, dass Ihr VBR-Server mit dem Status `Healthy` angezeigt wird.

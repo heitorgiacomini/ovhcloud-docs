@@ -1,7 +1,7 @@
 ---
 title: Backup Licenses - Troubleshooting guide
 description: Find out how to solve potential issues with Backup Licenses and with connecting your Veeam Backup & Replication server
-lastUpdated: 2026-08-12
+lastUpdated: 2026-08-25
 ---
 
 ## Objective
@@ -20,8 +20,15 @@ lastUpdated: 2026-08-12
 
 Backup Licenses is available in two universes of your Control Panel, with the same interface:
 
-- **Direct link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Bare Metal Cloud</code> > <code className="action">Backup Licenses</code>
-- **Direct link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Hosted Private Cloud</code> > <code className="action">Backup Licenses</code>
+**Bare Metal Cloud:**
+
+- **Direct link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigation path:** <code className="action">Bare Metal Cloud</code> > <code className="action">Storage and backups</code> > <code className="action">Backup Licenses</code>
+
+**Hosted Private Cloud:**
+
+- **Direct link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigation path:** <code className="action">Hosted Private Cloud</code> > <code className="action">Storage and backups</code> > <code className="action">Backup Licenses</code>
 
 ---
 {/* CP-NAV-END:storage-backup-licenses */}
@@ -104,7 +111,7 @@ If the issue persists while the connection is established, [contact OVHcloud sup
 
 <summary>The public IP address of my VBR server has changed.</summary>
 
-The IP address entered at order time is what allows traffic between our infrastructure and your server. If it changes, update it from your Control Panel: <code className="action">Linked servers</code> tab, <code className="action">…</code> menu to the right of the server, then <code className="action">Edit</code>.
+The IP address entered at order time is what allows traffic between our infrastructure and your server. If it changes, update it from your Control Panel: <code className="action">Linked servers</code> tab, <code className="action">...</code> menu to the right of the server, then <code className="action">Edit</code>.
 
 <img className="thumbnail" alt="Linked server actions menu with the Edit option" src="/images/storage-and-backup/backup-licenses/control-panel/bl_server_edit_en.png" loading="lazy" />
 

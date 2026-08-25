@@ -1,7 +1,7 @@
 ---
 title: Backup Licenses - Guide de diagnostic et dépannage
 description: Découvrez comment résoudre les problèmes potentiels liés à Backup Licenses et à la connexion de votre serveur Veeam Backup & Replication
-lastUpdated: 2026-08-12
+lastUpdated: 2026-08-25
 ---
 
 ## Objectif
@@ -20,8 +20,15 @@ lastUpdated: 2026-08-12
 
 Backup Licenses est disponible dans deux univers de votre espace client, avec la même interface :
 
-- **Lien direct :** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Bare Metal Cloud</code> > <code className="action">Backup Licenses</code>
-- **Lien direct :** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Hosted Private Cloud</code> > <code className="action">Backup Licenses</code>
+**Bare Metal Cloud :**
+
+- **Lien direct :** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Pour accéder à vos services :** <code className="action">Bare Metal Cloud</code> > <code className="action">Stockage et sauvegarde</code> > <code className="action">Backup Licenses</code>
+
+**Hosted Private Cloud :**
+
+- **Lien direct :** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Pour accéder à vos services :** <code className="action">Hosted Private Cloud</code> > <code className="action">Stockage et sauvegarde</code> > <code className="action">Backup Licenses</code>
 
 ---
 {/* CP-NAV-END:storage-backup-licenses */}
@@ -104,7 +111,7 @@ Si le problème persiste alors que la connexion est établie, [contactez le supp
 
 <summary>L'adresse IP publique de mon serveur VBR a changé.</summary>
 
-L'adresse IP renseignée à la commande sert à autoriser les échanges entre notre infrastructure et votre serveur. Si elle change, mettez-la à jour depuis votre espace client : onglet <code className="action">Serveurs liés</code>, menu <code className="action">…</code> à droite du serveur, puis <code className="action">Modifier</code>.
+L'adresse IP renseignée à la commande sert à autoriser les échanges entre notre infrastructure et votre serveur. Si elle change, mettez-la à jour depuis votre espace client : onglet <code className="action">Serveurs liés</code>, menu <code className="action">...</code> à droite du serveur, puis <code className="action">Modifier</code>.
 
 <img className="thumbnail" alt="Menu d'actions d'un serveur lié avec l'option Modifier" src="/images/storage-and-backup/backup-licenses/control-panel/bl_server_edit_fr.png" loading="lazy" />
 

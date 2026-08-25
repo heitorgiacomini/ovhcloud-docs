@@ -1,7 +1,7 @@
 ---
 title: Backup Licenses - Guía de diagnóstico y resolución de problemas
 description: Descubra cómo resolver los posibles problemas relacionados con Backup Licenses y con la conexión de su servidor Veeam Backup & Replication
-lastUpdated: 2026-08-12
+lastUpdated: 2026-08-25
 ---
 
 ## Objetivo
@@ -20,8 +20,15 @@ lastUpdated: 2026-08-12
 
 Backup Licenses está disponible en dos universos de su área de cliente, con la misma interfaz:
 
-- **Enlace directo:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Bare Metal Cloud</code> > <code className="action">Backup Licenses</code>
-- **Enlace directo:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Hosted Private Cloud</code> > <code className="action">Backup Licenses</code>
+**Bare Metal Cloud:**
+
+- **Enlace directo:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Ruta de acceso:** <code className="action">Bare Metal Cloud</code> > <code className="action">Almacenamiento y backup</code> > <code className="action">Backup Licenses</code>
+
+**Hosted Private Cloud:**
+
+- **Enlace directo:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Ruta de acceso:** <code className="action">Hosted Private Cloud</code> > <code className="action">Almacenamiento y backup</code> > <code className="action">Backup Licenses</code>
 
 ---
 {/* CP-NAV-END:storage-backup-licenses */}
@@ -104,7 +111,7 @@ Si el problema persiste aunque la conexión esté establecida, [contacte con el 
 
 <summary>La dirección IP pública de mi servidor VBR ha cambiado.</summary>
 
-La dirección IP indicada en el pedido sirve para autorizar los intercambios entre nuestra infraestructura y su servidor. Si cambia, actualícela desde su área de cliente: pestaña <code className="action">Servidores vinculados</code>, menú <code className="action">…</code> a la derecha del servidor y después <code className="action">Modificar</code>.
+La dirección IP indicada en el pedido sirve para autorizar los intercambios entre nuestra infraestructura y su servidor. Si cambia, actualícela desde su área de cliente: pestaña <code className="action">Servidores vinculados</code>, menú <code className="action">...</code> a la derecha del servidor y después <code className="action">Modificar</code>.
 
 <img className="thumbnail" alt="Menú de acciones de un servidor vinculado con la opción Modificar" src="/images/storage-and-backup/backup-licenses/control-panel/bl_server_edit_en.png" loading="lazy" />
 

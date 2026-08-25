@@ -1,7 +1,7 @@
 ---
 title: Backup Licenses - Encomendar e configurar a sua primeira licença
 description: "Saiba como encomendar a sua primeira licença Backup Licenses a partir da Área de Cliente OVHcloud e como ligar o seu servidor Veeam Backup & Replication à Veeam Service Provider Console da OVHcloud"
-lastUpdated: 2026-08-12
+lastUpdated: 2026-08-25
 ---
 
 ## Objetivo
@@ -28,8 +28,15 @@ Consulte o guia "[Restrições conhecidas](/guides/storage-and-backup/backup-lic
 
 O Backup Licenses está disponível em dois universos da sua Área de Cliente, com a mesma interface:
 
-- **Ligação direta:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Bare Metal Cloud</code> > <code className="action">Backup Licenses</code>
-- **Ligação direta:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Hosted Private Cloud</code> > <code className="action">Backup Licenses</code>
+**Bare Metal Cloud:**
+
+- **Ligação direta:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Caminho de navegação:** <code className="action">Bare Metal Cloud</code> > <code className="action">Armazenamento e backup</code> > <code className="action">Backup Licenses</code>
+
+**Hosted Private Cloud:**
+
+- **Ligação direta:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Caminho de navegação:** <code className="action">Hosted Private Cloud</code> > <code className="action">Armazenamento e backup</code> > <code className="action">Backup Licenses</code>
 
 ---
 {/* CP-NAV-END:storage-backup-licenses */}
@@ -68,7 +75,7 @@ Se o seu servidor VBR funcionar numa **Veeam Software Appliance** (Linux), apena
 
 ### Etapa 2: Encomendar a sua licença
 
-Na sua Área de Cliente OVHcloud, abra o produto <code className="action">Backup Licenses</code> e, no separador <code className="action">Servidores associados</code>, clique em <code className="action">Adicionar um servidor</code>.
+Na sua Área de Cliente OVHcloud, abra a secção <code className="action">Armazenamento e backup</code> e depois <code className="action">Backup Licenses</code> e, no separador <code className="action">Servidores associados</code>, clique em <code className="action">Adicionar um servidor</code>.
 
 <img className="thumbnail" alt="Separador Servidores associados do produto Backup Licenses" src="/images/storage-and-backup/backup-licenses/control-panel/bl_home_en.png" loading="lazy" />
 
@@ -203,7 +210,7 @@ Assim que a ligação estiver estabelecida, verifique se a licença fornecida pe
 
 1. Na consola Veeam Backup & Replication, abra o menu principal e clique em <code className="action">License</code>.
 
-<img className="thumbnail" alt="Entrada License do menu principal da consola VBR" src="/images/storage-and-backup/backup-licenses/vbr/bl_show_license_menu.png" loading="lazy" />
+    <img className="thumbnail" alt="Entrada License do menu principal da consola VBR" src="/images/storage-and-backup/backup-licenses/vbr/bl_show_license_menu.png" loading="lazy" />
 
 2. Na janela <code className="action">License Information</code>, verifique os seguintes elementos:
 
@@ -226,7 +233,7 @@ Também pode verificar a ligação a partir do portal VSPC, com a conta **Compan
 
 1. Inicie sessão no portal VSPC. A ligação de acesso está disponível no separador <code className="action">Informações gerais</code> do produto Backup Licenses, em <code className="action">Acesso VSPC</code>.
 
-<img className="thumbnail" alt="Separador Informações gerais com a ligação de acesso à VSPC" src="/images/storage-and-backup/backup-licenses/control-panel/bl_information_en.png" loading="lazy" />
+    <img className="thumbnail" alt="Separador Informações gerais com a ligação de acesso à VSPC" src="/images/storage-and-backup/backup-licenses/control-panel/bl_information_en.png" loading="lazy" />
 
 2. Aceda à secção <code className="action">Managed Computers</code>, separador <code className="action">Backup Servers</code>.
 3. Verifique se o seu servidor VBR aparece com o estado `Healthy`.

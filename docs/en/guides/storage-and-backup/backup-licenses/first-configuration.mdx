@@ -1,7 +1,7 @@
 ---
 title: Backup Licenses - Ordering and configuring your first licence
 description: "Find out how to order your first Backup Licenses licence from the OVHcloud Control Panel and connect your Veeam Backup & Replication server to the OVHcloud Veeam Service Provider Console"
-lastUpdated: 2026-08-12
+lastUpdated: 2026-08-25
 ---
 
 ## Objective
@@ -28,8 +28,15 @@ Read the "[Known restrictions](/guides/storage-and-backup/backup-licenses/restri
 
 Backup Licenses is available in two universes of your Control Panel, with the same interface:
 
-- **Direct link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Bare Metal Cloud</code> > <code className="action">Backup Licenses</code>
-- **Direct link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Hosted Private Cloud</code> > <code className="action">Backup Licenses</code>
+**Bare Metal Cloud:**
+
+- **Direct link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigation path:** <code className="action">Bare Metal Cloud</code> > <code className="action">Storage and backups</code> > <code className="action">Backup Licenses</code>
+
+**Hosted Private Cloud:**
+
+- **Direct link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigation path:** <code className="action">Hosted Private Cloud</code> > <code className="action">Storage and backups</code> > <code className="action">Backup Licenses</code>
 
 ---
 {/* CP-NAV-END:storage-backup-licenses */}
@@ -203,7 +210,7 @@ Once the connection is established, check that the licence provided by OVHcloud 
 
 1. In the Veeam Backup & Replication console, open the main menu and click <code className="action">License</code>.
 
-<img className="thumbnail" alt="License entry in the VBR console main menu" src="/images/storage-and-backup/backup-licenses/vbr/bl_show_license_menu.png" loading="lazy" />
+    <img className="thumbnail" alt="License entry in the VBR console main menu" src="/images/storage-and-backup/backup-licenses/vbr/bl_show_license_menu.png" loading="lazy" />
 
 2. In the <code className="action">License Information</code> window, check the following:
 
@@ -226,7 +233,7 @@ You can also check the connection from the VSPC portal, using the **Company Owne
 
 1. Log in to the VSPC portal. The access link is available in the <code className="action">General information</code> tab of the Backup Licenses product, under <code className="action">VSPC access</code>.
 
-<img className="thumbnail" alt="General information tab with the VSPC access link" src="/images/storage-and-backup/backup-licenses/control-panel/bl_information_en.png" loading="lazy" />
+    <img className="thumbnail" alt="General information tab with the VSPC access link" src="/images/storage-and-backup/backup-licenses/control-panel/bl_information_en.png" loading="lazy" />
 
 2. Go to the <code className="action">Managed Computers</code> section, <code className="action">Backup Servers</code> tab.
 3. Check that your VBR server appears with the `Healthy` status.

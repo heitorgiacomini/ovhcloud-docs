@@ -1,7 +1,7 @@
 ---
 title: Backup Licenses - Funktionsweise der Vaults
 description: Erfahren Sie, wie die mit dem Produkt Backup Licenses gelieferten Vaults funktionieren, wie sie abgerechnet werden und wie Sie zusätzliche Vaults bestellen
-lastUpdated: 2026-08-12
+lastUpdated: 2026-08-25
 ---
 
 ## Ziel
@@ -21,8 +21,15 @@ Ein **Vault** ist ein von OVHcloud bereitgestellter Speicherplatz, an den Sie Ih
 
 Backup Licenses ist in zwei Universen Ihres Kundencenters verfügbar, mit identischer Oberfläche:
 
-- **Direkter Link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Bare Metal Cloud</code> > <code className="action">Backup Licenses</code>
-- **Direkter Link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink> — <code className="action">Hosted Private Cloud</code> > <code className="action">Backup Licenses</code>
+**Bare Metal Cloud:**
+
+- **Direkter Link:** <ManagerLink to="/#/bmc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigationspfad:** <code className="action">Bare Metal Cloud</code> > <code className="action">Storage und Backup</code> > <code className="action">Backup Licenses</code>
+
+**Hosted Private Cloud:**
+
+- **Direkter Link:** <ManagerLink to="/#/hpc-backup-licenses/">Backup Licenses</ManagerLink>
+- **Navigationspfad:** <code className="action">Hosted Private Cloud</code> > <code className="action">Storage und Backup</code> > <code className="action">Backup Licenses</code>
 
 ---
 {/* CP-NAV-END:storage-backup-licenses */}
@@ -37,7 +44,7 @@ Ein **"Bundle"**-Vault wird standardmäßig mit Ihrer ersten Backup Licenses-Liz
 - Er ist **einzigartig**: Sie verfügen nur über einen "Bundle"-Vault, unabhängig davon, wie viele Lizenzen Sie besitzen.
 - Er ist **bis 500 GB kostenlos**. Dieser Speicherplatz kann sowohl für Ihre VBR-Server als auch für andere Speicheranforderungen genutzt werden.
 
-Ihre Vaults werden im Tab <code className="action">Vaults</code> des Produkts Backup Licenses in Ihrem OVHcloud Kundencenter aufgelistet. Der "Bundle"-Vault trägt dort das Label <code className="action">Inklusive</code>. Für jeden Vault sehen Sie seine **Region**, seine **Unveränderlichkeit** (aktiviert, 14 Tage), seine **Verschlüsselung** (aktiviert, SSE OMK) und seinen **Status**.
+Ihre Vaults werden im Tab <code className="action">Vaults</code> des Produkts Backup Licenses in Ihrem OVHcloud Kundencenter aufgelistet. Der "Bundle"-Vault trägt dort das Label <code className="action">Inbegriffen</code>. Für jeden Vault sehen Sie seine **Region**, seine **Immutability** (aktiviert - 14 Tage), seine **Encryption** (aktiviert - SSE OMK) und seinen **Status**.
 
 <img className="thumbnail" alt="Tab Vaults des Produkts Backup Licenses" src="/images/storage-and-backup/backup-licenses/vault/bl_vault_en.png" loading="lazy" />
 
@@ -48,19 +55,19 @@ Die Kündigung des Produkts Backup Licenses führt zur **Löschung des "Bundle"-
 
 ### Die Verbindungsdaten des Vault abrufen
 
-Der "Bundle"-Vault wird als **S3<sup>1</sup>-Bucket** bereitgestellt. Um seine Verbindungsdaten abzurufen, klicken Sie rechts neben dem Vault auf das Menü <code className="action">…</code> und dann auf <code className="action">Zugangsdaten anzeigen</code>.
+Der "Bundle"-Vault wird als **S3<sup>1</sup>-Bucket** bereitgestellt. Um seine Verbindungsdaten abzurufen, klicken Sie rechts neben dem Vault auf das Menü <code className="action">...</code> und dann auf <code className="action">Show credentials</code>.
 
-<img className="thumbnail" alt="Aktionsmenü eines Vaults mit der Option Zugangsdaten anzeigen" src="/images/storage-and-backup/backup-licenses/vault/bl_vault_show_creds_en.png" loading="lazy" />
+<img className="thumbnail" alt="Aktionsmenü eines Vaults mit der Option Show credentials" src="/images/storage-and-backup/backup-licenses/vault/bl_vault_show_creds_en.png" loading="lazy" />
 
-Das Fenster <code className="action">S3 credentials</code> zeigt daraufhin alle für die Verbindung erforderlichen Angaben an:
+Das Fenster <code className="action">S3-Zugangsdaten</code> zeigt daraufhin alle für die Verbindung erforderlichen Angaben an:
 
 - **Bucket name**
 - **Region**
-- **S3 Endpoint**
+- **S3-Endpunkt**
 - **Access key**
 - **Secret key**, standardmäßig ausgeblendet: Klicken Sie auf <code className="action">Show</code>, um ihn anzuzeigen.
 
-<img className="thumbnail" alt="Fenster S3 credentials eines Vaults" src="/images/storage-and-backup/backup-licenses/vault/bl_vault_creds_en.png" loading="lazy" />
+<img className="thumbnail" alt="Fenster S3-Zugangsdaten eines Vaults" src="/images/storage-and-backup/backup-licenses/vault/bl_vault_creds_en.png" loading="lazy" />
 
 Mit diesen Daten können Sie den Vault als Object Repository in Ihrem Server Veeam Backup & Replication konfigurieren oder mit einem beliebigen S3-kompatiblen Client darauf zugreifen.
 
@@ -80,7 +87,7 @@ Die aktuellen Preise finden Sie auf der [Object Storage Preisseite](/links/publi
 
 ### Zusätzliche Vaults bestellen
 
-Klicken Sie im Tab <code className="action">Vaults</code> Ihres OVHcloud Kundencenters auf <code className="action">Vault bestellen</code>, um einen **zusätzlichen Vault** hinzuzufügen. Geben Sie seinen **Namen** (1 bis 50 Zeichen, nur alphanumerische Zeichen und Bindestriche), das gewünschte **Land** und die gewünschte **Speicherregion** an und klicken Sie auf <code className="action">Bestellen</code>.
+Klicken Sie im Tab <code className="action">Vaults</code> Ihres OVHcloud Kundencenters auf <code className="action">Order a vault</code>, um einen **zusätzlichen Vault** hinzuzufügen. Geben Sie seinen **Namen** (1 bis 50 Zeichen, nur alphanumerische Zeichen und Bindestriche), das gewünschte **Country** und die gewünschte **Storage region** an und klicken Sie auf <code className="action">Bestellen</code>.
 
 <img className="thumbnail" alt="Fenster zur Bestellung eines zusätzlichen Vaults" src="/images/storage-and-backup/backup-licenses/vault/bl_vault_order_en.png" loading="lazy" />
 
