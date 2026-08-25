@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026.08.25.1
+
+### Features
+- **account:** add e-invoicing error guide (FR) (#599)
+- upgrade stack
+
+### Fixes
+- **components:** improve tooltip pagefind, parsing, search, react
+
+### Documentation
+- 49 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.25
 
 ### Features
