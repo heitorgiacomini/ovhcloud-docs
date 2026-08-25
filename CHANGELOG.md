@@ -2,11 +2,15 @@
 
 ## 2026.08.25
 
+### Features
+- add screenshots and Control Panel links to the Backup Licenses guides
+
 ### Fixes
+- proofread the Backup Licenses screenshots and Control Panel links
 - **account:** update SIRET guide after review feedback
 
 ### Documentation
-- 9 guides updated across de, en, es, fr, it, pl, pt
+- 37 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.24
 
