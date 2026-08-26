@@ -63,27 +63,27 @@ Voici comment ajouter votre clé SSH à votre solution AI si vous utilisez l'<Ma
     
     À partir de là, cliquez sur le bouton <code className="action">+ Créer un notebook</code> ou <code className="action">+ Lancer un job</code> pour configurer et créer votre solution AI.
     
-    <img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-1.png" loading="lazy" />
+    <img className="thumbnail" alt="Page AI Training dans l'espace client OVHcloud avec le bouton Launch a job mis en évidence" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-1.png" loading="lazy" />
 
 Remplissez les différents champs requis jusqu'à trouver la section <code className="action">Configuration avancée</code>. Ouvrez-la.
     
-    <img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-2.png" loading="lazy" />
+    <img className="thumbnail" alt="Section Advanced configuration repliée du formulaire de création du job" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-2.png" loading="lazy" />
 
 À partir de là, vous trouverez une sous-section `SSH Public Keys` où vous pouvez ajouter et configurer de nouvelles clés SSH en cliquant sur le bouton <code className="action">+ Configurer une clé SSH</code> :
     
-    <img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-3.png" loading="lazy" />
+    <img className="thumbnail" alt="Section SSH Public Keys sans clé configurée et bouton Configure an SSH key" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-3.png" loading="lazy" />
 
 Cela ouvrira une fenêtre où vous pouvez coller le contenu de votre fichier de clé publique (par exemple, `id_ed25519.pub`) :
     
-    <img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-4.png" loading="lazy" />
+    <img className="thumbnail" alt="Fenêtre Configure a new SSH key avec le nom et la clé publique renseignés" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-4.png" loading="lazy" />
 
 Cliquez sur <code className="action">Confirmer</code>. Une fois votre clé ajoutée, vous pouvez la sélectionner dans votre liste de clés SSH :
     
-    <img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-5.png" loading="lazy" />
+    <img className="thumbnail" alt="Liste déroulante des clés SSH affichant id_ed25519 et SSH_key_VM" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-5.png" loading="lazy" />
 
 Une fois sélectionnée, veillez à cliquer sur <code className="action">+</code> pour confirmer l'ajout de votre clé. Vous devriez voir le message suivant : `1 of 10 SSH key configured`.
     
-    <img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-6.png" loading="lazy" />
+    <img className="thumbnail" alt="Section SSH Public Keys indiquant 1 clé SSH configurée sur 10" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/manager-6.png" loading="lazy" />
   </Tab>
   <Tab label="Depuis la CLI ovhai">
     Pour suivre cette partie, assurez-vous d'avoir installé la [CLI ovhai](/guides/public-cloud/ai-machine-learning/ai-cli-install-client) sur votre ordinateur ou sur une instance.
@@ -132,11 +132,11 @@ ovh@job-36ed1f18-626b-42f7-b15f-0ed844e65d20:~$
 
 Dans Visual Studio Code, cliquez sur l'icône <code className="action">Remote Explorer</code>.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-1.png" loading="lazy" />
+<img className="thumbnail" alt="Barre d'activité de VS Code avec l'icône Remote Explorer sélectionnée" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-1.png" loading="lazy" />
 
 À partir de là, cliquez sur l'icône en forme d'engrenage de la fonctionnalité SSH pour accéder au fichier de configuration SSH de VSCode, généralement situé à `~/.ssh/config`, et ouvrez-le.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-2.png" loading="lazy" />
+<img className="thumbnail" alt="Remote Explorer de VS Code ouvrant la sélection du fichier de configuration SSH" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-2.png" loading="lazy" />
 
 Ajoutez la section suivante pour votre nouvel hôte :
 
@@ -149,25 +149,25 @@ IdentityFile C:\Path\To\id_ed25519 # Path to your private key file (not .pub)
 
 Enregistrez le fichier `config`. Puis actualisez les ressources distantes en cliquant sur cette icône :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-3.png" loading="lazy" />
+<img className="thumbnail" alt="Bouton Refresh de la liste des hôtes SSH de VS Code" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-3.png" loading="lazy" />
 
 Votre ressource devrait maintenant apparaître dans le menu SSH à gauche. Connectez-vous à celle-ci en cliquant sur la flèche à côté de votre ressource. VSCode redémarrera pour se connecter à votre ressource distante :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-4.png" loading="lazy" />
+<img className="thumbnail" alt="Liste des hôtes SSH affichant my_ai_training_job avec l'action Connect in New Window" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-4.png" loading="lazy" />
 
 Si la connexion est bien établie, vous devriez voir ce message dans le coin inférieur gauche de VSCode :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-5.png" loading="lazy" />
+<img className="thumbnail" alt="Barre d'état de VS Code confirmant la connexion SSH à my_ai_training_job" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-5.png" loading="lazy" />
 
 ### Développer et exécuter votre code
 
 Une fois connecté, vous pouvez commencer à développer et exécuter votre code dans le dossier par défaut `/workspace`, en cliquant sur le bouton bleu <code className="action">Open folder</code>, et en sélectionnant `/workspace`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-6.png" loading="lazy" />
+<img className="thumbnail" alt="Invite Open Folder listant le contenu du répertoire workspace distant" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-6.png" loading="lazy" />
 
 Vous pouvez également ouvrir un terminal et y exécuter des commandes. Profitez-en !
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-7.png" loading="lazy" />
+<img className="thumbnail" alt="Terminal VS Code exécutant nvidia-smi sur le job distant et affichant un GPU NVIDIA H100 PCIe" src="/images/public-cloud/ai-machine-learning/gi-03-remote-connection/vscode-7.png" loading="lazy" />
 
 ## Aller plus loin
 

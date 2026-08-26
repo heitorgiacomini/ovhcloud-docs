@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026.08.26.1
+
+### Features
+- **i18n:** translate the Pulumi backend state guide to FR + fix stale Pulumi links (#668)
+- Update tooltip component guardrails (#665)
+
+### Fixes
+- **docs:** repair truncated info callout in deploy-go-operator
+- **docs:** describe AI & ML screenshots in alt text
+- **docs:** replace placeholder alt text in three AI guides
+
+### Documentation
+- 107 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.26
 
 ### Features

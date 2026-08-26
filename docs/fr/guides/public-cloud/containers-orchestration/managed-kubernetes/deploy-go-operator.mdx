@@ -804,16 +804,16 @@ func (r *OvhNginxReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 :::info
 Si ce type d'erreur survient :
-:::
 
 ```bash
 controllers/ovhnginx_controller.go:22:4: no required module provides package github.com/ovhcloud-devrel/nginx-go-operator/api/v1; to add it:
     go get github.com/ovhcloud-devrel/nginx-go-operator/api/v1
 Error: not all generators ran successfully
 ```
+
 Vous avez certainement oublié de changer le nom du dépôt lors de la phase d'init de ce tutoriel.
 Pour corriger cela, vous devez modifier l'instruction d'import dans le fichier `./controllers/ovhnginx_controller.go`, en remplaçant le dépôt GitHub `ovhcloud-devrel` dans `tutorialsv1 "github.com/ovhcloud-devrel/nginx-go-operator/api/v1"` par votre propre dépôt GitHub.
->
+:::
 
 ### Tester l'opérateur en « mode dev »
 

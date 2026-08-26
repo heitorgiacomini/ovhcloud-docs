@@ -20,7 +20,7 @@ Vous devez d'abord envoyer des données vers l'`Object Storage` avant d'y accéd
 
 Vous pouvez accéder à la section `Object Storage` de votre projet Public Cloud depuis l'espace client OVHcloud.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-object-storage.png" loading="lazy" />
+<img className="thumbnail" alt="Page Object Storage dans l'espace client OVHcloud" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-object-storage.png" loading="lazy" />
 
 :::info
 Vous pouvez envoyer différents types de données : jeux de données, code, notebooks, poids de connexion, fichiers texte ou csv, etc.
@@ -42,7 +42,7 @@ Si vous choisissez une solution Object Storage compatible S3*, notez qu'elles ne
 
 Si vous souhaitez en savoir plus sur les différentes solutions de stockage, référez-vous à cette page.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-solution.png" loading="lazy" />
+<img className="thumbnail" alt="Étape 1 de la création du conteneur objet sélection de la solution Standard Swift" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-solution.png" loading="lazy" />
 
 ### 2- Sélectionnez une région
 
@@ -52,7 +52,7 @@ Pour optimiser les temps de téléchargement et d'envoi, nous vous conseillons d
 :::
 
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-region.png" loading="lazy" />
+<img className="thumbnail" alt="Étape 2 sélection de la région Gravelines GRA" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-region.png" loading="lazy" />
 
 ### 3- Sélectionnez un type de conteneur
 
@@ -64,15 +64,15 @@ Choisissez le type de vos données en fonction de ce que vous souhaitez faire.
 :::
 
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-type.png" loading="lazy" />
+<img className="thumbnail" alt="Étape 3 sélection du type de conteneur Private" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-type.png" loading="lazy" />
 
 ### 4- Nommez votre conteneur
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-name.png" loading="lazy" />
+<img className="thumbnail" alt="Étape 4 nom du conteneur my-dataset" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-container-name.png" loading="lazy" />
 
 Vous avez créé votre conteneur pour héberger votre jeu de données.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-object-container-created.png" loading="lazy" />
+<img className="thumbnail" alt="Liste des conteneurs confirmant l'ajout de my-dataset" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-object-container-created.png" loading="lazy" />
 
 Vous êtes maintenant prêt(e) à charger vos données !
 
@@ -80,11 +80,11 @@ Vous êtes maintenant prêt(e) à charger vos données !
 
 Afin d'envoyer votre jeu de données dans votre conteneur d'objets `my-dataset`, vous devez aller sur `Ajouter des objets` et sélectionner votre fichier local `my-dataset.zip`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-add-objects-to-container.png" loading="lazy" />
+<img className="thumbnail" alt="Conteneur my-dataset vide affichant son URL et le bouton Add objects" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-add-objects-to-container.png" loading="lazy" />
 
 Vous verrez maintenant votre fichier `my-dataset.zip` affiché dans votre conteneur d'objets.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-zip-file-uploaded.png" loading="lazy" />
+<img className="thumbnail" alt="Conteneur my-dataset après l'import de dataset.zip" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-zip-file-uploaded.png" loading="lazy" />
 
 :::info
 Vous pouvez également créer un nouveau conteneur vide `my-weights` dans lequel vous pourrez sauvegarder vos **poids de connexion** (ou votre **modèle validé**) à la fin de votre entraînement.
@@ -103,7 +103,7 @@ Vous êtes maintenant prêt(e) à lancer un notebook avec vos données !
 
 Pour lancer un AI notebook, accédez à la section **AI Notebooks** de votre projet Public Cloud dans l'espace client OVHcloud.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-ai-notebooks.png" loading="lazy" />
+<img className="thumbnail" alt="Page d'accueil AI Notebooks dans l'espace client OVHcloud" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-ai-notebooks.png" loading="lazy" />
 
 Pour les *4 premières étapes* de la création du notebook, veuillez vous référer à ce [tutoriel](/guides/public-cloud/ai-machine-learning/ai-notebooks-definition).
 
@@ -111,7 +111,7 @@ Pour les *4 premières étapes* de la création du notebook, veuillez vous réf�
 
 Vous pouvez choisir entre *2 datacenters* pour le stockage de votre notebook : `GRA` ou `BHS`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-localisation.png" loading="lazy" />
+<img className="thumbnail" alt="Étape 5 sélection du datacenter Gravelines GRA" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-localisation.png" loading="lazy" />
 
 ### Attachez un conteneur ou un dépôt Git
 
@@ -127,7 +127,7 @@ Comme mentionné précédemment, les buckets compatibles S3 ne sont pas encore c
 
 Vous pouvez charger le conteneur `my-dataset` dans le répertoire `/workspace/dataset`, avec la permission `Read-only`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-dataset-ro.png" loading="lazy" />
+<img className="thumbnail" alt="Attachement du conteneur my-dataset sur /workspace/dataset en lecture seule" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-dataset-ro.png" loading="lazy" />
 
 Vous ne pourrez pas modifier le jeu de données depuis ce notebook car vous l'avez chargé avec la permission `Read-only`.
 
@@ -140,7 +140,7 @@ Comme pour le mode `Read-only`, vous pouvez charger des données avec la permiss
 
 Une fois que vous disposez de données que vous souhaitez sauvegarder du notebook vers l'Object Storage (des poids de connexion dans cet exemple), il vous suffit de les écrire dans le dossier `/workspace/weights`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-weights-rw.png" loading="lazy" />
+<img className="thumbnail" alt="Attachement du conteneur my-weights sur /workspace/weights en lecture et écriture" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-weights-rw.png" loading="lazy" />
 
 Ce dossier sera envoyé vers votre Object Storage lorsque vous arrêterez votre notebook.
 
@@ -153,7 +153,7 @@ Pour pouvoir les modifier facilement, utilisez la permission Read-write.
 
 La commande est la suivante :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-git-repo-rw.png" loading="lazy" />
+<img className="thumbnail" alt="Attachement d'un dépôt Git public sur /workspace/git-hub-repository en lecture et écriture" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-git-repo-rw.png" loading="lazy" />
 
 :::warning
 Pour que votre commande soit valide, n'oubliez pas d'ajouter `.git` à la fin de l'URL du dépôt GitHub.
@@ -167,7 +167,7 @@ Lors du chargement de fichiers volumineux depuis l'`Object Storage`, le téléch
 
 Pour cela, vous pouvez cocher `Cache`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-dataset-cache.png" loading="lazy" />
+<img className="thumbnail" alt="Attachement du conteneur my-dataset en lecture seule avec l'option Cache activée" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-dataset-cache.png" loading="lazy" />
 
 Les volumes en cache seront supprimés au moins 72 heures après l'arrêt du dernier notebook les utilisant.
 Notez que le cache est partagé entre tous les utilisateurs de votre projet. La principale conséquence à laquelle vous devez faire attention
@@ -177,13 +177,13 @@ est que si une autre personne modifie les données de votre volume en cache, vou
 
 Votre notebook est maintenant prêt à être lancé avec vos données !
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-attached-data.png" loading="lazy" />
+<img className="thumbnail" alt="Étape 7 montrant deux conteneurs Object Storage et un dépôt Git attachés au notebook" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-attached-data.png" loading="lazy" />
 
 Vous pouvez consulter la page [Bien démarrer](/guides/public-cloud/ai-machine-learning/ai-notebooks-definition) pour savoir comment retrouver cette URL.
 
 Dès que vous accédez à votre notebook, vous verrez vos différents dossiers contenant vos données.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-containers.png" loading="lazy" />
+<img className="thumbnail" alt="Lanceur JupyterLab affichant les dossiers dataset git-hub-repository et weights" src="/images/public-cloud/ai-machine-learning/notebook-guide-data-ui/ui-notebook-containers.png" loading="lazy" />
 
 ## Nous voulons vos retours !
 

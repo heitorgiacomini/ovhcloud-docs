@@ -30,7 +30,7 @@ Ce guide couvre l'initialisation d'**AI Training** et la soumission de [**jobs**
 
 Cliquez sur <ManagerLink to="/#/pci/projects">ce lien</ManagerLink> pour accéder à votre projet Public Cloud, puis rendez-vous dans la section <code className="action">AI Training</code>, située sous `AI & Machine Learning`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/00_training_menu.png" loading="lazy" />
+<img className="thumbnail" alt="Section AI and Machine Learning du menu de l'espace client OVHcloud avec AI Training sélectionné" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/00_training_menu.png" loading="lazy" />
 
 ### Étape 2 - Démarrer la soumission d'un job
 
@@ -48,9 +48,9 @@ Chaque **job** est exécuté dans une région OVHcloud. Chaque région dispose d
 
 Sélectionnez la région souhaitée et cliquez sur <code className="action">Suivant</code>.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/02_name_job.png" loading="lazy" />
+<img className="thumbnail" alt="Formulaire Launch a job avec le champ Job name renseigné avec example-job" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/02_name_job.png" loading="lazy" />
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/03_submit_region.png" loading="lazy" />
+<img className="thumbnail" alt="Étape Location avec la région Gravelines GRA sélectionnée" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/03_submit_region.png" loading="lazy" />
 
 ### Étape 4 - Spécifier la quantité de ressources
 
@@ -60,7 +60,7 @@ La quantité maximale de GPUs ou de CPUs que vous pouvez sélectionner pour votr
 
 Une fois la quantité de ressources définie, vous pouvez voir un aperçu du tarif de facturation. Cliquez sur <code className="action">Suivant</code>.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/04_submit_resources.png" loading="lazy" />
+<img className="thumbnail" alt="Tableau Resources listant les flavors CPU et GPU disponibles avec leur tarif horaire" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/04_submit_resources.png" loading="lazy" />
 
 ### Étape 5 - Fournir une image Docker
 
@@ -76,7 +76,7 @@ Les images préconfigurées ne peuvent pas couvrir tous vos besoins, vous pouvez
 
 Cela inclut les images publiques (par exemple Dockerhub), les images du registre partagé ou les images de votre registre privé ajouté. Pour plus d'informations, découvrez comment [ajouter un registre privé](/guides/public-cloud/ai-machine-learning/ai-manage-registries).
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/05_submit_image.png" loading="lazy" />
+<img className="thumbnail" alt="Étape Docker Image sur l'onglet Custom image avec le champ du chemin de l'image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/05_submit_image.png" loading="lazy" />
 
 ### Étape 6 - Paramètres de confidentialité
 
@@ -88,7 +88,7 @@ L'*accès public* exposera vos données et votre code à quiconque obtient le li
 :::
 
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/06_job_privacy_settings.png" loading="lazy" />
+<img className="thumbnail" alt="Étape Privacy avec Public access sélectionné" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/06_job_privacy_settings.png" loading="lazy" />
 
 ### Étape 7 - Cycle de vie du job
 
@@ -101,7 +101,7 @@ Cela nous permet également de traiter les incidents localisés sur un hôte, pa
 
 Par défaut, votre job s'arrêtera automatiquement après 7 jours consécutifs au statut `RUNNING`. Soyez assuré que tous vos paramètres et données seront préservés. Vous avez la possibilité d'activer le redémarrage automatique, qui relancera automatiquement votre job tous les 7 jours, garantissant une interruption minimale de votre workflow. Vous pouvez également contacter [notre support](https://help.ovhcloud.com/csm?id=csm_get_help) pour étendre cette période de redémarrage automatique de 7 à 28 jours.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/07_job_lifecycle.png" loading="lazy" />
+<img className="thumbnail" alt="Étape Expiry affichant l'interrupteur Automatic restart et son infobulle" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/07_job_lifecycle.png" loading="lazy" />
 
 ### Étape 8 - Configuration avancée
 
@@ -115,7 +115,7 @@ Si vous souhaitez en savoir plus sur la configuration des conteneurs et des dép
 
 Enfin, les **clés publiques SSH** vous permettent d'accéder à votre job à distance.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/08_job_advanced_config.png" loading="lazy" />
+<img className="thumbnail" alt="Section Advanced configuration dépliée affichant les commandes Docker les volumes et les clés SSH" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/08_job_advanced_config.png" loading="lazy" />
 
 ### Étape 9 - Soumettre votre job
 
@@ -127,13 +127,13 @@ Cliquez sur <code className="action">Commander</code> pour confirmer et lancer l
 
 Une fois votre job créé, il apparaîtra dans votre onglet AI Training :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/10_ai_training_panel.png" loading="lazy" />
+<img className="thumbnail" alt="Liste des jobs AI Training affichant example-job en cours" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/10_ai_training_panel.png" loading="lazy" />
 
 ### Étape 10 - Consulter votre job
 
 Depuis cette liste, vous pouvez accéder aux détails de votre job en cliquant sur son nom ou en cliquant sur <code className="action">...</code> puis en sélectionnant `Manage`. Les détails incluent plusieurs éléments, comme les ressources du job, les statuts, la facturation, les logs et l'URL d'accès. Cette URL est de la forme `https://<JOB-ID>.job.<REGION>.ai.cloud.ovh.net/`. De plus, vous pouvez accéder à n'importe quel port disponible en l'ajoutant à l'URL du job de cette façon : `https://<JOB-ID>-<PORT>.job.<REGION>.ai.cloud.ovh.net/`. Vous pouvez consulter la liste des ports disponibles dans les [capacités](/guides/public-cloud/ai-machine-learning/ai-training-capabilities).
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/11_job_details.png" loading="lazy" />
+<img className="thumbnail" alt="Tableau de bord du job affichant l'accès la chronologie du cycle de vie les ressources et la commande ovhai" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/11_job_details.png" loading="lazy" />
 
 Vous pouvez également consulter les logs de votre job en cliquant sur le bouton <code className="action">Logs</code>.
 
@@ -143,17 +143,17 @@ Si vous avez terminé d'utiliser votre job, si votre modèle a convergé prémat
 
 Depuis la liste des **jobs**, vous pouvez consulter les actions disponibles tout à droite de chaque entrée et interrompre le job en cliquant sur <code className="action">Arrêter</code>. Vous pouvez également interrompre le **job** depuis ses détails, dans la liste des actions, en cliquant sur le bouton d'arrêt <code className="action">🔴</code>.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/12_job_stop.png" loading="lazy" />
+<img className="thumbnail" alt="En-tête du job avec le bouton d'arrêt mis en évidence" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/12_job_stop.png" loading="lazy" />
 
 Ensuite, si vous n'avez plus besoin de votre job, vous pouvez le supprimer. Pour cela, cliquez simplement sur le bouton <code className="action">...</code>, puis sélectionnez l'action <code className="action">Supprimer</code>.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/13_job_delete.png" loading="lazy" />
+<img className="thumbnail" alt="Liste des jobs avec le menu d'actions ouvert et Delete mis en évidence" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/13_job_delete.png" loading="lazy" />
 
 ### Étape 12 - Cloner votre job
 
 Vous pouvez également cliquer sur le bouton de redémarrage <code className="action">🔄</code> pour cloner le job avec la même configuration. Cela lancera un nouveau job identique à l'original (par exemple, `example-job`), vous permettant de relancer votre workflow sans avoir à reconfigurer le job.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/14_job_clone.png" loading="lazy" />
+<img className="thumbnail" alt="En-tête du job avec le bouton de clonage mis en évidence" src="/images/public-cloud/ai-machine-learning/training-guide-02-howto-submit-job/14_job_clone.png" loading="lazy" />
 
 ## Aller plus loin
 
