@@ -30,7 +30,7 @@ Au cours de sa vie, le notebook passera par les statuts suivants :
 - `ERROR` : le notebook s'est arrêté en raison d'une erreur backend. Vous pouvez contacter notre support.
 - `DELETING` : le notebook est en cours de suppression. Une fois supprimé, vous ne le verrez plus, et il n'existera plus. Ses données internes du dossier [/workspace](/guides/public-cloud/ai-machine-learning/ai-notebooks-workspace) ne seront pas supprimées automatiquement après la suppression du notebook. Si vous êtes sûr(e) de vouloir les supprimer, vous pouvez les retrouver et les supprimer dans le conteneur `notebooks_workspace` de votre Object Storage, sous le répertoire de l'ID du notebook.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-billing-concept/ai_notebooks_lifecycle.png" loading="lazy" />
+<img className="thumbnail" alt="Chronologie du cycle de vie d'un AI Notebook depuis Launch jusqu'à Delete en passant par Starting Running Stopping et Stopped annotée avec la sauvegarde automatique du workspace la branche expiration time reached et ce qui se passe à chaque phase" src="/images/public-cloud/ai-machine-learning/notebook-guide-billing-concept/ai_notebooks_lifecycle.png" loading="lazy" />
 
 ## Principes de facturation
 
@@ -45,7 +45,7 @@ AI Notebooks est une **solution facturée à l'usage**. Vous ne payez que pour l
 
 Voici un graphique détaillé illustrant chaque étape facturée ou non pendant le déroulement d'un AI Notebook :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-guide-billing-concept/ai.notebooks.billing.png" loading="lazy" />
+<img className="thumbnail" alt="Chronologie du cycle de vie d'un AI Notebook de Launch à Delete avec le CPU/GPU facturé uniquement pendant Running les données distantes facturées au tarif Object Storage et le workspace facturé une fois Stopped si le notebook a plus de 30 jours ou si le workspace dépasse 10G" src="/images/public-cloud/ai-machine-learning/notebook-guide-billing-concept/ai.notebooks.billing.png" loading="lazy" />
 
 ### Détails des ressources de calcul
 

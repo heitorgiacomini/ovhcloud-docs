@@ -8,7 +8,7 @@ lastUpdated: 2025-06-27
 
 L'objectif de ce tutoriel est de comparer deux méthodes en exécutant deux jobs en parallèle afin de classifier des audios. Pour voir quel modèle est le plus performant en termes de précision, de consommation de ressources et de temps d'entraînement, nous utiliserons l'outil [Weights & Biases](https://wandb.ai/site).
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/models-comparaison-overview.png" loading="lazy" />
+<img className="thumbnail" alt="Graphique en coordonnées parallèles Models comparaison reliant les axes accuracy val_accuracy loss val_loss Relative Time et best_epoch au best_val_loss obtenu pour deux runs" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/models-comparaison-overview.png" loading="lazy" />
 
 ### Cas d'usage
 
@@ -81,7 +81,7 @@ Vous allez suivre différentes étapes pour traiter vos données et entraîner v
 
 Le tutoriel se déroule comme suit :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/instructions-overview.jpeg" loading="lazy" />
+<img className="thumbnail" alt="Schéma dessiné à la main de deux approches où les fichiers audio sont convertis soit en un fichier CSV fourni à un ANN soit en spectrogrammes fournis à un CNN les deux résultats étant envoyés vers Weights and Biases" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/instructions-overview.jpeg" loading="lazy" />
 
 Nous allons principalement voir comment écrire le code de traitement des données et d'entraînement des modèles, les fichiers `requirements.txt` et `packages.txt`, ainsi que le `Dockerfile`. Si vous souhaitez consulter le code complet, reportez-vous au [dépôt GitHub](https://github.com/ovh/ai-training-examples/tree/main/jobs/weights-and-biases/audio-classification-models-comparaison).
 
@@ -153,7 +153,7 @@ Reportez-vous aux commentaires du [code](https://github.com/ovh/ai-training-exam
 
 *L'en-tête du fichier `csv` :*
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/csv-file-overview.png" loading="lazy" />
+<img className="thumbnail" alt="Cinq premières lignes du dataframe de caractéristiques extraites avec les colonnes filename length chroma_stft rms spectral_centroid spectral_bandwidth tempo et mfcc pour un total de 28 colonnes" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/csv-file-overview.png" loading="lazy" />
 
 #### Audio vers spectrogramme avec génération d'image
 
@@ -163,7 +163,7 @@ Reportez-vous aux commentaires du [code](https://github.com/ovh/ai-training-exam
 
 *Un exemple de spectrogramme :*
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/spectrogram-example.png" loading="lazy" />
+<img className="thumbnail" alt="Spectrogramme de Mel d'un échantillon audio où l'énergie apparaît sous forme de bandes orange et jaune vif sur un fond sombre" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/spectrogram-example.png" loading="lazy" />
 
 Une fois le traitement des données terminé, les modèles d'IA doivent être construits.
 
@@ -482,25 +482,25 @@ Vous pouvez maintenant accéder au panneau Weights & Biases. Vous pourrez consul
 
 *Précision :*
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/accuracy.png" loading="lazy" />
+<img className="thumbnail" alt="Graphique accuracy où le run image-classification-spectrogramms dépasse 0.9 tandis que le run audio-classification-features monte plus lentement jusqu'à environ 0.9" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/accuracy.png" loading="lazy" />
 
 *Perte :*
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/loss.png" loading="lazy" />
+<img className="thumbnail" alt="Graphique loss où le run image-classification-spectrogramms descend rapidement sous 0.2 tandis que le run audio-classification-features décroît progressivement jusqu'à environ 0.3" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/loss.png" loading="lazy" />
 
 - **Données de validation :**
 
 *Précision :*
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/val-accuracy.png" loading="lazy" />
+<img className="thumbnail" alt="Graphique val_accuracy où le run image-classification-spectrogramms se stabilise au-dessus de 0.9 tandis que le run audio-classification-features se stabilise autour de 0.7" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/val-accuracy.png" loading="lazy" />
 
 *Perte :*
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/val-loss.png" loading="lazy" />
+<img className="thumbnail" alt="Graphique val_loss où le run image-classification-spectrogramms descend sous 0.2 tandis que le run audio-classification-features reste autour de 1 et remonte légèrement à la fin" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/val-loss.png" loading="lazy" />
 
 Vous pouvez ensuite observer quel modèle est le meilleur en termes de vitesse, de précision ou de consommation de ressources...
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/gpu-power-usage.png" loading="lazy" />
+<img className="thumbnail" alt="Graphique GPU Power Usage en watts où le run image-classification-spectrogramms reste proche de 38.7 W pendant près de trois heures tandis que le run audio-classification-features n'apparaît que sous forme d'un bref pic près de 36.6 W" src="/images/public-cloud/ai-machine-learning/training-tuto-06-models-comparaison-weights-and-biases/gpu-power-usage.png" loading="lazy" />
 
 Dans ce cas, nous constatons que le **modèle classifiant les spectrogrammes** est meilleur en termes de précision et de perte sur le jeu de validation.
 

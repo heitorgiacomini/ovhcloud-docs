@@ -46,7 +46,7 @@ Les configurations suivantes sont actuellement disponibles :
 -   **MXNet** : une image préconfigurée OVHcloud contenant le notebook JupyterLab, l'IDE Visual Studio Code et les bibliothèques `mxnet`
 -   **Fast.ai** : une image préconfigurée OVHcloud contenant le notebook JupyterLab, l'IDE Visual Studio Code et les bibliothèques `fast.ai`
 -   **autogluon** : une image préconfigurée OVHcloud contenant le notebook JupyterLab, l'IDE Visual Studio Code et les bibliothèques `AutoGluon` + `mxnet`
-    <img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/01_submit_image.png" loading="lazy" />
+    <img className="thumbnail" alt="Étape 2 Enter the Docker image proposant les préréglages MXNet Fast.ai Pytorch Tensorflow 2 et Hugging Face Transformers chacun fourni avec JupyterLab et VSCode avec Tensorflow 2 sélectionné et un champ Custom image en dessous" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/01_submit_image.png" loading="lazy" />
 
 Une fois votre image choisie, cliquez sur <code className="action">Suivant</code>.
 
@@ -64,7 +64,7 @@ Si vous souhaitez pouvoir sauvegarder les fichiers de votre notebook sur votre O
 
 Une fois votre job `In progress`, dans le panneau de description du job, vous devriez voir le lien `Access`. Cliquez dessus et vous serez redirigé vers l'URL de votre job.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/02_http_access_url.png" loading="lazy" />
+<img className="thumbnail" alt="Panneaux de détail du job affichant Job information pour ai-training-tensorflow-acid-alvarez dans la région GRA un panneau Container avec l'image ovhcom/ai-training-tensorflow:2.3.0 In progress et un lien HTTP access et un panneau Resources avec 1 GPU" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/02_http_access_url.png" loading="lazy" />
 
 ### Étape 5 - Se connecter en tant qu'utilisateur AI Training
 
@@ -78,17 +78,17 @@ Si vous n'avez pas encore créé d'utilisateur pour AI Training, vous pouvez sui
 
 Remplissez les champs et cliquez sur <code className="action">Login</code>.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/03_login_form.png" loading="lazy" />
+<img className="thumbnail" alt="Formulaire de connexion OVHcloud avec les champs User Name et Password et le bouton Connect" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/03_login_form.png" loading="lazy" />
 
 ### Étape 6 - Utiliser votre notebook
 
 Dans la plupart des images préconfigurées fournies, vous pouvez choisir l'éditeur que vous préférez entre JupyterLab et VisualStudio Code.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/04_jupyter_vs_vscode.png" loading="lazy" />
+<img className="thumbnail" alt="Choix entre le bouton Jupyter Lab et le bouton Visual Studio Code" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/04_jupyter_vs_vscode.png" loading="lazy" />
 
 Sélectionnez simplement celui que vous souhaitez utiliser, et vous serez redirigé vers celui-ci.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/05_jupyter.png" loading="lazy" />
+<img className="thumbnail" alt="JupyterLab avec l'onglet Launcher ouvert proposant les tuiles Notebook et Console pour Python 3 et un fichier index.html dans le navigateur de fichiers" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/05_jupyter.png" loading="lazy" />
 
 Par défaut, le répertoire personnel de votre job se trouve sous `/workspace`. Cela signifie que vous disposerez d'un accès en **lecture** et en **écriture** à ce répertoire, ainsi qu'à vos volumes montés en **lecture** et en **écriture**.
 
@@ -103,7 +103,7 @@ Pour installer des bibliothèques spécifiques nécessitant un accès privilégi
 :::info
 Si vous ouvrez un onglet **console** dans votre notebook et tapez `nvidia-smi`, vous verrez les GPU disponibles que vous pouvez utiliser sur votre notebook.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/09_nvidia_smi.png" loading="lazy" />
+<img className="thumbnail" alt="Terminal JupyterLab affichant la bannière TensorFlow puis la sortie de nvidia-smi indiquant la version de pilote 450.51.05 la version CUDA 11.0 et un GPU Tesla V100S consommant 25W sur 250W sans processus en cours" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/09_nvidia_smi.png" loading="lazy" />
 
 :::
 
@@ -114,15 +114,15 @@ Une fois que vous avez terminé de travailler avec votre notebook, n'oubliez pas
 
 Vous pouvez le faire en sélectionnant <code className="action">Arrêter</code> dans le menu d'actions.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/06_stop_notebook.png" loading="lazy" />
+<img className="thumbnail" alt="Panneau Actions contenant une seule entrée Stop" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/06_stop_notebook.png" loading="lazy" />
 
 Puis <code className="action">confirmez</code> votre choix.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/07_confirm_stop.png" loading="lazy" />
+<img className="thumbnail" alt="Fenêtre de confirmation Stop the job listant l'ID du job la région l'image Docker l'utilisateur admin le statut In progress et la date de création avec les boutons Cancel et Confirm stop" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/07_confirm_stop.png" loading="lazy" />
 
 Après un certain temps, votre job devrait passer à l'état `Interrupted`, signifiant que le job a été arrêté.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/08_interrupted.png" loading="lazy" />
+<img className="thumbnail" alt="Champ Status affichant le badge Interrupted" src="/images/public-cloud/ai-machine-learning/training-guide-06-howto-notebooks/08_interrupted.png" loading="lazy" />
 
 :::info
 Avant de passer à l'état `Interrupted`, votre job peut traverser l'état `Finalizing`. Durant cette phase, toutes les données présentes dans les `read & write volumes` sont sauvegardées dans les conteneurs associés de votre Object Storage.

@@ -29,7 +29,7 @@ Les **jobs AI Training** et les **AI Notebooks** peuvent lire et écrire des don
 2.  Au démarrage du job, le volume est attaché dans le répertoire souhaité. Les données sont ensuite disponibles dans le job tant que dure la phase `RUNNING`.
 3.  Après l'arrêt du job, les données sont resynchronisées **depuis** le volume de système de fichiers sous-jacent **vers** l'**OVHcloud Object Storage**. Cette synchronisation a lieu pendant la phase `FINALIZING`.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_job.svg" loading="lazy" />
+<img className="thumbnail" alt="Schéma des phases de données d'un job montrant la synchronisation depuis OBJECT STORE vers VOLUME pendant INITIALIZING puis les interactions du système de fichiers entre VOLUME et JOB pendant RUNNING puis la synchronisation de retour vers OBJECT STORE pendant FINALIZING" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_job.svg" loading="lazy" />
 
 ### AI Notebooks
 
@@ -39,7 +39,7 @@ Les **jobs AI Training** et les **AI Notebooks** peuvent lire et écrire des don
 
 Cela s'applique à votre [/workspace](/guides/public-cloud/ai-machine-learning/ai-notebooks-workspace) interne ainsi qu'aux volumes d'object storage distants.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_notebook.svg" loading="lazy" />
+<img className="thumbnail" alt="Schéma des phases de données d'un notebook montrant la synchronisation depuis OBJECT STORE vers VOLUME pendant STARTING puis les interactions du système de fichiers entre VOLUME et NOTEBOOK pendant RUNNING puis la synchronisation de retour vers OBJECT STORE pendant STOPPING" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_notebook.svg" loading="lazy" />
 
 ## Capacités
 

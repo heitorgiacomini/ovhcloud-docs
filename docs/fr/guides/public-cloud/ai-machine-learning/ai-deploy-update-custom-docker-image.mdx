@@ -10,7 +10,7 @@ Pour être lancée, notre application AI Deploy **doit être conteneurisée**, �
 
 Pendant que notre app est en cours d'exécution, il est probable que nous devions **mettre à jour notre image Docker** pour corriger des problèmes ou apporter de nouvelles fonctionnalités. C'est pourquoi nous allons voir dans ce tutoriel **comment faire en sorte que notre app utilise la version mise à jour de notre image Docker**.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/deploy-guide-08-update-custom-docker-image/update_docker_img_deploy.svg" loading="lazy" />
+<img className="thumbnail" alt="Schéma de l'utilisation d'une image Docker mise à jour dans une application déployée montrant le tag et le push vers le registre d'images puis ovhai app set-image pour mettre à jour l'image puis l'arrêt et le redémarrage de l'application pour qu'AI Deploy récupère l'image mise à jour" src="/images/public-cloud/ai-machine-learning/deploy-guide-08-update-custom-docker-image/update_docker_img_deploy.svg" loading="lazy" />
 
 ## Prérequis
 
@@ -74,7 +74,7 @@ Cependant, si nous **arrêtons et redémarrons** l'app, l'image utilisée sera c
 
 Cette opération d'arrêt et de redémarrage peut être effectuée depuis le <ManagerLink to="/">espace client OVHcloud</ManagerLink> (UI) en cliquant sur le bouton `...` à côté de votre app, comme illustré sur la capture d'écran ci-dessous :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/deploy-guide-08-update-custom-docker-image/stop_start_app_control-panel.png" loading="lazy" />
+<img className="thumbnail" alt="Onglet Apps d'AI Deploy listant les applications déployées avec le menu d'actions ouvert sur l'application speech_to_text_app-compassionate en cours d'exécution affichant Details Generate a token Start Stop et Delete" src="/images/public-cloud/ai-machine-learning/deploy-guide-08-update-custom-docker-image/stop_start_app_control-panel.png" loading="lazy" />
 
 Exécutez-la depuis la CLI `ovhai` avec les commandes suivantes :
 
