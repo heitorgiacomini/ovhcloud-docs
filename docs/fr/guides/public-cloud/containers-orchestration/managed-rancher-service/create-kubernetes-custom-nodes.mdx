@@ -79,7 +79,7 @@ Connectez-vous en SSH aux machines/nœuds que vous avez créés pour `etcd` et `
 ```bash
 ssh xxxxx@xxx.xxx.xxx.xxx
 
-curl -fL https://xxxxxx.xxxx.rancher.ovh.net/system-agent-install.sh | sudo  sh -s - --server https://xxxxxx.xxxx.rancher.ovh.net --label 'cattle.io/os=linux' --token z2r458coqudhfilgdsifgdsqilgfqsdigfidsufgoisdnvzj --etcd --controlplane
+curl -fL https://xxxxxx.xxxx.rancher.ovh.net/system-agent-install.sh | sudo  sh -s - --server https://xxxxxx.xxxx.rancher.ovh.net --label 'cattle.io/os=linux' --token xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --etcd --controlplane
 ```
 
 Pour la configuration de nos nœuds `Worker`, décochez les cases et cochez uniquement la case Worker :
@@ -93,7 +93,7 @@ Connectez-vous en SSH aux machines/nœuds que vous avez créés pour vos nœuds 
 ```bash
 ssh xxxxx@xxx.xxx.xxx.xxx
 
-curl -fL https://xxxxxx.xxxx.rancher.ovh.net/system-agent-install.sh | sudo  sh -s - --server https://xxxxxx.xxxx.rancher.ovh.net --label 'cattle.io/os=linux' --token z2r458coqudhfilgdsifgdsqilgfqsdigfidsufgoisdnvzj --worker
+curl -fL https://xxxxxx.xxxx.rancher.ovh.net/system-agent-install.sh | sudo  sh -s - --server https://xxxxxx.xxxx.rancher.ovh.net --label 'cattle.io/os=linux' --token xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx --worker
 ```
 
 Après avoir exécuté ces commandes sur les machines/nœuds, attendez que le cluster passe à l'état `Active` dans l'interface Rancher.
