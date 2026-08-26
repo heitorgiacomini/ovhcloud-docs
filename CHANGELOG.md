@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026.08.26.1
+
+### Fixes
+- **docs:** repair truncated info callout in deploy-go-operator
+- **docs:** describe AI & ML screenshots in alt text
+- **docs:** replace placeholder alt text in three AI guides
+
+### Documentation
+- 100 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.26
 
 ### Features
