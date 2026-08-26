@@ -3,6 +3,7 @@
 ## 2026.08.26
 
 ### Features
+- **vps:** document the Modrinth mods catalog and Minecraft Forge (#653)
 - **i18n:** translate remaining FR backlog guides
 - **i18n:** translate Block Storage and Object Storage guides to FR
 - **i18n:** translate Quantum Computing guides to FR
@@ -11,10 +12,11 @@
 - **i18n:** translate Managed Rancher Service guides to FR
 
 ### Fixes
+- **i18n:** restore EN symlinks for the MPR IAM authentication guide
 - **i18n:** correct the Service definition in the FR MPR responsibility model
 
 ### Documentation
-- 56 guides updated across fr
+- 229 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.25.1
 
