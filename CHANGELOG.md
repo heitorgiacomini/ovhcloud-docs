@@ -3,6 +3,7 @@
 ## 2026.08.26
 
 ### Features
+- **nav:** add Logs Data Platform landing page, replace overview (#651)
 - **vps:** document the Modrinth mods catalog and Minecraft Forge (#653)
 - **i18n:** translate remaining FR backlog guides
 - **i18n:** translate Block Storage and Object Storage guides to FR
@@ -23,7 +24,7 @@
 - **links:** use the /links key for Professional Services URLs
 
 ### Documentation
-- 746 guides updated across de, en, es, fr, it, pl, pt
+- 817 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.25.1
 
