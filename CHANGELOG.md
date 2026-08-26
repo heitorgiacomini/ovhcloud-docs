@@ -12,6 +12,9 @@
 - **i18n:** translate Managed Rancher Service guides to FR
 
 ### Fixes
+- **docs:** repair headings broken by a non-breaking space in all locales
+- **docs:** correct mechanical defects found while translating to FR
+- **pci:** correct the Service definition in the MPR responsibility model
 - **i18n:** restore EN symlinks for the MPR IAM authentication guide
 - **i18n:** correct the Service definition in the FR MPR responsibility model
 
@@ -19,7 +22,7 @@
 - **links:** use the /links key for Professional Services URLs
 
 ### Documentation
-- 702 guides updated across de, en, es, fr, it, pl, pt
+- 744 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.25.1
 
