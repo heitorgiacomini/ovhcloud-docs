@@ -15,8 +15,11 @@
 - **i18n:** restore EN symlinks for the MPR IAM authentication guide
 - **i18n:** correct the Service definition in the FR MPR responsibility model
 
+### Maintenance
+- **links:** use the /links key for Professional Services URLs
+
 ### Documentation
-- 229 guides updated across de, en, es, fr, it, pl, pt
+- 702 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.25.1
 
