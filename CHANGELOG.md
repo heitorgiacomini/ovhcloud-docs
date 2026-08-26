@@ -7,6 +7,7 @@
 - **i18n:** translate remaining FR backlog guides
 - **i18n:** translate Block Storage and Object Storage guides to FR
 - **i18n:** translate Quantum Computing guides to FR
+- **bare-metal-cloud/dedicated-servers/partitioning-ovh:** partial diskgroups cleaning
 - **i18n:** translate Managed Private Registry guides to FR
 - **i18n:** translate Dedicated Servers guides to FR
 - **i18n:** translate Managed Rancher Service guides to FR
@@ -22,7 +23,7 @@
 - **links:** use the /links key for Professional Services URLs
 
 ### Documentation
-- 744 guides updated across de, en, es, fr, it, pl, pt
+- 746 guides updated across de, en, es, fr, it, pl, pt
 
 ## 2026.08.25.1
 
