@@ -29,7 +29,7 @@ There are two ways to manage your data:
 2.  At the job start, the volume is attached inside the wanted directory. Data is then available inside the job as long as the `RUNNING` phase lasts.
 3.  After the job stop, data is synchronized back **from** the underlying filesystem volume **into** the **OVHcloud Object Storage**. This synchronization is done during the `FINALIZING` phase.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_job.svg" loading="lazy" />
+<img className="thumbnail" alt="Diagram of the job data phases showing data synchronization from OBJECT STORE to VOLUME while INITIALIZING then filesystem interactions between VOLUME and JOB while RUNNING then synchronization back to OBJECT STORE while FINALIZING" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_job.svg" loading="lazy" />
 
 ### AI Notebooks
 
@@ -39,7 +39,7 @@ There are two ways to manage your data:
 
 This applies to your internal [/workspace](/guides/public-cloud/ai-machine-learning/ai-notebooks-workspace) and remote object storage volumes.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_notebook.svg" loading="lazy" />
+<img className="thumbnail" alt="Diagram of the notebook data phases showing data synchronization from OBJECT STORE to VOLUME while STARTING then filesystem interactions between VOLUME and NOTEBOOK while RUNNING then synchronization back to OBJECT STORE while STOPPING" src="/images/public-cloud/ai-machine-learning/gi-02-concepts-data/data_phases_notebook.svg" loading="lazy" />
 
 ## Capabilities
 

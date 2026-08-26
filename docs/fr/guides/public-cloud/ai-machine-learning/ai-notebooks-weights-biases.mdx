@@ -10,7 +10,7 @@ L'objectif de ce tutoriel est de montrer comment il est possible d'utiliser **We
 
 Weights & Biases vous permet de suivre vos expérimentations de machine learning, de versionner vos datasets et de gérer facilement vos modèles, comme illustré ci-dessous :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/overview_wandb.png" loading="lazy" />
+<img className="thumbnail" alt="Espace de travail Weights and Biases comparant sept runs d'entraînement avec les graphiques Test error rate loss acc val_loss val_acc et epoch" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/overview_wandb.png" loading="lazy" />
 
 Ce tutoriel présente deux exemples d'utilisation de Weights & Biases. Dans le premier notebook, nous utiliserons TensorFlow et dans le second, une image Docker PyTorch.
 
@@ -62,15 +62,15 @@ L'objectif de ce tutoriel est de montrer comment il est possible, grâce à Weig
 
 Par exemple, vous pouvez afficher les courbes d'accuracy et de loss pour vos données de validation et d'entraînement. Ces métriques seront affichées pour chaque epoch de chaque entraînement.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/valid_train_metrics_mnist_wandb.png" loading="lazy" />
+<img className="thumbnail" alt="Espace de travail Weights and Biases avec une section Valid data affichant val_loss et val_acc et une section Train data affichant loss et acc pour les sept runs d'entraînement" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/valid_train_metrics_mnist_wandb.png" loading="lazy" />
 
 Vous pouvez ensuite comparer vos entraînements à l'aide du type de graphique **Parallel coordinates** :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/parallel_coordinates_mnist_wandb.png" loading="lazy" />
+<img className="thumbnail" alt="Graphique Parallel coordinates de Weights and Biases reliant les axes loss learning_rate et epochs à la valeur acc obtenue avec une échelle de couleurs allant de 0.984 à 1.000" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/parallel_coordinates_mnist_wandb.png" loading="lazy" />
 
 Vous pouvez également comparer les **Test error rates** :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/test_error_rate_mnist_wandb.png" loading="lazy" />
+<img className="thumbnail" alt="Diagramme en barres Test error rate de Weights and Biases comparant les runs training_1 à training_7 avec des valeurs comprises entre environ 1.2 et 1.9" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/test_error_rate_mnist_wandb.png" loading="lazy" />
 
 Un aperçu de ce notebook est disponible sur [GitHub](https://github.com/ovh/ai-training-examples/tree/main/notebooks/computer-vision/image-classification/tensorflow/weights-and-biases).
 
@@ -82,15 +82,15 @@ Le notebook utilisant PyTorch et Weights & Biases est basé sur YOLOv5 et le dat
 
 L'objectif de ce tutoriel est de montrer comment Weights & Biases peut être utilisé avec le framework de détection d'objets en temps réel YOLOv5. Pour cela, les performances des modèles YOLOv5 s, m, l et x seront comparées sur le dataset COCO pour le même nombre d'epochs.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/loss_train_valid_yolov5_wandb.png" loading="lazy" />
+<img className="thumbnail" alt="Espace de travail Weights and Biases avec une section train affichant obj_loss cls_loss et box_loss et une section val affichant les trois mêmes pertes pour les quatre runs yolov5x_results yolov5l_results yolov5m_results et yolov5s_results" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/loss_train_valid_yolov5_wandb.png" loading="lazy" />
 
 Une autre possibilité offerte par Weights & Biases est d'afficher l'utilisation de vos ressources de calcul :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/system_utilization_yolov5_wandb.png" loading="lazy" />
+<img className="thumbnail" alt="Section System de Weights and Biases affichant GPU Power Usage en watts et en pourcentage GPU Memory Allocated GPU Time Spent Accessing Memory GPU Temp et GPU Utilization au fil du temps pour les quatre runs YOLOv5" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/system_utilization_yolov5_wandb.png" loading="lazy" />
 
 Vous pouvez également créer votre rapport avec vos courbes et vos images, et le partager avec votre équipe !
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/report_yolov5_wandb.png" loading="lazy" />
+<img className="thumbnail" alt="Rapport Weights and Biases intitulé YOLOv5 model comparaison avec une ligne Images montrant la même photo annotée par chacun des quatre runs et une ligne Results montrant leurs courbes précision rappel PR_curve.png" src="/images/public-cloud/ai-machine-learning/notebook-tuto-03-weight-biases/report_yolov5_wandb.png" loading="lazy" />
 
 Un aperçu de ce notebook est disponible sur [GitHub](https://github.com/ovh/ai-training-examples/tree/main/notebooks/computer-vision/object-detection/miniconda/weights-and-biases).
 

@@ -37,7 +37,7 @@ Au cours de son cycle de vie, l’app passera par les statuts suivants :
 - `DELETING` : l’app est en cours de suppression. Une fois supprimée, vous ne la verrez plus, elle n’existera plus.
 - `DELETED` : l’app est entièrement supprimée.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/deploy-guide-06-billing-concept/ai.deploy.lifecycle.png" loading="lazy" />
+<img className="thumbnail" alt="Chronologie du cycle de vie d'une application AI Deploy depuis Launch jusqu'à Delete en passant par Queued Initializing Scaling Running Standby Stopping et Stopped avec le CPU/GPU non facturé en dehors de la phase Running et les données distantes facturées au tarif Object Storage" src="/images/public-cloud/ai-machine-learning/deploy-guide-06-billing-concept/ai.deploy.lifecycle.png" loading="lazy" />
 
 ## Principes de facturation
 
@@ -61,7 +61,7 @@ Les ressources **optionnelles**, non incluses avec AI Deploy, sont :
 
 Voici un graphique détaillé illustrant chaque étape facturée ou non pendant le workflow AI Deploy :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/deploy-guide-06-billing-concept/ai.deploy.billing.png" loading="lazy" />
+<img className="thumbnail" alt="Chronologie du cycle de vie d'une application AI Deploy de Launch à Delete annotée sous chaque phase avec ce qui se passe et ce qui est facturé notamment les ressources de calcul allouées par réplique pendant Running et les données éphémères perdues une fois Stopped" src="/images/public-cloud/ai-machine-learning/deploy-guide-06-billing-concept/ai.deploy.billing.png" loading="lazy" />
 
 ### Détails des ressources de calcul
 

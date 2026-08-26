@@ -8,7 +8,7 @@ lastUpdated: 2023-05-11
 
 L'objectif de ce tutoriel est de montrer comment il est possible d'entraîner YOLOv5 à reconnaître des objets. YOLOv5 est un algorithme de détection d'objets. Bien qu'étroitement lié à la classification d'images, la détection d'objets effectue une classification d'images à une échelle plus précise. La détection d'objets localise et catégorise les éléments dans les images.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/image-yolov5.png" loading="lazy" />
+<img className="thumbnail" alt="Photo de rue annotée par YOLOv5 avec des cadres de détection étiquetés person avec des scores de confiance de 0.56 à 0.86 bicycle 0.74 et dog 0.82 surmontée du texte You Only Look Once" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/image-yolov5.png" loading="lazy" />
 
 Il repose sur le repository open source de YOLOv5 développé par [Ultralytics](https://github.com/ultralytics/yolov5).
 
@@ -35,7 +35,7 @@ Il repose sur le repository open source de YOLOv5 développé par [Ultralytics](
 
 Si vous souhaitez l'envoyer depuis l'<ManagerLink to="/">espace client OVHcloud</ManagerLink>, rendez-vous dans la section Object Storage et créez un nouveau conteneur d'objets en cliquant sur <code className="action">Object Storage</code> > <code className="action">Créer un conteneur d'objets</code>.
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/new-object-container.png" loading="lazy" />
+<img className="thumbnail" alt="Page Create an object container avec l'étape 1 Select a region ouverte sur l'onglet All locations proposant Beauharnois BHS Frankfurt DE Gravelines GRA Strasbourg SBG London UK et Warsaw WAW" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/new-object-container.png" loading="lazy" />
 
 Si vous souhaitez l'exécuter avec la CLI, suivez simplement ce [guide](/guides/public-cloud/ai-machine-learning/ai-cli-access-data). Vous devez choisir la région, le nom de votre conteneur et le chemin où se trouvent vos données, puis utiliser la commande suivante :
 
@@ -80,7 +80,7 @@ Dans ce tutoriel, vous avez besoin de 2 conteneurs d'objets.
 - le **premier conteneur d'objets** contient votre dataset (étiqueté et séparé) ainsi que votre fichier `data.yaml`.
 - le **second conteneur d'objets** est vide. Il est destiné à sauvegarder les poids de votre modèle (pour une future inférence par exemple).
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/notebook-attach-data.png" loading="lazy" />
+<img className="thumbnail" alt="Étape 7 Attach a Git container or repository avec le conteneur dataset - GRA monté en lecture seule sur /workspace/data le conteneur weights - GRA monté en lecture et écriture sur /workspace/models_train et le dépôt Git ai-training-examples monté sur /workspace/examples" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/notebook-attach-data.png" loading="lazy" />
 
 Une fois le dépôt cloné, trouvez le notebook YOLOv5 en suivant ce chemin : `ai-training-examples` > `notebooks` > `computer-vision` > `object-detection` > `miniconda` > `notebook_object_detection_yolov5.ipynb`.
 
@@ -103,7 +103,7 @@ Vous pourrez ensuite accéder à l'URL de votre notebook une fois qu'il est en c
 
 Vous devriez obtenir cet aperçu :
 
-<img className="thumbnail" alt="image" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/overview-notebook.png" loading="lazy" />
+<img className="thumbnail" alt="JupyterLab affichant le notebook notebook_object_detection ouvert sur le titre TUTORIAL Train YOLOv5 on custom dataset avec ses sections introduction et prérequis" src="/images/public-cloud/ai-machine-learning/notebook-tuto-04-yolov5/overview-notebook.png" loading="lazy" />
 
 ### Expérimenter avec le notebook YOLOv5
 
