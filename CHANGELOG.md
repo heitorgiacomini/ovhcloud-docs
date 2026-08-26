@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026.08.26
+
+### Features
+- **i18n:** translate remaining FR backlog guides
+- **i18n:** translate Block Storage and Object Storage guides to FR
+- **i18n:** translate Quantum Computing guides to FR
+- **i18n:** translate Managed Private Registry guides to FR
+- **i18n:** translate Dedicated Servers guides to FR
+- **i18n:** translate Managed Rancher Service guides to FR
+
+### Fixes
+- **i18n:** correct the Service definition in the FR MPR responsibility model
+
+### Documentation
+- 56 guides updated across fr
+
 ## 2026.08.25.1
 
 ### Features
