@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026.08.27
+
+### Maintenance
+- **scripts:** apply Biome formatting to 5 drifted files
+
+### Documentation
+- 113 guides updated across de, en, es, fr, it, pl, pt
+
 ## 2026.08.26.2
 
 ### Fixes
