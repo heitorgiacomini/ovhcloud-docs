@@ -6,7 +6,7 @@
 - **account:** clarify e-invoicing FAQ and shorten SIRET guide title
 
 ### Documentation
-- 4 guides updated across fr
+- 5 guides updated across fr
 
 ## 2026.08.26.1
 
