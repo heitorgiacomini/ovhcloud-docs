@@ -1,7 +1,7 @@
 ---
 title: AI Notebooks - Caractéristiques, capacités et limites
 description: Découvrez les principales caractéristiques, capacités et limites des AI Notebooks
-lastUpdated: 2026-01-27
+lastUpdated: 2026-08-27
 ---
 
 :::info
@@ -97,21 +97,18 @@ ovhai capabilities flavor list
 À titre indicatif, les limites actuelles sont :
 
 - CPU : 12 par notebook.
-- GPU : 4 par notebook.
+- GPU : 4 par notebook pour V100S, A10, L4, L40s et H100 ; 2 pour A100 ; le H200 n'est disponible que par lots de 4 GPU NVLinked (le nombre de `--gpu` doit être un multiple de 4 pour ce flavor).
 
 ##### **Matériel disponible pour AI Notebooks**
 
-Nous proposons actuellement :
+La disponibilité du matériel dépend de la région du datacenter :
 
-- **NVIDIA H100**
-- **NVIDIA Ampere A100**
-- **NVIDIA Ampere A10**
-- **NVIDIA Tesla V100S**
-- **NVIDIA L4**
-- **NVIDIA L40s**
-- **Intel CPU vCores**
+- **GRA** (Gravelines) : NVIDIA H200, NVIDIA H100, NVIDIA Ampere A100, NVIDIA Ampere A10, NVIDIA Tesla V100S, NVIDIA L4, NVIDIA L40s, Intel CPU vCores
+- **BHS** (Beauharnois) : NVIDIA Tesla V100S, Intel CPU vCores
 
-Le tarif est disponible [ici](/links/public-cloud/prices-ai).
+Exécutez `ovhai capabilities flavor list` après vous être connecté à la région que vous souhaitez utiliser (`ovhai config set <region>`) pour obtenir la liste exacte et à jour.
+
+Les tarifs sont disponibles sur la [page des tarifs Public Cloud](/links/public-cloud/prices-ai).
 
 #### Stockage disponible
 
@@ -130,7 +127,7 @@ Le **stockage local** est limité et n'est pas la méthode recommandée pour gé
 Lors de l'attachement de volumes de données à vos AI Notebooks, vous pouvez utiliser du stockage depuis Public Cloud Object Storage. Cela vous permet de travailler avec de larges jeux de données, tout en garantissant la persistance même si vous supprimez vos notebooks.
 
 :::info
-Assurez-vous que le conteneur Object Storage est **situé dans la même région** que votre AI Notebook.
+Pour de meilleures performances, nous recommandons de conserver le conteneur Object Storage dans la **même région** que votre AI Notebook. Monter un conteneur situé dans une autre région fonctionne également, mais ajoute de la latence réseau inter-régions. Si vous utilisez un datastore S3<sup>1</sup> externe enregistré via le CLI `ovhai` avec `--store-credentials-locally`, gardez à l'esprit que ce datastore n'est enregistré que pour le contexte régional du CLI (`ovhai config set <region>`) sous lequel il a été créé : enregistrez-le à nouveau dans chaque région où vous souhaitez l'utiliser.
 
 Votre projet Public Cloud peut stocker un volume illimité de données dans des conteneurs Object Storage. Cependant, lorsque vous montez un conteneur Object Storage en tant que volume, il existe une **limite d'utilisation de 10 To par projet Public Cloud**. Cette limite s'applique au stockage total consommé par l'ensemble des volumes attachés simultanément sur vos AI Notebooks, jobs AI Training et apps AI Deploy.
 
@@ -218,3 +215,5 @@ Si vous avez besoin d'une formation ou d'une assistance technique pour la mise e
 Nous serions ravis de répondre à vos questions et apprécions tout retour que vous pourriez nous faire.
 
 Vous êtes sur Discord ? Connectez-vous à [notre canal](https://discord.gg/ovhcloud) et échangez directement avec l'équipe qui développe nos services AI !
+
+<sup>1</sup> : S3 est une marque déposée appartenant à Amazon Technologies, Inc. Les services de OVHcloud ne sont pas sponsorisés, approuvés, ou affiliés de quelque manière que ce soit.

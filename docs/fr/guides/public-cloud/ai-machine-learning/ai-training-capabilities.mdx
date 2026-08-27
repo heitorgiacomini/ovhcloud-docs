@@ -1,7 +1,7 @@
 ---
 title: AI Training - Caractéristiques, capacités et limites
 description: Découvrez les principales caractéristiques, capacités et limites de AI Training
-lastUpdated: 2026-01-27
+lastUpdated: 2026-08-27
 ---
 
 :::info
@@ -107,13 +107,18 @@ ovhai capabilities flavor list
 À titre indicatif, les limites actuelles sont :
 
 - CPU : 12 par job.
-- GPU : 4 par job.
+- GPU : 4 par job pour V100S, A10, L4, L40s et H100 ; 2 pour A100 ; le H200 n'est disponible que par lots de 4 GPU NVLinked (le nombre de `--gpu` doit être un multiple de 4 pour ce flavor).
 
 ##### **Matériel disponible pour AI Training**
 
-Actuellement, nous fournissons :
+La disponibilité du matériel dépend de la région du datacenter :
 
-- **NVIDIA V100S** ([tarifs disponibles ici](/links/public-cloud/prices-ai)).
+- **GRA** (Gravelines) : NVIDIA H200, NVIDIA H100, NVIDIA Ampere A100, NVIDIA Ampere A10, NVIDIA Tesla V100S, NVIDIA L4, NVIDIA L40s, Intel CPU vCores
+- **BHS** (Beauharnois) : NVIDIA Tesla V100S, Intel CPU vCores
+
+Exécutez `ovhai capabilities flavor list` après vous être connecté à la région que vous souhaitez utiliser (`ovhai config set <region>`) pour obtenir la liste exacte et à jour.
+
+Les tarifs sont disponibles sur la [page des tarifs Public Cloud](/links/public-cloud/prices-ai).
 
 #### Stockage disponible
 
@@ -129,7 +134,7 @@ Le **stockage local** est limité et n'est pas la méthode recommandée pour gé
 
 ##### **Stockage attaché**
 
-Vous pouvez attacher des volumes de données depuis Public Cloud Object Storage. Le bucket Object Storage doit se trouver dans la même région que votre job AI Training.
+Vous pouvez attacher des volumes de données depuis Public Cloud Object Storage. Pour de meilleures performances, nous recommandons de conserver le bucket Object Storage dans la même région que votre job AI Training. Monter un bucket situé dans une autre région fonctionne également, mais ajoute de la latence réseau inter-régions.
 Le stockage attaché vous permet de travailler sur plusieurs To de données, tout en restant persistant lorsque vous supprimez votre job AI Training.
 
 #### Durée d'exécution maximale

@@ -1718,6 +1718,7 @@
                 + [How to get information about a domain name with WHOIS](web-cloud/domains/domain-whois)
                 + [How do I configure the WHOIS display for a domain name?](web-cloud/domains/domain-configure-whois-listing)
                 + [How to export the list of your domain names in CSV](web-cloud/domains/domain-csv-list)
+                + [Getting started with the MCP server for domain names](web-cloud/domains/mcp-domain-getting-started)
             + [Configuration](web-cloud-domains-domain-names-configuration)
                 + [Domain names contacts management](web-cloud-domains-domain-names-configuration-changing-a-domain-name-owner-trade)
                     + [Changing the owner of a domain name](web-cloud/domains/trade-domain)
